@@ -9,6 +9,7 @@ import { generateSystemPrompt } from '@/config/aiAssistant';
 import { useAIChat } from '@/hooks/useAIChat';
 import { useAuth } from '@/hooks/useAuth';
 import { Message } from '@/types/AIChat';
+import { AIChatAPI } from '@/api/AIChatAPI';
 
 // 代码块渲染属性定义
 interface CodeBlockProps {
@@ -128,12 +129,26 @@ const AIChat: React.FC = () => {
 
     if (!input.trim() || isLoading) return;
 
+    let newSessionId: number | null = null;
     // 如果没有当前会话，先创建一个
     if (!currentSession) {
       const newSession = await createNewSession();
       if (!newSession) {
         setError('创建会话失败');
         return;
+      }
+      newSessionId = newSession.id;
+      // 这里 currentSession 还没更新，等 selectSession 后再更新标题
+      const title = input.trim().slice(0, 10) || '新对话';
+      try {
+        await AIChatAPI.updateSessionTitle(newSession.id, { title });
+        // 更新后立即获取最新会话信息并刷新
+        if (typeof selectSession === 'function') {
+          await selectSession(newSession.id);
+        }
+      } catch (err) {
+        // 标题更新失败不影响主流程
+        console.error('更新会话标题失败:', err);
       }
     }
 
@@ -419,7 +434,7 @@ const AIChat: React.FC = () => {
           {/*    }}*/}
           {/*    title="历史会话"*/}
           {/*>*/}
-          {/*  �📚*/}
+          {/*  📚*/}
           {/*</button>*/}
           <button
             className={styles.sessionButton}

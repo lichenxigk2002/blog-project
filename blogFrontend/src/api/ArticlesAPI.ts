@@ -7,7 +7,7 @@ export const ArticlesAPI = {
   //  获取文章列表
   getArticles: () => http.get<ApiResponse<Article[]>>('/articles/list'),
   //  获取文章
-  getArticleById: (id: number) => http.get<ApiResponse<Article>>(`/articles/${id}`),
+  getArticleById: (id: number) => http.get<Article>(`/articles/${id}`),
   //  创建文章
   createArticle: (data: any) => http.post<ApiResponse<Article>>('/articles', data),
   //  更新文章

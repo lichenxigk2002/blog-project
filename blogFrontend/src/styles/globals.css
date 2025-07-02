@@ -4,6 +4,24 @@
 :root {
   font-size: 16px;
   /* 基准字体大小 */
+  --transition-duration: 0.3s;
+}
+
+/* 主题切换动画基础样式 */
+* {
+  transition: background-color var(--transition-duration) ease,
+    color var(--transition-duration) ease,
+    border-color var(--transition-duration) ease,
+    box-shadow var(--transition-duration) ease;
+}
+
+/* 排除不需要动画的元素 */
+img,
+svg,
+.icon,
+.no-transition,
+.no-transition * {
+  transition: none !important;
 }
 
 /* 添加媒体查询，针对不同屏幕尺寸调整基准字体大小 */

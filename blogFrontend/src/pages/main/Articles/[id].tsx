@@ -95,17 +95,20 @@ const ArticleDetail: React.FC = () => {
                 const response = await ArticlesAPI.getArticleById(Number(id));
                 // 更新文章状态
                 setArticle(response);
+                console.log('获取文章数据:', response);
                 setLikeCount(response.likeCount || 0);
                 setIsLiked(false); // 每次进入页面重置点赞状态
 
                 // 提取标题
                 const headingRegex = /^(#{1,6})\s+(.+)$/gm; // 作用：识别以 # 开头、后跟空格和标题文字的行，并分别捕获标签级别和标题内容。
-                const matches = Array.from(response.content.matchAll(headingRegex));
+                const matches = Array.from(response.content.matchAll(headingRegex)); //作用：使用正则表达式匹配文章内容中的所有标题，并返回一个包含匹配结果的数组。
+                // console.log('匹配到的标题:', matches);
                 const extractedHeadings = matches.map(match => ({
                     id: match[2].toLowerCase().replace(/\s+/g, '-'),
                     text: match[2],
                     level: match[1].length
                 }));
+                // console.log('提取的标题:', extractedHeadings);
                 setHeadings(extractedHeadings);
             } catch (err) {
                 console.error('获取数据错误:', err);
@@ -142,11 +145,6 @@ const ArticleDetail: React.FC = () => {
         if (contentRef.current) {
             contentRef.current.style.fontSize = `${size}px`;
         }
-    };
-
-    const handleThemeChange = (theme: 'light' | 'dark') => {
-        // 实现主题切换逻辑
-        document.documentElement.setAttribute('data-theme', theme);
     };
 
     const handleExportOutline = (format: 'markdown' | 'pdf') => {

@@ -130,6 +130,7 @@ const Articles: React.FC = () => {
     useEffect(() => {
         if (observer.current) {
             observer.current.disconnect();
+            console.log(observer)
         }
         observer.current = new IntersectionObserver(entries => {
             if (entries[0].isIntersecting && hasMore) {

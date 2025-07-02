@@ -56,7 +56,7 @@ const NavbarRight: React.FC = () => {
 
             {/* 2. GitHub按钮 */}
             <button className={styles.iconButton}>
-                <a href='https://github.com/lichenx2002/demo'>
+                <a href='https://github.com/lichenxigk2002'>
                     <RiGithubFill style={{ color: 'var(--text)', fontSize: '1rem' }} />
                 </a>
             </button>

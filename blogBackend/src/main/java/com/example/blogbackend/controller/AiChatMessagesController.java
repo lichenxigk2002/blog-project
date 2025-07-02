@@ -5,6 +5,7 @@ import com.example.blogbackend.entity.Result;
 import com.example.blogbackend.entity.ResultCodeEnum;
 import com.example.blogbackend.service.IAiChatMessagesService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/ai-chat-messages")
 @CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "false")
+@Slf4j
 public class AiChatMessagesController {
 
     @Autowired
@@ -37,6 +39,7 @@ public class AiChatMessagesController {
             queryWrapper.eq("session_id", sessionId)
                     .orderByAsc("created_at");
             List<AiChatMessages> messages = aiChatMessagesService.list(queryWrapper);
+            log.info("获取消息列表成功:"+messages);
             return Result.ok(messages);
         } catch (Exception e) {
             return Result.build(null, ResultCodeEnum.FAIL).message("获取消息列表失败: " + e.getMessage());

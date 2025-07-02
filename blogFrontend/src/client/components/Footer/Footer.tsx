@@ -123,7 +123,7 @@ const Footer: React.FC = () => {
         <div className={styles.footerSection}>
           <h3>其他社交方式</h3>
           <div className={styles.links}>
-            <a href="https://github.com/lichenx2002/blog-project" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
+            <a href="https://github.com/lichenxigk2002" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
               <FaGithub className={styles.socialIcon} />
               <span>GitHub</span>
             </a>

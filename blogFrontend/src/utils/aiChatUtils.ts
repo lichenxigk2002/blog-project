@@ -19,7 +19,8 @@ export const convertBackendMessageToFrontend = (backendMessage: AiChatMessage): 
 export const convertFrontendMessageToBackend = (
     frontendMessage: Message,
     sessionId: number
-): { sessionId: number; role: 'user' | 'assistant'; content: string } => {
+): { sessionId: number; role: 'user' | 'assistant'; content: string } =>
+{
     return {
         sessionId,
         role: frontendMessage.type === 'user' ? 'user' : 'assistant',
