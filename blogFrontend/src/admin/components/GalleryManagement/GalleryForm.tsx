@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { Gallery } from '@/types/Gallery';
-import styles from './GalleryForm.module.css';
+import styles from './GalleryForm.module.scss';
 
 interface GalleryFormProps {
   initialData?: Gallery;

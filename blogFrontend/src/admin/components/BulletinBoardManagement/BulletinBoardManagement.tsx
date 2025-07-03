@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BulletinBoardAPI } from '@/api/BulletinBoardAPI';
 import type { BulletinBoardProps } from '@/types/BulletinBoard';
-import styles from './BulletinBoardManagement.module.css';
+import styles from './BulletinBoardManagement.module.scss';
 import Pagination from "@/admin/components/ui/Pagination/Pagination";
 import BulletinBoardForm from './BulletinBoardForm';
 

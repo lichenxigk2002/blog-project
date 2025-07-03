@@ -1,0 +1,223 @@
+// 变量定义
+$clock-gap: 0.5rem;
+$clock-font-family: 'ZiHun', 'Helvetica Neue', Arial, sans-serif;
+$clock-label-size: 0.75rem;
+$clock-label-opacity: 0.8;
+$clock-label-spacing: 0.0625rem;
+$clock-separator-size: 1.5rem;
+$clock-separator-line: 3.125rem;
+$clock-em-line: 102px;
+$clock-em-size: 66px;
+$clock-em-color: var(--text);
+$clock-em-weight: lighter;
+$clock-em-style: normal;
+$clock-em-v-align: top;
+$clock-unit-gap: 0.25rem;
+$clock-unit-gap-mobile: 0.03125rem;
+$clock-label-size-mobile: 0.25rem;
+$clock-separator-size-mobile: 0.5rem;
+$clock-separator-line-mobile: 1rem;
+$clock-em-line-mobile: 60px;
+$clock-em-size-mobile: 40px;
+
+// Mixin: 响应式字体
+@mixin clock-em($line, $size) {
+  line-height: $line;
+  font-size: $size;
+}
+
+.clock {
+  text-align: center;
+
+  :global(.M-FlipCard) {
+    margin: 0 3px;
+  }
+
+  em {
+    display: inline-block;
+    @include clock-em($clock-em-line, $clock-em-size);
+    font-style: $clock-em-style;
+    vertical-align: $clock-em-v-align;
+    font-weight: $clock-em-weight;
+    color: $clock-em-color;
+  }
+}
+
+.flipClock {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $clock-gap;
+  font-family: $clock-font-family;
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  width: 100%;
+  height: 100%;
+
+  .flipClockUnit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $clock-unit-gap;
+    flex: 1;
+    min-width: 0;
+
+    .flipClockLabel {
+      font-size: $clock-label-size;
+      color: $clock-em-color;
+      opacity: $clock-label-opacity;
+      text-transform: uppercase;
+      letter-spacing: $clock-label-spacing;
+      width: 100%;
+      text-align: center;
+    }
+  }
+
+  .flipClockSeparator {
+    font-size: $clock-separator-size;
+    font-weight: bold;
+    color: $clock-em-color;
+    line-height: $clock-separator-line;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    margin: 0.25rem 0.25rem 0;
+  }
+}
+
+// 响应式适配
+@media screen and (min-width: 1920px) {
+  .flipClock {
+    gap: $clock-gap;
+    right: 1rem;
+    top: 1rem;
+
+    .flipClockUnit {
+      gap: $clock-unit-gap;
+    }
+
+    .flipClockLabel {
+      font-size: $clock-label-size;
+      letter-spacing: $clock-label-spacing;
+    }
+
+    .flipClockSeparator {
+      font-size: $clock-separator-size;
+      margin: 0 0.25rem;
+      line-height: $clock-separator-line;
+    }
+  }
+
+  .clock em {
+    @include clock-em($clock-em-line, $clock-em-size);
+  }
+}
+
+@media screen and (min-width: 1367px) and (max-width: 1919px) {
+  .flipClock {
+    gap: 0.25rem;
+    right: 0.5rem;
+    top: 0.5rem;
+
+    .flipClockUnit {
+      gap: 0.125rem;
+    }
+
+    .flipClockLabel {
+      font-size: 0.375rem;
+      letter-spacing: 0.03125rem;
+    }
+
+    .flipClockSeparator {
+      font-size: 0.5rem;
+      margin: 0 0.0625rem;
+      line-height: 1rem;
+    }
+  }
+
+  .clock em {
+    @include clock-em(80px, 50px);
+  }
+}
+
+@media screen and (min-width: 1050px) and (max-width: 1366px) {
+  .flipClock {
+    gap: 0.125rem;
+    right: 0.5rem;
+    top: 0.5rem;
+
+    .flipClockUnit {
+      gap: 0.03125rem;
+    }
+
+    .flipClockLabel {
+      font-size: 0.375rem;
+      letter-spacing: 0.03125rem;
+    }
+
+    .flipClockSeparator {
+      font-size: 0.75rem;
+      margin: 0 0.03125rem;
+      line-height: 1.25rem;
+    }
+  }
+
+  .clock em {
+    @include clock-em(75px, 48px);
+  }
+}
+
+@media screen and (max-width: 1049px) {
+  .flipClock {
+    gap: 0.125rem;
+    right: 0.5rem;
+    top: 0.5rem;
+
+    .flipClockUnit {
+      gap: 0.03125rem;
+    }
+
+    .flipClockLabel {
+      font-size: 0.375rem;
+      letter-spacing: 0.03125rem;
+    }
+
+    .flipClockSeparator {
+      font-size: 0.75rem;
+      margin: 0 0.03125rem;
+      line-height: 1.25rem;
+    }
+  }
+
+  .clock em {
+    @include clock-em(70px, 45px);
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .flipClock {
+    gap: 0.125rem;
+    right: 0.25rem;
+    top: 0.25rem;
+
+    .flipClockUnit {
+      gap: $clock-unit-gap-mobile;
+    }
+
+    .flipClockLabel {
+      font-size: $clock-label-size-mobile;
+      letter-spacing: 0.03125rem;
+    }
+
+    .flipClockSeparator {
+      font-size: $clock-separator-size-mobile;
+      margin: 0 0.03125rem;
+      line-height: $clock-separator-line-mobile;
+    }
+  }
+
+  .clock em {
+    @include clock-em($clock-em-line-mobile, $clock-em-size-mobile);
+  }
+}

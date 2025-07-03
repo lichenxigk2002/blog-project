@@ -3,13 +3,14 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
-import styles from './AIChat.module.css';
+import styles from './AIChat.module.scss';
 import { motion } from 'framer-motion';
 import { generateSystemPrompt } from '@/config/aiAssistant';
 import { useAIChat } from '@/hooks/useAIChat';
 import { useAuth } from '@/hooks/useAuth';
 import { Message } from '@/types/AIChat';
 import { AIChatAPI } from '@/api/AIChatAPI';
+import AIChatCodeBlock from '@/components/Code/AIChatCodeBlock';
 
 // 代码块渲染属性定义
 interface CodeBlockProps {
@@ -174,6 +175,24 @@ const AIChat: React.FC = () => {
     setError(null);
     setStreamingMessage('');
 
+    const responseBody = {
+      model: "deepseek-chat",
+      messages: [
+        {
+          role: "system",
+          content: generateSystemPrompt()
+        },
+        ...messages.map(msg => ({
+          role: msg.type === 'user' ? 'user' : 'assistant',
+          content: msg.content
+        })),
+        { role: 'user', content: userMessage.content }
+      ],
+      temperature: 0.7,
+      max_tokens: 2000,
+      stream: true
+    }
+
     try {
       // 请求 deepseek 的流式接口
       const response = await fetch(apiEndpoint, {
@@ -182,23 +201,7 @@ const AIChat: React.FC = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${apiKey}`
         },
-        body: JSON.stringify({
-          model: "deepseek-chat",
-          messages: [
-            {
-              role: "system",
-              content: generateSystemPrompt()
-            },
-            ...messages.map(msg => ({
-              role: msg.type === 'user' ? 'user' : 'assistant',
-              content: msg.content
-            })),
-            { role: 'user', content: userMessage.content }
-          ],
-          temperature: 0.7,
-          max_tokens: 2000,
-          stream: true
-        })
+        body: JSON.stringify(responseBody)
       });
 
       if (!response || !response.ok) {
@@ -214,7 +217,7 @@ const AIChat: React.FC = () => {
       }
 
       // 读取流式响应
-      const reader = response.body?.getReader();
+      const reader = response.body?.getReader(); //响应体是ReadableStream
       const decoder = new TextDecoder();
       let buffer = '';
       let finalContent = '';
@@ -225,10 +228,11 @@ const AIChat: React.FC = () => {
 
       // 循环读取流数据
       while (true) {
-        const { done, value } = await reader.read();
+        const { done, value: contentValue } = await reader.read();
+        console.log('未解码的value:', contentValue); // 这里就是 Uint8Array
         if (done) break;
 
-        buffer += decoder.decode(value, { stream: true });
+        buffer += decoder.decode(contentValue, { stream: true });
         const lines = buffer.split('\n');
         buffer = lines.pop() || '';
 
@@ -309,91 +313,29 @@ const AIChat: React.FC = () => {
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
-          p: ({ children }) => (
-            <p style={{
-              margin: '0.2em 0',
-              lineHeight: '1.6',
-              fontSize: '1rem'
-            }}>
-              {children}
-            </p>
-          ),
-          code({ className, children, ...props }: CodeBlockProps) {
+          code({ className, children, inline, ...props }: CodeBlockProps) {
             const match = /language-(\w+)/.exec(className || '');
-            return match ? (
-              <SyntaxHighlighter
-                style={vscDarkPlus as any}
-                language={match[1]}
-                PreTag="div"
-                customStyle={{
-                  margin: '0.5em 0',
-                  padding: '1em',
-                  borderRadius: '4px',
-                  background: 'rgba(0, 0, 0, 0.1)'
-                }}
-                {...props}
-              >
-                {String(children).replace(/\n$/, '')}
-              </SyntaxHighlighter>
-            ) : (
-              <code
-                className={className}
-                style={{
-                  padding: '0.2em 0.4em',
-                  background: 'rgba(0, 0, 0, 0.1)',
-                  borderRadius: '3px',
-                  fontSize: '0.9em'
-                }}
-                {...props}
-              >
-                {children}
-              </code>
+            const lang = match ? match[1] : 'text';
+            if (inline) {
+              return (
+                <code
+                  style={{
+                    background: '#f7f8fa',
+                    borderRadius: '4px',
+                    padding: '0.1em 0.4em',
+                    fontSize: '0.92em',
+                    color: '#a259ff'
+                  }}
+                  {...props}
+                >
+                  {children}
+                </code>
+              );
+            }
+            return (
+              <AIChatCodeBlock language={lang} value={Array.isArray(children) ? children.join('') : String(children)} />
             );
-          },
-          blockquote: ({ children }) => (
-            <blockquote style={{
-              margin: '0.5em 0',
-              padding: '0.5em 1em',
-              borderLeft: '4px solid rgba(255, 255, 255, 0.3)',
-              background: 'rgba(0, 0, 0, 0.1)'
-            }}>
-              {children}
-            </blockquote>
-          ),
-          ul: ({ children }) => (
-            <ul style={{
-              margin: '0.2em 0',
-              padding: '0 0 0 1.5em',
-              listStyleType: 'disc'
-            }}>
-              {children}
-            </ul>
-          ),
-          ol: ({ children }) => (
-            <ol style={{
-              margin: '0.2em 0',
-              padding: '0 0 0 1.5em',
-              listStyleType: 'decimal'
-            }}>
-              {children}
-            </ol>
-          ),
-          li: ({ children }) => (
-            <li style={{
-              margin: '0.1em 0',
-              padding: '0',
-              lineHeight: '1.4',
-              fontSize: '1rem'
-            }}>
-              {children}
-            </li>
-          ),
-          h1: ({ children }) => <h1 style={{ margin: '1em 0 0.5em', lineHeight: '1.4' }}>{children}</h1>,
-          h2: ({ children }) => <h2 style={{ margin: '1em 0 0.5em', lineHeight: '1.4' }}>{children}</h2>,
-          h3: ({ children }) => <h3 style={{ margin: '1em 0 0.5em', lineHeight: '1.4' }}>{children}</h3>,
-          h4: ({ children }) => <h4 style={{ margin: '1em 0 0.5em', lineHeight: '1.4' }}>{children}</h4>,
-          h5: ({ children }) => <h5 style={{ margin: '1em 0 0.5em', lineHeight: '1.4' }}>{children}</h5>,
-          h6: ({ children }) => <h6 style={{ margin: '1em 0 0.5em', lineHeight: '1.4' }}>{children}</h6>
+          }
         }}
       >
         {content}

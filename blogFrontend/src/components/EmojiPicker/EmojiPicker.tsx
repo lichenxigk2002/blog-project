@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import Picker from '@emoji-mart/react';
 import data from '@emoji-mart/data';
-import styles from './EmojiPicker.module.css';
+import styles from './EmojiPicker.module.scss';
 
 interface EmojiPickerProps {
   onSelect: (emoji: string) => void;

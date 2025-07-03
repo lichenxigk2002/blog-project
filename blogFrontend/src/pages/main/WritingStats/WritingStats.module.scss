@@ -1,0 +1,310 @@
+// 变量定义
+$text-color: var(--text);
+$border-color: rgba(255, 255, 255, 0.2);
+$shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+// 混合器
+@mixin glass-effect {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(20px);
+}
+
+@mixin hover-transition {
+  transition: all 0.3s ease;
+}
+
+@mixin responsive-font($min, $max) {
+  font-size: clamp($min, 4vw, $max) !important;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  @include responsive-font(2rem, 2.5rem);
+  font-weight: 700;
+  color: $text-color;
+  margin: 0;
+}
+
+.colorPicker {
+  position: relative;
+
+  .colorPickerButton {
+    background: none;
+    border: none;
+    color: $text-color;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    @include hover-transition;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: scale(1.1);
+    }
+  }
+
+  .colorOptions {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    @include glass-effect;
+    border-radius: 12px;
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    box-shadow: 0 4px 12px $shadow;
+    border: 1px solid $border-color;
+    z-index: 100;
+
+    .colorOption {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      @include hover-transition;
+
+      &:hover {
+        transform: scale(1.1);
+        border-color: $text-color;
+      }
+    }
+  }
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+
+  .statCard {
+    border-radius: 12px;
+    @include hover-transition;
+    box-shadow: $shadow;
+    @include glass-effect;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    &:hover {
+      transform: scale(1.01);
+    }
+
+    .statIcon {
+      font-size: 2rem;
+      color: $text-color;
+      opacity: 0.9;
+    }
+
+    .statContent {
+      h3 {
+        font-size: 1rem;
+        color: $text-color;
+        margin-bottom: 0.5rem;
+        opacity: 0.8;
+        font-weight: 500;
+      }
+
+      p {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: $text-color;
+        letter-spacing: 0.5px;
+      }
+    }
+  }
+}
+
+.chartsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+
+  .chartCard {
+    border-radius: 12px;
+    @include hover-transition;
+    box-shadow: $shadow;
+    @include glass-effect;
+    padding: 1.5rem;
+
+    &:hover {
+      transform: scale(1.01);
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      color: $text-color;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-align: center;
+    }
+
+    .chartContainer {
+      width: 100%;
+      height: 300px;
+    }
+  }
+}
+
+.calendarSection {
+  width: 100%;
+  padding: 2rem 0;
+  margin: 2rem 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+
+  >div {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  &:hover {
+    transform: scale(1.01);
+  }
+
+  h3 {
+    font-size: 1.2rem;
+    color: $text-color;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+}
+
+.detailsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+
+  .detailCard {
+    border-radius: 12px;
+    @include hover-transition;
+    box-shadow: $shadow;
+    @include glass-effect;
+    padding: 1.5rem;
+
+    &:hover {
+      transform: scale(1.01);
+    }
+
+    h3 {
+      font-size: 1rem;
+      color: $text-color;
+      margin-bottom: 0.5rem;
+      opacity: 0.8;
+      font-weight: 500;
+    }
+
+    p {
+      font-size: 1.2rem;
+      color: $text-color;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+  }
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+
+  .legendItems {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .legendItem {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .legendColor {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+    }
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .title {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+
+    .statCard {
+      padding: 1rem;
+
+      .statIcon {
+        font-size: 1.5rem;
+      }
+
+      .statContent p {
+        font-size: 1.2rem;
+      }
+    }
+  }
+
+  .chartsGrid {
+    grid-template-columns: 1fr;
+
+    .chartCard .chartContainer {
+      height: 250px;
+    }
+  }
+
+  .detailsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .calendarSection>div {
+    padding: 0 0.5rem;
+  }
+
+  .legend {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+
+    .legendItems {
+      width: 100%;
+      justify-content: flex-start;
+    }
+  }
+}

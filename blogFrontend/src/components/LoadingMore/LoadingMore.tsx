@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './LoadingMore.module.css';
+import styles from './LoadingMore.module.scss';
 
 const LoadingMore: React.FC = () => {
   return (

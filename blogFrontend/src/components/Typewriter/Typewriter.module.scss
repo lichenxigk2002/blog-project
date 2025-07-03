@@ -1,0 +1,51 @@
+/* Typewriter.module.scss
+
+
+ */
+
+// 变量定义
+$text-color: var(--text-color, #333);
+$cursor-color: var(--cursor-color, currentColor);
+
+.typewriter {
+    font-size: 1.2rem;
+    line-height: 1.5;
+    color: $text-color;
+    /* 使用 CSS 变量 */
+    display: inline-block;
+    position: relative;
+    transition: color 0.3s ease;
+    /* 添加颜色过渡 */
+
+    @media (max-width: 1440px) {
+        font-size: 1.1rem;
+    }
+
+    @media (min-width: 768px) and (max-width: 1024px) {
+        font-size: 1.15rem;
+    }
+
+    @media (max-width: 480px) {
+        font-size: 1rem;
+    }
+}
+
+.cursor {
+    animation: blink 1s infinite;
+    margin-left: 0.125rem;
+    font-family: inherit;
+    color: $cursor-color;
+    /* 独立光标颜色控制 */
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}

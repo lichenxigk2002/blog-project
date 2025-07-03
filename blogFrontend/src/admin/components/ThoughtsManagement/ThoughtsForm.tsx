@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { ThoughtsProps } from '@/types/Thoughts';
-import styles from './ThoughtsForm.module.css';
+import styles from './ThoughtsForm.module.scss';
 
 const moodMap: Record<string, string> = {
   happy: '😄',

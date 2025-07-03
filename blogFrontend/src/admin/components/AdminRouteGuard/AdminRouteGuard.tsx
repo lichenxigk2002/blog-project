@@ -2,7 +2,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
-import styles from './AdminRouteGuard.module.css';
+import styles from './AdminRouteGuard.module.scss';
 import UnauthorizedAccess from "@/admin/components/UnauthorizedAccess/UnauthorizedAccess";
 
 const AdminRouteGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {

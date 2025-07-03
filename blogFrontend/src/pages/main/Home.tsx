@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Head from "next/head";
-import styles from './Home/Home.module.css'
+import Image from 'next/image';
+import styles from './Home/Home.module.scss'
 import ProfileCard from "@/components/ProfileCard/ProfileCard";
 import Arrow from "@/components/Arrow/Arrow";
 import Typewriter from '@/components/Typewriter/Typewriter';
@@ -171,13 +172,17 @@ const Home: React.FC = () => {
                             {recentPhotos.map((photo) => (
                                 <Link href="/main/Gallery" key={photo.id}>
                                     <div className={styles.photoCard}>
-                                        <img
-                                            src={photo.coverImage}
+                                        <Image
+                                            src={photo.coverImage || '/default-image.jpg'}
                                             alt={photo.title}
+                                            width={300}
+                                            height={200}
                                             className={styles.photoImage}
-                                            onError={(e) => {
-                                                const target = e.target as HTMLImageElement;
-                                                target.src = '/default-image.jpg';
+                                            placeholder="blur"
+                                            blurDataURL="/default-image.jpg"
+                                            onError={() => {
+                                                // next/image 不支持 onError，但会使用 blurDataURL 作为 fallback
+                                                console.warn(`Failed to load image: ${photo.coverImage}`);
                                             }}
                                         />
                                         <div className={styles.photoInfo}>

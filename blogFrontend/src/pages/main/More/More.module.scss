@@ -1,0 +1,185 @@
+// 变量定义
+$container-max-width: 1200px;
+$border-radius: 12px;
+$transition-duration: 0.3s;
+$spacing: (
+  xs: 0.5rem,
+  sm: 0.75rem,
+  md: 1rem,
+  lg: 1.5rem,
+  xl: 2rem,
+  xxl: 3rem
+);
+
+// 混合器
+@mixin glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@mixin hover-lift {
+  transition: all $transition-duration ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+@mixin responsive-grid($min-width: 280px) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr));
+  gap: map-get($spacing, lg);
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-column-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+// 主容器
+.container {
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: map-get($spacing, xl);
+}
+
+// 标题样式
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: map-get($spacing, xl);
+  text-align: center;
+}
+
+// 功能网格
+.featuresGrid {
+  @include responsive-grid();
+  margin-bottom: map-get($spacing, xxl);
+}
+
+// 功能卡片
+.featureCard {
+  @include glass-effect;
+  @include hover-lift;
+  border-radius: $border-radius;
+  padding: map-get($spacing, lg);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  // 链接样式
+  .featureLink {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    height: 100%;
+  }
+
+  // 图标容器
+  .iconContainer {
+    width: 48px;
+    height: 48px;
+    border-radius: $border-radius;
+    @include flex-center;
+    margin-bottom: map-get($spacing, md);
+  }
+
+  // 图标
+  .icon {
+    font-size: 1.5rem;
+  }
+
+  // 功能标题
+  .featureTitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: map-get($spacing, xs);
+  }
+
+  // 功能描述
+  .featureDescription {
+    font-size: 0.9rem;
+    color: var(--text);
+    opacity: 0.8;
+    line-height: 1.5;
+  }
+}
+
+.contactSection {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-top: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.contactTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.contactInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+.contactItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.contactIcon {
+  font-size: 1.25rem;
+  color: var(--primary-color);
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .container {
+    padding: map-get($spacing, md);
+  }
+
+  .title {
+    font-size: 2rem;
+    margin-bottom: map-get($spacing, lg);
+  }
+
+  .featuresGrid {
+    grid-template-columns: 1fr;
+    gap: map-get($spacing, md);
+  }
+
+  .featureCard {
+    padding: 1.25rem;
+  }
+
+  .contactSection {
+    padding: 1.5rem;
+  }
+
+  .contactTitle {
+    font-size: 1.25rem;
+  }
+
+  .contactItem {
+    font-size: 0.9rem;
+  }
+}

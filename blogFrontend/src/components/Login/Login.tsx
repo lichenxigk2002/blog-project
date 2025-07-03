@@ -7,7 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 // Redux的登录/登出action
 import { login, logout } from '@/redux/auth/actions';
 // 样式文件
-import styles from './Login.module.css';
+import styles from './Login.module.scss';
 // 全局登录模态框的Context
 import { LoginModalContext } from '@/context/LoginModalContext';
 // 导入注册组件

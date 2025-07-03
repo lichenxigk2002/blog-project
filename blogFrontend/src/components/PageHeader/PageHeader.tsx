@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import styles from './PageHeader.module.css';
+import styles from './PageHeader.module.scss';
 
 interface PageHeaderProps {
   headerText: string;

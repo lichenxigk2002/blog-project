@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import styles from './RecentArticles.module.css';
+import styles from './RecentArticles.module.scss';
 import { Article } from '@/types/Article';
 import { ArticlesAPI } from '@/api/ArticlesAPI';
 import { useLoading } from "@/hooks/useLoading";
@@ -60,7 +60,9 @@ const RecentArticles: React.FC = () => {
                                         className={styles.articleImage}
                                     />
                                 ) : (
-                                    <div className={styles.noImage}>暂无图片</div>
+                                    <div className={styles.noImage}>
+                                        <span className={styles.noImageText}>咦，这里空空如也，期待你的精彩图片！</span>
+                                    </div>
                                 )}
                             </div>
                             <div className={styles.contentBox}>

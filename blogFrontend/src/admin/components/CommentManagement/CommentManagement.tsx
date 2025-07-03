@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CommentsAPI } from "@/api/CommentsAPI";
 import { Comment } from '@/types/Comment'
-import styles from './CommentManagement.module.css'
+import styles from './CommentManagement.module.scss'
 import Pagination from "@/admin/components/ui/Pagination/Pagination";
 
 const CommentManagement: React.FC = () => {

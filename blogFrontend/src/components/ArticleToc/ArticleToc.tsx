@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { IoIosArrowDown } from 'react-icons/io';
 import {FaArrowLeft, FaList} from 'react-icons/fa';
-import styles from './ArticleToc.module.css';
+import styles from './ArticleToc.module.scss';
 import {useRouter} from "next/router";
 
 interface Heading {

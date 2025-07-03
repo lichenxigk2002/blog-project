@@ -1,0 +1,177 @@
+// 变量定义
+$text-color: var(--text);
+$border-color: var(--border-color);
+$primary-color: var(--primary-color);
+$background: var(--background);
+$radius: 8px;
+$shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+$font-family-title: 'ZiHun', serif;
+
+// mixin
+@mixin flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    align-content: center;
+    display: flex;
+    width: 100%;
+    max-width: 70rem;
+    flex-direction: column;
+    overflow-x: auto;
+    gap: 0.625rem;
+    scrollbar-width: thin;
+    margin: 0 auto;
+    /* 上下边距为0，左右自动 */
+
+    &::-webkit-scrollbar {
+        display: none;
+        /* Chrome/Safari */
+    }
+
+    @media screen and (min-width: 1367px) and (max-width: 1775px) {
+        max-width: 56.25rem;
+    }
+
+    @media screen and (max-width: 1366px) {
+        max-width: 45rem;
+    }
+}
+
+.title {
+    color: $text-color;
+    padding: 0;
+    border: 0;
+    margin: 20px 0 0;
+}
+
+.articleList {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding: 20px 0;
+    scrollbar-width: thin;
+}
+
+.container::-webkit-scrollbar {
+    height: 6px;
+}
+
+.container::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 3px;
+}
+
+.boxGrip {
+    width: 350px;
+    height: 280px;
+    box-shadow: $shadow;
+    width: 350px;
+    height: 280px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* 阴影效果 */
+    background: rgba(255, 255, 255, 0.2);
+    /* 半透明背景 */
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    transition: transform 0.2s;
+}
+
+.boxGrip:hover {
+    transform: translateY(-5px);
+}
+
+.imageBox {
+    width: 350px;
+    height: 180px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* 阴影效果 */
+    background: rgba(255, 255, 255, 0.2);
+    /* 半透明背景 */
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.articleImage {
+    width: 100%;
+    object-fit: contain;
+}
+
+.noImage {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    font-size: 14px;
+    background-color: #f5f5f5;
+}
+
+.contentBox {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+}
+
+.tagBox {
+    font-size: 14px;
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    color: var(--text);
+    font-family: 'ZiHun', serif;
+}
+
+.tagBox:first-child {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+/* 1500px左右屏幕适配 */
+@media screen and (min-width: 1367px) and (max-width: 1775px) {
+    .container {
+        max-width: 56.25rem;
+    }
+
+    .boxGrip {
+        width: 18.75rem;
+        height: 15rem;
+    }
+
+    .imageBox {
+        width: 18.75rem;
+        height: 9.375rem;
+    }
+}
+
+/* 笔记本屏幕适配 */
+@media screen and (max-width: 1366px) {
+    .container {
+        max-width: 45rem;
+    }
+
+    .boxGrip {
+        width: 15.625rem;
+        height: 12.5rem;
+    }
+
+    .imageBox {
+        width: 15.625rem;
+        height: 7.8125rem;
+    }
+}

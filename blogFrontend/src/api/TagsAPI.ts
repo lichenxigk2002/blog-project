@@ -1,4 +1,5 @@
 import { http } from '@/utils/request';
+import {Tag} from "@/types/Tags";
 
 export const TagsAPI = {
   // 获取所有标签
@@ -8,7 +9,7 @@ export const TagsAPI = {
   getTagsWithCount: () => http.get('/tags/withCount'),
 
   // 根据ID获取标签
-  getTagById: (id: number) => http.get(`/tags/${id}`),
+  getTagById: (id: number) => http.get<Tag>(`/tags/${id}`),
 
   // 获取标签下的文章
   getArticlesByTagId: (id: number) => http.get(`/tags/${id}/articles`),

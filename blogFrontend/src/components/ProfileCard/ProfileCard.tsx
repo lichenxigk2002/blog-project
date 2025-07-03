@@ -1,6 +1,5 @@
 import { FiArrowRight } from 'react-icons/fi';
-import styles from './ProfileCard.module.css';
-import Image from "next/image";
+import styles from './ProfileCard.module.scss';
 import React from "react";
 import { motion } from 'framer-motion';
 import {FaGithub} from "react-icons/fa";

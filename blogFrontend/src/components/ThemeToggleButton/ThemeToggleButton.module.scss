@@ -1,0 +1,38 @@
+// 变量定义
+$icon-invert: var(--icon-invert);
+
+// mixin
+@mixin flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.iconButton {
+    margin: auto;
+    border-radius: 50%;
+    @include flex-center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: none;
+    border: none;
+    padding: 8px;
+
+    &:hover {
+        background: rgba(0, 0, 0, 0.05);
+    }
+}
+
+[data-theme="dark"] .iconButton {
+    &:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+}
+
+.iconImage {
+    width: 15px;
+    height: 15px;
+    object-fit: contain;
+    color: $icon-invert;
+    /*filter: brightness(0) invert();*/
+}

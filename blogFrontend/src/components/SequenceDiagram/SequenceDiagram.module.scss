@@ -1,0 +1,165 @@
+// 变量定义
+$code-block-bg: var(--code-block-bg);
+$code-header-bg: var(--code-header-bg);
+$code-border: var(--code-border);
+$code-text: var(--code-text);
+$primary: var(--primary);
+$text-color: var(--text);
+$error-background: var(--error-background);
+$error-text: var(--error-text);
+$background: var(--background);
+$radius: 8px;
+$shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+// mixin
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.diagramContainer {
+  width: 100%;
+  margin: 2rem 0;
+  padding: 0;
+  background-color: $code-block-bg;
+  border-radius: $radius;
+  overflow: hidden;
+  min-height: 200px;
+  position: relative;
+  box-shadow: $shadow;
+}
+
+.diagramHeader {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.5rem 1rem;
+  background: $code-header-bg;
+  border-bottom: 1px solid $code-border;
+}
+
+.diagramActions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+}
+
+.actionButton {
+  padding: 0.25rem 0.75rem;
+  border: 1px solid $code-border;
+  border-radius: 4px;
+  background: $code-header-bg;
+  color: $code-text;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+
+  div {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.sourceCode {
+  background-color: $code-block-bg;
+  padding: 1rem;
+  border-radius: 0 0 $radius $radius;
+  margin-bottom: 1rem;
+  overflow-x: auto;
+  font-family: monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  border: 1px solid $code-border;
+  border-top: none;
+}
+
+.diagram {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+
+  svg {
+    max-width: 100%;
+    height: auto;
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+.loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.loadingDots {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.loadingDot {
+  width: 8px;
+  height: 8px;
+  background-color: $primary;
+  border-radius: 50%;
+  animation: bounce 0.5s infinite alternate;
+
+  &:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  &:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+}
+
+.loadingText {
+  color: $text-color;
+  font-size: 0.9rem;
+}
+
+.errorContainer {
+  width: 100%;
+  margin: 2rem 0;
+  padding: 1rem;
+  background-color: $error-background;
+  border-radius: $radius;
+  color: $error-text;
+}
+
+.errorCode {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: $background;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-family: monospace;
+  white-space: pre-wrap;
+}
+
+@keyframes bounce {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-10px);
+  }
+}

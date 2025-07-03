@@ -1,6 +1,6 @@
 import React from 'react';
 import { Question } from '@/types/Question';
-import styles from './QuestionModal.module.css';
+import styles from './QuestionModal.module.scss';
 import { FaTimes, FaEye, FaHeart } from 'react-icons/fa';
 
 interface QuestionModalProps {

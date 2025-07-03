@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import {FaCopy, FaAngleUp, FaAngleDown,} from 'react-icons/fa';
+import { FaCopy, FaAngleUp, FaAngleDown, } from 'react-icons/fa';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
-import styles from './CodeBlock.module.css';
+import styles from './CodeBlock.module.scss';
 
 interface CodeBlockProps {
     language: string;
@@ -46,7 +46,7 @@ const CodeBlock = ({ language, value }: CodeBlockProps) => {
                     </button>
                     {shouldShowExpand ? (
                         <button className={styles.expandButton} onClick={toggleExpand}>
-                            {isExpanded ? '收起' : '展开' }
+                            {isExpanded ? '收起' : '展开'}
                         </button>
                     ) : null}
                 </div>

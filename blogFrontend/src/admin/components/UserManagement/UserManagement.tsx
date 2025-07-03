@@ -1,7 +1,7 @@
 import React, { useState, FormEvent, useEffect } from 'react';
 import { AuthAPI } from '@/api/AuthAPI';
 import type { User, UserDTO } from '@/api/AuthAPI';
-import styles from './UserManagement.module.css';
+import styles from './UserManagement.module.scss';
 
 const UserManagement: React.FC = () => {
     const [modalVisible, setModalVisible] = useState(false);

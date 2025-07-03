@@ -1,6 +1,6 @@
 import React, {useState,useEffect} from "react";
-import styles from './Typewriter.module.css'
-import {TyperwriterProps} from '../../../types/Typewriter'
+import styles from './Typewriter.module.scss'
+import TyperwriterProps from '../../types/Typewriter'
 
 
 /*定义组件接口类型*/

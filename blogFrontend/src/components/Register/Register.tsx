@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAppDispatch } from '@/redux/store';
 import { register } from '@/redux/auth/actions';
-import styles from './Register.module.css';
+import styles from './Register.module.scss';
 
 interface RegisterProps {
     onClose: () => void;

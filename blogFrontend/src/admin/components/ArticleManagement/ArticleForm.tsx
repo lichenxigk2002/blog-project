@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 import WordCount from '@/components/WordCount/WordCount';
-import styles from './ArticleForm.module.css';
+import styles from './ArticleForm.module.scss';
 
 interface Tag {
   id: number;
@@ -16,8 +16,8 @@ interface ArticleFormData {
   excerpt: string;
   coverImage: string;
   readingTime: number;
-  status: 'draft' | 'published' |'archived';
-  postType: 'post' | 'page' |'thought' | 'diary';
+  status: 'draft' | 'published' | 'archived';
+  postType: 'post' | 'page' | 'thought' | 'diary';
   tags: number[];
 }
 
@@ -189,7 +189,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
               className={styles.selectSelector}
               onClick={() => setIsStatusOpen(!isStatusOpen)}
             >
-              {formData.status === 'draft' ? '草稿' :formData.status === 'published' ? '已发布' : '已归档' }
+              {formData.status === 'draft' ? '草稿' : formData.status === 'published' ? '已发布' : '已归档'}
             </div>
             {isStatusOpen && (
               <div className={styles.selectDropdown}>
@@ -206,8 +206,8 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
                   已发布
                 </div>
                 <div
-                    className={`${styles.selectOption} ${formData.status === 'published' ? styles.selected : ''}`}
-                    onClick={() => handleSelectChange('status', 'archived')}
+                  className={`${styles.selectOption} ${formData.status === 'published' ? styles.selected : ''}`}
+                  onClick={() => handleSelectChange('status', 'archived')}
                 >
                   已归档
                 </div>
@@ -223,7 +223,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
               className={styles.selectSelector}
               onClick={() => setIsPostTypeOpen(!isPostTypeOpen)}
             >
-              {formData.postType === 'post' ? '文章' :formData.postType === 'page' ? '笔记' : formData.postType === 'thought'? '思考' : '日记' }
+              {formData.postType === 'post' ? '文章' : formData.postType === 'page' ? '笔记' : formData.postType === 'thought' ? '思考' : '日记'}
             </div>
             {isPostTypeOpen && (
               <div className={styles.selectDropdown}>
@@ -240,14 +240,14 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
                   笔记
                 </div>
                 <div
-                    className={`${styles.selectOption} ${formData.postType === 'thought' ? styles.selected : ''}`}
-                    onClick={() => handleSelectChange('postType', 'thought')}
+                  className={`${styles.selectOption} ${formData.postType === 'thought' ? styles.selected : ''}`}
+                  onClick={() => handleSelectChange('postType', 'thought')}
                 >
                   想法
                 </div>
                 <div
-                    className={`${styles.selectOption} ${formData.postType === 'diary' ? styles.selected : ''}`}
-                    onClick={() => handleSelectChange('postType', 'diary')}
+                  className={`${styles.selectOption} ${formData.postType === 'diary' ? styles.selected : ''}`}
+                  onClick={() => handleSelectChange('postType', 'diary')}
                 >
                   日记
                 </div>

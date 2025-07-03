@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { TagsAPI } from '@/api/TagsAPI';
 import { Tag } from "@/types/Tags";
-import styles from './TagCloudBackground.module.css';
+import styles from './TagCloudBackground.module.scss';
 
 interface TagItem {
     name: string;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { Question } from '@/types/Question';
-import styles from './QuestionsForm.module.css';
+import styles from './QuestionsForm.module.scss';
 
 const difficultyMap: Record<string, { label: string; color: string }> = {
     easy: { label: '简单', color: '#4CAF50' },

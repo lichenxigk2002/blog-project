@@ -1,5 +1,5 @@
 import React, { useState, useImperativeHandle, forwardRef } from 'react';
-import styles from './FlipCard.module.css';
+import styles from './FlipCard.module.scss';
 
 export interface FlipCardHandleInterface {
   flipDown: (newFrontText: string | number, newBackText: string | number) => void;

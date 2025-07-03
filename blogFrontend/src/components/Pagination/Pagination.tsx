@@ -1,7 +1,7 @@
 import React from 'react';
 import * as Select from '@radix-ui/react-select';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import styles from './Pagination.module.css';
+import styles from './Pagination.module.scss';
 
 interface PaginationProps {
   currentPage: number;

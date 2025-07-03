@@ -1,0 +1,173 @@
+// 变量定义
+$picker-bg: #fff;
+$picker-radius: 12px;
+$picker-border: 1px solid #e0e0e0;
+$picker-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+$picker-font: inherit;
+$search-bg: #f4f8fb;
+$search-color: #333;
+$search-radius: 8px;
+$category-label-bg: #f0f4ff;
+$category-label-color: #007bff;
+$category-label-radius: 6px;
+$emoji-size: 28px;
+$emoji-radius: 6px;
+$emoji-hover-bg: #f0f4ff;
+$emoji-selected-bg: #e6f0ff;
+$category-nav-radius: 8px;
+$category-btn-radius: 6px;
+$category-btn-color: #007bff;
+$category-btn-active-bg: #e6f0ff;
+$preview-bg: #f4f8fb;
+$preview-radius: 8px;
+$custom-radius: 8px;
+$custom-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+$custom-padding: 10px;
+$custom-width: 320px;
+$custom-max-height: 300px;
+$custom-grid-gap: 5px;
+$custom-btn-radius: 4px;
+$custom-btn-size: 30px;
+$custom-btn-font-size: 1.5rem;
+$custom-btn-hover-bg: #f0f0f0;
+$custom-btn-active-bg: #e0e0e0;
+$scrollbar-width: 8px;
+$scrollbar-track-bg: #f1f1f1;
+$scrollbar-thumb-bg: #888;
+$scrollbar-thumb-hover-bg: #555;
+
+// Mixin: 滚动条
+@mixin custom-scrollbar {
+  &::-webkit-scrollbar {
+    width: $scrollbar-width;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $scrollbar-track-bg;
+    border-radius: $custom-btn-radius;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $scrollbar-thumb-bg;
+    border-radius: $custom-btn-radius;
+
+    &:hover {
+      background: $scrollbar-thumb-hover-bg;
+    }
+  }
+}
+
+.emojiPickerContainer {
+  position: absolute;
+  z-index: 1000;
+  margin-top: 5px;
+  right: 0;
+
+  // 主题自定义：直接覆盖 emoji-picker-react 的类名
+  .EmojiPickerReact {
+    background: $picker-bg !important;
+    border-radius: $picker-radius !important;
+    border: $picker-border !important;
+    box-shadow: $picker-shadow !important;
+    font-family: $picker-font !important;
+  }
+
+  .epr-search-container input {
+    background: $search-bg !important;
+    color: $search-color !important;
+    border-radius: $search-radius !important;
+    border: $picker-border !important;
+
+    &::placeholder {
+      color: #aaa !important;
+    }
+  }
+
+  .epr-emoji-category-label {
+    font-size: 14px !important;
+    color: $category-label-color !important;
+    font-weight: 600 !important;
+    background: $category-label-bg !important;
+    border-radius: $category-label-radius !important;
+    margin: 4px 0 !important;
+  }
+
+  .epr-emoji {
+    font-size: $emoji-size !important;
+    padding: 6px !important;
+    border-radius: $emoji-radius !important;
+    transition: background 0.2s;
+
+    &:hover {
+      background: $emoji-hover-bg !important;
+    }
+
+    &[aria-selected="true"] {
+      background: $emoji-selected-bg !important;
+    }
+  }
+
+  .epr-category-nav {
+    background: $picker-bg !important;
+    border-radius: $category-nav-radius !important;
+    margin-bottom: 4px !important;
+
+    .epr-category-nav-btn {
+      color: $category-btn-color !important;
+      border-radius: $category-btn-radius !important;
+      transition: background 0.2s;
+
+      &.epr-active {
+        background: $category-btn-active-bg !important;
+        color: $category-btn-color !important;
+      }
+    }
+  }
+
+  .epr-preview {
+    background: $preview-bg !important;
+    border-radius: $preview-radius !important;
+  }
+}
+
+.emojiPicker {
+  background: $picker-bg;
+  border-radius: $custom-radius;
+  box-shadow: $custom-shadow;
+  padding: $custom-padding;
+  width: $custom-width;
+  max-height: $custom-max-height;
+  overflow-y: auto;
+  @include custom-scrollbar;
+}
+
+.emojiGrid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: $custom-grid-gap;
+  padding: $custom-grid-gap;
+}
+
+.emojiButton {
+  background: none;
+  border: none;
+  font-size: $custom-btn-font-size;
+  padding: $custom-grid-gap;
+  cursor: pointer;
+  border-radius: $custom-btn-radius;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: $custom-btn-size;
+  height: $custom-btn-size;
+
+  &:hover {
+    background-color: $custom-btn-hover-bg;
+  }
+
+  &:active {
+    background-color: $custom-btn-active-bg;
+    transform: scale(0.95);
+  }
+}

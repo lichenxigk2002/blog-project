@@ -1,0 +1,88 @@
+// 变量定义
+$wrapper-z: 1000;
+$dot-size: 18px;
+$dot-gap: 12px;
+$dot-radius: 50%;
+$dot-opacity: 0.85;
+$dot-shadow-yellow: 0 2px 12px 0 rgba(255, 204, 51, 0.25);
+$dot-shadow-blue: 0 2px 12px 0 rgba(61, 141, 222, 0.18);
+$dot-shadow-pink: 0 2px 12px 0 rgba(255, 106, 136, 0.18);
+$dot-bg-yellow: linear-gradient(135deg, #ffb347 0%, #ffcc33 100%);
+$dot-bg-blue: linear-gradient(135deg, #3a8dde 0%, #6dd5ed 100%);
+$dot-bg-pink: linear-gradient(135deg, #ff6a88 0%, #ffccf1 100%);
+$text-color: var(--text, #333);
+$text-size: 16px;
+$text-shadow: 0 2px 8px rgba(255, 204, 51, 0.12);
+$text-weight: 500;
+$text-spacing: 2px;
+
+.loadingWrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: $wrapper-z;
+}
+
+.dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $dot-gap;
+    margin-bottom: 18px;
+}
+
+.dot {
+    width: $dot-size;
+    height: $dot-size;
+    border-radius: $dot-radius;
+    background: $dot-bg-yellow;
+    /* 你可以换成你喜欢的渐变色，比如蓝紫色：#3a8dde,#6dd5ed */
+    opacity: $dot-opacity;
+    animation: bounce 1.2s infinite;
+    box-shadow: $dot-shadow-yellow;
+    /* 让渐变更有立体感 */
+    transition: background 0.3s;
+
+    &:nth-child(2) {
+        background: $dot-bg-blue;
+        animation-delay: 0.2s;
+        box-shadow: $dot-shadow-blue;
+    }
+
+    &:nth-child(3) {
+        background: $dot-bg-pink;
+        animation-delay: 0.4s;
+        box-shadow: $dot-shadow-pink;
+    }
+}
+
+@keyframes bounce {
+
+    0%,
+    80%,
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: $dot-opacity;
+    }
+
+    40% {
+        transform: translateY(-18px) scale(1.2);
+        opacity: 1;
+    }
+}
+
+.loadingText {
+    color: $text-color;
+    font-size: $text-size;
+    letter-spacing: $text-spacing;
+    opacity: $dot-opacity;
+    user-select: none;
+    font-weight: $text-weight;
+    text-shadow: $text-shadow;
+}

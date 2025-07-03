@@ -5,7 +5,14 @@ export const BASE_URL = '/api';
 const nextConfig: NextConfig = {
     reactStrictMode: true,
     images: {
-        domains: ['images-1359353257.cos.ap-beijing.myqcloud.com'],
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'images-1359353257.cos.ap-beijing.myqcloud.com',
+                port: '',
+                pathname: '/images/**',
+            },
+        ],
     },
     webpack: (config, { isServer }) => {
         if (!isServer) {

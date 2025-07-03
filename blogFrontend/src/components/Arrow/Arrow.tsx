@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import styles from './Arrow.module.css';
+import styles from './Arrow.module.scss';
 import Image from "next/image";
 import { useTheme } from '@/hooks/useTheme';
 import WisdomProps from '@/types/Arrow'

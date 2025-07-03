@@ -1,0 +1,386 @@
+// 变量定义
+$container-max-width: 1200px;
+$content-max-width: 800px;
+$border-radius: 14px;
+$transition-duration: 0.25s;
+$timeline-width: 2px;
+$dot-size: 12px;
+$small-dot-size: 10px;
+
+$spacing: (
+  xs: 0.5rem,
+  sm: 0.75rem,
+  md: 1rem,
+  lg: 1.5rem,
+  xl: 2rem,
+  xxl: 3rem
+);
+
+$colors: (
+  primary: var(--primary-color),
+  primary-rgb: var(--primary-rgb),
+  text: var(--text),
+  background: var(--background),
+  border: var(--border),
+  shadow: var(--shadow)
+);
+
+// 混合器
+@mixin glass-effect {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.85) 80%, rgba(map-get($colors, primary-rgb), 0.10) 100%);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@mixin hover-lift {
+  transition: all $transition-duration cubic-bezier(.4, 2, .6, 1);
+
+  &:hover {
+    background: linear-gradient(90deg, rgba(map-get($colors, primary-rgb), 0.12) 60%, #fff 100%);
+    box-shadow: 0 4px 24px 0 rgba(map-get($colors, primary-rgb), 0.18);
+    transform: scale(1.025) translateX(8px);
+    border-color: map-get($colors, primary);
+  }
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-column-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@mixin timeline-dot($size: $dot-size) {
+  content: '';
+  position: absolute;
+  width: $size;
+  height: $size;
+  border-radius: 50%;
+  background: map-get($colors, primary);
+  box-shadow: 0 0 0 4px rgba(map-get($colors, primary-rgb), 0.2);
+}
+
+@mixin loading-dot($delay: 0s) {
+  width: 8px;
+  height: 8px;
+  background: map-get($colors, primary);
+  border-radius: 50%;
+  animation: bounce 0.5s infinite alternate;
+  animation-delay: $delay;
+}
+
+// 主容器
+.container {
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: map-get($spacing, xl);
+  min-height: 100vh;
+  /* background-color: var(--background); */
+  color: map-get($colors, text);
+}
+
+// 归档内容
+.archiveContent {
+  width: 100%;
+  max-width: $content-max-width;
+  margin: 0 auto;
+}
+
+.header {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: map-get($colors, text);
+  margin-bottom: 1.5rem;
+  text-align: center;
+  position: relative;
+}
+
+// 标题样式
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: map-get($colors, text);
+  margin-bottom: map-get($spacing, xxl);
+  text-align: center;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: map-get($colors, primary);
+    border-radius: 3px;
+  }
+}
+
+// 介绍文本
+.introText {
+  max-width: $content-max-width;
+  margin: 0 auto map-get($spacing, lg);
+  color: map-get($colors, text);
+  opacity: 0.7;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  font-style: italic;
+  font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+// 时间线
+.timeline {
+  position: relative;
+  padding-left: map-get($spacing, xl);
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: $timeline-width;
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+
+// 年份组
+.yearGroup {
+  margin-bottom: map-get($spacing, xxl);
+  position: relative;
+}
+
+.year {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: map-get($colors, text);
+  margin-bottom: map-get($spacing, lg);
+  position: relative;
+
+  &::before {
+    @include timeline-dot();
+    left: -2.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+// 月份组
+.monthGroup {
+  margin-bottom: map-get($spacing, xl);
+  margin-left: map-get($spacing, md);
+}
+
+.month {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: map-get($colors, text);
+  opacity: 0.8;
+  margin-bottom: map-get($spacing, md);
+}
+
+// 文章列表
+.articleList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.articleItem {
+  margin-bottom: map-get($spacing, md);
+  width: 100%;
+}
+
+// 日期容器
+.dateContainer {
+  margin-bottom: map-get($spacing, xs);
+  padding-left: 1.7rem;
+  /* 与卡片内容对齐 */
+}
+
+// 卡片容器
+.cardContainer {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+// 文章链接
+.articleLink {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: map-get($spacing, md);
+  @include glass-effect;
+  @include hover-lift;
+  border-radius: $border-radius;
+  text-decoration: none;
+  color: map-get($colors, text);
+  box-shadow: 0 2px 16px 0 map-get($colors, shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+// 文章标题
+.articleTitle {
+  font-size: 1.08rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: map-get($colors, text);
+  margin-left: map-get($spacing, xs);
+  /* 调整标题与圆点的间距 */
+}
+
+// 文章日期
+.articleDate {
+  font-size: 0.92rem;
+  opacity: 0.65;
+  color: map-get($colors, primary);
+  font-family: 'JetBrains Mono', 'Fira Mono', 'Consolas', monospace;
+}
+
+// 加载状态
+.loading {
+  @include flex-column-center;
+  min-height: 400px;
+}
+
+.loadingDots {
+  display: flex;
+  gap: 8px;
+  margin-bottom: map-get($spacing, md);
+}
+
+.loadingDot {
+  @include loading-dot();
+
+  &:nth-child(2) {
+    @include loading-dot(0.2s);
+  }
+
+  &:nth-child(3) {
+    @include loading-dot(0.4s);
+  }
+}
+
+.loadingText {
+  color: map-get($colors, text);
+  font-size: 1rem;
+}
+
+// 错误状态
+.error {
+  text-align: center;
+  padding: map-get($spacing, xl);
+  color: map-get($colors, text);
+}
+
+.backLink {
+  display: inline-block;
+  margin-top: map-get($spacing, md);
+  color: map-get($colors, primary);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// 动画
+@keyframes bounce {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-10px);
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .container {
+    padding: map-get($spacing, md);
+  }
+
+  .title {
+    font-size: 2rem;
+    margin-bottom: map-get($spacing, xl);
+  }
+
+  .timeline {
+    padding-left: map-get($spacing, lg);
+  }
+
+  .year::before {
+    left: -2rem;
+  }
+
+  .articleLink {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: map-get($spacing, xs);
+    padding: 0.8rem map-get($spacing, md);
+  }
+
+  .articleDate {
+    font-size: 0.8rem;
+    margin-left: 0;
+  }
+}
+
+// 动态圆点
+.dot {
+  position: absolute;
+  left: -15px;
+  width: $small-dot-size;
+  height: $small-dot-size;
+  border-radius: 50%;
+  z-index: 2;
+  display: inline-block;
+  margin-right: 8px;
+  vertical-align: middle;
+  box-shadow: 0 0 4px 0 rgba(map-get($colors, primary-rgb), 0.18);
+  animation: colorChange 3s infinite alternate;
+}
+
+@keyframes colorChange {
+  0% {
+    background: linear-gradient(135deg, #ff6b6b 60%, #ff6b6b 100%);
+  }
+
+  25% {
+    background: linear-gradient(135deg, #a8e6cf 60%, #a8e6cf 100%);
+  }
+
+  50% {
+    background: linear-gradient(135deg, #ffd93d 60%, #ffd93d 100%);
+  }
+
+  75% {
+    background: linear-gradient(135deg, #6c5ce7 60%, #6c5ce7 100%);
+  }
+
+  100% {
+    background: linear-gradient(135deg, #fd79a8 60%, #fd79a8 100%);
+  }
+}
+
+// 文章类型标签
+.articleType {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: map-get($colors, text);
+  background-color: map-get($colors, background);
+  border: 1px solid map-get($colors, border);
+  margin-left: auto;
+  margin-right: 8px;
+}

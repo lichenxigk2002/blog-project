@@ -3,7 +3,7 @@ import { ArticlesAPI } from '@/api/ArticlesAPI';
 import { TagsAPI } from '@/api/TagsAPI';
 import ArticleForm from './ArticleForm';
 import type { Article } from '@/types/Article';
-import styles from './ArticleManagement.module.css';
+import styles from './ArticleManagement.module.scss';
 import Pagination from "@/admin/components/ui/Pagination/Pagination";
 
 

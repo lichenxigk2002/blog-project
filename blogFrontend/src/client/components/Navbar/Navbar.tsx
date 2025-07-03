@@ -3,7 +3,7 @@ import NavbarCenter from "@/client/components/Navbar/NavbarCenter/NavbarCenter";
 import NavbarLeft from "@/client/components/Navbar/NavbarLeft/NavbarLeft";
 import NavbarRight from "@/client/components/Navbar/NavbarRight/NavbarRight";
 import { useTheme } from '@/hooks/useTheme';
-import styles from './Navbar.module.css';
+import styles from './Navbar.module.scss';
 import { FiMenu, FiX } from 'react-icons/fi';
 
 const Navbar: React.FC = () => {

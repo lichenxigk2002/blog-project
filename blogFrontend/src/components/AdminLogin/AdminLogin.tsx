@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useAppDispatch } from '@/redux/store';
 import { adminLogin } from '@/redux/adminAuth/actions';
 import { LoginModalContext } from '@/context/LoginModalContext';
-import styles from './AdminLogin.module.css';
+import styles from './AdminLogin.module.scss';
 
 const AdminLogin: React.FC = () => {
   const dispatch = useAppDispatch();

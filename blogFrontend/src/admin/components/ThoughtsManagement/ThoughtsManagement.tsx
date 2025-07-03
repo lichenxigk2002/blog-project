@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ThoughtsAPI } from '@/api/ThoughtsAPI';
 import type { ThoughtsProps } from '@/types/Thoughts';
-import styles from './ThoughtsManagement.module.css';
+import styles from './ThoughtsManagement.module.scss';
 import Pagination from "@/admin/components/ui/Pagination/Pagination";
 import ThoughtsForm from './ThoughtsForm';
 

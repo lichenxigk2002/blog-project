@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiSearch, FiFilter, FiClock, FiEye, FiThumbsUp } from 'react-icons/fi';
-import styles from './Questions/Questions.module.css';
+import styles from './Questions/Questions.module.scss';
 import Head from 'next/head';
 import { useLoading } from '@/hooks/useLoading';
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';

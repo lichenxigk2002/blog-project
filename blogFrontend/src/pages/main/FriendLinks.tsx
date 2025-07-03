@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { FriendLinksAPI } from '@/api/FriendLinkAPI';
-import styles from './FriendLinks/FriendLinks.module.css';
+import styles from './FriendLinks/FriendLinks.module.scss';
 import { useTheme } from '@/hooks/useTheme';
 import { useLoading } from "@/hooks/useLoading";
 import LoadingSpinner from "@/components/LoadingSpinner/LoadingSpinner";
 import Head from "next/head";
 import PageHeader from '../../components/PageHeader/PageHeader';
-import {FriendLinks} from "@/types/FriendLinks";
+import type { FriendLinks } from "@/types/FriendLinks";
 
 
 const SITE_INFO = {
@@ -34,6 +34,33 @@ const FriendLinks: React.FC = () => {
         avatarUrl: ''
     });
     const [modalOpen, setModalOpen] = useState(false);
+    const [hoverColors, setHoverColors] = useState<Record<string, { h3: string, p: string }>>({});
+
+    function getRandomColor() {
+        const letters = '89ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * letters.length)];
+        }
+        return color;
+    }
+
+    const handleCardMouseEnter = (id: string) => {
+        setHoverColors(prev => ({
+            ...prev,
+            [id]: {
+                h3: getRandomColor(),
+                p: getRandomColor()
+            }
+        }));
+    };
+    const handleCardMouseLeave = (id: string) => {
+        setHoverColors(prev => {
+            const newColors = { ...prev };
+            delete newColors[id];
+            return newColors;
+        });
+    };
 
     // 获取友链列表
     const fetchFriendLinks = async () => {
@@ -79,7 +106,8 @@ const FriendLinks: React.FC = () => {
                 name: formData.name,
                 url: formData.url,
                 description: formData.description,
-                avatarUrl: formData.avatarUrl
+                avatarUrl: formData.avatarUrl,
+                status: 'pending'
             });
             setFormData({ name: '', url: '', description: '', avatarUrl: '' });
             await fetchFriendLinks();
@@ -93,7 +121,7 @@ const FriendLinks: React.FC = () => {
     return (
         <div className={styles.container}>
             <Head>
-                <title>友情链接 | 海内存知己，天涯若比邻</title>
+                <title>友人帐 | 海内存知己，天涯若比邻</title>
                 <meta name="description" content="友链交换，让我们的博客世界更加精彩" />
             </Head>
             {isLoading && <LoadingSpinner />}
@@ -110,22 +138,27 @@ const FriendLinks: React.FC = () => {
                         {friendLinks
                             .filter((link) => link.status === 'approved')
                             .map((link) => (
-                            <a
-                                key={link.id}
-                                href={link.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={styles.friendLinkCard}
-                            >
-                                <div className={styles.avatar}>
-                                    <img src={link.avatarUrl} alt={link.name} />
-                                </div>
-                                <div className={styles.info}>
-                                    <h3>{link.name}</h3>
-                                    <p>{link.description}</p>
-                                </div>
-                            </a>
-                        ))}
+                                <a
+                                    key={link.id}
+                                    href={link.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={styles.friendLinkCard}
+                                    onMouseEnter={() => handleCardMouseEnter(link.id.toString())}
+                                    onMouseLeave={() => handleCardMouseLeave(link.id.toString())}
+                                >
+                                    <div className={styles.avatar}>
+                                        <img src={link.avatarUrl} alt={link.name} />
+                                    </div>
+                                    <div className={styles.bgAvatar}>
+                                        <img src={link.avatarUrl} alt={link.name + '背景'} />
+                                    </div>
+                                    <div className={styles.info}>
+                                        <h3 style={hoverColors[link.id.toString()]?.h3 ? { color: hoverColors[link.id.toString()].h3 } : {}}>{link.name}</h3>
+                                        <p style={hoverColors[link.id.toString()]?.p ? { color: hoverColors[link.id.toString()].p } : {}}>{link.description}</p>
+                                    </div>
+                                </a>
+                            ))}
                     </div>
                 ) : (
                     <p className={styles.emptyMessage}>暂无友链，快来申请吧！</p>
@@ -164,59 +197,64 @@ const FriendLinks: React.FC = () => {
 
 
             {/* 申请友链模态框 */}
-            {/* 申请友链模态框 */}
             {modalOpen && (
-                <div className={styles.modalOverlay}>
-                    <div className={styles.modalCard}>
+                <div className={styles.friendLinksFormWrapper}>
+                    <div className={styles.loginCard}>
                         <button className={styles.closeButton} onClick={() => setModalOpen(false)} title="关闭">×</button>
-                        <form className={styles.simpleForm} onSubmit={handleSubmit} autoComplete="off">
-                            <h2 className={styles.formTitle}>申请友链</h2>
-                            <div className={styles.formRow}>
+                        <form className={styles.form} onSubmit={handleSubmit} autoComplete="off">
+                            <h2 className={styles.header}>申请友链</h2>
+                            <div className={styles.inputGroup}>
+                                <label className={styles.label} htmlFor="name">网站名称</label>
                                 <input
                                     type="text"
+                                    id="name"
                                     name="name"
                                     value={formData.name}
                                     onChange={handleInputChange}
                                     placeholder="网站名称"
-                                    className={styles.simpleInput}
+                                    className={styles.input}
                                     required
                                 />
                             </div>
-                            <div className={styles.formRow}>
+                            <div className={styles.inputGroup}>
+                                <label className={styles.label} htmlFor="url">网站地址</label>
                                 <input
                                     type="url"
+                                    id="url"
                                     name="url"
                                     value={formData.url}
                                     onChange={handleInputChange}
                                     placeholder="网站地址"
-                                    className={styles.simpleInput}
+                                    className={styles.input}
                                     required
                                 />
                             </div>
-                            <div className={styles.formRow}>
+                            <div className={styles.inputGroup}>
+                                <label className={styles.label} htmlFor="avatarUrl">头像图片地址</label>
                                 <input
                                     type="url"
+                                    id="avatarUrl"
                                     name="avatarUrl"
                                     value={formData.avatarUrl}
                                     onChange={handleInputChange}
                                     placeholder="头像图片地址"
-                                    className={styles.simpleInput}
+                                    className={styles.input}
                                     required
                                 />
                             </div>
-                            <div className={styles.formRow}>
+                            <div className={styles.inputGroup}>
+                                <label className={styles.label} htmlFor="description">网站描述</label>
                                 <textarea
+                                    id="description"
                                     name="description"
                                     value={formData.description}
                                     onChange={handleInputChange}
                                     placeholder="网站描述"
-                                    className={styles.simpleTextarea}
+                                    className={styles.input}
                                     required
                                 />
                             </div>
-                            <div className={styles.formRow}>
-                                <button type="submit" className={styles.simpleButton}>提交申请</button>
-                            </div>
+                            <button type="submit" className={styles.submitButton}>提交申请</button>
                         </form>
                     </div>
                 </div>

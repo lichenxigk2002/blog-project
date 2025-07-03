@@ -1,0 +1,48 @@
+// 变量定义
+$text-color: var(--text);
+$arrow-size: 20px;
+$float-distance: 10px;
+$wisdom1-font: 'YouYuan', serif;
+$wisdom2-font: 'AgencyFB', serif;
+
+// 混合器
+@mixin flex-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.wisdom1 {
+    font-family: $wisdom1-font;
+    color: $text-color;
+}
+
+.wisdom2 {
+    margin-top: 0;
+    font-family: $wisdom2-font;
+    color: $text-color;
+}
+
+.Arrow {
+    width: $arrow-size;
+    height: $arrow-size;
+    animation: float 2s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-$float-distance);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+.showBottom {
+    @include flex-center;
+}

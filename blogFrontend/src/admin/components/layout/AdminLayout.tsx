@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import styles from './AdminLayout.module.css';
+import styles from './AdminLayout.module.scss';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { adminRoutes } from '@/admin/routes/admin-routes';

@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './WordCount.module.css';
+import styles from './WordCount.module.scss';
 
 interface WordCountProps {
   text: string;

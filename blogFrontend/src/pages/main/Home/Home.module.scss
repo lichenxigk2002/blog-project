@@ -1,0 +1,497 @@
+// 字体定义
+@font-face {
+    font-family: 'ZiHun';
+    src: url("/fonts/ZiHun.woff2") format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+// 变量定义
+$primary-color: var(--primary-color);
+$text-color: var(--text);
+$border-color: var(--border-color);
+$shadow: var(--shadow);
+
+// 混合器
+@mixin flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@mixin glass-effect {
+    background: rgba(255, 255, 255, 0);
+    backdrop-filter: blur(20px);
+}
+
+@mixin hover-transition {
+    transition: all 0.3s ease;
+}
+
+@mixin responsive-font($min-size, $max-size) {
+    font-size: clamp($min-size, 4vw, $max-size) !important;
+}
+
+// 主容器
+.bacc {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    box-sizing: content-box;
+}
+
+.container {
+    margin-top: 7.5rem;
+    @include flex-center;
+    position: relative;
+    flex-direction: column;
+    z-index: 1;
+    box-sizing: content-box;
+}
+
+// 打字机样式
+.typewriter1 {
+    font-family: ZiHun, serif;
+    font-size: 2.5rem !important;
+    caret-color: transparent;
+    box-sizing: content-box;
+    line-height: 1.2;
+    margin: 0;
+    padding: 0;
+}
+
+.typewriter2 {
+    font-family: 幼圆, serif;
+    font-size: 3.125rem !important;
+    caret-color: transparent;
+    box-sizing: content-box;
+    line-height: 1.2;
+    margin: 0;
+    padding: 0;
+}
+
+// 时钟和箭头容器
+.clockArrowContainer {
+    @include flex-center;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 3rem;
+}
+
+.flipClock {
+    position: relative;
+    @include flex-center;
+    width: 100%;
+}
+
+.arrowWrapper {
+    @include flex-center;
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+// 顶部区域
+.showTop {
+    position: relative;
+    top: -2em;
+    min-height: 25rem;
+    margin-top: 0.625rem;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-sizing: content-box;
+}
+
+.box1 {
+    margin-top: 3.125rem;
+    width: 31.25rem;
+    height: 21.875rem;
+    box-sizing: content-box;
+}
+
+.box2 {
+    width: 31.25rem;
+    height: 25rem;
+    box-sizing: content-box;
+}
+
+// 主内容区域
+.mainContentArea {
+    display: flex;
+    gap: 2rem;
+    padding: 2rem;
+    max-width: 75rem;
+    margin: 2rem auto 0;
+}
+
+.mainContentLeft,
+.mainContentRight {
+    flex: 1;
+    max-width: calc(66.666% - 1rem);
+}
+
+// 文章标题
+.latestArticlesTitle {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: $text-color;
+    margin: 1.5rem 0 1rem;
+    text-align: left;
+    padding-left: 0.5rem;
+    font-family: 'ZiHun', serif;
+}
+
+// 文章网格
+.articlesGrid {
+    list-style: none;
+    margin: 0;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.articleCard {
+    border-radius: 0;
+    @include hover-transition;
+    @include glass-effect;
+    padding: 1rem;
+
+    &:hover {
+        box-shadow: 0 4px 10px $shadow;
+        background: rgba(255, 255, 255, 0.09);
+    }
+}
+
+.articleTitle {
+    font-size: 1rem;
+    font-weight: 700;
+    color: $text-color;
+    margin: 0;
+    position: relative;
+    display: inline-block;
+}
+
+.articleDescription {
+    color: $text-color;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: 幼圆, sans-serif;
+    margin: 0.5rem 0;
+    text-decoration: none;
+}
+
+.articleMeta {
+    display: flex;
+    gap: 1.5rem;
+    color: $text-color;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+}
+
+// 统计区域
+.stats {
+    @include glass-effect;
+    border-radius: 0;
+    padding: 1rem;
+    margin: 50px 0 1.5rem 0;
+    @include hover-transition;
+
+    &:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        background: rgba(255, 255, 255, 0.09);
+    }
+
+    h2 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: $text-color;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid $border-color;
+        font-family: 'ZiHun', serif;
+    }
+}
+
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    text-align: center;
+}
+
+.statItem {
+    span {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: $text-color;
+        display: block;
+        margin-bottom: 0.5rem;
+        font-family: 'ZiHun', serif;
+    }
+
+    p {
+        color: $text-color;
+        font-size: 0.9rem;
+        margin: 0;
+        font-family: 'ZiHun', serif;
+    }
+}
+
+// 照片网格
+.photosGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    padding: 0.5rem;
+}
+
+.photoCard {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16/9;
+    cursor: pointer;
+    @include hover-transition;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(20px);
+    height: 160px;
+
+    &:hover {
+        transform: translateY(0);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        background: rgba(255, 255, 255, 0.25);
+
+        .photoInfo {
+            opacity: 1;
+        }
+    }
+}
+
+.photoImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photoInfo {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 0.75rem;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+    color: #fff;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+
+    h3 {
+        font-size: 0.9rem;
+        margin: 0 0 0.25rem;
+    }
+
+    span {
+        font-size: 0.75rem;
+        opacity: 0.8;
+    }
+}
+
+// 响应式设计
+// 笔记本屏幕 (1440px以下)
+@media (max-width: 90rem) {
+    .container {
+        margin-top: 5rem;
+    }
+
+    .typewriter1 {
+        font-size: 2.25rem !important;
+    }
+
+    .typewriter2 {
+        font-size: 2.875rem !important;
+    }
+
+    .box1,
+    .box2 {
+        width: 28.125rem;
+    }
+}
+
+// 平板设备 (768px-1024px)
+@media (min-width: 48rem) and (max-width: 64rem) {
+    .container {
+        margin-top: 2rem;
+    }
+
+    .showTop {
+        flex-direction: column;
+        gap: 2rem;
+        padding: 0 1.5rem;
+    }
+
+    .box1 {
+        width: 100%;
+        max-width: 37.5rem;
+        height: auto;
+        margin-top: 1.25rem;
+        text-align: center;
+    }
+
+    .box2 {
+        width: 100%;
+        max-width: 37.5rem;
+        height: auto;
+    }
+
+    .typewriter1 {
+        font-size: 2rem !important;
+    }
+
+    .typewriter2 {
+        font-size: 2.5rem !important;
+    }
+
+    .flipClock {
+        margin: 2rem auto;
+    }
+}
+
+// 手机设备 (768px以下)
+@media (max-width: 48rem) {
+    .container {
+        margin-top: 6rem;
+    }
+
+    .showTop {
+        flex-direction: column;
+        padding: 0 1rem;
+        min-height: auto;
+        gap: 1.5rem;
+    }
+
+    .box1 {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        margin-top: 0;
+        order: 1;
+    }
+
+    .box2 {
+        padding-top: 0.5rem;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        order: 3;
+    }
+
+    .typewriter1,
+    .typewriter2 {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        align-content: center;
+    }
+
+    .typewriter1 {
+        font-size: 1.75rem !important;
+    }
+
+    .typewriter2 {
+        font-size: 2.25rem !important;
+    }
+
+    .flipClock {
+        margin: 1.5rem auto;
+        order: 2;
+    }
+
+    .arrowWrapper {
+        order: 4;
+    }
+
+    .mainContentArea {
+        flex-direction: column;
+        padding: 1rem;
+        gap: 1.5rem;
+    }
+
+    .mainContentLeft,
+    .mainContentRight {
+        max-width: 100%;
+    }
+
+    .latestArticlesTitle {
+        font-size: 1.5rem;
+        margin: 1.5rem 0 1rem;
+    }
+
+    .articlesGrid {
+        padding: 0.5rem;
+    }
+
+    .articleCard {
+        padding: 0.75rem;
+    }
+
+    .photosGrid {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .photoCard {
+        height: 200px;
+    }
+}
+
+// 小手机设备 (480px以下)
+@media (max-width: 30rem) {
+    .container {
+        margin-top: 4rem;
+    }
+
+    .showTop {
+        padding: 0 0.5rem;
+        gap: 1rem;
+    }
+
+    .typewriter1 {
+        font-size: 1.5rem !important;
+        align-content: center;
+    }
+
+    .typewriter2 {
+        font-size: 2rem !important;
+        align-content: center;
+    }
+
+    .flipClock {
+        margin: 1rem auto;
+    }
+
+    .mainContentArea {
+        padding: 0.5rem;
+    }
+
+    .latestArticlesTitle {
+        font-size: 1.25rem;
+    }
+
+    .articleTitle {
+        font-size: 0.9rem;
+    }
+
+    .articleDescription {
+        font-size: 0.8rem;
+    }
+
+    .articleMeta {
+        font-size: 0.75rem;
+    }
+}

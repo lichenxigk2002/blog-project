@@ -1,0 +1,159 @@
+// 变量定义
+$container-max-width: 1200px;
+$border-radius: 8px;
+$transition-duration: 0.3s;
+$tag-gap: 12px;
+$tag-padding: 6px 16px;
+
+$spacing: (
+    xs: 0.5rem,
+    sm: 0.75rem,
+    md: 1rem,
+    lg: 1.5rem,
+    xl: 2rem,
+    xxl: 3rem
+);
+
+$colors: (
+    text: var(--text),
+    tag-background: var(--tag-background),
+    error: #ff4d4f,
+    loading-bg: rgba(32, 32, 32, 0.6)
+);
+
+// 混合器
+@mixin glass-effect {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@mixin flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@mixin tag-hover {
+    transition: all $transition-duration ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+}
+
+@mixin loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: map-get($colors, text);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+// 主容器
+.container {
+    position: relative;
+    width: 100%;
+    padding: map-get($spacing, xl);
+    box-sizing: border-box;
+}
+
+// 标签网格
+.tagsGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $tag-gap;
+    padding: map-get($spacing, xl);
+    max-width: $container-max-width;
+    margin: 0 auto;
+    justify-content: center;
+}
+
+// 标签样式
+.tag {
+    padding: $tag-padding;
+    border-radius: $border-radius;
+    font-size: 14px;
+    @include glass-effect;
+    white-space: nowrap;
+    cursor: pointer;
+    @include tag-hover;
+    @include flex-center;
+    gap: 8px;
+    margin: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+// 标签计数
+.tagCount {
+    background: rgba(0, 0, 0, 0.05);
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-size: 12px;
+    min-width: 20px;
+    text-align: center;
+}
+
+// 错误状态
+.error {
+    color: map-get($colors, error);
+    text-align: center;
+    padding: map-get($spacing, xl);
+    background: rgba(255, 77, 79, 0.1);
+    border-radius: 4px;
+    margin: map-get($spacing, xl);
+}
+
+// 加载状态
+.loading {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: map-get($colors, loading-bg);
+    backdrop-filter: blur(8px);
+    border-radius: $border-radius;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: map-get($spacing, lg) map-get($spacing, xl);
+    color: map-get($colors, text);
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    z-index: 1000;
+}
+
+.loadingSpinner {
+    @include loading-spinner;
+}
+
+.loadingText {
+    font-size: 0.9rem;
+    color: map-get($colors, text);
+    opacity: 0.7;
+    letter-spacing: 1px;
+}
+
+// 动画
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+    .container {
+        padding: map-get($spacing, md);
+    }
+
+    .tagsGrid {
+        padding: map-get($spacing, md);
+        gap: 8px;
+    }
+
+    .tag {
+        font-size: 12px;
+        padding: 4px 12px;
+    }
+}

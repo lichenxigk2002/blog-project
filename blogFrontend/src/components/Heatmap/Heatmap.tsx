@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ArticlesAPI } from '@/api/ArticlesAPI';
-import styles from './Heatmap.module.css';
+import styles from './Heatmap.module.scss';
 
 interface HeatmapProps {
   data?: boolean[];

@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./LoadingError.module.css";
+import styles from "./LoadingError.module.scss";
 
 interface LoadingErrorProps {
     errorMessage?: string;

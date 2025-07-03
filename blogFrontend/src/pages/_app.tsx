@@ -2,7 +2,7 @@ import type { AppProps } from 'next/app';
 import AppLayout from '@/client/components/layout/AppLayout';
 import { Provider } from 'react-redux';
 import store from '@/redux/store';
-import '@/styles/globals.css';
+import '@/styles/globals.scss';
 import React from 'react';
 import { useTheme } from '@/hooks/useTheme';
 import Login from '@/components/Login/Login';
@@ -10,6 +10,31 @@ import { useRouter } from "next/router";
 import { LoginModalProvider, LoginModalContext } from '@/context/LoginModalContext';
 import AdminLogin from '@/components/AdminLogin/AdminLogin';
 import AdminRouteGuard from '@/admin/components/AdminRouteGuard/AdminRouteGuard';
+import localFont from 'next/font/local';
+
+// 字体配置
+const ziHun = localFont({
+    src: '../../public/fonts/ZiHun.woff2',
+    display: 'swap',
+});
+const youYuan = localFont({
+    src: '../../public/fonts/幼圆.woff2',
+    display: 'swap',
+});
+const agencyFB = localFont({
+    src: '../../public/fonts/AgencyFB.woff2',
+    display: 'swap',
+});
+const comicSansMS = localFont({
+    src: '../../public/fonts/ComicSansMS.woff2',
+    display: 'swap',
+});
+const ShouZhang = localFont({
+    src: '../../public/fonts/ShouZhang.woff2',
+    display: 'swap',
+});
+
+export { ShouZhang };
 
 // 创建主题包装组件
 function ThemeWrapper({ children }: { children: React.ReactNode }) {
@@ -63,7 +88,14 @@ function AppContent({ Component, pageProps }: AppProps) {
 const MyApp: React.FC<AppProps> = (props) => {
     return (
         <Provider store={store}>
-            <AppContent {...props} />
+            <div className={[
+                ziHun.className,
+                youYuan.className,
+                agencyFB.className,
+                comicSansMS.className,
+            ].join(' ')}>
+                <AppContent {...props} />
+            </div>
         </Provider>
     );
 };

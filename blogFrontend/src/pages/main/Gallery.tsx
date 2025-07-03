@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import styles from './Gallery/Gallery.module.css';
+import styles from './Gallery/Gallery.module.scss';
 import Head from "next/head";
 import LoadingSpinner from "@/components/LoadingSpinner/LoadingSpinner";
 import { useLoading } from '@/hooks/useLoading';
 import { GalleryAPI } from '@/api/GalleryAPI';
 import { Gallery as GalleryItem } from '@/types/Gallery';
 import PageHeader from '../../components/PageHeader/PageHeader';
+import Image from 'next/image';
 
 // 添加类型定义
 interface GroupedGalleries {
@@ -98,14 +99,14 @@ const Gallery: React.FC = () => {
                                     onClick={() => setSelectedGallery(gallery)}
                                 >
                                     <div className={styles.photoContent}>
-                                        <img
-                                            src={gallery.coverImage}
+                                        <Image
+                                            src={gallery.coverImage || '/default-image.jpg'}
                                             alt={gallery.title}
+                                            width={300}
+                                            height={200}
                                             className={styles.coverImage}
-                                            onError={(e) => {
-                                                const target = e.target as HTMLImageElement;
-                                                target.src = '/default-image.jpg';
-                                            }}
+                                            placeholder="blur"
+                                            blurDataURL="/default-image.jpg"
                                         />
                                         <span className={styles.date}>{gallery.date}</span>
                                         <h3 className={styles.photoTitle}>{gallery.title}</h3>
@@ -214,14 +215,14 @@ const Gallery: React.FC = () => {
                                 <span>×</span>
                             </button>
                             <div className={styles.modalImageContainer}>
-                                <img
-                                    src={selectedGallery.coverImage}
+                                <Image
+                                    src={selectedGallery.coverImage || '/default-image.jpg'}
                                     alt={selectedGallery.title}
+                                    width={800}
+                                    height={600}
                                     className={styles.modalImage}
-                                    onError={(e) => {
-                                        const target = e.target as HTMLImageElement;
-                                        target.src = '/default-image.jpg';
-                                    }}
+                                    placeholder="blur"
+                                    blurDataURL="/default-image.jpg"
                                 />
                             </div>
                             <div className={styles.modalInfo}>

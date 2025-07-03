@@ -2,7 +2,7 @@ import React from 'react';
 import { useTheme } from '@/hooks/useTheme';
 import { useDispatch } from 'react-redux';
 import { toggleTheme } from '@/redux/theme/actions';
-import styles from './ThemeToggleButton.module.css';
+import styles from './ThemeToggleButton.module.scss';
 
 // 定义图标资源类型
 interface ThemeIcons {

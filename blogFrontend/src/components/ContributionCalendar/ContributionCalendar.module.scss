@@ -1,0 +1,180 @@
+/**
+ * 响应式贡献日历样式
+ * - 支持横向滚动
+ * - rem单位自适应
+ * - 小屏缩放，父容器宽度变化时自适应
+ */
+
+// 变量定义
+$calendar-gap: 0.18rem;
+$calendar-radius: 0.2rem;
+$calendar-day-size: 1rem;
+$calendar-day-size-tablet: 0.8rem;
+$calendar-day-size-mobile: 0.5rem;
+$calendar-min-width: 40rem;
+$calendar-min-width-tablet: 28rem;
+$calendar-min-width-mobile: 16rem;
+$calendar-font-size: 0.85rem;
+$calendar-font-size-tablet: 0.7rem;
+$calendar-font-size-mobile: 0.6rem;
+$calendar-label-margin: 0.5rem;
+$calendar-label-margin-left: 2.5rem;
+$fadein-duration: 0.3s;
+$fadein-duration-label: 0.5s;
+$fadein-ease: ease;
+$label-color: #888;
+
+// Mixin: 动画延迟
+@mixin fadein-delay($i) {
+    animation-delay: ($i * 0.1s);
+}
+
+.container {
+    width: 100%;
+    overflow-x: auto;
+    padding: 0.4rem 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    .calendarWrapper {
+        display: flex;
+        flex-direction: row;
+
+        .weekLabels {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin-right: $calendar-label-margin;
+            font-size: $calendar-font-size;
+            color: $label-color;
+            height: auto;
+            padding-top: 0.1rem;
+            opacity: 0;
+            animation: fadeIn $fadein-duration-label $fadein-ease forwards;
+            min-width: 1.5rem;
+        }
+
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(52, minmax(0.7rem, 1.1rem));
+            grid-template-rows: repeat(7, minmax(0.7rem, 1.1rem));
+            gap: $calendar-gap;
+            min-width: $calendar-min-width;
+            max-width: 100vw;
+            background: none;
+
+            .calendarDay {
+                width: $calendar-day-size;
+                height: $calendar-day-size;
+                border-radius: $calendar-radius;
+                transition: background 0.2s;
+                cursor: pointer;
+                opacity: 0;
+                animation: fadeIn $fadein-duration $fadein-ease forwards;
+                box-sizing: border-box;
+
+                // 动画延迟（前10个）
+                @for $i from 1 through 10 {
+                    &:nth-child(#{$i}) {
+                        animation-delay: #{$i * 0.1}s;
+                    }
+                }
+            }
+        }
+    }
+
+    .monthLabels {
+        display: grid;
+        grid-template-columns: repeat(52, minmax(0.7rem, 1.1rem));
+        margin-left: $calendar-label-margin-left;
+        font-size: $calendar-font-size;
+        color: $label-color;
+        margin-bottom: $calendar-label-margin;
+        position: relative;
+        opacity: 0;
+        animation: fadeIn $fadein-duration-label $fadein-ease forwards;
+        min-width: $calendar-min-width;
+        max-width: 100vw;
+
+        >div {
+            position: relative;
+            white-space: nowrap;
+
+            &:nth-child(5) {
+                transform: translateX(-2px);
+            }
+
+            &:nth-child(6) {
+                transform: translateX(-4px);
+            }
+        }
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 响应式：平板 */
+@media (max-width: 900px) {
+    .container {
+        .calendarWrapper {
+            .calendar {
+                grid-template-columns: repeat(52, minmax(0.5rem, 0.8rem));
+                min-width: $calendar-min-width-tablet;
+
+                .calendarDay {
+                    width: $calendar-day-size-tablet;
+                    height: $calendar-day-size-tablet;
+                }
+            }
+
+            .weekLabels {
+                font-size: $calendar-font-size-tablet;
+            }
+        }
+
+        .monthLabels {
+            grid-template-columns: repeat(52, minmax(0.5rem, 0.8rem));
+            min-width: $calendar-min-width-tablet;
+            font-size: $calendar-font-size-tablet;
+        }
+    }
+}
+
+/* 响应式：手机 */
+@media (max-width: 600px) {
+    .container {
+        .calendarWrapper {
+            .calendar {
+                grid-template-columns: repeat(52, minmax(0.32rem, 0.5rem));
+                min-width: $calendar-min-width-mobile;
+
+                .calendarDay {
+                    width: $calendar-day-size-mobile;
+                    height: $calendar-day-size-mobile;
+                }
+            }
+
+            .weekLabels {
+                font-size: $calendar-font-size-mobile;
+            }
+        }
+
+        .monthLabels {
+            grid-template-columns: repeat(52, minmax(0.32rem, 0.5rem));
+            min-width: $calendar-min-width-mobile;
+            font-size: $calendar-font-size-mobile;
+        }
+    }
+}

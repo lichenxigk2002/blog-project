@@ -1,0 +1,455 @@
+// 变量定义
+$main-purple: #6d3e9c;
+$main-yellow: #ffe4a1;
+$main-blue: #b5d0ff;
+$main-pink: #ffb6c1;
+$main-green: #c1ffd7;
+$main-bg: #f8e1ff;
+$main-shadow: 0 0.375rem 1.5rem rgba(120, 80, 180, 0.15), 0 0.09375rem 0.375rem #fff;
+$main-border: 0.15625rem solid #fff;
+$main-radius: 1.375rem;
+$main-font: 'ComicSansMS', sans-serif;
+
+.card {
+    width: 17.5rem;
+    aspect-ratio: 1/1;
+    background: $main-bg;
+    border-radius: $main-radius;
+    box-shadow: $main-shadow;
+    position: relative;
+    overflow: hidden;
+    border: $main-border;
+    display: flex;
+    flex-direction: column;
+    transform: rotate(var(--rotate, 0deg));
+
+    @media (min-width: 1920px) {
+        width: 20rem;
+    }
+
+    @media (max-width: 1440px) {
+        width: 16rem;
+    }
+
+    @media (min-width: 768px) and (max-width: 1024px) {
+        width: 15rem;
+    }
+
+    @media (max-width: 768px) {
+        width: 14rem;
+    }
+}
+
+.headerBar {
+    height: 2.75rem;
+    background: linear-gradient(90deg, $main-blue 60%, $main-bg 100%);
+    border-top-left-radius: $main-radius;
+    border-top-right-radius: $main-radius;
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding-left: $main-radius;
+    font-family: $main-font;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: $main-purple;
+    box-shadow: 0 0.125rem 0.5rem #fff8;
+
+    @media (min-width: 1920px) {
+        height: 3rem;
+        font-size: 1rem;
+    }
+
+    @media (max-width: 1440px) {
+        height: 2.5rem;
+        font-size: 0.875rem;
+    }
+
+    @media (max-width: 768px) {
+        height: 2.25rem;
+        font-size: 0.8125rem;
+    }
+}
+
+.date {
+    z-index: 1;
+}
+
+.hole {
+    position: absolute;
+    right: 10px;
+    top: 6px;
+    width: 32px;
+    height: 32px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+/* 便签内容区 */
+.noteArea {
+    flex: 1;
+    position: relative;
+    padding: 1.125rem 1.125rem 0.75rem 1.125rem;
+    border-bottom-left-radius: 1.125rem;
+    border-bottom-right-radius: 1.125rem;
+    font-family: $main-font;
+    /* 横线效果 */
+    background-image: repeating-linear-gradient(to bottom,
+            #fffbe6 0px,
+            #fffbe6 1.75rem,
+            $main-yellow 1.8125rem,
+            #fffbe6 1.875rem);
+}
+
+.mood {
+    position: absolute;
+    top: 0.625rem;
+    right: 1.125rem;
+    font-size: 1.75rem;
+    filter: drop-shadow(0 0.125rem 0.25rem #fff8);
+    pointer-events: none;
+}
+
+.content {
+    font-weight: 700;
+    font-size: 1.0625rem;
+    margin-bottom: 0.625rem;
+    color: $main-purple;
+    text-shadow: 0 0.0625rem 0 #fff, 0 0.125rem 0.25rem #e1bfff;
+    word-break: break-all;
+    margin-top: 1.75rem;
+
+    @media (min-width: 1920px) {
+        font-size: 1.125rem;
+    }
+
+    @media (max-width: 1440px) {
+        font-size: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        font-size: 0.9375rem;
+    }
+}
+
+.tags {
+    margin-bottom: 10px;
+}
+
+.tag {
+    display: inline-block;
+    color: $main-purple;
+    border-radius: 0.75rem;
+    padding: 0.1875rem 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    margin-right: 0.375rem;
+    margin-bottom: 0.125rem;
+    box-shadow: 0 0.0625rem 0.25rem #fff8;
+    border: 0.09375rem solid #fff;
+    background: #fff;
+
+    @media (min-width: 1920px) {
+        font-size: 0.875rem;
+    }
+
+    @media (max-width: 1440px) {
+        font-size: 0.75rem;
+    }
+
+    @media (max-width: 768px) {
+        font-size: 0.6875rem;
+        padding: 0.125rem 0.625rem;
+    }
+}
+
+.tagPink {
+    background: #ffb6c1;
+}
+
+.tagBlue {
+    background: #b5d0ff;
+}
+
+.tagYellow {
+    background: #ffe4a1;
+}
+
+.tagGreen {
+    background: #c1ffd7;
+}
+
+.tagPurple {
+    background: #e1bfff;
+}
+
+.tagLightYellow {
+    background: #fff2b2;
+}
+
+.info {
+    font-size: 0.8125rem;
+    color: #7a5fa0;
+    margin-bottom: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    @media (min-width: 1920px) {
+        font-size: 0.875rem;
+    }
+
+    @media (max-width: 1440px) {
+        font-size: 0.75rem;
+    }
+
+    @media (max-width: 768px) {
+        font-size: 0.6875rem;
+    }
+}
+
+.themeA-header {
+    background: linear-gradient(90deg, #b5d0ff 60%, #f8e1ff 100%);
+}
+
+.themeB-header {
+    background: linear-gradient(90deg, #ffd6e0 60%, #ffe4e1 100%);
+}
+
+.themeC-header {
+    background: linear-gradient(90deg, #b2ebf2 60%, #e0f7fa 100%);
+}
+
+.themeD-header {
+    background: linear-gradient(90deg, #ffe082 60%, #fffde7 100%);
+}
+
+.themeE-header {
+    background: linear-gradient(90deg, #c8e6c9 60%, #e6ffe6 100%);
+}
+
+.themeF-header {
+    background: linear-gradient(90deg, #ffe0b2 60%, #fff0e6 100%);
+}
+
+.themeG-header {
+    background: linear-gradient(90deg, #b3e5fc 60%, #e6f0ff 100%);
+}
+
+.themeH-header {
+    background: linear-gradient(90deg, #e1bee7 60%, #f9e6ff 100%);
+}
+
+/* 背景色方案 */
+.themeA-bg {
+    background: linear-gradient(135deg, rgba(248, 225, 255, 0.7) 0%, rgba(230, 240, 255, 0.7) 100%);
+}
+
+.themeB-bg {
+    background: linear-gradient(135deg, rgba(255, 240, 245, 0.7) 0%, rgba(255, 238, 247, 0.7) 100%);
+}
+
+.themeC-bg {
+    background: linear-gradient(135deg, rgba(224, 247, 250, 0.7) 0%, rgba(230, 252, 255, 0.7) 100%);
+}
+
+.themeD-bg {
+    background: linear-gradient(135deg, rgba(255, 253, 231, 0.7) 0%, rgba(255, 251, 224, 0.7) 100%);
+}
+
+.themeE-bg {
+    background: linear-gradient(135deg, rgba(240, 255, 240, 0.7) 0%, rgba(220, 255, 230, 0.7) 100%);
+}
+
+.themeF-bg {
+    background: linear-gradient(135deg, rgba(255, 250, 240, 0.7) 0%, rgba(255, 240, 220, 0.7) 100%);
+}
+
+.themeG-bg {
+    background: linear-gradient(135deg, rgba(240, 248, 255, 0.7) 0%, rgba(220, 235, 255, 0.7) 100%);
+}
+
+.themeH-bg {
+    background: linear-gradient(135deg, rgba(250, 240, 255, 0.7) 0%, rgba(240, 220, 255, 0.7) 100%);
+}
+
+/* 横线色方案（便签纸横线） */
+.themeA-line {
+    background-image: repeating-linear-gradient(to bottom,
+            transparent 0px, transparent 28px,
+            #ffe4a1 29px, transparent 30px);
+}
+
+.themeB-line {
+    background-image: repeating-linear-gradient(to bottom,
+            transparent 0px, transparent 28px,
+            #ffb347 29px, transparent 30px);
+}
+
+.themeC-line {
+    background-image: repeating-linear-gradient(to bottom,
+            transparent 0px, transparent 28px,
+            #81d4fa 29px, transparent 30px);
+}
+
+.themeD-line {
+    background-image: repeating-linear-gradient(to bottom,
+            transparent 0px, transparent 28px,
+            #ffd54f 29px, transparent 30px);
+}
+
+.themeE-line {
+    background-image: repeating-linear-gradient(to bottom,
+            transparent 0px, transparent 28px,
+            #b2f2bb 29px, transparent 30px);
+}
+
+.themeF-line {
+    background-image: repeating-linear-gradient(to bottom,
+            transparent 0px, transparent 28px,
+            #ffe082 29px, transparent 30px);
+}
+
+.themeG-line {
+    background-image: repeating-linear-gradient(to bottom,
+            transparent 0px, transparent 28px,
+            #90caf9 29px, transparent 30px);
+}
+
+.themeH-line {
+    background-image: repeating-linear-gradient(to bottom,
+            transparent 0px, transparent 28px,
+            #e1bee7 29px, transparent 30px);
+}
+
+/* 标签色方案（每套一组） */
+.themeA-tag .tagPink {
+    background: #ffb6c1;
+}
+
+.themeA-tag .tagBlue {
+    background: #b5d0ff;
+}
+
+.themeA-tag .tagYellow {
+    background: #ffe4a1;
+}
+
+.themeA-tag .tagGreen {
+    background: #c1ffd7;
+}
+
+.themeB-tag .tagPink {
+    background: #ffb347;
+}
+
+.themeB-tag .tagBlue {
+    background: #ff6961;
+}
+
+.themeB-tag .tagYellow {
+    background: #fdfd96;
+}
+
+.themeB-tag .tagGreen {
+    background: #aec6cf;
+}
+
+.themeC-tag .tagPink {
+    background: #81d4fa;
+}
+
+.themeC-tag .tagBlue {
+    background: #4dd0e1;
+}
+
+.themeC-tag .tagYellow {
+    background: #b2dfdb;
+}
+
+.themeC-tag .tagGreen {
+    background: #f8bbd0;
+}
+
+.themeD-tag .tagPink {
+    background: #ffd54f;
+}
+
+.themeD-tag .tagBlue {
+    background: #ffb300;
+}
+
+.themeD-tag .tagYellow {
+    background: #ff8a65;
+}
+
+.themeD-tag .tagGreen {
+    background: #a5d6a7;
+}
+
+.themeE-tag .tagPink {
+    background: #e0ffe0;
+}
+
+.themeE-tag .tagBlue {
+    background: #b2f2bb;
+}
+
+.themeE-tag .tagYellow {
+    background: #fff9c4;
+}
+
+.themeE-tag .tagGreen {
+    background: #c8e6c9;
+}
+
+.themeF-tag .tagPink {
+    background: #ffe0b2;
+}
+
+.themeF-tag .tagBlue {
+    background: #ffe082;
+}
+
+.themeF-tag .tagYellow {
+    background: #fffde7;
+}
+
+.themeF-tag .tagGreen {
+    background: #ffd180;
+}
+
+.themeG-tag .tagPink {
+    background: #b3e5fc;
+}
+
+.themeG-tag .tagBlue {
+    background: #90caf9;
+}
+
+.themeG-tag .tagYellow {
+    background: #e1f5fe;
+}
+
+.themeG-tag .tagGreen {
+    background: #b2dfdb;
+}
+
+.themeH-tag .tagPink {
+    background: #f8bbd0;
+}
+
+.themeH-tag .tagBlue {
+    background: #e1bee7;
+}
+
+.themeH-tag .tagYellow {
+    background: #f3e5f5;
+}
+
+.themeH-tag .tagGreen {
+    background: #d1c4e9;
+}

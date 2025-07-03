@@ -3,8 +3,9 @@ import AdminLayout from '@/admin/components/layout/AdminLayout';
 import AdminRouteGuard from '@/admin/components/AdminRouteGuard/AdminRouteGuard';
 import { ArticlesAPI } from '@/api/ArticlesAPI';
 import { TagsAPI } from '@/api/TagsAPI';
-import styles from './index.module.css';
+import styles from './index.module.scss';
 import Head from "next/head";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 
 interface Article {
   id: number;
@@ -40,6 +41,8 @@ const AdminDashboard: React.FC = () => {
     popularTags: [] as Tag[]
   });
 
+  const [monthlyData, setMonthlyData] = useState<{ name: string; value: number }[]>([]);
+
   useEffect(() => {
     fetchDashboardData();
   }, []);
@@ -58,8 +61,12 @@ const AdminDashboard: React.FC = () => {
         return;
       }
 
-      if (articlesResponse.error || tagsResponse.error) {
-        console.error('Failed to fetch dashboard data:', articlesResponse.error || tagsResponse.error);
+      if (articlesResponse && typeof articlesResponse === 'object' && 'error' in articlesResponse && articlesResponse.error) {
+        console.error('Failed to fetch dashboard data:', articlesResponse.error);
+        return;
+      }
+      if (tagsResponse && typeof tagsResponse === 'object' && !Array.isArray(tagsResponse) && 'error' in tagsResponse && tagsResponse.error) {
+        console.error('Failed to fetch dashboard data:', tagsResponse.error);
         return;
       }
 
@@ -80,8 +87,8 @@ const AdminDashboard: React.FC = () => {
 
       // 获取热门标签（按使用次数排序）
       const popularTags = [...tags]
-          .sort((a, b) => (b.count || 0) - (a.count || 0))
-          .slice(0, 5);
+        .sort((a, b) => (b.count || 0) - (a.count || 0))
+        .slice(0, 5);
 
       setStats({
         totalArticles: articles.length,
@@ -90,10 +97,43 @@ const AdminDashboard: React.FC = () => {
         recentArticles,
         popularTags
       });
+      setMonthlyData(getMonthlyData(articles));
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
     }
   };
+
+  const getMonthlyData = (articles: Article[]) => {
+    // 统计最近12个月的文章数
+    const now = new Date();
+    const months = Array.from({ length: 12 }, (_, i) => {
+      const d = new Date(now.getFullYear(), now.getMonth() - 11 + i, 1);
+      return `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}`;
+    });
+    const data = months.map(month => ({ name: month, value: 0 }));
+    articles.forEach(article => {
+      const date = new Date(article.createdAt);
+      if (!isNaN(date.getTime())) {
+        const key = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+        const found = data.find(d => d.name === key);
+        if (found) found.value++;
+      }
+    });
+    return data;
+  };
+
+  // 饼图颜色
+  const PIE_COLORS = ['#a259ff', '#52c41a', '#faad14', '#ff4d4f', '#6c3ec1'];
+
+  // 文章状态分布数据
+  const statusData = [
+    { name: '草稿', value: stats.recentArticles.filter(a => a.status === 'draft').length },
+    { name: '已发布', value: stats.recentArticles.filter(a => a.status === 'published').length },
+    { name: '已归档', value: stats.recentArticles.filter(a => a.status === 'archived').length },
+  ];
+
+  // 标签分布数据（前5热门标签）
+  const tagData = stats.popularTags.map((tag) => ({ name: tag.name, value: tag.count || 0 }));
 
   return (
     <AdminRouteGuard>
@@ -143,6 +183,61 @@ const AdminDashboard: React.FC = () => {
               <div className={styles.statContent}>
                 <h3>总浏览量</h3>
                 <div className={styles.statValue}>{stats.totalViews}</div>
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.chartsGrid}>
+            <div className={styles.chartCard}>
+              <h3>文章发布趋势</h3>
+              <div className={styles.chartContainer}>
+                <ResponsiveContainer width="100%" height={220}>
+                  <AreaChart data={monthlyData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#a259ff" stopOpacity={0.8} />
+                        <stop offset="95%" stopColor="#a259ff" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+                    <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <Tooltip />
+                    <Area type="monotone" dataKey="value" stroke="#a259ff" fillOpacity={1} fill="url(#colorUv)" />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+            <div className={styles.chartCard}>
+              <h3>文章状态分布</h3>
+              <div className={styles.chartContainer}>
+                <ResponsiveContainer width="100%" height={220}>
+                  <PieChart>
+                    <Pie data={statusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={70} label>
+                      {statusData.map((entry, idx) => (
+                        <Cell key={`cell-status-${idx}`} fill={PIE_COLORS[idx % PIE_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                    <Legend verticalAlign="bottom" height={36} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+            <div className={styles.chartCard}>
+              <h3>热门标签分布</h3>
+              <div className={styles.chartContainer}>
+                <ResponsiveContainer width="100%" height={220}>
+                  <PieChart>
+                    <Pie data={tagData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={70} label>
+                      {tagData.map((entry, idx) => (
+                        <Cell key={`cell-tag-${idx}`} fill={PIE_COLORS[idx % PIE_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                    <Legend verticalAlign="bottom" height={36} />
+                  </PieChart>
+                </ResponsiveContainer>
               </div>
             </div>
           </div>

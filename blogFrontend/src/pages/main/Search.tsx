@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiSearch, FiX, FiClock, FiTag } from 'react-icons/fi';
 import Link from 'next/link';
-import styles from './Search/Search.module.css';
+import styles from './Search/Search.module.scss';
 import Head from 'next/head';
 import { ArticlesAPI } from '@/api/ArticlesAPI';
 import { Article } from '@/types/Article';

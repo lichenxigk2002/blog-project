@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import styles from './Articles/Articles.module.css';
+import styles from './Articles/Articles.module.scss';
 import { motion } from 'framer-motion';
 import Head from "next/head";
 import { FiClock, FiEye, FiHeart, FiTag, FiSearch, FiArrowUp, FiArrowDown } from 'react-icons/fi';

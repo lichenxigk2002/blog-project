@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './ArticleSidebar.module.css';
+import styles from './ArticleSidebar.module.scss';
 import ReadingTools from './ReadingTools';
 import ArticleSearch from './ArticleSearch';
 

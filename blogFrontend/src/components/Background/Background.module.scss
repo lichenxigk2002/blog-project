@@ -1,0 +1,290 @@
+// 变量定义
+$white: #ffffff;
+$night-bg: #1a1a1a;
+$morandi-pink: #ffcccc;
+$morandi-blue: #15c0fa;
+$morandi-lightblue: #f3daff;
+$beige: #de9b20;
+$green: #00f603;
+$blur: 0.9375rem;
+$block-size: 12.5rem;
+$triangle-size: 9.375rem;
+$pentagram-size: 9.375rem;
+$spot-size: 18.75rem;
+$z-bg: -2;
+
+// Mixin: 浮动动画
+@mixin float-anim {
+    animation: float 25s infinite linear;
+}
+
+// Mixin: 色块形状
+@mixin block-shape($shape) {
+    @if $shape ==circle {
+        width: $block-size;
+        height: $block-size;
+        border-radius: 50%;
+        background: $morandi-pink;
+        @include float-anim;
+    }
+
+    @else if $shape ==circle2 {
+        width: $block-size;
+        height: $block-size;
+        border-radius: 50%;
+        background: $green;
+        @include float-anim;
+    }
+
+    @else if $shape ==triangle {
+        width: $triangle-size;
+        height: $triangle-size;
+        background: $morandi-blue;
+        clip-path: polygon(50% 0, 100% 100%, 0 100%);
+        @include float-anim;
+    }
+
+    @else if $shape ==pentagram {
+        width: $pentagram-size;
+        height: $pentagram-size;
+        background: $morandi-lightblue;
+        clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+        @include float-anim;
+    }
+}
+
+/* 几何色块容器 */
+.backgroundBlocks {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    /* 防止遮挡点击 */
+    z-index: -2;
+
+    .bgBlock {
+        position: absolute;
+        opacity: 0.1;
+        /* 10%透明度 */
+        filter: blur(0.9375rem);
+        /* 柔化边缘 */
+        mix-blend-mode: multiply;
+        /* 混合模式 */
+
+        &.circle {
+            @include block-shape(circle);
+        }
+
+        &.circle2 {
+            @include block-shape(circle2);
+        }
+
+        &.triangle {
+            @include block-shape(triangle);
+        }
+
+        &.pentagram {
+            @include block-shape(pentagram);
+        }
+
+        &.block3 {
+            bottom: 20%;
+            left: 20%;
+            background: #de9b20 !important;
+            /* 米色 */
+        }
+
+        &.block1 {
+            top: 15%;
+            left: 5%;
+        }
+
+        &.block2 {
+            top: 40%;
+            right: 10%;
+        }
+
+        &.block5 {
+            bottom: 50%;
+            left: 50%;
+        }
+
+        &.block6 {
+            bottom: 20%;
+            left: 60%;
+        }
+    }
+}
+
+/* 动画效果 */
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-1.875rem);
+    }
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.microParticles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+/*网格*/
+.dynamicGrid {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image:
+        linear-gradient(rgba(200, 200, 200, 0.1) 0.0625rem, transparent 0.0625rem),
+        linear-gradient(90deg, rgba(200, 200, 200, 0.1) 0.0625rem, transparent 0.0625rem);
+    background-size: 1.875rem 1.875rem;
+    animation: gridMove 60s linear infinite;
+    transition: background-image 0.3s ease;
+
+    &.darkGrid {
+        background-image:
+            linear-gradient(rgba(100, 100, 100, 0.15) 0.0625rem, transparent 0.0625rem),
+            linear-gradient(90deg, rgba(100, 100, 100, 0.15) 0.0625rem, transparent 0.0625rem);
+    }
+}
+
+@keyframes gridMove {
+    from {
+        background-position: 0 0;
+    }
+
+    to {
+        background-position: 6.25rem 6.25rem;
+    }
+}
+
+.backgroundBase {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    /* 置于最底层 */
+    transition: background-color 0.3s ease;
+    background-color: #ffffff;
+
+    &.dark {
+        background-color: #1a1a1a;
+
+        .glowEffect {
+            background: radial-gradient(circle at 50% 50%,
+                    rgba(255, 255, 255, 0.05) 0%,
+                    rgba(255, 255, 255, 0.02) 30%,
+                    transparent 70%);
+        }
+
+        .particles {
+            background-image:
+                radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+        }
+
+        .lightSpot {
+            background: radial-gradient(circle at center,
+                    rgba(255, 255, 255, 0.05) 0%,
+                    transparent 70%);
+        }
+    }
+
+    .glowEffect {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at 50% 50%,
+                rgba(255, 255, 255, 0.1) 0%,
+                rgba(255, 255, 255, 0.05) 30%,
+                transparent 70%);
+        animation: glowPulse 8s ease-in-out infinite;
+    }
+
+    .particles {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-image:
+            radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 0.0625rem, transparent 0.0625rem),
+            radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.1) 0.0625rem, transparent 0.0625rem);
+        background-size: 3.125rem 3.125rem;
+        animation: particleFloat 20s linear infinite;
+    }
+
+    .lightSpot {
+        position: absolute;
+        width: 18.75rem;
+        height: 18.75rem;
+        background: radial-gradient(circle at center,
+                rgba(255, 255, 255, 0.1) 0%,
+                transparent 70%);
+        animation: spotMove 15s ease-in-out infinite;
+    }
+}
+
+@keyframes glowPulse {
+
+    0%,
+    100% {
+        opacity: 0.5;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.8;
+        transform: scale(1.1);
+    }
+}
+
+@keyframes particleFloat {
+    0% {
+        background-position: 0 0;
+    }
+
+    100% {
+        background-position: 100px 100px;
+    }
+}
+
+@keyframes spotMove {
+    0% {
+        transform: translate(0, 0);
+    }
+
+    25% {
+        transform: translate(6.25rem, 3.125rem);
+    }
+
+    50% {
+        transform: translate(3.125rem, 6.25rem);
+    }
+
+    75% {
+        transform: translate(-3.125rem, 3.125rem);
+    }
+
+    100% {
+        transform: translate(0, 0);
+    }
+}

@@ -3,7 +3,7 @@ import { useAppSelector } from '@/redux/store';
 import { CommentsAPI } from '@/api/CommentsAPI';
 import type { Comment } from '@/types/Comment';
 import EmojiPicker from '../EmojiPicker/EmojiPicker';
-import styles from './Comments.module.css';
+import styles from './Comments.module.scss';
 import { LoginModalContext } from '@/context/LoginModalContext';
 import { CommentIcon, HeartIcon, TrashIcon, LoginIcon, SmileIcon } from '@/client/components/ui/Icons'
 

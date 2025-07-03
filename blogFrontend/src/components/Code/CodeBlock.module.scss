@@ -1,0 +1,92 @@
+// 变量定义
+$border-radius: 8px;
+$header-padding: 0.5rem 1rem;
+$button-radius: 4px;
+$button-padding: 0.25rem 0.75rem;
+$button-font-size: 0.9rem;
+$button-gap: 0.5rem;
+$box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+// Mixin: 按钮样式
+@mixin code-btn {
+    padding: $button-padding;
+    border: 1px solid var(--code-border);
+    border-radius: $button-radius;
+    background: var(--code-header-bg);
+    color: var(--code-text);
+    font-size: $button-font-size;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.codeBlock {
+    position: relative;
+    margin: 1rem 0;
+    border-radius: $border-radius;
+    background: var(--code-block-bg);
+    box-shadow: $box-shadow;
+
+    .codeHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: $header-padding;
+        background: var(--code-header-bg);
+        border-radius: $border-radius $border-radius 0 0;
+        border-bottom: 1px solid var(--code-border);
+
+        .language {
+            font-size: 0.8rem;
+            color: var(--lang-color);
+
+            // 语言色
+            &-javascript {
+                --lang-color: #f7df1e;
+                color: black;
+            }
+
+            &-typescript {
+                --lang-color: #3178c6;
+            }
+
+            &-python {
+                --lang-color: #3776ab;
+            }
+
+            &-html {
+                --lang-color: #e34c26;
+            }
+
+            &-css {
+                --lang-color: #2965f1;
+            }
+
+            &-json {
+                --lang-color: #6e7681;
+            }
+
+            &-java {
+                --lang-color: #ff9500;
+            }
+        }
+
+        .buttonGroup {
+            display: flex;
+            gap: $button-gap;
+
+            .copyButton,
+            .expandButton {
+                @include code-btn;
+
+                &:hover {
+                    transform: scale(1.05);
+                }
+            }
+        }
+    }
+
+    .codeContent {
+        transition: max-height 0.3s ease-out;
+        position: relative;
+    }
+}

@@ -1,0 +1,152 @@
+// 变量定义
+$text-color: var(--text);
+$border-color: var(--border-color);
+$primary-color: var(--primary-color);
+$primary-hover: var(--primary-hover);
+$background: var(--background);
+$bg-secondary: var(--bg-secondary);
+$radius: 12px;
+$shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+// mixin
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  @include flex-center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.modalContent {
+  box-shadow: $shadow;
+  background: $background;
+  border-radius: $radius;
+  padding: 2rem;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $bg-secondary;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $primary-color;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: $primary-hover;
+  }
+
+  @media (max-width: 768px) {
+    width: 95%;
+    padding: 1.5rem;
+  }
+}
+
+.closeButton {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: $text-color;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  @include flex-center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: rotate(90deg);
+  }
+}
+
+.modalHeader {
+  margin-bottom: 1.5rem;
+  padding-right: 2rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: $text-color;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+
+  @media (max-width: 768px) {
+    font-size: 1.3rem;
+  }
+}
+
+.metaInfo {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  color: $text-color;
+  font-size: 0.9rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: $text-color;
+}
+
+.difficulty {
+  padding: 0.2rem 0.8rem;
+  border-radius: $radius;
+  font-size: 0.8rem;
+  font-weight: 500;
+
+  &[data-difficulty="easy"] {
+    background-color: #4caf50;
+    color: white;
+  }
+
+  &[data-difficulty="medium"] {
+    background-color: #ff9800;
+    color: white;
+  }
+
+  &[data-difficulty="hard"] {
+    background-color: #f44336;
+    color: white;
+  }
+}
+
+.content {
+  color: $text-color;
+  line-height: 1.8;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.questionContent {
+  white-space: pre-wrap;
+  word-break: break-word;
+}

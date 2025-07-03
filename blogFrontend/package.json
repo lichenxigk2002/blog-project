@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "analyze": "npm run build && source-map-explorer .next/static/chunks/*.js",
     "generate-knowledge": "node scripts/generateKnowledge.js"
   },
   "dependencies": {
@@ -43,6 +44,9 @@
     "@types/react-syntax-highlighter": "^15.5.13",
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
+    "purgecss": "^7.0.2",
+    "sass": "^1.89.2",
+    "source-map-explorer": "^2.5.3",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

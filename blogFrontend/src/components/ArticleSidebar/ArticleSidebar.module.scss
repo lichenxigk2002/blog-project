@@ -1,0 +1,35 @@
+// 变量定义
+$primary-light: var(--primary-light);
+$radius: 0.125rem;
+
+.sidebar {
+  position: fixed;
+  top: 6.875rem;
+  /* 导航栏下方 */
+  right: 3rem;
+  width: 15rem;
+  overflow-y: auto;
+  z-index: 100;
+  scrollbar-width: thin;
+
+  &::-webkit-scrollbar {
+    width: 0.25rem;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $primary-light;
+    border-radius: $radius;
+  }
+}
+
+/* 响应式布局 */
+@media (max-width: 87.5rem) {
+  .sidebar {
+    width: 14rem;
+    right: 0.75rem;
+  }
+}

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { QuestionsAPI } from '@/api/QuestionsAPI';
 import type { Question } from '@/types/Question';
 import type { QuestionsFormData } from './QuestionsForm';
-import styles from './QuestionsManagement.module.css';
+import styles from './QuestionsManagement.module.scss';
 import Pagination from "@/admin/components/ui/Pagination/Pagination";
 import QuestionsForm from './QuestionsForm';
 

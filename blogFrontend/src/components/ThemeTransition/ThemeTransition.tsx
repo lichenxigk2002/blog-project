@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useTheme } from '@/hooks/useTheme';
-import styles from './ThemeTransition.module.css';
+import styles from './ThemeTransition.module.scss';
 
 interface ThemeTransitionProps {
   children: React.ReactNode;

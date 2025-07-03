@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { GalleryAPI } from '@/api/GalleryAPI';
 import type { Gallery } from '@/types/Gallery';
 import GalleryForm from './GalleryForm';
-import styles from './GalleryManagement.module.css';
+import styles from './GalleryManagement.module.scss';
 import Pagination from "@/admin/components/ui/Pagination/Pagination";
 
 const GalleryManagement: React.FC = () => {

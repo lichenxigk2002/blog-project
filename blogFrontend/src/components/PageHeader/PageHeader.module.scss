@@ -1,0 +1,56 @@
+// 变量定义
+$header-font-size: 2.5rem;
+$header-font-weight: 700;
+$header-color: var(--text);
+$header-margin-bottom: 0.75rem;
+$english-title-font-size: 4rem;
+$english-title-font-weight: 800;
+$english-title-opacity: 0.05;
+$intro-max-width: 800px;
+$intro-margin: 0 auto 1.5rem;
+$intro-color: var(--text);
+$intro-opacity: 0.7;
+$intro-font-size: 0.95rem;
+$intro-line-height: 1.6;
+$intro-font-style: italic;
+$intro-font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+$intro-font-weight: lighter;
+
+.header {
+  font-size: $header-font-size;
+  font-weight: $header-font-weight;
+  color: $header-color;
+  margin-bottom: $header-margin-bottom;
+  text-align: center;
+  width: 100%;
+  display: block;
+  position: relative;
+
+  .englishTitle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: $english-title-font-size;
+    font-weight: $english-title-font-weight;
+    color: $header-color;
+    opacity: $english-title-opacity;
+    white-space: nowrap;
+    z-index: 0;
+    pointer-events: none;
+  }
+}
+
+.introText {
+  max-width: $intro-max-width;
+  margin: $intro-margin;
+  color: $intro-color;
+  opacity: $intro-opacity;
+  font-size: $intro-font-size;
+  line-height: $intro-line-height;
+  font-style: $intro-font-style;
+  font-family: $intro-font-family;
+  font-weight: $intro-font-weight;
+  position: relative;
+  z-index: 1;
+}

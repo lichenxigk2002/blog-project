@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { LoginModalContext } from '@/context/LoginModalContext';
-import styles from './NavbarLeft.module.css';
+import styles from './NavbarLeft.module.scss';
 
 const NavbarLeft: React.FC = () => {
     const { setShowAdminLogin } = useContext(LoginModalContext);

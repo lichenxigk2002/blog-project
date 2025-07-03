@@ -1,6 +1,6 @@
 import React from "react";
 import { Article } from "@/types/Article";
-import styles from "./ContributionCalendar.module.css";
+import styles from "./ContributionCalendar.module.scss";
 
 const WEEK_LABELS = ["Mon", "Wed", "Fri"];
 const WEEK_LABEL_INDEXES = [1, 3, 5]; // 星期一、三、五在 grid 的行号

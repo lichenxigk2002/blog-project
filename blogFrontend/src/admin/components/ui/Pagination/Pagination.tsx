@@ -1,6 +1,6 @@
 // 创建新文件：blogFrontend/src/admin/components/Pagination/Pagination.tsx
 import React from 'react';
-import styles from './Pagination.module.css';
+import styles from './Pagination.module.scss';
 
 interface PaginationProps {
     total: number;

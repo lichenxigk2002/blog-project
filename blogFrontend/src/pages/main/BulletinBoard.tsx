@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { BulletinBoardAPI } from '@/api/BulletinBoardAPI';
 import type { BulletinBoardProps } from '@/types/BulletinBoard';
-import styles from './BulletinBoard/BulletinBoard.module.css';
+import styles from './BulletinBoard/BulletinBoard.module.scss';
 import { useTheme } from '@/hooks/useTheme';
 import { useLoading } from "@/hooks/useLoading";
 import LoadingSpinner from "@/components/LoadingSpinner/LoadingSpinner";
 import Head from "next/head";
 import PageHeader from '../../components/PageHeader/PageHeader';
-import registerStyles from '@/components/Register/Register.module.css';
 import { http } from '@/utils/request';
 import { ApiResponse } from '@/types/common';
+import Typewriter from '@/components/Typewriter/Typewriter';
+import { ShouZhang } from '../_app';
 
 const BulletinBoard: React.FC = () => {
     const { isDarkMode } = useTheme();
@@ -28,6 +29,7 @@ const BulletinBoard: React.FC = () => {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
     });
+    const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
     // 获取留言列表
     const fetchMessages = async () => {
@@ -201,6 +203,8 @@ const BulletinBoard: React.FC = () => {
                                 <div
                                     key={index}
                                     className={`${styles.messageItem} ${item.gender === '小姐姐' ? styles.female : styles.male} ${item.isPinned ? (item.gender === '小姐姐' ? styles.pinned : styles.pinnedBlue) : ''}`}
+                                    onMouseEnter={() => setHoveredIndex(index)}
+                                    onMouseLeave={() => setHoveredIndex(null)}
                                 >
                                     <div className={styles.messageHeader}>
                                         <div className={`${styles.avatar} ${item.gender === '小姐姐' ? styles.female : styles.male}`}>
@@ -219,7 +223,11 @@ const BulletinBoard: React.FC = () => {
                                             🗓️{new Date(item.createdAt!).toLocaleString()}
                                         </span>
                                     </div>
-                                    <p className={styles.messageContent}>{item.content}</p>
+                                    <p className={styles.messageContent}>
+                                        {hoveredIndex === index
+                                            ? <div className={ShouZhang.className}><Typewriter text={item.content} delay={50} /></div>
+                                            : item.content}
+                                    </p>
                                     {renderReply(item)}
                                 </div>
                             ))}
@@ -239,18 +247,18 @@ const BulletinBoard: React.FC = () => {
             </button>
 
             {/* 留言表单模态框 */}
-            <div className={`${registerStyles.modalOverlay} ${isModalOpen ? registerStyles.active : ''}`}>
-                <div className={registerStyles.registerCard}>
+            <div className={`${styles.modalOverlay} ${isModalOpen ? styles.active : ''}`}>
+                <div className={styles.registerCard}>
                     <button
-                        className={registerStyles.closeButton}
+                        className={styles.closeButton}
                         onClick={() => setIsModalOpen(false)}
                         title="关闭"
                     >
                         ×
                     </button>
-                    <form onSubmit={handleSubmit} className={registerStyles.form}>
-                        <div className={registerStyles.inputGroup}>
-                            <label className={registerStyles.label}>头像</label>
+                    <form onSubmit={handleSubmit} className={styles.form}>
+                        <div className={styles.inputGroup}>
+                            <label className={styles.label}>头像</label>
                             <div className={styles.avatarUpload}>
                                 <div
                                     className={`${styles.avatarPreview} ${formData.gender === '小姐姐' ? styles.female : styles.male}`}
@@ -271,34 +279,34 @@ const BulletinBoard: React.FC = () => {
                                 />
                             </div>
                         </div>
-                        <div className={registerStyles.inputGroup}>
-                            <label className={registerStyles.label}>你的名字</label>
+                        <div className={styles.inputGroup}>
+                            <label className={styles.label}>你的名字</label>
                             <input
                                 type="text"
                                 name="name"
                                 value={formData.name}
                                 onChange={handleInputChange}
                                 placeholder="请输入你的名字"
-                                className={registerStyles.input}
+                                className={styles.input}
                                 required
                             />
                         </div>
-                        <div className={registerStyles.inputGroup}>
-                            <label className={registerStyles.label}>你的邮箱</label>
+                        <div className={styles.inputGroup}>
+                            <label className={styles.label}>你的邮箱</label>
                             <input
                                 type="email"
                                 name="email"
                                 value={formData.email}
                                 onChange={handleInputChange}
                                 placeholder="请输入你的邮箱"
-                                className={registerStyles.input}
+                                className={styles.input}
                                 required
                             />
                         </div>
-                        <div className={registerStyles.inputGroup}>
-                            <label className={registerStyles.label}>选择你的身份</label>
+                        <div className={styles.inputGroup}>
+                            <label className={styles.label}>选择你的身份</label>
                             <div style={{ display: 'flex', gap: '1rem' }}>
-                                <label className={registerStyles.label}>
+                                <label className={styles.label}>
                                     <input
                                         type="radio"
                                         name="gender"
@@ -309,7 +317,7 @@ const BulletinBoard: React.FC = () => {
                                     />
                                     小哥哥
                                 </label>
-                                <label className={registerStyles.label}>
+                                <label className={styles.label}>
                                     <input
                                         type="radio"
                                         name="gender"
@@ -322,20 +330,20 @@ const BulletinBoard: React.FC = () => {
                                 </label>
                             </div>
                         </div>
-                        <div className={registerStyles.inputGroup}>
-                            <label className={registerStyles.label}>留言内容</label>
+                        <div className={styles.inputGroup}>
+                            <label className={styles.label}>留言内容</label>
                             <textarea
                                 name="content"
                                 value={formData.content}
                                 onChange={handleInputChange}
                                 placeholder="写下你想说的话..."
-                                className={registerStyles.input}
+                                className={styles.input}
                                 required
                             />
                         </div>
                         <button
                             type="submit"
-                            className={registerStyles.submitButton}
+                            className={styles.submitButton}
                         >
                             提交留言
                         </button>

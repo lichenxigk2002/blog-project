@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { ThoughtsProps } from '@/types/Thoughts';
-import styles from './ThoughtsCard.module.css';
+import styles from './ThoughtsCard.module.scss';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 
 const moodMap: Record<string, string> = {

@@ -1,6 +1,6 @@
 // src/admin/components/UnauthorizedAccess/UnauthorizedAccess.tsx
 import React, { useContext } from 'react';
-import styles from './UnauthorizedAccess.module.css';
+import styles from './UnauthorizedAccess.module.scss';
 import { useRouter } from 'next/router';
 import { LoginModalContext } from '@/context/LoginModalContext';
 

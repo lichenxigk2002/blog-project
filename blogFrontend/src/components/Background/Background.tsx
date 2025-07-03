@@ -1,6 +1,6 @@
 // Background.tsx
 import React from 'react';
-import styles from './Background.module.css';
+import styles from './Background.module.scss';
 import { useTheme } from '@/hooks/useTheme';
 
 const Background: React.FC = () => {

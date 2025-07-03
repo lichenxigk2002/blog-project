@@ -1,11 +1,11 @@
 import React, { useContext, useState, useEffect } from 'react';
 import Image from 'next/image';
-import styles from './NavbarRight.module.css';
+import styles from './NavbarRight.module.scss';
 import ThemeToggleButton from '@/components/ThemeToggleButton/ThemeToggleButton';
 import { useTheme } from '@/hooks/useTheme';
 import { LoginModalContext } from '@/context/LoginModalContext';
-import {RiGithubFill, RiUser3Line, RiSunLine, RiMoonLine } from "react-icons/ri";
-import {FaChevronUp} from "react-icons/fa";
+import { RiGithubFill, RiUser3Line, RiSunLine, RiMoonLine } from "react-icons/ri";
+import { FaChevronUp } from "react-icons/fa";
 
 const NavbarRight: React.FC = () => {
     const { isDarkMode } = useTheme();

@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Tag } from '@/types/Tags';
-import styles from '../ArticleManagement/ArticleManagement.module.css';
+import styles from '../ArticleManagement/ArticleManagement.module.scss';
 
 interface TagArticlesModalProps {
   visible: boolean;

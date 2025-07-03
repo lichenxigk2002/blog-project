@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import mermaid from 'mermaid';
-import styles from './SequenceDiagram.module.css';
+import styles from './SequenceDiagram.module.scss';
 import { FaCode, FaDownload, FaEye, } from 'react-icons/fa';
 
 interface SequenceDiagramProps {

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import FlipCard, { FlipCardHandleInterface } from './FlipCard';
-import styles from './FlipClock.module.css';
+import styles from './FlipClock.module.scss';
 
 function FlipClock( ) {
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);

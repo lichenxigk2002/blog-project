@@ -1,6 +1,6 @@
 import React from 'react';
 import AIChat from '@/components/AIChat/AIChat';
-import styles from './XiaoXiAI/XiaoXiAI.module.css';
+import styles from './XiaoXiAI/XiaoXiAI.module.scss';
 import Head from "next/head";
 import { useAuth } from '@/hooks/useAuth';
 import { useContext } from 'react';

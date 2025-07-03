@@ -2,7 +2,7 @@
 import { useRouter } from 'next/router';          // Next.js路由库，用于获取路由参数
 import React, { useEffect, useState, useRef } from 'react'; // React核心钩子
 import { Article } from '@/types/Article';    // 文章类型定义
-import styles from './[id].module.css';       // CSS模块样式
+import styles from './[id].module.scss';       // CSS模块样式
 import { FaHeart, FaRegHeart } from 'react-icons/fa';   // FontAwesome图标库
 import ReactMarkdown from 'react-markdown';       // Markdown渲染组件
 import remarkGfm from 'remark-gfm'                // 支持GitHub Flavored Markdown的插件

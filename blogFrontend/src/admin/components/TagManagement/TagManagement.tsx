@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { TagsAPI } from '@/api/TagsAPI';
 import type { Tag } from '@/types/Tags';
 import TagArticlesModal from './TagArticlesModal';
-import styles from './TagManagement.module.css';
+import styles from './TagManagement.module.scss';
 import TagForm from './TagForm';
 import Pagination from "@/admin/components/ui/Pagination/Pagination";
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styles from './TagForm.module.css';
+import styles from './TagForm.module.scss';
 
 interface TagFormProps {
   initialValues?: {

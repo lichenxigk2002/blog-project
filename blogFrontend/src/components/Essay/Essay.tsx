@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import styles from './Essay.module.css';
+import styles from './Essay.module.scss';
 import { Article } from '@/types/Article';
 
 interface EssayProps {

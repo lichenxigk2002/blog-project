@@ -1,0 +1,47 @@
+/* NavbarRight.module.css */
+// 变量定义
+$icon-invert: var(--icon-invert);
+
+@mixin flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@mixin transition($prop: all, $time: 0.3s, $ease: ease) {
+    transition: #{$prop} #{$time} #{$ease};
+}
+
+.navRight {
+    display: flex;
+    gap: 15px;
+    height: 100%;
+    align-items: center;
+}
+
+.iconButton {
+    margin: auto;
+    border-radius: 50%;
+    @include flex-center;
+    cursor: pointer;
+    @include transition();
+    background: none;
+    border: none;
+
+    &:hover {
+        background: rgba(0, 0, 0, 0.05);
+    }
+}
+
+.iconImage {
+    width: 15px;
+    height: 15px;
+    object-fit: contain;
+    filter: brightness(0) invert($icon-invert);
+}
+
+.iconUserImage {
+    padding-left: 5px;
+    width: 20px;
+    height: 20px;
+}

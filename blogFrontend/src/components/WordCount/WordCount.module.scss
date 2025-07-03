@@ -1,0 +1,45 @@
+// 变量定义
+$wordcount-bg: #f5f5f5;
+$wordcount-radius: 4px;
+$wordcount-label: #999;
+$wordcount-value: #333;
+$wordcount-main: #666;
+
+.wordCount {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: $wordcount-main;
+  padding: 4px 8px;
+  background-color: $wordcount-bg;
+  border-radius: $wordcount-radius;
+  margin-left: 12px;
+  align-items: center;
+  height: 12px;
+  /* 与标签高度保持一致 */
+
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    gap: 8px;
+    height: auto;
+    margin-top: 4px;
+    margin-left: 0;
+  }
+}
+
+.countItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  /* 防止数字换行 */
+}
+
+.label {
+  color: $wordcount-label;
+}
+
+.value {
+  font-weight: 500;
+  color: $wordcount-value;
+}

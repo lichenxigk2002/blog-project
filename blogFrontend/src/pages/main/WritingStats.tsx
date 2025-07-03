@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ArticlesAPI } from "@/api/ArticlesAPI";
 import ContributionCalendar from "@/components/ContributionCalendar/ContributionCalendar";
 import { Article } from "@/types/Article";
-import styles from "./WritingStats/WritingStats.module.css";
+import styles from "./WritingStats/WritingStats.module.scss";
 import { motion } from "framer-motion";
 import { FaBook, FaCalendarAlt, FaFire, FaChartLine, FaPalette } from "react-icons/fa";
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';

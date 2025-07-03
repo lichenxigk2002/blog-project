@@ -1,0 +1,124 @@
+@import '../../styles/shared.module.scss';
+
+$primary: #a259ff;
+$secondary: #6c3ec1;
+$card-bg: rgba(255, 255, 255, 0.95);
+$card-radius: 8px;
+$card-shadow: 0 4px 12px rgba(162, 89, 255, 0.2);
+$input-border: 2px solid #fbeaff;
+$input-radius: 8px;
+$input-bg: rgba(255, 255, 255, 0.9);
+$input-focus-shadow: 0 0 0 3px rgba(162, 89, 255, 0.2);
+$font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
+
+@mixin input-base {
+  width: 100%;
+  padding: 8px 12px;
+  border: $input-border;
+  border-radius: $input-radius;
+  background: $input-bg;
+  color: $secondary;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  font-family: $font-main;
+}
+
+.tableHeader,
+.tableRow {
+  grid-template-columns: minmax(120px, 1fr) minmax(200px, 2fr) minmax(300px, 3fr) minmax(120px, 1fr) minmax(150px, 1.5fr) minmax(120px, 1fr);
+}
+
+.coverImage {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: $card-radius;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: $card-shadow;
+  }
+}
+
+.categoryTag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: $input-radius;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: $font-main;
+  background: rgba(167, 233, 255, 0.2);
+  color: $primary;
+  border: 2px solid #a7e9ff;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-start;
+
+  button {
+    padding: 4px 12px;
+  }
+}
+
+.formGroup {
+  margin-bottom: 16px;
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    color: $secondary;
+    font-weight: 500;
+    font-family: $font-main;
+  }
+
+  input[type="text"],
+  textarea {
+    @include input-base;
+  }
+
+  textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+
+  input[type="text"]:focus,
+  textarea:focus {
+    outline: none;
+    border-color: $primary;
+    box-shadow: $input-focus-shadow;
+  }
+
+  input[type="file"] {
+    display: none;
+  }
+}
+
+.fileUploadLabel {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #f0f0f0;
+  border-radius: $input-radius;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.fileInput {
+  display: none;
+}
+
+.imagePreview {
+  max-width: 200px;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: $input-radius;
+  margin-top: 10px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: $card-shadow;
+  }
+}

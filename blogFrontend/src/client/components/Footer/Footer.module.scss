@@ -1,0 +1,466 @@
+// 变量定义
+$primary-color: var(--primary-color);
+$text-color: var(--text);
+$text-secondary: var(--text-secondary);
+$border-color: var(--border-color);
+$hover-bg: var(--hover-bg);
+$bg-secondary: var(--bg-secondary);
+
+// Mixin
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+}
+
+@mixin transition($prop: all, $time: 0.3s, $ease: ease) {
+  transition: #{$prop} #{$time} #{$ease};
+}
+
+.footer {
+  width: 100%;
+  padding: 0.5rem 0;
+  margin-top: 0.75rem;
+  border-top: 1px solid $border-color;
+  z-index: 2;
+
+  &.light {
+    background-color: #f5f5f5;
+    color: #333;
+  }
+
+  &.dark {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+  }
+}
+
+.footerContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 0.75rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.footerSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+
+  h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.15rem;
+    color: $primary-color;
+  }
+
+  p {
+    font-size: 0.75rem;
+    line-height: 1.2;
+    opacity: 0.8;
+    margin: 0;
+  }
+}
+
+.stats {
+  @include flex-center;
+  gap: 0.75rem;
+  margin-top: 0.15rem;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .statNumber {
+    font-size: 1rem;
+    font-weight: 600;
+    color: $primary-color;
+  }
+
+  .statLabel {
+    font-size: 0.7rem;
+    color: #666;
+  }
+}
+
+.contactInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  a,
+  p {
+    margin: 0;
+    font-size: 0.75rem;
+  }
+}
+
+.contactItem {
+  @include flex-center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: $text-secondary;
+  text-decoration: none;
+  @include transition(color);
+
+  &:hover {
+    color: $primary-color;
+  }
+}
+
+.links {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.socialLink {
+  @include flex-center;
+  gap: 0.5rem;
+  color: $text-color;
+  text-decoration: none;
+  @include transition();
+  padding: 0.5rem;
+  border-radius: 8px;
+
+  &:hover {
+    background-color: $hover-bg;
+    transform: translateY(-2px);
+  }
+
+  .socialIcon {
+    font-size: 1.3rem;
+    @include transition(transform);
+  }
+
+  &:hover .socialIcon {
+    transform: scale(1.1);
+  }
+
+  &:hover .socialIcon[data-icon="github"] {
+    color: #333;
+  }
+
+  &:hover .socialIcon[data-icon="instagram"] {
+    color: #E1306C;
+  }
+
+  &:hover .socialIcon[data-icon="twitch"] {
+    color: #9146FF;
+  }
+}
+
+.dark {
+  .socialLink:hover .socialIcon[data-icon="github"] {
+    color: #fff;
+  }
+}
+
+.quickLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.15rem;
+
+  a {
+    color: #666;
+    text-decoration: none;
+    font-size: 0.75rem;
+    @include transition(color, 0.2s);
+
+    &:hover {
+      color: $primary-color;
+    }
+  }
+}
+
+.footerBottom {
+  max-width: 1200px;
+  margin: 0.75rem auto 0;
+  padding: 0.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+  opacity: 0.7;
+  border-top: 1px solid $border-color;
+}
+
+.serviceProviders {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 0.5rem 0;
+  line-height: 1.5;
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    color: #999;
+    text-decoration: none;
+    @include transition(opacity);
+
+    &:hover {
+      opacity: 0.8;
+      text-decoration: underline;
+    }
+  }
+}
+
+.mainBrand {
+  img {
+    margin-right: 0.3rem;
+  }
+}
+
+.beian {
+  margin-top: 0.15rem;
+  font-size: 0.7rem;
+  color: #999;
+  text-decoration: none;
+}
+
+@media (max-width: 768px) {
+  .contactInfo {
+    align-items: center;
+  }
+
+  .footerContent {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .links,
+  .quickLinks {
+    justify-content: center;
+  }
+
+  .stats {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 1440px) {
+  .footer {
+    padding: 0.4rem 0;
+    margin-top: 0.5rem;
+  }
+
+  .footerContent {
+    gap: 0.4rem;
+  }
+
+  .footerSection {
+    h3 {
+      font-size: 0.85rem;
+      margin-bottom: 0.1rem;
+    }
+
+    p {
+      font-size: 0.7rem;
+    }
+  }
+
+  .statNumber {
+    font-size: 0.9rem;
+  }
+
+  .statLabel {
+    font-size: 0.65rem;
+  }
+
+  .contactInfo {
+
+    a,
+    p {
+      font-size: 0.7rem;
+    }
+  }
+
+  .contactItem {
+    font-size: 0.85rem;
+  }
+
+  .socialLink {
+    padding: 0.4rem;
+  }
+
+  .socialIcon {
+    font-size: 1.2rem;
+  }
+
+  .quickLinks {
+    a {
+      font-size: 0.7rem;
+    }
+  }
+
+  .footerBottom {
+    margin-top: 0.5rem;
+    padding: 0.4rem;
+    font-size: 0.7rem;
+  }
+
+  .beian {
+    font-size: 0.65rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .footer {
+    padding: 0.45rem 0;
+    margin-top: 0.6rem;
+  }
+
+  .footerContent {
+    gap: 0.45rem;
+  }
+
+  .footerSection {
+    h3 {
+      font-size: 0.875rem;
+      margin-bottom: 0.125rem;
+    }
+
+    p {
+      font-size: 0.725rem;
+    }
+  }
+
+  .statNumber {
+    font-size: 0.95rem;
+  }
+
+  .statLabel {
+    font-size: 0.675rem;
+  }
+
+  .contactInfo {
+
+    a,
+    p {
+      font-size: 0.725rem;
+    }
+  }
+
+  .contactItem {
+    font-size: 0.875rem;
+  }
+
+  .socialLink {
+    padding: 0.45rem;
+  }
+
+  .socialIcon {
+    font-size: 1.25rem;
+  }
+
+  .quickLinks {
+    a {
+      font-size: 0.725rem;
+    }
+  }
+
+  .footerBottom {
+    margin-top: 0.6rem;
+    padding: 0.45rem;
+    font-size: 0.725rem;
+  }
+
+  .beian {
+    font-size: 0.675rem;
+  }
+}
+
+@media (min-width: 1920px) {
+  .footer {
+    padding: 0.6rem 0;
+    margin-top: 1rem;
+  }
+
+  .footerContent {
+    gap: 0.6rem;
+  }
+
+  .footerSection {
+    h3 {
+      font-size: 1rem;
+      margin-bottom: 0.2rem;
+    }
+
+    p {
+      font-size: 0.85rem;
+    }
+  }
+
+  .statNumber {
+    font-size: 1.1rem;
+  }
+
+  .statLabel {
+    font-size: 0.8rem;
+  }
+
+  .contactInfo {
+
+    a,
+    p {
+      font-size: 0.85rem;
+    }
+  }
+
+  .contactItem {
+    font-size: 1rem;
+  }
+
+  .socialLink {
+    padding: 0.6rem;
+  }
+
+  .socialIcon {
+    font-size: 1.4rem;
+  }
+
+  .quickLinks {
+    a {
+      font-size: 0.85rem;
+    }
+  }
+
+  .footerBottom {
+    margin-top: 1rem;
+    padding: 0.6rem;
+    font-size: 0.85rem;
+  }
+
+  .beian {
+    font-size: 0.8rem;
+  }
+}
+
+.performanceMonitor {
+  position: absolute;
+  left: 1rem;
+  bottom: 1rem;
+  @include flex-center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: $text-secondary;
+  background: $bg-secondary;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  opacity: 0.8;
+  @include transition(opacity);
+
+  &:hover {
+    opacity: 1;
+  }
+
+  .performanceIcon {
+    font-size: 0.9rem;
+  }
+}

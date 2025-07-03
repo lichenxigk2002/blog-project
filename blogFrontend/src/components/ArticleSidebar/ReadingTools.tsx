@@ -3,7 +3,7 @@ import { FaFont, FaMoon, FaSun, FaFileExport, FaShareAlt, FaChevronUp } from 're
 import { useTheme } from '@/hooks/useTheme';
 import { useAppDispatch } from '@/redux/store';
 import { toggleTheme } from '@/redux/theme/actions';
-import styles from './ReadingTools.module.css';
+import styles from './ReadingTools.module.scss';
 
 interface ReadingToolsProps {
   onFontSizeChange: (size: number) => void;

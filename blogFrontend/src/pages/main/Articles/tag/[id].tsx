@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import styles from './TagArticles.module.css';
+import styles from './TagArticles.module.scss';
 import { Article } from '@/types/Article';
 import { TagsAPI } from '@/api/TagsAPI';
 import Head from "next/head";
@@ -18,6 +18,9 @@ export default function TagArticles() {
   const routerBack = useRouter();
 
   useEffect(() => {
+
+    if (!id || Array.isArray(id) || isNaN(Number(id))) return;
+
     const fetchArticlesByTag = async () => {
       try {
         if (!id) return;
@@ -26,8 +29,8 @@ export default function TagArticles() {
         setError(null);
 
         // 使用 TagsAPI 获取标签信息
-        const tagData = await TagsAPI.getTagById(Number(id));
-        setTagName(tagData.name);
+        const {name} = await TagsAPI.getTagById(Number(id));
+        setTagName(name);
 
         // 使用 TagsAPI 获取该标签下的文章
         const articlesData = await TagsAPI.getArticlesByTagId(Number(id));

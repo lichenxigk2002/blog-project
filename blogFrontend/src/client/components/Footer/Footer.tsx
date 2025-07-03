@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import styles from './Footer.module.css';
+import styles from './Footer.module.scss';
 import { useTheme } from '@/hooks/useTheme';
 import { ArticlesAPI } from '@/api/ArticlesAPI';
 import { GalleryAPI } from '@/api/GalleryAPI';

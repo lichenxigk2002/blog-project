@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ThoughtsCard from "@/components/ThoughtsCard/ThoughtsCard";
-import styles from './Thoughts/Thoughts.module.css';
+import styles from './Thoughts/Thoughts.module.scss';
 import { ThoughtsAPI } from "@/api/ThoughtsAPI";
 import { ThoughtsProps } from "@/types/Thoughts";
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
@@ -75,13 +75,15 @@ const Thoughts: React.FC = () => {
                     <div><LoadingSpinner /></div>
                 ) : (
                     thoughtsList.map((item, idx) => {
+                        const rotate = cardTransforms[idx % cardTransforms.length].rotate;
                         return (
                             <ThoughtsCard
                                 key={item.id + '-' + idx}
                                 data={item}
                                 style={{
                                     transition: 'transform 0.3s cubic-bezier(.4,2,.6,1)',
-                                }}
+                                    '--rotate': `${rotate}deg`
+                                } as React.CSSProperties}
                                 className={styles.cardAnimation}
                             />
                         );

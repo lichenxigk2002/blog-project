@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './ArticleSearch.module.css';
+import styles from './ArticleSearch.module.scss';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaSearch, FaTimes } from 'react-icons/fa';
 

@@ -1,0 +1,202 @@
+// 变量定义
+$card-width: 60px;
+$card-height: 100px;
+$card-radius: 12px;
+$card-bg: var(--background-color);
+$card-border: 1px solid var(--background-color);
+$card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+$card-font-size: 66px;
+$card-font-family: 'ZiHun', sans-serif;
+$card-color: var(--text);
+$gap: 8px;
+$mobile-width: 40px;
+$mobile-height: 60px;
+$mobile-radius: 8px;
+$mobile-font-size: 40px;
+$mobile-line-height: 60px;
+$mobile-card-font-size: 40px;
+$mobile-card-line-height: 60px;
+$flip-perspective: 160px;
+$flip-duration: 0.6s;
+$flip-ease: ease-in-out;
+
+// Mixin: 数字内容
+@mixin number-content($n) {
+  content: '#{$n}';
+}
+
+.clock {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $gap;
+  font-family: $card-font-family;
+}
+
+.flipCard {
+  display: inline-block;
+  position: relative;
+  width: $card-width;
+  height: $card-height;
+  line-height: $card-height;
+  border: $card-border;
+  border-radius: $card-radius;
+  background: $card-bg;
+  font-size: $card-font-size;
+  color: $card-color;
+  box-shadow: $card-shadow;
+  text-align: center;
+  font-family: $card-font-family;
+
+  .digital:before,
+  .digital:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    background: $card-bg;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  .digital:before {
+    top: 0;
+    bottom: 50%;
+    border-radius: $card-radius $card-radius 0 0;
+    border-bottom: solid 1px rgba(0, 0, 0, 0.1);
+  }
+
+  .digital:after {
+    top: 50%;
+    bottom: 0;
+    border-radius: 0 0 $card-radius $card-radius;
+    line-height: 0;
+  }
+
+  // 数字样式
+  @for $i from 0 through 9 {
+
+    .number#{$i}:before,
+    .number#{$i}:after {
+      @include number-content($i);
+    }
+  }
+
+  // 翻牌动画
+  &.down {
+    .front:before {
+      z-index: 3;
+    }
+
+    .back:after {
+      z-index: 2;
+      transform-origin: 50% 0%;
+      transform: perspective($flip-perspective) rotateX(180deg);
+    }
+
+    .front:after,
+    .back:before {
+      z-index: 1;
+    }
+
+    &.go {
+      .front:before {
+        transform-origin: 50% 100%;
+        animation: frontFlipDown $flip-duration $flip-ease both;
+        box-shadow: 0 -2px 6px rgba(255, 255, 255, 0.15);
+        backface-visibility: hidden;
+      }
+
+      .back:after {
+        animation: backFlipDown $flip-duration $flip-ease both;
+      }
+    }
+  }
+
+  &.up {
+    .front:after {
+      z-index: 3;
+    }
+
+    .back:before {
+      z-index: 2;
+      transform-origin: 50% 100%;
+      transform: perspective($flip-perspective) rotateX(-180deg);
+    }
+
+    .front:before,
+    .back:after {
+      z-index: 1;
+    }
+
+    &.go {
+      .front:after {
+        transform-origin: 50% 0;
+        animation: frontFlipUp $flip-duration $flip-ease both;
+        box-shadow: 0 2px 6px rgba(255, 255, 255, 0.3);
+        backface-visibility: hidden;
+      }
+
+      .back:before {
+        animation: backFlipUp $flip-duration $flip-ease both;
+      }
+    }
+  }
+
+  // 手机屏幕适配
+  @media screen and (max-width: 767px) {
+    width: $mobile-width;
+    height: $mobile-height;
+    line-height: $mobile-line-height;
+    font-size: $mobile-font-size;
+    border-radius: $mobile-radius;
+
+    .digital:before {
+      border-radius: $mobile-radius $mobile-radius 0 0;
+    }
+
+    .digital:after {
+      border-radius: 0 0 $mobile-radius $mobile-radius;
+    }
+  }
+}
+
+@keyframes frontFlipDown {
+  0% {
+    transform: perspective($flip-perspective) rotateX(0deg);
+  }
+
+  100% {
+    transform: perspective($flip-perspective) rotateX(-180deg);
+  }
+}
+
+@keyframes backFlipDown {
+  0% {
+    transform: perspective($flip-perspective) rotateX(180deg);
+  }
+
+  100% {
+    transform: perspective($flip-perspective) rotateX(0deg);
+  }
+}
+
+@keyframes frontFlipUp {
+  0% {
+    transform: perspective($flip-perspective) rotateX(0deg);
+  }
+
+  100% {
+    transform: perspective($flip-perspective) rotateX(180deg);
+  }
+}
+
+@keyframes backFlipUp {
+  0% {
+    transform: perspective($flip-perspective) rotateX(-180deg);
+  }
+
+  100% {
+    transform: perspective($flip-perspective) rotateX(0deg);
+  }
+}
