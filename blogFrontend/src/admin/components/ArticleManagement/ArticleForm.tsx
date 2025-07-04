@@ -4,6 +4,10 @@ import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 import WordCount from '@/components/WordCount/WordCount';
 import styles from './ArticleForm.module.scss';
+import MarkdownEditor from './MarkdownEditor';
+import { marked } from 'marked';
+import MarkdownToolbar from './MarkdownToolbar';
+import { MarkdownImageAPI } from '@/api/MarkdownImageAPI';
 
 interface Tag {
   id: number;
@@ -28,6 +32,7 @@ interface ArticleFormProps {
 }
 
 const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSubmit }) => {
+
   const [formData, setFormData] = useState<ArticleFormData>({
     title: '',
     content: '',
@@ -47,6 +52,8 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
   const statusRef = useRef<HTMLDivElement>(null);
   const postTypeRef = useRef<HTMLDivElement>(null);
   const tagsRef = useRef<HTMLDivElement>(null);
+  const [showToolbar, setShowToolbar] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (initialValues) {
@@ -88,15 +95,6 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
     if (name === 'postType') setIsPostTypeOpen(false);
   };
 
-  const handleTagsChange = (tagId: number) => {
-    setFormData(prev => {
-      const newTags = prev.tags.includes(tagId)
-        ? prev.tags.filter(id => id !== tagId)
-        : [...prev.tags, tagId];
-      return { ...prev, tags: newTags };
-    });
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (onSubmit) {
@@ -104,6 +102,64 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
     }
   };
 
+  const insertAtCursor = (before: string, after: string = '') => {
+    if (!textareaRef.current) return;
+    const textarea = textareaRef.current;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const newValue = formData.content.slice(0, start) + before + formData.content.slice(start, end) + after + formData.content.slice(end);
+    setFormData(prev => ({ ...prev, content: newValue }));
+    setPreviewContent(newValue);
+    setTimeout(() => {
+      textarea.focus();
+      textarea.selectionStart = textarea.selectionEnd = start + before.length;
+    }, 0);
+  };
+
+  const handleImageUpload = async () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+
+    // 使用 Promise 包装文件选择
+    const filePromise = new Promise<File | null>((resolve) => {
+      input.onchange = () => {
+        if (input.files && input.files.length > 0) {
+          resolve(input.files[0]);
+        } else {
+          resolve(null);
+        }
+      };
+    });
+
+    input.click();
+
+    try {
+      const file = await filePromise;
+      if (!file) return; // 用户取消了选择
+
+      console.log('开始上传图片:', file.name);
+      const res = await MarkdownImageAPI.uploadImage(file);
+      console.log('上传响应:', res);
+
+      if (res && res.url) {
+        // 插入带尺寸的图片，用户可以根据需要调整
+        insertAtCursor(`<img src="${res.url}" alt="图片" width="500" height="300" />`);
+        console.log('图片插入成功:', res.url);
+      } else {
+        console.error('上传响应格式错误:', res);
+        alert('图片上传失败: 响应格式错误');
+      }
+    } catch (e) {
+      console.error('图片上传错误:', e);
+      alert(`图片上传失败: ${e instanceof Error ? e.message : '未知错误'}`);
+    } finally {
+      // 清理 input 元素
+      input.remove();
+    }
+  };
+
+  // @ts-ignore
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
       <div className={styles.formItem}>
@@ -120,30 +176,24 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
       </div>
 
       <div className={styles.formItem}>
-        <div className={styles.labelContainer}>
+        <div className={styles.labelContainer} style={{ position: 'relative' }}>
           <label className={styles.formLabel}>内容</label>
           <WordCount text={formData.content} />
+          <MarkdownToolbar
+            showToolbar={showToolbar}
+            setShowToolbar={setShowToolbar}
+            insertAtCursor={insertAtCursor}
+            handleImageUpload={handleImageUpload}
+          />
         </div>
-        <div className={styles.row}>
-          <div>
-            <textarea
-              name="content"
-              value={formData.content}
-              onChange={handleInputChange}
-              className={`${styles.editor} ${styles.textarea}`}
-              placeholder="支持 Markdown 格式和 HTML 标签"
-              required
-            />
-          </div>
-          <div className={styles.preview}>
-            <ReactMarkdown
-              rehypePlugins={[rehypeRaw]}
-              remarkPlugins={[remarkGfm]}
-            >
-              {previewContent}
-            </ReactMarkdown>
-          </div>
-        </div>
+        <MarkdownEditor
+          value={formData.content}
+          onChange={val => {
+            setFormData(prev => ({ ...prev, content: val }));
+            setPreviewContent(val);
+          }}
+          textareaRef={textareaRef}
+        />
       </div>
 
       <div className={styles.formItem}>
@@ -274,7 +324,12 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
                     key={tag.id}
                     type="button"
                     className={`${styles.tagButton} ${formData.tags.includes(tag.id) ? styles.selected : ''}`}
-                    onClick={() => handleTagsChange(tag.id)}
+                    onClick={() => {
+                      const newTags = formData.tags.includes(tag.id)
+                        ? formData.tags.filter(id => id !== tag.id)
+                        : [...formData.tags, tag.id];
+                      setFormData(prev => ({ ...prev, tags: newTags }));
+                    }}
                   >
                     {tag.name}
                   </button>

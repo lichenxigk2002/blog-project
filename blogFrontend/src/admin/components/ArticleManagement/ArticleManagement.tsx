@@ -5,6 +5,7 @@ import ArticleForm from './ArticleForm';
 import type { Article } from '@/types/Article';
 import styles from './ArticleManagement.module.scss';
 import Pagination from "@/admin/components/ui/Pagination/Pagination";
+import OperationTipModal from '../ui/OperationTipModal/OperationTipModal';
 
 
 const ArticleManagement: React.FC = () => {
@@ -23,6 +24,7 @@ const ArticleManagement: React.FC = () => {
   const [total, setTotal] = useState(0);
   const [sortField, setSortField] = useState<string>('');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [tipModal, setTipModal] = useState<{ open: boolean, message: string, type: 'success' | 'failure' }>({ open: false, message: '', type: 'success' });
 
   useEffect(() => {
     const start = (currentPage - 1) * pageSize;
@@ -48,7 +50,7 @@ const ArticleManagement: React.FC = () => {
       setTotal(data.length);
     } catch (error: any) {
       console.error('Failed to fetch articles:', error);
-      alert(error.message || '获取文章列表失败');
+      setTipModal({ open: true, message: error.message || '获取文章列表失败', type: 'failure' });
     } finally {
       setLoading(false);
     }
@@ -100,16 +102,16 @@ const ArticleManagement: React.FC = () => {
       if (editingArticle) {
         data.id = editingArticle.id;
         await ArticlesAPI.updateArticle(editingArticle.id, data);
-        alert('更新成功');
+        setTipModal({ open: true, message: '更新成功', type: 'success' });
       } else {
         await ArticlesAPI.createArticle(data);
-        alert('创建成功');
+        setTipModal({ open: true, message: '创建成功', type: 'success' });
       }
       setModalVisible(false);
       fetchArticles();
     } catch (e: any) {
       console.error('操作失败:', e);
-      alert(e.message || '操作失败');
+      setTipModal({ open: true, message: e.message || '操作失败', type: 'failure' });
     }
   };
 
@@ -119,12 +121,12 @@ const ArticleManagement: React.FC = () => {
     try {
       setLoading(true);
       await ArticlesAPI.deleteArticle(deletingArticle.id);
-      alert('删除成功');
+      setTipModal({ open: true, message: '删除成功', type: 'success' });
       setDeleteModalVisible(false);
       setDeletingArticle(null);
       await fetchArticles();
     } catch (error: any) {
-      alert(error.message || '删除失败');
+      setTipModal({ open: true, message: error.message || '删除失败', type: 'failure' });
     } finally {
       setLoading(false);
     }
@@ -431,6 +433,13 @@ const ArticleManagement: React.FC = () => {
           <div className={styles.loadingSpinner} />
         </div>
       )}
+
+      <OperationTipModal
+        open={tipModal.open}
+        onClose={() => setTipModal({ ...tipModal, open: false })}
+        message={tipModal.message}
+        type={tipModal.type}
+      />
     </div>
   );
 };

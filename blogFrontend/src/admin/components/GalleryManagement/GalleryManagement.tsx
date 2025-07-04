@@ -4,6 +4,7 @@ import type { Gallery } from '@/types/Gallery';
 import GalleryForm from './GalleryForm';
 import styles from './GalleryManagement.module.scss';
 import Pagination from "@/admin/components/ui/Pagination/Pagination";
+import OperationTipModal from '../ui/OperationTipModal/OperationTipModal';
 
 const GalleryManagement: React.FC = () => {
   const [allGalleries, setAllGalleries] = useState<Gallery[]>([]);
@@ -18,6 +19,7 @@ const GalleryManagement: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
+  const [tipModal, setTipModal] = useState<{ open: boolean, message: string, type: 'success' | 'failure' }>({ open: false, message: '', type: 'success' });
 
   useEffect(() => {
     const start = (currentPage - 1) * pageSize;
@@ -42,7 +44,7 @@ const GalleryManagement: React.FC = () => {
       setFilteredGalleries(data)
     } catch (error) {
       console.error('获取相册列表失败:', error);
-      alert('获取相册列表失败');
+      setTipModal({ open: true, message: '获取相册列表失败', type: 'failure' });
     } finally {
       setLoading(false);
     }
@@ -57,16 +59,16 @@ const GalleryManagement: React.FC = () => {
     try {
       if (editingGallery) {
         await GalleryAPI.updateGallery(editingGallery.id, formData);
-        alert('更新成功');
+        setTipModal({ open: true, message: '更新成功', type: 'success' });
       } else {
         await GalleryAPI.addGallery(formData);
-        alert('创建成功');
+        setTipModal({ open: true, message: '创建成功', type: 'success' });
       }
       setModalVisible(false);
       fetchGalleries();
     } catch (e: any) {
       console.error('操作失败:', e);
-      alert(e.message || '操作失败');
+      setTipModal({ open: true, message: e.message || '操作失败', type: 'failure' });
     }
   };
 
@@ -76,12 +78,12 @@ const GalleryManagement: React.FC = () => {
     try {
       setLoading(true);
       await GalleryAPI.deleteGallery(deletingGallery.id);
-      alert('删除成功');
+      setTipModal({ open: true, message: '删除成功', type: 'success' });
       setDeleteModalVisible(false);
       setDeletingGallery(null);
       await fetchGalleries();
     } catch (error: any) {
-      alert(error.message || '删除失败');
+      setTipModal({ open: true, message: error.message || '删除失败', type: 'failure' });
     } finally {
       setLoading(false);
     }
@@ -300,6 +302,14 @@ const GalleryManagement: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* 操作提示弹窗 */}
+      <OperationTipModal
+        open={tipModal.open}
+        onClose={() => setTipModal({ ...tipModal, open: false })}
+        message={tipModal.message}
+        type={tipModal.type}
+      />
     </div>
   );
 };

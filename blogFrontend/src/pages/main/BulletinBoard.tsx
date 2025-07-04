@@ -10,7 +10,6 @@ import PageHeader from '../../components/PageHeader/PageHeader';
 import { http } from '@/utils/request';
 import { ApiResponse } from '@/types/common';
 import Typewriter from '@/components/Typewriter/Typewriter';
-import { ShouZhang } from '../_app';
 
 const BulletinBoard: React.FC = () => {
     const { isDarkMode } = useTheme();
@@ -225,7 +224,7 @@ const BulletinBoard: React.FC = () => {
                                     </div>
                                     <p className={styles.messageContent}>
                                         {hoveredIndex === index
-                                            ? <div className={ShouZhang.className}><Typewriter text={item.content} delay={50} /></div>
+                                            ? <div className={styles.messageContentTypewriter}><Typewriter text={item.content} delay={50} /></div>
                                             : item.content}
                                     </p>
                                     {renderReply(item)}

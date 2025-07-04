@@ -3,6 +3,7 @@ import { CommentsAPI } from "@/api/CommentsAPI";
 import { Comment } from '@/types/Comment'
 import styles from './CommentManagement.module.scss'
 import Pagination from "@/admin/components/ui/Pagination/Pagination";
+import OperationTipModal from '../ui/OperationTipModal/OperationTipModal';
 
 const CommentManagement: React.FC = () => {
     // 状态管理
@@ -18,6 +19,7 @@ const CommentManagement: React.FC = () => {
     const [sortField, setSortField] = useState<string>('');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
     const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
+    const [tipModal, setTipModal] = useState<{ open: boolean, message: string, type: 'success' | 'failure' }>({ open: false, message: '', type: 'success' });
 
     // 当页码或每页条数改变时，重新计算当前页数据
     useEffect(() => {
@@ -67,15 +69,15 @@ const CommentManagement: React.FC = () => {
             setLoading(true);
             const response = await CommentsAPI.deleteComment(deletingComment.id);
             if (typeof response === 'string' || 'message' in response) {
-                alert('删除成功');
+                setTipModal({ open: true, message: '删除成功', type: 'success' });
                 setDeleteModalVisible(false);
                 setDeletingComment(null);
                 await fetchComments(); // 重新获取所有数据
             } else if ('error' in response) {
-                alert(response.error || '删除失败');
+                setTipModal({ open: true, message: response.error || '删除失败', type: 'failure' });
             }
         } catch (error: any) {
-            alert(error.message || '删除失败');
+            setTipModal({ open: true, message: error.message || '删除失败', type: 'failure' });
         } finally {
             setLoading(false);
         }
@@ -326,6 +328,14 @@ const CommentManagement: React.FC = () => {
                     </div>
                 </div>
             )}
+
+            {/* 操作提示弹窗 */}
+            <OperationTipModal
+                open={tipModal.open}
+                onClose={() => setTipModal({ ...tipModal, open: false })}
+                message={tipModal.message}
+                type={tipModal.type}
+            />
 
             {/* 加载状态 */}
             {loading && (

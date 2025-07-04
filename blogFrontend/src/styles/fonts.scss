@@ -6,3 +6,34 @@
   --font-comic: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
   --font-agency: 'Agency FB', 'Arial', sans-serif;
 }
+
+/* 字体文件引入 */
+@font-face {
+  font-family: 'YouYuan';
+  src: url('/fonts/幼圆.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Comic Sans MS';
+  src: url('/fonts/ComicSansMS.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Agency FB';
+  src: url('/fonts/AgencyFB.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ZiHun';
+  src: url('/fonts/ZiHun.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ShouZhang';
+  src: url('/fonts/ShouZhang.woff2') format('woff2');
+  font-display: swap;
+}

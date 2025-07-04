@@ -2,6 +2,7 @@ import React, { useState, FormEvent, useEffect } from 'react';
 import { AuthAPI } from '@/api/AuthAPI';
 import type { User, UserDTO } from '@/api/AuthAPI';
 import styles from './UserManagement.module.scss';
+import OperationTipModal from '../ui/OperationTipModal/OperationTipModal';
 
 const UserManagement: React.FC = () => {
     const [modalVisible, setModalVisible] = useState(false);
@@ -9,6 +10,7 @@ const UserManagement: React.FC = () => {
     const [users, setUsers] = useState<User[]>([]);
     const [editingUser, setEditingUser] = useState<User | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [tipModal, setTipModal] = useState<{ open: boolean, message: string, type: 'success' | 'failure' }>({ open: false, message: '', type: 'success' });
 
     useEffect(() => {
         fetchUsers();
@@ -44,31 +46,30 @@ const UserManagement: React.FC = () => {
 
             if (editingUser) {
                 await AuthAPI.updateUser(editingUser.id, data);
-                alert('更新成功');
+                setTipModal({ open: true, message: '更新成功', type: 'success' });
             } else {
                 await AuthAPI.register(data);
-                alert('创建成功');
+                setTipModal({ open: true, message: '创建成功', type: 'success' });
             }
             setModalVisible(false);
             setEditingUser(null);
             fetchUsers();
         } catch (e: any) {
             console.error('操作失败:', e);
-            alert(e.message || '操作失败');
+            setTipModal({ open: true, message: e.message || '操作失败', type: 'failure' });
         } finally {
             setLoading(false);
         }
     };
 
     const handleDelete = async (id: number) => {
-        if (!confirm('确定要删除这个用户吗？')) return;
+        setLoading(true);
         try {
-            setLoading(true);
             await AuthAPI.deleteUser(id);
-            alert('删除成功');
+            setTipModal({ open: true, message: '删除成功', type: 'success' });
             fetchUsers();
         } catch (error: any) {
-            alert(error.message || '删除失败');
+            setTipModal({ open: true, message: error.message || '删除失败', type: 'failure' });
         } finally {
             setLoading(false);
         }
@@ -148,7 +149,12 @@ const UserManagement: React.FC = () => {
                 </div>
             </div>
 
-
+            <OperationTipModal
+                open={tipModal.open}
+                onClose={() => setTipModal({ ...tipModal, open: false })}
+                message={tipModal.message}
+                type={tipModal.type}
+            />
 
             {/* 新建/编辑用户的模态框 */}
             {modalVisible && (

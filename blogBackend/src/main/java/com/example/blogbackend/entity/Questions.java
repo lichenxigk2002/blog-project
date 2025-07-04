@@ -46,7 +46,6 @@ public class Questions implements Serializable {
     /**
      * 分类
      */
-    private String category;
 
     private LocalDateTime createdAt;
 

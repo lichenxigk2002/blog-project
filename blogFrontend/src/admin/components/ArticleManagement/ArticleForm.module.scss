@@ -41,7 +41,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
   position: relative;
   z-index: 2;
   width: 100%;
@@ -56,7 +56,7 @@
 
 .editor {
   font-family: $font-main;
-  height: 400px;
+  height: 410px;
   resize: vertical;
   padding: 12px;
   border: 2px solid $primary-light;
@@ -72,7 +72,6 @@
   box-sizing: border-box;
   overflow-x: hidden;
   max-width: 100%;
-  margin-bottom: 20px;
 
   &:focus {
     outline: none;
@@ -81,10 +80,49 @@
   }
 }
 
+.previewContainer {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.previewHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba($primary-light, 0.1);
+  border: 2px solid $primary-light;
+  border-bottom: none;
+  border-radius: 12px 12px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: $primary;
+  font-family: $font-main;
+}
+
+.previewExpandButton {
+  background: none;
+  border: none;
+  color: $primary;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  @include transition();
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: rgba($primary, 0.1);
+    transform: scale(1.1);
+  }
+}
+
 .preview {
   padding: 16px;
   border: 2px solid $primary-light;
-  border-radius: 12px;
+  border-radius: 0 0 12px 12px;
   height: 400px;
   overflow-y: auto;
   overflow-x: hidden;
@@ -258,7 +296,7 @@
 .formItemRow {
   display: flex;
   gap: 32px;
-  margin-bottom: 32px;
+  margin-bottom: 16px;
   position: relative;
   width: 100%;
   box-sizing: border-box;
@@ -476,10 +514,16 @@
   @include transition();
   font-family: $font-main;
   white-space: nowrap;
+  min-width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
     border-color: $primary;
     background: rgba($primary, 0.1);
+    transform: translateY(-1px);
   }
 
   &.selected {
@@ -487,6 +531,278 @@
     color: $primary;
     border-color: $primary;
     font-weight: 600;
+  }
+}
+
+.toolbarPopover {
+  background: rgba(255, 255, 255, 0.98);
+  border: 2px solid $primary-light;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(180, 120, 255, 0.2);
+  backdrop-filter: blur(10px);
+
+  .toolbarSection {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba($primary-light, 0.3);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .sectionLabel {
+      font-size: 12px;
+      color: $primary;
+      font-weight: 600;
+      min-width: 40px;
+      font-family: $font-main;
+    }
+  }
+}
+
+// 全屏预览模态框样式
+.fullPreviewOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.fullPreviewModal {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 0.3s ease-out;
+  overflow: hidden;
+}
+
+.fullPreviewHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 2px solid $primary-light;
+  background: linear-gradient(90deg, rgba($primary-light, 0.1) 0%, rgba($accent, 0.1) 100%);
+
+  h3 {
+    margin: 0;
+    color: $primary;
+    font-size: 18px;
+    font-weight: 600;
+    font-family: $font-main;
+  }
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: $primary;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  @include transition();
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: rgba($primary, 0.1);
+    transform: scale(1.1);
+  }
+}
+
+.fullPreviewContent {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+  max-height: calc(90vh - 80px);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.6;
+  color: #333333;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $accent;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $primary-light;
+    border-radius: 4px;
+  }
+
+  // 预览内容样式
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin-top: 24px;
+    margin-bottom: 16px;
+    font-weight: 600;
+    line-height: 1.25;
+    color: #262626;
+  }
+
+  h1 {
+    font-size: 2em;
+  }
+
+  h2 {
+    font-size: 1.5em;
+  }
+
+  h3 {
+    font-size: 1.25em;
+  }
+
+  h4 {
+    font-size: 1em;
+  }
+
+  h5 {
+    font-size: 0.875em;
+  }
+
+  h6 {
+    font-size: 0.85em;
+  }
+
+  p {
+    margin-bottom: 16px;
+    line-height: 1.6;
+    color: #262626;
+  }
+
+  code {
+    padding: 0.2em 0.4em;
+    margin: 0;
+    font-size: 85%;
+    background-color: #f5f5f5;
+    border-radius: 3px;
+    color: #333333;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+  }
+
+  pre {
+    padding: 16px;
+    overflow-x: auto;
+    font-size: 85%;
+    line-height: 1.45;
+    background-color: #f5f5f5;
+    border-radius: 6px;
+    border: 1px solid #e8e8e8;
+
+    code {
+      padding: 0;
+      background-color: transparent;
+      border-radius: 0;
+      color: inherit;
+    }
+  }
+
+  blockquote {
+    padding: 0 1em;
+    color: #666666;
+    border-left: 4px solid #e8e8e8;
+    margin: 0 0 16px 0;
+    font-style: italic;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    overflow-x: auto;
+    display: block;
+  }
+
+  th,
+  td {
+    padding: 8px 12px;
+    border: 1px solid #e8e8e8;
+    text-align: left;
+  }
+
+  th {
+    background-color: #fafafa;
+    color: #262626;
+    font-weight: 600;
+  }
+
+  ul,
+  ol {
+    padding-left: 2em;
+    margin-bottom: 16px;
+  }
+
+  li {
+    margin-bottom: 8px;
+  }
+
+  hr {
+    height: 1px;
+    background-color: #e8e8e8;
+    border: none;
+    margin: 24px 0;
+  }
+
+  a {
+    color: #1890ff;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+// 动画效果
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
 }
 

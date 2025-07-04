@@ -5,6 +5,7 @@ import TagArticlesModal from './TagArticlesModal';
 import styles from './TagManagement.module.scss';
 import TagForm from './TagForm';
 import Pagination from "@/admin/components/ui/Pagination/Pagination";
+import OperationTipModal from '../ui/OperationTipModal/OperationTipModal';
 
 
 const TagManagement: React.FC = () => {
@@ -25,12 +26,13 @@ const TagManagement: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
+  const [tipModal, setTipModal] = useState<{ open: boolean, message: string, type: 'success' | 'failure' }>({ open: false, message: '', type: 'success' });
 
   useEffect(() => {
     const start = (currentPage - 1) * pageSize;
     const end = start + pageSize;
     setPaginatedTags(filteredTags.slice(start, end));
-  }, [currentPage, pageSize,allTags]);
+  }, [currentPage, pageSize, allTags]);
 
   useEffect(() => {
     fetchTags();
@@ -40,7 +42,7 @@ const TagManagement: React.FC = () => {
     try {
       const response = await TagsAPI.getTagsWithCount();
       let data = response as Tag[];
-      if (name){
+      if (name) {
         data = data.filter(tag =>
           tag.name.toLowerCase().includes(name.toLowerCase())
         );
@@ -68,16 +70,16 @@ const TagManagement: React.FC = () => {
 
       if (editingTag) {
         await TagsAPI.updateTag(editingTag.id, tagData);
-        alert('更新成功');
+        setTipModal({ open: true, message: '更新成功', type: 'success' });
       } else {
         await TagsAPI.createTag(tagData);
-        alert('创建成功');
+        setTipModal({ open: true, message: '创建成功', type: 'success' });
       }
       setModalVisible(false);
       fetchTags();
     } catch (e: any) {
       console.error('操作失败:', e);
-      alert(e.message || '操作失败');
+      setTipModal({ open: true, message: e.message || '操作失败', type: 'failure' });
     }
   };
 
@@ -87,12 +89,12 @@ const TagManagement: React.FC = () => {
     try {
       setLoading(true);
       await TagsAPI.deleteTag(deletingTag.id);
-      alert('删除成功');
+      setTipModal({ open: true, message: '删除成功', type: 'success' });
       setDeleteModalVisible(false);
       setDeletingTag(null);
       await fetchTags();
     } catch (error: any) {
-      alert(error.message || '删除失败');
+      setTipModal({ open: true, message: error.message || '删除失败', type: 'failure' });
     } finally {
       setLoading(false);
     }
@@ -262,14 +264,14 @@ const TagManagement: React.FC = () => {
       </div>
 
       <Pagination
-          total={total}
-          currentPage={currentPage}
-          pageSize={pageSize}
-          onPageChange={(page) => setCurrentPage(page)}
-          onPageSizeChange={(size) => {
-            setPageSize(size);
-            setCurrentPage(1);
-          }}
+        total={total}
+        currentPage={currentPage}
+        pageSize={pageSize}
+        onPageChange={(page) => setCurrentPage(page)}
+        onPageSizeChange={(size) => {
+          setPageSize(size);
+          setCurrentPage(1);
+        }}
       />
 
       {modalVisible && (
@@ -345,6 +347,14 @@ const TagManagement: React.FC = () => {
           setSelectedTag(null);
           setArticles([]);
         }}
+      />
+
+      {/* 操作提示弹窗 */}
+      <OperationTipModal
+        open={tipModal.open}
+        onClose={() => setTipModal({ ...tipModal, open: false })}
+        message={tipModal.message}
+        type={tipModal.type}
       />
 
       {loading && (

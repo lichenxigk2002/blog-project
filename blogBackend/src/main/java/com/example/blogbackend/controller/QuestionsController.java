@@ -147,4 +147,31 @@ public class QuestionsController {
       return Result.error("删除问题失败：" + e.getMessage());
     }
   }
+
+  /**
+   * 创建面试题
+   *
+   * @param questionDTO 面试题数据
+   * @return 创建后的面试题
+   */
+  @PostMapping
+  public Result<QuestionDTO> createQuestion(@RequestBody QuestionDTO questionDTO) {
+    try {
+      log.info("收到创建问题请求，请求体：{}", questionDTO);
+      if (questionDTO == null) {
+        log.error("请求体为空");
+        return Result.error("请求体不能为空");
+      }
+      QuestionDTO created = questionsService.createQuestion(questionDTO);
+      if (created == null) {
+        log.error("创建失败");
+        return Result.error("创建失败");
+      }
+      log.info("问题创建成功，数据：{}", created);
+      return Result.success(created);
+    } catch (Exception e) {
+      log.error("创建问题失败，错误：{}", e.getMessage(), e);
+      return Result.error("创建问题失败：" + e.getMessage());
+    }
+  }
 }

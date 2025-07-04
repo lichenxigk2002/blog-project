@@ -10,31 +10,6 @@ import { useRouter } from "next/router";
 import { LoginModalProvider, LoginModalContext } from '@/context/LoginModalContext';
 import AdminLogin from '@/components/AdminLogin/AdminLogin';
 import AdminRouteGuard from '@/admin/components/AdminRouteGuard/AdminRouteGuard';
-import localFont from 'next/font/local';
-
-// 字体配置
-const ziHun = localFont({
-    src: '../../public/fonts/ZiHun.woff2',
-    display: 'swap',
-});
-const youYuan = localFont({
-    src: '../../public/fonts/幼圆.woff2',
-    display: 'swap',
-});
-const agencyFB = localFont({
-    src: '../../public/fonts/AgencyFB.woff2',
-    display: 'swap',
-});
-const comicSansMS = localFont({
-    src: '../../public/fonts/ComicSansMS.woff2',
-    display: 'swap',
-});
-const ShouZhang = localFont({
-    src: '../../public/fonts/ShouZhang.woff2',
-    display: 'swap',
-});
-
-export { ShouZhang };
 
 // 创建主题包装组件
 function ThemeWrapper({ children }: { children: React.ReactNode }) {
@@ -89,10 +64,8 @@ const MyApp: React.FC<AppProps> = (props) => {
     return (
         <Provider store={store}>
             <div className={[
-                ziHun.className,
-                youYuan.className,
-                agencyFB.className,
-                comicSansMS.className,
+                // 字体配置
+                // 已移除 localFont 加载，统一用全局 SCSS 变量管理字体
             ].join(' ')}>
                 <AppContent {...props} />
             </div>

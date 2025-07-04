@@ -48,4 +48,12 @@ public interface IQuestionsService extends IService<Questions> {
    * @return 更新后的问题详情
    */
   QuestionDTO updateQuestion(Integer id, QuestionDTO questionDTO);
+
+  /**
+   * 创建问题
+   *
+   * @param questionDTO 问题DTO
+   * @return 创建后的问题详情
+   */
+  QuestionDTO createQuestion(QuestionDTO questionDTO);
 }

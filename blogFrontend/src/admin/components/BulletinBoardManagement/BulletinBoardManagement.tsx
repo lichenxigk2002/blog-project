@@ -4,6 +4,7 @@ import type { BulletinBoardProps } from '@/types/BulletinBoard';
 import styles from './BulletinBoardManagement.module.scss';
 import Pagination from "@/admin/components/ui/Pagination/Pagination";
 import BulletinBoardForm from './BulletinBoardForm';
+import OperationTipModal from '../ui/OperationTipModal/OperationTipModal';
 
 const statusMap: Record<string, { label: string; color: string }> = {
     pending: { label: '待审核', color: '#FFC107' },
@@ -25,6 +26,7 @@ const BulletinBoardManagement: React.FC = () => {
     const [total, setTotal] = useState(0);
     const [sortField, setSortField] = useState<string>('');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+    const [tipModal, setTipModal] = useState<{ open: boolean, message: string, type: 'success' | 'failure' }>({ open: false, message: '', type: 'success' });
 
     useEffect(() => {
         fetchMessages();
@@ -43,13 +45,14 @@ const BulletinBoardManagement: React.FC = () => {
                 setMessages([]);
                 setFilteredMessages([]);
                 setTotal(0);
+                setTipModal({ open: true, message: '获取留言列表失败', type: 'failure' });
             }
         } catch (error: any) {
             console.error('Failed to fetch messages:', error);
-            alert(error.message || '获取留言列表失败');
             setMessages([]);
             setFilteredMessages([]);
             setTotal(0);
+            setTipModal({ open: true, message: error.message || '获取留言列表失败', type: 'failure' });
         } finally {
             setLoading(false);
         }
@@ -64,16 +67,16 @@ const BulletinBoardManagement: React.FC = () => {
         try {
             if (editingMessage) {
                 await BulletinBoardAPI.updateMessage(editingMessage.id, values);
-                alert('更新成功');
+                setTipModal({ open: true, message: '更新成功', type: 'success' });
             } else {
                 await BulletinBoardAPI.createMessage(values);
-                alert('创建成功');
+                setTipModal({ open: true, message: '创建成功', type: 'success' });
             }
             setModalVisible(false);
             fetchMessages();
         } catch (e: any) {
             console.error('操作失败:', e);
-            alert(e.message || '操作失败');
+            setTipModal({ open: true, message: e.message || '操作失败', type: 'failure' });
         }
     };
 
@@ -83,12 +86,12 @@ const BulletinBoardManagement: React.FC = () => {
         try {
             setLoading(true);
             await BulletinBoardAPI.deleteMessage(deletingMessage.id);
-            alert('删除成功');
+            setTipModal({ open: true, message: '删除成功', type: 'success' });
             setDeleteModalVisible(false);
             setDeletingMessage(null);
             await fetchMessages();
         } catch (error: any) {
-            alert(error.message || '删除失败');
+            setTipModal({ open: true, message: error.message || '删除失败', type: 'failure' });
         } finally {
             setLoading(false);
         }
@@ -127,20 +130,20 @@ const BulletinBoardManagement: React.FC = () => {
     const handleStatusChange = async (id: number, status: 'pending' | 'approved' | 'rejected') => {
         try {
             await BulletinBoardAPI.updateStatus(id, status);
-            alert('状态更新成功');
+            setTipModal({ open: true, message: '状态更新成功', type: 'success' });
             fetchMessages();
         } catch (error: any) {
-            alert(error.message || '状态更新失败');
+            setTipModal({ open: true, message: error.message || '状态更新失败', type: 'failure' });
         }
     };
 
     const handleReply = async (id: number, reply: string) => {
         try {
             await BulletinBoardAPI.replyMessage(id, reply);
-            alert('回复成功');
+            setTipModal({ open: true, message: '回复成功', type: 'success' });
             fetchMessages();
         } catch (error: any) {
-            alert(error.message || '回复失败');
+            setTipModal({ open: true, message: error.message || '回复失败', type: 'failure' });
         }
     };
 
@@ -347,7 +350,7 @@ const BulletinBoardManagement: React.FC = () => {
                                 确认删除
                             </button>
                             <button
-                                className={styles.secondaryButton}
+                                className={styles.button}
                                 onClick={() => {
                                     setDeleteModalVisible(false);
                                     setDeletingMessage(null);
@@ -359,6 +362,13 @@ const BulletinBoardManagement: React.FC = () => {
                     </div>
                 </div>
             )}
+
+            <OperationTipModal
+                open={tipModal.open}
+                onClose={() => setTipModal({ ...tipModal, open: false })}
+                message={tipModal.message}
+                type={tipModal.type}
+            />
         </div>
     );
 };

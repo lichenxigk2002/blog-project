@@ -129,4 +129,35 @@ public class QuestionsServiceImpl extends ServiceImpl<QuestionsMapper, Questions
       throw e;
     }
   }
+
+  @Override
+  @Transactional
+  public QuestionDTO createQuestion(QuestionDTO questionDTO) {
+    try {
+      log.info("开始创建问题，数据：{}", questionDTO);
+      // 构造实体
+      Questions question = new Questions();
+      question.setTitle(questionDTO.getTitle());
+      question.setContent(questionDTO.getContent());
+      question.setDifficulty(questionDTO.getDifficulty());
+      question.setStatus(questionDTO.getStatus());
+      question.setViews(questionDTO.getViews() != null ? questionDTO.getViews() : 0);
+      question.setLikes(questionDTO.getLikes() != null ? questionDTO.getLikes() : 0);
+      question.setCreatedAt(java.time.LocalDateTime.now());
+      question.setUpdatedAt(java.time.LocalDateTime.now());
+      // 插入数据库
+      boolean saved = this.save(question);
+      if (!saved) {
+        log.error("插入问题失败");
+        throw new RuntimeException("插入问题失败");
+      }
+      // 查询插入后的完整 DTO
+      QuestionDTO created = baseMapper.selectQuestionWithTagsById(question.getId());
+      log.info("问题创建成功，ID：{}", question.getId());
+      return created;
+    } catch (Exception e) {
+      log.error("创建问题失败，错误：{}", e.getMessage(), e);
+      throw e;
+    }
+  }
 }

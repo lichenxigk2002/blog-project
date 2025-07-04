@@ -5,6 +5,7 @@ import type { QuestionsFormData } from './QuestionsForm';
 import styles from './QuestionsManagement.module.scss';
 import Pagination from "@/admin/components/ui/Pagination/Pagination";
 import QuestionsForm from './QuestionsForm';
+import OperationTipModal from '../ui/OperationTipModal/OperationTipModal';
 
 const difficultyMap: Record<string, { label: string; color: string }> = {
     easy: { label: '简单', color: '#4CAF50' },
@@ -26,6 +27,7 @@ const QuestionsManagement: React.FC = () => {
     const [total, setTotal] = useState(0);
     const [sortField, setSortField] = useState<string>('');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+    const [tipModal, setTipModal] = useState<{ open: boolean, message: string, type: 'success' | 'failure' }>({ open: false, message: '', type: 'success' });
 
     useEffect(() => {
         fetchQuestions();
@@ -82,7 +84,7 @@ const QuestionsManagement: React.FC = () => {
                 };
                 const response = await QuestionsAPI.updateQuestion(editingQuestion.id, updateData);
                 if (response.data) {
-                    alert('更新成功');
+                    setTipModal({ open: true, message: '更新成功', type: 'success' });
                     setModalVisible(false);
                     fetchQuestions();
                 } else {
@@ -96,7 +98,7 @@ const QuestionsManagement: React.FC = () => {
                 };
                 const response = await QuestionsAPI.createQuestion(createData);
                 if (response.data) {
-                    alert('创建成功');
+                    setTipModal({ open: true, message: '创建成功', type: 'success' });
                     setModalVisible(false);
                     fetchQuestions();
                 } else {
@@ -104,7 +106,7 @@ const QuestionsManagement: React.FC = () => {
                 }
             }
         } catch (e: any) {
-            alert(e.message || '操作失败');
+            setTipModal({ open: true, message: e.message || '操作失败', type: 'failure' });
         } finally {
             setLoading(false);
         }
@@ -116,12 +118,12 @@ const QuestionsManagement: React.FC = () => {
         try {
             setLoading(true);
             await QuestionsAPI.deleteQuestion(deletingQuestion.id);
-            alert('删除成功');
+            setTipModal({ open: true, message: '删除成功', type: 'success' });
             setDeleteModalVisible(false);
             setDeletingQuestion(null);
             await fetchQuestions();
         } catch (error: any) {
-            alert(error.message || '删除失败');
+            setTipModal({ open: true, message: error.message || '删除失败', type: 'failure' });
         } finally {
             setLoading(false);
         }
@@ -383,6 +385,14 @@ const QuestionsManagement: React.FC = () => {
                     </div>
                 </div>
             )}
+
+            {/* 操作提示弹窗 */}
+            <OperationTipModal
+                open={tipModal.open}
+                onClose={() => setTipModal({ ...tipModal, open: false })}
+                message={tipModal.message}
+                type={tipModal.type}
+            />
         </div>
     );
 };

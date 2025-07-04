@@ -326,9 +326,10 @@ $font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
 
 .modalFooter {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 12px;
   margin-top: 24px;
+  margin-bottom: 24px;
   padding-top: 24px;
   border-top: 2px solid #fbeaff;
   position: relative;
@@ -460,5 +461,25 @@ $font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
   .searchInput {
     width: 100%;
     max-width: none;
+  }
+}
+
+.modalInput {
+  width: 80px;
+  padding: 8px 12px;
+  border: 2px solid $primary-light;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  color: $primary-dark;
+  font-size: 15px;
+  font-family: $font-main;
+  margin-top: 4px;
+  margin-bottom: 0;
+  @include transition();
+
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba($primary, 0.2);
   }
 }

@@ -4,6 +4,7 @@ import type { ThoughtsProps } from '@/types/Thoughts';
 import styles from './ThoughtsManagement.module.scss';
 import Pagination from "@/admin/components/ui/Pagination/Pagination";
 import ThoughtsForm from './ThoughtsForm';
+import OperationTipModal from '../ui/OperationTipModal/OperationTipModal';
 
 const moodMap: Record<string, string> = {
     happy: '😄',
@@ -28,6 +29,7 @@ const ThoughtsManagement: React.FC = () => {
     const [total, setTotal] = useState(0);
     const [sortField, setSortField] = useState<string>('');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+    const [tipModal, setTipModal] = useState<{ open: boolean, message: string, type: 'success' | 'failure' }>({ open: false, message: '', type: 'success' });
 
     useEffect(() => {
         fetchThoughts();
@@ -37,15 +39,15 @@ const ThoughtsManagement: React.FC = () => {
         setLoading(true);
         try {
             const response = await ThoughtsAPI.getAllThoughts();
-            if (!response || 'error' in response) {
-                throw new Error(response?.error || '获取思考列表失败');
+            if (!response) {
+                throw new Error('获取思考列表失败');
             }
             setThoughts(response);
             setFilteredThoughts(response);
             setTotal(response.length);
         } catch (error: any) {
             console.error('Failed to fetch thoughts:', error);
-            alert(error.message || '获取思考列表失败');
+            setTipModal({ open: true, message: error.message || '获取思考列表失败', type: 'failure' });
         } finally {
             setLoading(false);
         }
@@ -60,16 +62,16 @@ const ThoughtsManagement: React.FC = () => {
         try {
             if (editingThought) {
                 await ThoughtsAPI.updateThought({ ...values, id: editingThought.id });
-                alert('更新成功');
+                setTipModal({ open: true, message: '更新成功', type: 'success' });
             } else {
                 await ThoughtsAPI.createThought(values);
-                alert('创建成功');
+                setTipModal({ open: true, message: '创建成功', type: 'success' });
             }
             setModalVisible(false);
             fetchThoughts();
         } catch (e: any) {
             console.error('操作失败:', e);
-            alert(e.message || '操作失败');
+            setTipModal({ open: true, message: e.message || '操作失败', type: 'failure' });
         }
     };
 
@@ -79,12 +81,12 @@ const ThoughtsManagement: React.FC = () => {
         try {
             setLoading(true);
             await ThoughtsAPI.deleteThought(deletingThought.id);
-            alert('删除成功');
+            setTipModal({ open: true, message: '删除成功', type: 'success' });
             setDeleteModalVisible(false);
             setDeletingThought(null);
             await fetchThoughts();
         } catch (error: any) {
-            alert(error.message || '删除失败');
+            setTipModal({ open: true, message: error.message || '删除失败', type: 'failure' });
         } finally {
             setLoading(false);
         }
@@ -341,6 +343,14 @@ const ThoughtsManagement: React.FC = () => {
                     </div>
                 </div>
             )}
+
+            {/* 操作提示弹窗 */}
+            <OperationTipModal
+                open={tipModal.open}
+                onClose={() => setTipModal({ ...tipModal, open: false })}
+                message={tipModal.message}
+                type={tipModal.type}
+            />
         </div>
     );
 };
