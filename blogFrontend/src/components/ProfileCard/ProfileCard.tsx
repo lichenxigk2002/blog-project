@@ -2,9 +2,10 @@ import { FiArrowRight } from 'react-icons/fi';
 import styles from './ProfileCard.module.scss';
 import React from "react";
 import { motion } from 'framer-motion';
-import {FaGithub} from "react-icons/fa";
+import { FaGithub } from "react-icons/fa";
+import Image from "next/image";
 
-const ProfileCard:React.FC = () => {
+const ProfileCard: React.FC = () => {
 
     // 定义动画变体
     const cardVariants = {
@@ -17,14 +18,14 @@ const ProfileCard:React.FC = () => {
             opacity: 1,
             transition: {
                 duration: 0.6,
-                ease: "easeOut"
+                ease: "easeOut" as const
             }
         },
         hover: {
             y: -10,
             transition: {
                 duration: 0.3,
-                ease: "easeInOut"
+                ease: "easeInOut" as const
             }
         }
     };
@@ -44,10 +45,15 @@ const ProfileCard:React.FC = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
             >
-                <img
+                <Image
                     src="/images/avatar_20250520_215057.png"
                     alt="用户头像"
                     className={styles.avatar}
+                    width={120}
+                    height={120}
+                    priority
+                    placeholder="blur"
+                    blurDataURL="/images/avatar_blur.png"
                 />
                 <div className={styles.profileInfo}>
                     <motion.h1
@@ -107,21 +113,30 @@ const ProfileCard:React.FC = () => {
                 transition={{ delay: 1.6, duration: 0.5 }}
             >
                 <motion.a
-                    href="https://github.com/lichenx2002?tab=projects"
+                    href="https://github.com/lichenxigk2002"
+                    target="_blank"
                     className={styles.profileLink}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                 >
-                    <FaGithub style={{color:'var(--text)'}}/>
+                    <FaGithub style={{ color: 'var(--text)' }} />
                     <div className={styles.aLink}>My GitHub</div>
                 </motion.a>
                 <motion.a
-                    href="/blog/public"
+                    href="https://www.yuque.com/gufangbuzishang-lzxva"
+                    target="_blank"
                     className={styles.profileLink}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                 >
-                    HomePage <FiArrowRight className={styles.linkIcon} />
+                    <Image
+                        src="/images/yuque.png"
+                        alt="语雀图标"
+                        width={16}
+                        height={16}
+                        className={styles.linkIcon}
+                    />
+                    My garden
                 </motion.a>
             </motion.div>
         </motion.div>

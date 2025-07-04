@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styles from './OperationTipModal.module.scss';
+import Image from "next/image";
 
 const iconMap = {
   success: '/images/success.png',
@@ -16,6 +17,7 @@ interface OperationTipModalProps {
   width?: number;
   iconSize?: number;
   icon?: string;
+  theme: string;
 }
 
 const OperationTipModal: React.FC<OperationTipModalProps> = ({
@@ -25,7 +27,8 @@ const OperationTipModal: React.FC<OperationTipModalProps> = ({
   type = 'success',
   width = 280,
   iconSize = 128,
-  icon
+  icon,
+  theme
 }) => {
   const [show, setShow] = useState(open);
   const [leaving, setLeaving] = useState(false);
@@ -65,11 +68,16 @@ const OperationTipModal: React.FC<OperationTipModalProps> = ({
         style={{ width }}
         onClick={e => e.stopPropagation()}
       >
-        <img
+        <Image
           src={icon || iconMap[type] || iconMap.success}
           alt={type}
           className={styles.icon}
-          style={{ width: iconSize, height: iconSize }}
+          width={iconSize}
+          height={iconSize}
+          priority
+          quality={60}
+          placeholder="blur"
+          blurDataURL="/images/placeholder.png"
         />
         <div className={styles.message}>{message}</div>
       </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Head from "next/head";
 import Image from 'next/image';
 import styles from './Home/Home.module.scss'
@@ -19,6 +19,8 @@ const Home: React.FC = () => {
     const [tags, setTags] = useState<Tag[]>([]);
     const [stats, setStats] = useState({ articles: 0, tags: 0, views: 0 });
     const [recentPhotos, setRecentPhotos] = useState<Gallery[]>([]);
+    const [showMainContent, setShowMainContent] = useState(false);
+    const mainContentRef = useRef<HTMLDivElement>(null);
 
     // 添加滚动处理函数
     const handleArrowClick = () => {
@@ -97,6 +99,21 @@ const Home: React.FC = () => {
         fetchLatestArticles();
         fetchRecentPhotos();
         fetchTags();
+
+        // IntersectionObserver 懒加载 mainContent
+        const observer = new window.IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting) {
+                    setShowMainContent(true);
+                    observer.disconnect();
+                }
+            },
+            { rootMargin: '0px 0px 200px 0px' }
+        );
+        if (mainContentRef.current) {
+            observer.observe(mainContentRef.current);
+        }
+        return () => observer.disconnect();
     }, []);
 
 
@@ -143,76 +160,80 @@ const Home: React.FC = () => {
                     </div>
                 </div>
 
-                <div id="mainContent" className={styles.mainContentArea}>
-                    <div className={styles.mainContentLeft}>
-                        <h2 className={styles.latestArticlesTitle}>最新文章</h2>
-                        <div className={styles.articlesGrid}>
-                            {latestArticles.map((article: Article) => (
-                                <Link href={`/main/Articles/${article.id}`} key={article.id}>
-                                    <div className={styles.articleCard}>
-                                        <div>
-                                            <h3 className={styles.articleTitle}>{article.title}</h3>
-                                            <p className={styles.articleDescription}>
-                                                {article.excerpt || article.content.slice(0, 100)}
-                                            </p>
-                                        </div>
-                                        <div className={styles.articleMeta}>
-                                            <span>{formatDate(article.createdAt)}</span>
-                                            <span>{article.viewCount || 0} 阅读</span>
-                                        </div>
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className={styles.mainContentRight}>
-                        <h2 className={styles.latestArticlesTitle}>近期照片</h2>
-                        <div className={styles.photosGrid}>
-                            {recentPhotos.map((photo) => (
-                                <Link href="/main/Gallery" key={photo.id}>
-                                    <div className={styles.photoCard}>
-                                        <Image
-                                            src={photo.coverImage || '/default-image.jpg'}
-                                            alt={photo.title}
-                                            width={300}
-                                            height={200}
-                                            className={styles.photoImage}
-                                            placeholder="blur"
-                                            blurDataURL="/default-image.jpg"
-                                            onError={() => {
-                                                // next/image 不支持 onError，但会使用 blurDataURL 作为 fallback
-                                                console.warn(`Failed to load image: ${photo.coverImage}`);
-                                            }}
-                                        />
-                                        <div className={styles.photoInfo}>
-                                            <h3>{photo.title}</h3>
-                                            <span>{photo.date}</span>
-                                        </div>
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
-
-                        <section className={styles.stats}>
-                            <h2>博客统计</h2>
-                            <div className={styles.statsGrid}>
-                                <div className={styles.statItem}>
-                                    <span>{stats.articles}</span>
-                                    <p>文章数</p>
-                                </div>
-                                <div className={styles.statItem}>
-                                    <span>{stats.tags}</span>
-                                    <p>标签数</p>
-                                </div>
-                                <div className={styles.statItem}>
-                                    <span>{stats.views}</span>
-                                    <p>总访问量</p>
+                <div ref={mainContentRef} id="mainContent" className={styles.mainContentArea}>
+                    {showMainContent && (
+                        <>
+                            <div className={styles.mainContentLeft}>
+                                <h2 className={styles.latestArticlesTitle}>最新文章</h2>
+                                <div className={styles.articlesGrid}>
+                                    {latestArticles.map((article: Article) => (
+                                        <Link href={`/main/Articles/${article.id}`} key={article.id}>
+                                            <div className={styles.articleCard}>
+                                                <div>
+                                                    <h3 className={styles.articleTitle}>{article.title}</h3>
+                                                    <p className={styles.articleDescription}>
+                                                        {article.excerpt || article.content.slice(0, 100)}
+                                                    </p>
+                                                </div>
+                                                <div className={styles.articleMeta}>
+                                                    <span>{formatDate(article.createdAt)}</span>
+                                                    <span>{article.viewCount || 0} 阅读</span>
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    ))}
                                 </div>
                             </div>
-                        </section>
 
-                    </div>
+                            <div className={styles.mainContentRight}>
+                                <h2 className={styles.latestArticlesTitle}>近期照片</h2>
+                                <div className={styles.photosGrid}>
+                                    {recentPhotos.map((photo) => (
+                                        <Link href="/main/Gallery" key={photo.id}>
+                                            <div className={styles.photoCard}>
+                                                <Image
+                                                    src={photo.coverImage || '/default-image.jpg'}
+                                                    alt={photo.title}
+                                                    width={300}
+                                                    height={200}
+                                                    className={styles.photoImage}
+                                                    placeholder="blur"
+                                                    blurDataURL="/default-image.jpg"
+                                                    onError={() => {
+                                                        // next/image 不支持 onError，但会使用 blurDataURL 作为 fallback
+                                                        console.warn(`Failed to load image: ${photo.coverImage}`);
+                                                    }}
+                                                />
+                                                <div className={styles.photoInfo}>
+                                                    <h3>{photo.title}</h3>
+                                                    <span>{photo.date}</span>
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    ))}
+                                </div>
+
+                                <section className={styles.stats}>
+                                    <h2>博客统计</h2>
+                                    <div className={styles.statsGrid}>
+                                        <div className={styles.statItem}>
+                                            <span>{stats.articles}</span>
+                                            <p>文章数</p>
+                                        </div>
+                                        <div className={styles.statItem}>
+                                            <span>{stats.tags}</span>
+                                            <p>标签数</p>
+                                        </div>
+                                        <div className={styles.statItem}>
+                                            <span>{stats.views}</span>
+                                            <p>总访问量</p>
+                                        </div>
+                                    </div>
+                                </section>
+
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
         </div>
