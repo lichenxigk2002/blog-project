@@ -6,6 +6,7 @@ import EmojiPicker from '../EmojiPicker/EmojiPicker';
 import styles from './Comments.module.scss';
 import { LoginModalContext } from '@/context/LoginModalContext';
 import { CommentIcon, HeartIcon, TrashIcon, LoginIcon, SmileIcon } from '@/client/components/ui/Icons'
+import OperationTipModal from '@/components/OperationTipModal/OperationTipModal';
 
 interface CommentsProps {
   articleId: number;
@@ -330,6 +331,9 @@ const Comments: React.FC<CommentsProps> = ({ articleId }) => {
   const [replyingTo, setReplyingTo] = useState<Comment | null>(null);
   const user = useAppSelector(state => state.auth.user);
   const isLoggedIn = !!user;
+  const [tipOpen, setTipOpen] = useState(false);
+  const [tipMessage, setTipMessage] = useState('');
+  const [tipType, setTipType] = useState<'success' | 'error' | 'info' | 'warning'>('error');
 
   // 恢复 useEffect 钩子，确保组件挂载时加载评论
   useEffect(() => {
@@ -344,7 +348,9 @@ const Comments: React.FC<CommentsProps> = ({ articleId }) => {
       setComments(response);
     } catch (err) {
       console.error('Error fetching comments:', err);
-      setError(err instanceof Error ? err.message : '获取评论失败');
+      setTipMessage(err instanceof Error ? err.message : '获取评论失败');
+      setTipType('error');
+      setTipOpen(true);
     } finally {
       setLoading(false);
     }
@@ -352,7 +358,9 @@ const Comments: React.FC<CommentsProps> = ({ articleId }) => {
 
   const handleSubmit = async (content: string, parentId?: number) => {
     if (!user) {
-      setError('请先登录');
+      setTipMessage('请先登录');
+      setTipType('warning');
+      setTipOpen(true);
       return;
     }
 
@@ -368,12 +376,17 @@ const Comments: React.FC<CommentsProps> = ({ articleId }) => {
       if (typeof response === 'string') {
         await fetchComments();
         setReplyingTo(null);
+        setTipMessage('评论发布成功');
+        setTipType('success');
+        setTipOpen(true);
         return;
       }
 
       // 处理错误响应
       if ('error' in response) {
-        setError(response.error || '评论发布失败');
+        setTipMessage(response.error || '评论发布失败');
+        setTipType('error');
+        setTipOpen(true);
         return;
       }
 
@@ -381,9 +394,14 @@ const Comments: React.FC<CommentsProps> = ({ articleId }) => {
       if ('message' in response) {
         await fetchComments();
         setReplyingTo(null);
+        setTipMessage(response.message || '评论发布成功');
+        setTipType('success');
+        setTipOpen(true);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : '评论发布失败');
+      setTipMessage(err instanceof Error ? err.message : '评论发布失败');
+      setTipType('error');
+      setTipOpen(true);
     }
   };
 
@@ -394,34 +412,50 @@ const Comments: React.FC<CommentsProps> = ({ articleId }) => {
       if (typeof response === 'string') {
         // 如果是成功消息字符串
         setComments(prev => prev.filter(c => c.id !== id));
+        setTipMessage('删除成功');
+        setTipType('success');
+        setTipOpen(true);
         return;
       }
       if ('error' in response) {
         // 如果是错误响应
-        throw new Error(response.error);
+        setTipMessage(response.error || '删除失败');
+        setTipType('error');
+        setTipOpen(true);
+        return;
       }
       // 如果是 CommentOperationResponse
       if (response.success) {
         setComments(prev => prev.filter(c => c.id !== id));
+        setTipMessage('删除成功');
+        setTipType('success');
+        setTipOpen(true);
       } else {
-        throw new Error(response.message || '删除失败');
+        setTipMessage(response.message || '删除失败');
+        setTipType('error');
+        setTipOpen(true);
       }
     } catch (error) {
-      console.error('删除评论失败:', error);
-      // 可以在这里添加错误提示
+      setTipMessage(error instanceof Error ? error.message : '删除评论失败');
+      setTipType('error');
+      setTipOpen(true);
     }
   };
 
   const handleLike = async (commentId: number) => {
     if (!user) {
-      setError('请先登录');
+      setTipMessage('请先登录');
+      setTipType('warning');
+      setTipOpen(true);
       return;
     }
     try {
       // 实现点赞逻辑
       await CommentsAPI.likeComment(commentId);
     } catch (err: any) {
-      setError(err.message || '点赞失败');
+      setTipMessage(err.message || '点赞失败');
+      setTipType('error');
+      setTipOpen(true);
     }
   };
 
@@ -432,7 +466,12 @@ const Comments: React.FC<CommentsProps> = ({ articleId }) => {
   return (
     <div className={styles.commentsContainer}>
       <h2 className={styles.title}>评论 ({comments.length})</h2>
-      {error && <div className={styles.error}>{error}</div>}
+      <OperationTipModal
+        open={tipOpen}
+        onClose={() => setTipOpen(false)}
+        message={tipMessage}
+        type={tipType}
+      />
       <CommentForm
         onSubmit={handleSubmit}
         loading={loading}

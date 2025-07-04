@@ -1,0 +1,66 @@
+$text-color: var(--text);
+
+.overlay {
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.2); // 半透明
+  backdrop-filter: blur(1.25rem); // 毛玻璃模糊
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(162, 89, 255, 0.12), 0 1.5px 6px rgba(0, 0, 0, 0.06);
+  padding: 32px 24px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 180px;
+  animation: fadeInUp 0.35s cubic-bezier(.23, 1.01, .32, 1) both;
+}
+
+.icon {
+  margin-bottom: 16px;
+  border-radius: 12px;
+}
+
+.message {
+  font-size: 18px;
+  font-family: 'Comic Sans MS', 'PingFang SC', Arial, sans-serif;
+  color: $text-color;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOutDown {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+}
+
+.card-leave {
+  animation: fadeOutDown 1s cubic-bezier(.23, 1.01, .32, 1) both;
+}

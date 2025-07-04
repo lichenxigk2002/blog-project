@@ -7,6 +7,7 @@ import LoadingSpinner from "@/components/LoadingSpinner/LoadingSpinner";
 import Head from "next/head";
 import PageHeader from '../../components/PageHeader/PageHeader';
 import type { FriendLinks } from "@/types/FriendLinks";
+import OperationTipModal from '@/components/OperationTipModal/OperationTipModal';
 
 
 const SITE_INFO = {
@@ -35,6 +36,9 @@ const FriendLinks: React.FC = () => {
     });
     const [modalOpen, setModalOpen] = useState(false);
     const [hoverColors, setHoverColors] = useState<Record<string, { h3: string, p: string }>>({});
+    const [tipOpen, setTipOpen] = useState(false);
+    const [tipMessage, setTipMessage] = useState('');
+    const [tipType, setTipType] = useState<'success' | 'error' | 'info' | 'warning'>('success');
 
     function getRandomColor() {
         const letters = '89ABCDEF';
@@ -93,12 +97,16 @@ const FriendLinks: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!formData.name || !formData.url || !formData.description || !formData.avatarUrl) {
-            alert('请填写所有必填字段');
+            setTipMessage('请填写所有必填字段');
+            setTipType('warning');
+            setTipOpen(true);
             return;
         }
-        const urlRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
+        const urlRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/;
         if (!urlRegex.test(formData.url)) {
-            alert('请输入有效的网站地址');
+            setTipMessage('请输入有效的网站地址');
+            setTipType('warning');
+            setTipOpen(true);
             return;
         }
         try {
@@ -112,9 +120,13 @@ const FriendLinks: React.FC = () => {
             setFormData({ name: '', url: '', description: '', avatarUrl: '' });
             await fetchFriendLinks();
             setModalOpen(false);
-            alert('友链申请已提交！');
+            setTipMessage('友链申请已提交！');
+            setTipType('success');
+            setTipOpen(true);
         } catch (error) {
-            alert('提交失败，请稍后重试');
+            setTipMessage('提交失败，请稍后重试');
+            setTipType('error');
+            setTipOpen(true);
         }
     };
 
@@ -259,6 +271,12 @@ const FriendLinks: React.FC = () => {
                     </div>
                 </div>
             )}
+            <OperationTipModal
+                open={tipOpen}
+                onClose={() => setTipOpen(false)}
+                message={tipMessage}
+                type={tipType}
+            />
         </div>
     );
 };

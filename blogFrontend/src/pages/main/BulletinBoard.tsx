@@ -10,6 +10,7 @@ import PageHeader from '../../components/PageHeader/PageHeader';
 import { http } from '@/utils/request';
 import { ApiResponse } from '@/types/common';
 import Typewriter from '@/components/Typewriter/Typewriter';
+import OperationTipModal from '@/components/OperationTipModal/OperationTipModal';
 
 const BulletinBoard: React.FC = () => {
     const { isDarkMode } = useTheme();
@@ -29,6 +30,9 @@ const BulletinBoard: React.FC = () => {
         updatedAt: new Date().toISOString()
     });
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+    const [tipOpen, setTipOpen] = useState(false);
+    const [tipMessage, setTipMessage] = useState('');
+    const [tipType, setTipType] = useState<'success' | 'error' | 'info' | 'warning'>('success');
 
     // 获取留言列表
     const fetchMessages = async () => {
@@ -42,7 +46,9 @@ const BulletinBoard: React.FC = () => {
             }
         } catch (error: any) {
             console.error('获取留言失败:', error);
-            alert(error.message || '获取留言失败');
+            setTipMessage(error.message || '获取留言失败');
+            setTipType('error');
+            setTipOpen(true);
         }
     };
 
@@ -87,13 +93,17 @@ const BulletinBoard: React.FC = () => {
 
         // 表单验证
         if (!formData.name || !formData.email || !formData.content) {
-            alert('请填写所有必填字段');
+            setTipMessage('请填写所有必填字段');
+            setTipType('warning');
+            setTipOpen(true);
             return;
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(formData.email)) {
-            alert('请输入有效的邮箱地址');
+            setTipMessage('请输入有效的邮箱地址');
+            setTipType('warning');
+            setTipOpen(true);
             return;
         }
 
@@ -117,7 +127,9 @@ const BulletinBoard: React.FC = () => {
             const response = await BulletinBoardAPI.createMessage(messageData);
 
             if (response) {
-                alert('留言成功！');
+                setTipMessage('留言成功！');
+                setTipType('success');
+                setTipOpen(true);
                 setIsModalOpen(false);
                 setFormData({
                     id: 0,
@@ -136,7 +148,9 @@ const BulletinBoard: React.FC = () => {
             }
         } catch (error: any) {
             console.error('提交留言失败:', error);
-            alert(error.message || '留言失败，请稍后重试');
+            setTipMessage(error.message || '留言失败，请稍后重试');
+            setTipType('error');
+            setTipOpen(true);
         }
     };
 
@@ -349,6 +363,12 @@ const BulletinBoard: React.FC = () => {
                     </form>
                 </div>
             </div>
+            <OperationTipModal
+                open={tipOpen}
+                onClose={() => setTipOpen(false)}
+                message={tipMessage}
+                type={tipType}
+            />
         </div>
     );
 };

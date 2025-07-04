@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import { LoginModalProvider, LoginModalContext } from '@/context/LoginModalContext';
 import AdminLogin from '@/components/AdminLogin/AdminLogin';
 import AdminRouteGuard from '@/admin/components/AdminRouteGuard/AdminRouteGuard';
+import OperationTipModal from '@/components/OperationTipModal/OperationTipModal';
 
 // 创建主题包装组件
 function ThemeWrapper({ children }: { children: React.ReactNode }) {
@@ -33,10 +34,36 @@ function ThemeWrapper({ children }: { children: React.ReactNode }) {
 function AppContent({ Component, pageProps }: AppProps) {
     const router = useRouter();
     const isAdminPage = router.pathname.startsWith('/admin');
+    const { isDarkMode } = useTheme();
+    const [showThemeModal, setShowThemeModal] = React.useState(false);
+    const [themeModalInfo, setThemeModalInfo] = React.useState({ message: '', type: 'info', icon: '/images/daytime.png' });
+    const [prevDarkMode, setPrevDarkMode] = React.useState(isDarkMode);
+
+    React.useEffect(() => {
+        // 首次挂载只记录，不弹窗
+        if (prevDarkMode === isDarkMode) return;
+
+        // 主题切换时弹窗
+        setShowThemeModal(true);
+        setThemeModalInfo({
+            message: isDarkMode ? '已切换为夜间模式' : '已切换为日间模式',
+            type: 'info',
+            icon: isDarkMode ? '/images/night.png' : '/images/daytime.png',
+        });
+        setPrevDarkMode(isDarkMode);
+    }, [isDarkMode]);
 
     return (
         <LoginModalProvider>
             <ThemeWrapper>
+                <OperationTipModal
+                    open={showThemeModal}
+                    onClose={() => setShowThemeModal(false)}
+                    message={themeModalInfo.message}
+                    type={themeModalInfo.type as any}
+                    // @ts-ignore
+                    icon={themeModalInfo.icon}
+                />
                 {isAdminPage ? (
                     <AdminRouteGuard>
                         <Component {...pageProps} />
