@@ -10,6 +10,7 @@ import PageHeader from '../../components/PageHeader/PageHeader';
 import { http } from '@/utils/request';
 import Typewriter from '@/components/Typewriter/Typewriter';
 import OperationTipModal from '@/components/OperationTipModal/OperationTipModal';
+import { getQQAvatarUrl } from '@/utils/qqAvatar';
 
 
 // 新增：定义props类型
@@ -39,6 +40,7 @@ const BulletinBoard: React.FC<BulletinBoardPageProps> = ({ initialMessages }) =>
     const [tipOpen, setTipOpen] = useState(false);
     const [tipMessage, setTipMessage] = useState('');
     const [tipType, setTipType] = useState<'success' | 'error' | 'info' | 'warning'>('success');
+    const [hasShownQQTip, setHasShownQQTip] = useState(false);
 
     // 获取留言列表
     const fetchMessages = async () => {
@@ -72,6 +74,21 @@ const BulletinBoard: React.FC<BulletinBoardPageProps> = ({ initialMessages }) =>
             ...prev,
             [name]: value
         }));
+
+        // 只在邮箱输入时判断
+        if (name === 'email') {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (
+                emailRegex.test(value) &&
+                !value.trim().toLowerCase().endsWith('@qq.com') &&
+                !hasShownQQTip
+            ) {
+                setTipMessage('支持QQ邮箱，头像会自动解析');
+                setTipType('info');
+                setTipOpen(true);
+                setHasShownQQTip(true);
+            }
+        }
     };
 
     // 处理性别选择
@@ -80,6 +97,11 @@ const BulletinBoard: React.FC<BulletinBoardPageProps> = ({ initialMessages }) =>
             ...prev,
             gender: e.target.value as '小哥哥' | '小姐姐'
         }));
+    };
+
+    const handleOpenModal = () => {
+        setIsModalOpen(true);
+        setHasShownQQTip(false);
     };
 
     // 处理头像上传
@@ -174,9 +196,16 @@ const BulletinBoard: React.FC<BulletinBoardPageProps> = ({ initialMessages }) =>
 
     // 渲染头像
     const renderAvatar = (item: BulletinBoardProps) => {
+        // 优先用 QQ 邮箱头像（只检测纯数字@qq.com）
+        const qqAvatar = getQQAvatarUrl(item.email, 100);
+        if (qqAvatar) {
+            return <img src={qqAvatar} alt={item.name} className={styles.avatarImage} />;
+        }
+        // 其次用用户上传的头像
         if (item.avatar) {
             return <img src={item.avatar} alt={item.name} className={styles.avatarImage} />;
         }
+        // 否则用昵称首字
         return (
             <div className={`${styles.avatarText} ${item.gender === '小姐姐' ? styles.female : styles.male}`}>
                 {item.name.charAt(0)}
@@ -268,7 +297,7 @@ const BulletinBoard: React.FC<BulletinBoardPageProps> = ({ initialMessages }) =>
 
             <button
                 className={styles.addMessageButton}
-                onClick={() => setIsModalOpen(true)}
+                onClick={handleOpenModal}
             >
                 {isDarkMode ? (<svg className="icon" viewBox="0 0 1073 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="25" height="25">
                     <path d="M160.256 973.824c-63.488 0-133.12-76.288-133.12-145.408V364.544c0-1.536-0.512-39.936 13.312-65.024 12.288-22.016 39.424-37.888 40.448-38.4l76.288-43.52V130.048c3.584-39.424 26.112-61.44 61.44-61.44h633.344c27.136 0 58.88 25.088 61.44 61.44v88.064l63.488 37.376c1.024 0.512 29.696 16.384 47.104 44.032 17.408 28.16 19.456 69.632 19.456 71.168v464.384c0 94.72-80.896 138.752-135.68 138.752h-747.52z m720.896-60.416h6.144c12.8 0 45.568-2.56 69.632-27.648 26.112-27.136 26.112-64 26.112-64.512V389.632L581.12 624.64c-14.336 8.704-28.672 12.8-44.032 12.8-13.824 0-28.672-3.584-45.056-11.264L87.04 388.608v424.448c1.536 45.056 40.96 97.792 90.624 100.352h703.488z m-377.856-350.72c0.512 0 13.312 8.704 31.232 9.216h1.024c18.432 0 32.768-11.264 32.768-11.264l283.136-168.448V150.016c0-16.384-5.632-22.016-22.016-22.016H239.616c-16.384 0-22.016 5.632-22.016 22.016v242.176l285.696 170.496z m410.624-199.68l56.32-36.352-56.32-38.912v75.264z m-756.736-2.048V288.256l-54.272 35.84 54.272 36.864z m182.784 22.016c-14.336 0-26.624-16.384-26.624-29.696s12.288-29.696 26.624-29.696h286.72c14.336 0 25.6 15.872 25.6 29.696 0 13.824-10.752 29.696-25.6 29.696h-286.72z m-5.632-118.272c-14.336 0-26.624-16.384-26.624-29.696s12.288-29.696 26.624-29.696h401.92c14.336 0 25.6 15.872 25.6 29.696s-11.264 29.696-25.6 29.696H334.336z" fill="#ffffff"></path>

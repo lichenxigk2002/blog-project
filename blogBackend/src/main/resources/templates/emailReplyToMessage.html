@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>留言回复通知 - 孤芳不自赏的知识空间</title>
+    <style>
+        body {
+            background: #fff0f5;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+        }
+        .main-card {
+            max-width: 600px;
+            margin: 32px auto;
+            background: #fff;
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(255, 105, 135, 0.15);
+            overflow: hidden;
+            border: 1px solid #ffe0e9;
+        }
+        .banner {
+            width: 100%;
+            display: block;
+            border-radius: 24px 24px 0 0;
+            box-shadow: 0 4px 16px rgba(255, 105, 135, 0.10);
+        }
+        .content {
+            padding: 32px 28px 24px 28px;
+            position: relative;
+        }
+        .greeting {
+            width: auto;
+            min-width: 200px;
+            padding-left: 20px;
+            display: flex;
+            height: 50px;
+            font-size: 20px;
+            color: #ffffff;
+            font-weight: bold;
+            margin-bottom: 12px;
+            position: absolute;
+            background: linear-gradient(90deg, #ffb6c1 0%, #ff6f91 100%);
+            box-shadow: 0 2px 8px rgba(255, 105, 135, 0.83);
+            border-radius: 50px;
+            top: -25px;
+            left: 30px;
+        }
+        .title {
+            width: 100%;
+            font-size: 20px;
+            display: flex;
+        }
+        .title span {
+            font-weight: bold;
+            color: #d72660;
+            margin: auto;
+            align-content: center;
+            justify-content: center;
+        }
+        .greeting-text {
+            justify-content: center;
+            align-content: center;
+        }
+        .section {
+            margin: 18px 0;
+            color: #333;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+        .info-box {
+            background: #ffe0e9;
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin: 18px 0;
+            color: #d72660;
+            font-size: 15px;
+            box-shadow: 0 2px 8px rgba(255, 105, 135, 0.08);
+        }
+        .reply-box {
+            background: #f3f8ff;
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin: 18px 0;
+            color: #2d6cdf;
+            font-size: 15px;
+            box-shadow: 0 2px 8px rgba(45, 108, 223, 0.08);
+        }
+        .footer {
+            text-align: center;
+            color: #bdbdbd;
+            font-size: 13px;
+            padding: 18px 0 12px 0;
+            background: #fff0f5;
+            border-radius: 0 0 24px 24px;
+        }
+        .footer a {
+            color: #ff6f91;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        .ai-assistant {
+            text-align: center;
+            margin: 24px 0;
+        }
+        .ai-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(255, 105, 135, 0.15);
+            margin-bottom: 10px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="main-card">
+    <!-- 顶部横幅图片 -->
+    <img src="https://email-1359353257.cos.ap-beijing.myqcloud.com/%E9%82%AE%E4%BB%B6/%E6%8B%9B%E5%91%BC.jpg" alt="欢迎" class="banner">
+
+    <div class="content">
+        <div class="greeting">
+            <div class="greeting-text">
+                亲爱的
+                <span th:text="${gender == '小姐姐' ? name + ' 小姐姐' : name + ' 小哥哥'}"></span>：
+            </div>
+        </div>
+        <div class="title">
+            <span>来自孤芳不自赏的留言回复</span>
+        </div>
+        <div class="section">
+            您在<strong>孤芳不自赏的知识空间</strong>的留言
+        </div>
+        <div class="info-box">
+            <div><strong>留言内容：</strong><span th:text="${content}"></span></div>
+        </div>
+        <div class="section">
+            孤芳不自赏给您回复啦！
+        </div>
+        <div class="ai-assistant">
+            <img src="https://email-1359353257.cos.ap-beijing.myqcloud.com/%E9%82%AE%E4%BB%B6/avatar.png" alt="AI助手小熙"
+                 class="ai-avatar">
+            <div style="color:#ff6f91;font-weight:bold;margin-top:8px;">桃宝已为您的留言送上专属回复！</div>
+        </div>
+        <div class="reply-box">
+            <strong>孤芳不自赏的回复：</strong>
+            <div style="margin-top: 8px;" th:text="${reply}"></div>
+        </div>
+        <div class="info-box" style="text-align:center;">
+            欢迎再次光临小站：孤芳不自赏的知识空间
+        </div>
+    </div>
+    <!-- 底部横幅图片 -->
+    <img src="https://email-1359353257.cos.ap-beijing.myqcloud.com/%E9%82%AE%E4%BB%B6/%EF%BF%BD%EF%BF%BD%EF%BF%BD%EF%BF%BD.png" alt="再见"
+         class="banner" style="border-radius:0 0 24px 24px; margin-bottom:-4px; margin-top:8px;">
+    <div class="footer">
+        本邮件由系统自动发送，请勿直接回复。<br>
+        如有疑问请联系 <a href="mailto:chenxili380@gmail.com">chenxili380@gmail.com</a><br>
+        &copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2025</span> By孤芳不自赏
+    </div>
+</div>
+</body>
+</html>

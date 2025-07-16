@@ -107,4 +107,26 @@ public class EmailUtil {
             e.printStackTrace();
         }
     }
+
+
+    // 5. 发送留言回复邮件（HTML模板）
+    public void sendReplyToMessageMail(String to, String name, String gender, String content, String reply) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            Context context = new Context();
+            context.setVariable("name", name);
+            context.setVariable("gender", gender);
+            context.setVariable("content", content);
+            context.setVariable("reply", reply);
+            String html = templateEngine.process("emailReplyToMessage.html", context);
+            helper.setFrom(FROM_PERSONAL + fromEmail + ">");
+            helper.setTo(to);
+            helper.setSubject("留言回复通知 - 孤芳不自赏的知识空间");
+            helper.setText(html, true);
+            mailSender.send(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

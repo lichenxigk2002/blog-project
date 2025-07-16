@@ -66,7 +66,11 @@ const BulletinBoardManagement: React.FC = () => {
     const handleSubmit = async (values: BulletinBoardProps) => {
         try {
             if (editingMessage) {
-                await BulletinBoardAPI.updateMessage(editingMessage.id, values);
+                await BulletinBoardAPI.replyMessage(
+                    editingMessage.id,
+                    values.reply || '',
+                    !!values.sendEmail // 保证是布尔值
+                );
                 setTipModal({ open: true, message: '更新成功', type: 'success' });
             } else {
                 await BulletinBoardAPI.createMessage(values);
@@ -137,15 +141,19 @@ const BulletinBoardManagement: React.FC = () => {
         }
     };
 
-    const handleReply = async (id: number, reply: string) => {
-        try {
-            await BulletinBoardAPI.replyMessage(id, reply);
-            setTipModal({ open: true, message: '回复成功', type: 'success' });
-            fetchMessages();
-        } catch (error: any) {
-            setTipModal({ open: true, message: error.message || '回复失败', type: 'failure' });
-        }
-    };
+    // const handleReply = async (id: number, reply: string) => {
+    //     try {
+    //         await BulletinBoardAPI.replyMessage(
+    //             editingMessage.id,
+    //             values.reply || '',
+    //             !!values.sendEmail // 保证是布尔值
+    //         );
+    //         setTipModal({ open: true, message: '回复成功', type: 'success' });
+    //         fetchMessages();
+    //     } catch (error: any) {
+    //         setTipModal({ open: true, message: error.message || '回复失败', type: 'failure' });
+    //     }
+    // };
 
     const stats = {
         totalMessages: messages?.length || 0,

@@ -33,6 +33,7 @@ const BulletinBoardForm: React.FC<BulletinBoardFormProps> = ({
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const [avatarPreview, setAvatarPreview] = useState<string>('');
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [sendEmail, setSendEmail] = useState(false);
 
     useEffect(() => {
         if (initialValues) {
@@ -82,7 +83,8 @@ const BulletinBoardForm: React.FC<BulletinBoardFormProps> = ({
 
             const submitData = {
                 ...formData,
-                avatar: avatarUrl
+                avatar: avatarUrl,
+                sendEmail // 这里要加上 sendEmail
             };
 
             onSubmit(submitData);
@@ -199,6 +201,17 @@ const BulletinBoardForm: React.FC<BulletinBoardFormProps> = ({
                     className={styles.textarea}
                     placeholder="输入回复内容..."
                 />
+            </div>
+            <div className={styles.formItem}>
+                <label className={styles.label}>
+                    <input
+                        type="checkbox"
+                        checked={sendEmail}
+                        onChange={e => setSendEmail(e.target.checked)}
+                        className={styles.checkbox}
+                    />
+                    回复时发送邮件通知用户
+                </label>
             </div>
 
             <div className={styles.formButtons}>

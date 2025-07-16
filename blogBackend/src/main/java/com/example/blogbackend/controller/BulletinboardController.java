@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.blogbackend.entity.Bulletinboard;
 import com.example.blogbackend.service.IBulletinboardService;
 import com.example.blogbackend.utils.CosUtil;
+import com.example.blogbackend.utils.EmailUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,9 @@ public class BulletinboardController {
 
   @Autowired
   private CosUtil cosUtil;
+
+  @Autowired
+  private EmailUtil emailUtil;
 
   /**
    * 创建留言
@@ -145,6 +149,16 @@ public class BulletinboardController {
     message.setUpdatedAt(LocalDateTime.now());
 
     bulletinboardService.updateById(message);
+
+    if (replyData.get("sendEmail") != null && Boolean.parseBoolean(replyData.get("sendEmail"))) {
+      emailUtil.sendReplyToMessageMail(
+              message.getEmail(),
+              message.getName(),
+              message.getGender(),
+              message.getContent(),
+              message.getReply()
+      );
+    }
     return ResponseEntity.ok(message);
   }
 

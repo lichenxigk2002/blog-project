@@ -10,6 +10,7 @@ export interface BulletinBoardProps extends Identifiable, Timestamped {
   replyTime?: string;
   isPinned?: boolean;
   avatar?: string;
+  sendEmail?: boolean;
 }
 
 export interface BulletinBoardResponse extends PaginatedResponse<BulletinBoardProps> { }
