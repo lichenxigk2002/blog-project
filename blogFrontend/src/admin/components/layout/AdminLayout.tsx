@@ -4,9 +4,11 @@ import React, { useState } from 'react';
 import styles from './AdminLayout.module.scss';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { adminRoutes } from '@/admin/routes/admin-routes';
+import { adminRoutes } from '@/routes/admin-routes';
 import { motion, AnimatePresence } from 'framer-motion';
 import Watermark from '@/components/Watermark/Watermark';
+import {useSelector} from "react-redux";
+import {RootState} from "@/redux/store";
 
 const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [collapsed, setCollapsed] = useState(() => {
@@ -17,6 +19,7 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     }
     return false;
   });
+  const showWatermark = useSelector((state:RootState) => state.settings.uiSettings.showWatermark);
   const router = useRouter();
   const pathname = router.pathname;
 
@@ -105,6 +108,13 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <path d="M12 16h4" />
           </svg>
         );
+      case '/admin/friendlinks':
+        return (
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+          </svg>
+        );
       case '/admin/settings':
         return (
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -187,27 +197,40 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             </button>
           </div>
         </header>
-          {/* 内容区 */}
-        <Watermark
-          content="孤芳不自赏"
-          opacity={0.2} // 设置水印透明度
-          gap={[150, 150]} // 设置水印间隔
-          debug={true}
-        >
-          <main className={styles.content}>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={pathname}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.2 }}
-              >
-                {children}
-              </motion.div>
-            </AnimatePresence>
-          </main>
-        </Watermark>
+        {/* 内容区 */}
+          {showWatermark ? <Watermark
+              content="孤芳不自赏"
+              opacity={0.2} // 设置水印透明度
+              gap={[150, 150]} // 设置水印间隔
+              debug={true}
+          >
+              <main className={styles.content}>
+                  <AnimatePresence mode="wait">
+                      <motion.div
+                          key={pathname}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -20 }}
+                          transition={{ duration: 0.2 }}
+                      >
+                          {children}
+                      </motion.div>
+                  </AnimatePresence>
+              </main>
+          </Watermark> : <main className={styles.content}>
+              <AnimatePresence mode="wait">
+                  <motion.div
+                      key={pathname}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.2 }}
+                  >
+                      {children}
+                  </motion.div>
+              </AnimatePresence>
+          </main> }
+
 
         {/* 底部 */}
         <footer className={styles.footer}>

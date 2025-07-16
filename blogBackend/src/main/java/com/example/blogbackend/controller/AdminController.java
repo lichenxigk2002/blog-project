@@ -13,6 +13,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/admin")
+@CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "false")
 public class AdminController {
     private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
 

@@ -12,13 +12,22 @@ import Link from 'next/link';
 import type { Tag } from '@/types/Tags';
 import { Article } from '@/types/Article';
 import { Gallery } from '@/types/Gallery';
-import FlipClock from "@/components/FlipCard/FlipClock";
+import dynamic from 'next/dynamic';
+const FlipClock = dynamic(() => import('@/components/FlipCard/FlipClock'), { ssr: false });
 
-const Home: React.FC = () => {
-    const [latestArticles, setLatestArticles] = useState<Article[]>([]);
-    const [tags, setTags] = useState<Tag[]>([]);
-    const [stats, setStats] = useState({ articles: 0, tags: 0, views: 0 });
-    const [recentPhotos, setRecentPhotos] = useState<Gallery[]>([]);
+// 新增：定义props类型
+interface HomeProps {
+    latestArticles: Article[];
+    tags: Tag[];
+    stats: { articles: number; tags: number; views: number };
+    recentPhotos: Gallery[];
+}
+
+const Home: React.FC<HomeProps> = ({ latestArticles: initialArticles, tags: initialTags, stats: initialStats, recentPhotos: initialPhotos }) => {
+    const [latestArticles, setLatestArticles] = useState<Article[]>(initialArticles || []);
+    const [tags, setTags] = useState<Tag[]>(initialTags || []);
+    const [stats, setStats] = useState(initialStats || { articles: 0, tags: 0, views: 0 });
+    const [recentPhotos, setRecentPhotos] = useState<Gallery[]>(initialPhotos || []);
     const [showMainContent, setShowMainContent] = useState(false);
     const mainContentRef = useRef<HTMLDivElement>(null);
 
@@ -30,14 +39,14 @@ const Home: React.FC = () => {
         }
     };
 
-
+    // useEffect兜底，防止props为空时依然能获取数据
     useEffect(() => {
+        if (initialArticles && initialArticles.length > 0) return;
         // 获取最新文章
         const fetchLatestArticles = async () => {
             try {
                 const response = await ArticlesAPI.getArticles();
                 if (response && Array.isArray(response.data)) {
-                    // 筛选已发布的文章并按时间排序
                     const publishedArticles = response.data
                         .filter(article => article.status === 'published')
                         .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
@@ -99,7 +108,9 @@ const Home: React.FC = () => {
         fetchLatestArticles();
         fetchRecentPhotos();
         fetchTags();
+    }, [initialArticles, initialTags, initialStats, initialPhotos]);
 
+    useEffect(() => {
         // IntersectionObserver 懒加载 mainContent
         const observer = new window.IntersectionObserver(
             (entries) => {
@@ -115,7 +126,6 @@ const Home: React.FC = () => {
         }
         return () => observer.disconnect();
     }, []);
-
 
     // 格式化日期
     const formatDate = (dateString: string) => {
@@ -141,7 +151,7 @@ const Home: React.FC = () => {
                         <br className={styles.typewriter1} />
                         <Typewriter className={styles.typewriter2} text={'日益努力，而后风生水起'} delay={200} cursorChar={'|'} />
                     </div>
-                    <div className="box2">
+                    <div className={styles.box2}>
                         <ProfileCard />
                     </div>
                 </div>
@@ -239,5 +249,64 @@ const Home: React.FC = () => {
         </div>
     );
 }
+
+// 新增：getStaticProps实现SSG
+import { GetStaticProps } from 'next';
+
+export const getStaticProps: GetStaticProps = async () => {
+    // 获取最新文章
+    let latestArticles: Article[] = [];
+    let stats = { articles: 0, tags: 0, views: 0 };
+    try {
+        const response = await ArticlesAPI.getArticles();
+        if (response && Array.isArray(response.data)) {
+            latestArticles = response.data
+                .filter(article => article.status === 'published')
+                .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                .slice(0, 5);
+            const articles = response.data as Article[];
+            stats.articles = articles.filter(article => article.status === 'published').length;
+            stats.views = articles.reduce((acc, article) => acc + (article.viewCount || 0), 0);
+        }
+    } catch (e) {
+        // 忽略错误，兜底用useEffect
+    }
+
+    // 获取标签
+    let tags: Tag[] = [];
+    try {
+        const response = await TagsAPI.getTagsWithCount();
+        tags = response as Tag[];
+        stats.tags = tags.length;
+    } catch (e) {
+        // 忽略错误
+    }
+
+    // 获取近期照片
+    let recentPhotos: Gallery[] = [];
+    try {
+        const data = await GalleryAPI.getGalleries();
+        const galleryData = Array.isArray(data) ? data : [];
+        recentPhotos = galleryData
+            .map((item: any) => ({
+                ...item,
+                coverImage: item.coverImage ? item.coverImage.replace(/\/uploads\/\/uploads\//g, '/uploads/') : '/default-image.jpg'
+            }))
+            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+            .slice(0, 4);
+    } catch (e) {
+        // 忽略错误
+    }
+
+    return {
+        props: {
+            latestArticles,
+            tags,
+            stats,
+            recentPhotos
+        },
+        revalidate: 600 // ISR: 每10分钟自动更新一次
+    };
+};
 
 export default Home;

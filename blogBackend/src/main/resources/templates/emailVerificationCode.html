@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <title>您的验证码 - 孤芳不自赏的博客</title>
+  <style>
+    body {
+      background: #fff0f5;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+    }
+
+    .main-card {
+      max-width: 480px;
+      margin: 32px auto;
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 8px 32px rgba(255, 105, 135, 0.15);
+      overflow: hidden;
+      border: 1px solid #ffe0e9;
+      padding: 32px 28px 24px 28px;
+      text-align: center;
+    }
+
+    .ai-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(255, 105, 135, 0.15);
+      margin-bottom: 16px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #d72660;
+      margin-bottom: 18px;
+    }
+
+    .info-box {
+      background: #ffe0e9;
+      border-radius: 12px;
+      padding: 18px 20px;
+      color: #d72660;
+      font-size: 16px;
+      margin: 18px 0 12px 0;
+      box-shadow: 0 2px 8px rgba(255, 105, 135, 0.08);
+      word-break: break-all;
+    }
+
+    .code {
+      font-size: 28px;
+      font-weight: bold;
+      letter-spacing: 4px;
+      color: #ff6f91;
+      margin: 16px 0 8px 0;
+    }
+
+    .footer {
+      color: #bdbdbd;
+      font-size: 13px;
+      padding: 18px 0 0 0;
+    }
+
+    .footer a {
+      color: #ff6f91;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="main-card">
+    <img src="https://email-1359353257.cos.ap-beijing.myqcloud.com/%E9%82%AE%E4%BB%B6/avatar.png" alt="AI助手桃宝"
+      class="ai-avatar">
+    <div class="title">桃宝为您发送验证码啦！</div>
+    <div class="info-box">
+      <div>您的验证码：</div>
+      <div class="code">[[${code}]]</div>
+      <div>请在 <b>10 分钟</b> 内使用，切勿泄露给他人。</div>
+    </div>
+    <div style="color:#d72660;font-size:15px;margin:12px 0 0 0;">如非本人操作，请忽略本邮件。</div>
+    <div class="footer">
+      本邮件由系统自动发送，请勿直接回复。<br>
+      如有疑问请联系 <a href="mailto:chenxili380@gmail.com">chenxili380@gmail.com</a><br>
+      &copy; <span>2025</span> 孤芳不自赏
+    </div>
+  </div>
+</body>
+
+</html>

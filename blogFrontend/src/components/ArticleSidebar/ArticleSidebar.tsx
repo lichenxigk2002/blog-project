@@ -9,6 +9,7 @@ interface ArticleSidebarProps {
   readingTime: number;
   onExportOutline: (format: 'markdown' | 'pdf') => void;
   onResultClick: (index: number) => void;
+  contentRef: React.RefObject<HTMLDivElement>;
 }
 
 const ArticleSidebar: React.FC<ArticleSidebarProps> = ({
@@ -16,7 +17,8 @@ const ArticleSidebar: React.FC<ArticleSidebarProps> = ({
   onFontSizeChange,
   readingTime,
   onExportOutline,
-  onResultClick
+  onResultClick,
+  contentRef
 }) => {
   return (
     <aside className={styles.sidebar}>
@@ -27,7 +29,8 @@ const ArticleSidebar: React.FC<ArticleSidebarProps> = ({
       <ReadingTools
         onFontSizeChange={onFontSizeChange}
         readingTime={readingTime}
-        onExportOutline={onExportOutline}
+        articleContent={articleContent}
+        contentRef={contentRef}
       />
     </aside>
   );

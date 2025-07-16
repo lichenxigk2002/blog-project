@@ -1,6 +1,6 @@
 // types/article.ts
 export interface Article {
-    id: number;
+    id?: number;
     title: string;
     slug: string;
     content: string;

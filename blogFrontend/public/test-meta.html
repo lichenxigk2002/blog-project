@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meta标签测试页面</title>
+
+  <!-- 测试用的meta标签 -->
+  <meta name="description" content="这是一个测试页面，用于验证meta标签是否正确设置" />
+  <meta property="og:title" content="Meta标签测试页面" />
+  <meta property="og:description" content="这是一个测试页面，用于验证meta标签是否正确设置" />
+  <meta property="og:type" content="article" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Meta标签测试页面" />
+  <meta name="twitter:description" content="这是一个测试页面，用于验证meta标签是否正确设置" />
+
+  <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Meta标签测试页面",
+        "description": "这是一个测试页面，用于验证meta标签是否正确设置",
+        "datePublished": "2024-01-15",
+        "author": {
+            "@type": "Person",
+            "name": "博主"
+        }
+    }
+    </script>
+</head>
+
+<body>
+  <h1>Meta标签测试页面</h1>
+  <p>这个页面用于测试各种meta标签是否正确设置。</p>
+
+  <h2>测试步骤：</h2>
+  <ol>
+    <li>右键 -> 查看页面源代码</li>
+    <li>搜索 "meta" 查看meta标签</li>
+    <li>按F12打开开发者工具</li>
+    <li>在Console中运行测试代码</li>
+  </ol>
+
+  <h2>Console测试代码：</h2>
+  <pre>
+// 测试description
+console.log('Description:', document.querySelector('meta[name="description"]')?.content);
+
+// 测试Open Graph
+console.log('OG Title:', document.querySelector('meta[property="og:title"]')?.content);
+console.log('OG Description:', document.querySelector('meta[property="og:description"]')?.content);
+
+// 测试Twitter Card
+console.log('Twitter Card:', document.querySelector('meta[name="twitter:card"]')?.content);
+
+// 测试JSON-LD
+const jsonLd = document.querySelector('script[type="application/ld+json"]');
+if (jsonLd) {
+    console.log('JSON-LD:', JSON.parse(jsonLd.textContent));
+} else {
+    console.log('未找到JSON-LD');
+}
+    </pre>
+
+  <script>
+    // 页面加载完成后自动测试
+    window.addEventListener('load', function () {
+      console.log('=== Meta标签测试结果 ===');
+      console.log('Description:', document.querySelector('meta[name="description"]')?.content);
+      console.log('OG Title:', document.querySelector('meta[property="og:title"]')?.content);
+      console.log('OG Description:', document.querySelector('meta[property="og:description"]')?.content);
+      console.log('Twitter Card:', document.querySelector('meta[name="twitter:card"]')?.content);
+
+      const jsonLd = document.querySelector('script[type="application/ld+json"]');
+      if (jsonLd) {
+        console.log('JSON-LD:', JSON.parse(jsonLd.textContent));
+      } else {
+        console.log('未找到JSON-LD');
+      }
+    });
+  </script>
+</body>
+
+</html>

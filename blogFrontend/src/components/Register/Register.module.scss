@@ -93,6 +93,20 @@ $shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     padding: 0 1rem;
 }
 
+.info{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 0 1rem;
+    justify-content: center;
+    align-content: center;
+    margin-bottom: 2rem;
+}
+.labelInfo{
+    @extend .info;
+    text-align: center;
+}
+
 .inputGroup {
     display: flex;
     flex-direction: column;

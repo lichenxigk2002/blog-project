@@ -6,6 +6,7 @@ import type { Article } from '@/types/Article';
 import styles from './ArticleManagement.module.scss';
 import Pagination from "@/admin/components/ui/Pagination/Pagination";
 import OperationTipModal from '../ui/OperationTipModal/OperationTipModal';
+import {buildArticleData} from "@/utils/articleUtils";
 
 
 const ArticleManagement: React.FC = () => {
@@ -42,7 +43,7 @@ const ArticleManagement: React.FC = () => {
     try {
       const response = await ArticlesAPI.getArticles();
       if (!response || 'error' in response) {
-        throw new Error(response?.error || '获取文章列表失败');
+        throw new Error(typeof response?.error === 'string' ? response.error : '获取文章列表失败');
       }
       const data = response.data as unknown as Article[];
       setAllArticles(data);
@@ -50,15 +51,20 @@ const ArticleManagement: React.FC = () => {
       setTotal(data.length);
     } catch (error: any) {
       console.error('Failed to fetch articles:', error);
-      setTipModal({ open: true, message: error.message || '获取文章列表失败', type: 'failure' });
+      setTipModal({ open: true, message: (error instanceof Error ? error.message : '获取文章列表失败'), type: 'failure' });
     } finally {
       setLoading(false);
     }
   };
 
   const fetchTags = async () => {
-    const res = await TagsAPI.getTags();
-    setAllTags(res);
+    try {
+      const res = await TagsAPI.getTags();
+      setAllTags(Array.isArray(res) ? res : []);
+    } catch (error) {
+      console.error('Failed to fetch tags:', error);
+      setAllTags([]);
+    }
   };
 
   const openModal = (article?: Article) => {
@@ -68,36 +74,7 @@ const ArticleManagement: React.FC = () => {
 
   const handleSubmit = async (values: any) => {
     try {
-      const now = new Date();
-      const timezoneOffset = now.getTimezoneOffset();
-      const timezoneHours = Math.abs(Math.floor(timezoneOffset / 60));
-      const timezoneMinutes = Math.abs(timezoneOffset % 60);
-      const timezoneSign = timezoneOffset <= 0 ? '+' : '-';
-      const timezoneString = `${timezoneSign}${String(timezoneHours).padStart(2, '0')}:${String(timezoneMinutes).padStart(2, '0')}`;
-
-      const formatDate = (date: Date) => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        const seconds = String(date.getSeconds()).padStart(2, '0');
-        return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${timezoneString}`;
-      };
-
-      const data = {
-        ...values,
-        htmlContent: values.content,
-        slug: values.title?.toLowerCase().replace(/\s+/g, '-'),
-        authorId: 1,
-        createdAt: formatDate(new Date(editingArticle ? editingArticle.createdAt : new Date())),
-        updatedAt: formatDate(new Date()),
-        publishedAt: values.status === 'published' ? formatDate(new Date()) : null,
-        viewCount: editingArticle ? editingArticle.viewCount : 0,
-        likeCount: editingArticle ? editingArticle.likeCount : 0,
-        readingTime: values.readingTime || Math.ceil((values.content?.length || 0) / 500),
-        tagIds: values.tags || []
-      };
+      const data = buildArticleData(values, editingArticle);
 
       if (editingArticle) {
         data.id = editingArticle.id;

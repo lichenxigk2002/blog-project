@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54 (76480) - https://sketchapp.com -->
+    <title>SES-32px</title>
+    <desc>Created with Sketch.</desc>
+    <g id="SES-32px" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M27,25 L25,25 L25,3 L7,3 L7,29 L27,29 L27,31 L5,31 L5,1 L27,1 L27,25 Z M18,25 L14,25 L14,23 L18,23 L18,25 Z" id="形状结合" fill="#0052D9" fill-rule="nonzero"></path>
+        <g id="编组-2" transform="translate(10.000000, 5.000000)" fill="#0052D9">
+            <rect id="矩形" x="0" y="4" width="2" height="7"></rect>
+            <rect id="矩形" x="1" y="9" width="10" height="2"></rect>
+            <rect id="矩形" x="10" y="4" width="2" height="7"></rect>
+            <rect id="矩形" x="2" y="1" width="8" height="2"></rect>
+            <rect id="矩形" x="1" y="1" width="2" height="4"></rect>
+            <rect id="矩形" x="9" y="1" width="2" height="4"></rect>
+            <polygon id="路径" fill-rule="nonzero" transform="translate(6.000000, 1.000000) scale(1, -1) translate(-6.000000, -1.000000) " points="4 0.0276527572 6.02303028 2 8 6.9388939e-18"></polygon>
+        </g>
+        <polygon id="路径-4" fill="#0052D9" fill-rule="nonzero" points="12.5795205 9 11 10.5877343 15.9783138 13 21 10.6930317 19.4772204 9.07852292 16.0196537 10.666933"></polygon>
+    </g>
+</svg>

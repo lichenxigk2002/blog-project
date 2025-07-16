@@ -1,9 +1,9 @@
 import type { AppProps } from 'next/app';
 import AppLayout from '@/client/components/layout/AppLayout';
-import { Provider } from 'react-redux';
+import {Provider, useDispatch} from 'react-redux';
 import store from '@/redux/store';
 import '@/styles/globals.scss';
-import React from 'react';
+import React, {useEffect} from 'react';
 import { useTheme } from '@/hooks/useTheme';
 import Login from '@/components/Login/Login';
 import { useRouter } from "next/router";
@@ -11,6 +11,11 @@ import { LoginModalProvider, LoginModalContext } from '@/context/LoginModalConte
 import AdminLogin from '@/components/AdminLogin/AdminLogin';
 import AdminRouteGuard from '@/admin/components/AdminRouteGuard/AdminRouteGuard';
 import OperationTipModal from '@/components/OperationTipModal/OperationTipModal';
+import {SystemSettingsAPI} from "@/api/SystemSettingsAPI";
+import {modifyAllSettings} from "@/redux/systemSettingsSlice";
+import { useAppDispatch } from '@/redux/store';
+import {flatToGroupedSettings} from "@/utils/settingTransform";
+import {adminLoginFromStorage}  from '@/redux/adminAuthSlice';
 
 // 创建主题包装组件
 function ThemeWrapper({ children }: { children: React.ReactNode }) {
@@ -38,8 +43,18 @@ function AppContent({ Component, pageProps }: AppProps) {
     const [showThemeModal, setShowThemeModal] = React.useState(false);
     const [themeModalInfo, setThemeModalInfo] = React.useState({ message: '', type: 'info', icon: '/images/daytime.png' });
     const [prevDarkMode, setPrevDarkMode] = React.useState(isDarkMode);
+    const dispatch = useAppDispatch();
 
-    React.useEffect(() => {
+    useEffect(() => {
+        // 只在客户端执行
+        const token = localStorage.getItem('adminToken');
+
+        if(token) {
+            dispatch(adminLoginFromStorage({ token }));
+        }
+    }, [dispatch]);
+
+    useEffect(() => {
         // 首次挂载只记录，不弹窗
         if (prevDarkMode === isDarkMode) return;
 
@@ -52,6 +67,12 @@ function AppContent({ Component, pageProps }: AppProps) {
         });
         setPrevDarkMode(isDarkMode);
     }, [isDarkMode]);
+
+    useEffect(() => {
+        SystemSettingsAPI.getSettings().then(setting => {
+            dispatch(modifyAllSettings(flatToGroupedSettings(setting)))
+        })
+    }, [dispatch]);
 
     return (
         <LoginModalProvider>
@@ -88,6 +109,7 @@ function AppContent({ Component, pageProps }: AppProps) {
 
 // 主应用组件
 const MyApp: React.FC<AppProps> = (props) => {
+
     return (
         <Provider store={store}>
             <div className={[

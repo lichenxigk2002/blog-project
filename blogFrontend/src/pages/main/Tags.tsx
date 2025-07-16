@@ -35,9 +35,14 @@ const tagVariants = {
     }
 };
 
-const Tags: React.FC = () => {
+// 新增：定义props类型
+interface TagsProps {
+    initialTags: Tag[];
+}
+
+const Tags: React.FC<TagsProps> = ({ initialTags }) => {
     const router = useRouter();
-    const [tags, setTags] = useState<Tag[]>([]);
+    const [tags, setTags] = useState<Tag[]>(initialTags || []);
     const [error, setError] = useState<string | null>(null);
     const { isLoading, withLoading } = useLoading();
 
@@ -52,6 +57,8 @@ const Tags: React.FC = () => {
     };
 
     useEffect(() => {
+        // 如果props有数据则不再请求
+        if (initialTags && initialTags.length > 0) return;
         const fetchTags = async () => {
             try {
                 const data = await withLoading(TagsAPI.getTags()) as Tag[];
@@ -61,9 +68,8 @@ const Tags: React.FC = () => {
                 setError('加载标签失败，请稍后重试');
             }
         };
-
         fetchTags();
-    }, [withLoading]);
+    }, [withLoading, initialTags]);
 
     if (error) {
         return <div className={styles.error}>{error}</div>;
@@ -123,6 +129,27 @@ const Tags: React.FC = () => {
             />
         </div>
     );
+};
+
+// 新增：getStaticProps实现SSG+ISR
+import { GetStaticProps } from 'next';
+export const getStaticProps: GetStaticProps = async () => {
+    try {
+        const data = await TagsAPI.getTags();
+        return {
+            props: {
+                initialTags: (data as Tag[]).slice(0, MAX_TAGS)
+            },
+            revalidate: 600 // ISR: 每10分钟自动更新
+        };
+    } catch (err) {
+        return {
+            props: {
+                initialTags: []
+            },
+            revalidate: 600
+        };
+    }
 };
 
 export default Tags;

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/api/questions")
+@CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "false")
 public class QuestionsController {
 
   @Autowired

@@ -11,7 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/files")
+@RequestMapping("/files")
+@CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "false")
 public class FileController {
   @Autowired
   private CosUtil cosUtil;
@@ -20,11 +21,16 @@ public class FileController {
   public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) {
     try {
       String fileUrl = cosUtil.uploadFile(file);
-      Map<String, String> response = new HashMap<>();
+      Map<String, Object> response = new HashMap<>();
+      response.put("code", 200);
       response.put("url", fileUrl);
+      response.put("message", "上传成功");
       return ResponseEntity.ok(response);
     } catch (IOException e) {
-      return ResponseEntity.badRequest().body("文件上传失败：" + e.getMessage());
+      Map<String, Object> errorResponse = new HashMap<>();
+      errorResponse.put("code", 400);
+      errorResponse.put("message", "文件上传失败：" + e.getMessage());
+      return ResponseEntity.badRequest().body(errorResponse);
     }
   }
 

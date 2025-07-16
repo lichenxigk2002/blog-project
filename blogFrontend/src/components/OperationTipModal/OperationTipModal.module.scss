@@ -19,7 +19,23 @@ $text-color: var(--text);
   flex-direction: column;
   align-items: center;
   min-width: 180px;
+  position: relative;
   animation: fadeInUp 0.35s cubic-bezier(.23, 1.01, .32, 1) both;
+}
+
+// 位置控制
+.position-center {
+  // 默认居中，不需要额外样式
+}
+
+.position-top {
+  margin-top: 10vh;
+  align-self: flex-start;
+}
+
+.position-bottom {
+  margin-bottom: 10vh;
+  align-self: flex-end;
 }
 
 .icon {
@@ -35,6 +51,34 @@ $text-color: var(--text);
   text-align: center;
   letter-spacing: 0.5px;
   margin-top: 2px;
+}
+
+.closeButton {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  color: $text-color;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
 @keyframes fadeInUp {

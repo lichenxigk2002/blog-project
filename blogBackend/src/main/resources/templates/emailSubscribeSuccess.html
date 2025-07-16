@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <title>欢迎订阅孤芳不自赏的博客</title>
+  <style>
+    body {
+      background: #fff0f5;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+    }
+
+    .main-card {
+      max-width: 600px;
+      margin: 32px auto;
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 8px 32px rgba(255, 105, 135, 0.15);
+      overflow: hidden;
+      border: 1px solid #ffe0e9;
+    }
+
+    .banner {
+      width: 100%;
+      display: block;
+      border-radius: 24px 24px 0 0;
+      box-shadow: 0 4px 16px rgba(255, 105, 135, 0.10);
+    }
+
+    .content {
+      padding: 32px 28px 24px 28px;
+      position: relative;
+    }
+
+    .greeting {
+      width: auto;
+      min-width: 200px;
+      padding-left: 20px;
+      display: flex;
+      height: 50px;
+      font-size: 20px;
+      color: #ffffff;
+      font-weight: bold;
+      margin-bottom: 12px;
+      position: absolute;
+      background: linear-gradient(90deg, #ffb6c1 0%, #ff6f91 100%);
+      box-shadow: 0 2px 8px rgba(255, 105, 135, 0.83);
+      border-radius: 50px;
+      top: -25px;
+      left: 30px;
+    }
+
+    .title {
+      width: 100%;
+      font-size: 20px;
+      display: flex;
+    }
+
+    .title span {
+      font-weight: bold;
+      color: #d72660;
+      margin: auto;
+      align-content: center;
+      justify-content: center;
+    }
+
+    .greeting-text {
+      justify-content: center;
+      align-content: center;
+    }
+
+    .section {
+      margin: 18px 0;
+      color: #333;
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    .info-box {
+      background: #ffe0e9;
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin: 18px 0;
+      color: #d72660;
+      font-size: 15px;
+      box-shadow: 0 2px 8px rgba(255, 105, 135, 0.08);
+    }
+
+    .button {
+      display: inline-block;
+      background: linear-gradient(90deg, #ffb6c1 0%, #ff6f91 100%);
+      color: #fff;
+      padding: 12px 32px;
+      border-radius: 24px;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: bold;
+      margin: 24px 0;
+      box-shadow: 0 2px 8px rgba(255, 105, 135, 0.12);
+      transition: background 0.2s;
+    }
+
+    .button:hover {
+      background: linear-gradient(90deg, #ff6f91 0%, #ffb6c1 100%);
+    }
+
+    .ai-assistant {
+      text-align: center;
+      margin: 24px 0;
+    }
+
+    .ai-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(255, 105, 135, 0.15);
+      margin-bottom: 10px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .footer {
+      text-align: center;
+      color: #bdbdbd;
+      font-size: 13px;
+      padding: 18px 0 12px 0;
+      background: #fff0f5;
+      border-radius: 0 0 24px 24px;
+    }
+
+    .footer a {
+      color: #ff6f91;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="main-card">
+    <!-- 顶部横幅图片 -->
+    <img src="https://email-1359353257.cos.ap-beijing.myqcloud.com/%E9%82%AE%E4%BB%B6/%E6%8B%9B%E5%91%BC.jpg" alt="欢迎"
+      class="banner">
+
+    <div class="content">
+      <div class="greeting">
+        <div class="greeting-text">
+          亲爱的<span th:text="${name}"></span>同学：
+        </div>
+      </div>
+      <div class="title">
+        <span>来自孤芳不自赏的回复</span>
+      </div>
+      <div class="section">
+        <span>您好，您在孤芳不自赏的知识空间提交的订阅</span>
+      </div>
+      <div class="info-box">
+        <div><strong>邮件：</strong><span th:text="${email}"></span></div>
+        <div><strong>昵称：</strong><span th:text="${name}"></span></div>
+      </div>
+      <div class="section">
+        孤芳不自赏给您回复啦!
+
+      </div>
+      <div class="info-box">
+        已经订阅成功，以后我的博客有新文章发布时，桃宝会第一时间通过邮件通知您
+      </div>
+
+
+      <div class="ai-assistant">
+        <img src="https://email-1359353257.cos.ap-beijing.myqcloud.com/%E9%82%AE%E4%BB%B6/avatar.png" alt="AI助手小熙"
+          class="ai-avatar">
+        <div style="color:#ff6f91;font-weight:bold;margin-top:8px;">桃宝已准备就绪，为您推送最新文章！</div>
+      </div>
+      <div class="info-box" style="text-align:center;">
+        欢迎再次光临小站：孤芳不自赏的知识空间
+      </div>
+      <div style="text-align:center;">
+        <button onclick="unsubscribe()" class="button" style="border:none;cursor:pointer;">点此退订</button>
+      </div>
+      <script>
+        function unsubscribe() {
+          // 发送DELETE请求到后端退订接口
+          fetch('https://www.gfbzsblog.site/api/subscribe_emails/unsubscribe', {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              token: '[[${unsubscribeToken}]]'
+            })
+          })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                alert('退订成功！感谢您一直以来的关注与支持！');
+              } else {
+                alert('退订失败：' + data.message);
+              }
+            })
+            .catch(error => {
+              alert('退订请求失败，请稍后重试或联系管理员。');
+            });
+        }
+      </script>
+    </div>
+    <!-- 底部横幅图片 -->
+    <img src="https://email-1359353257.cos.ap-beijing.myqcloud.com/%E9%82%AE%E4%BB%B6/%E5%86%8D%E8%A7%81.png" alt="再见"
+      class="banner" style="border-radius:0 0 24px 24px; margin-bottom:-4px; margin-top:8px;">
+    <div class="footer">
+      本邮件由系统自动发送，请勿直接回复。<br>
+      如有疑问请联系 <a href="mailto:chenxili380@gmail.com">chenxili380@gmail.com</a><br>
+      &copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2025</span> By孤芳不自赏
+    </div>
+  </div>
+</body>
+
+</html>

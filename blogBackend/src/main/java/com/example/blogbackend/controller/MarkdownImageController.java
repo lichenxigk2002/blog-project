@@ -14,6 +14,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/markdownImage")
+@CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "false")
 public class MarkdownImageController {
   @Autowired
   private COSClient cosClient;

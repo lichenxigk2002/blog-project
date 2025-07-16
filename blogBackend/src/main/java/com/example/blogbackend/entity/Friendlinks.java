@@ -42,5 +42,4 @@ public class Friendlinks implements Serializable {
 
     private LocalDateTime updatedAt;
 
-
 }

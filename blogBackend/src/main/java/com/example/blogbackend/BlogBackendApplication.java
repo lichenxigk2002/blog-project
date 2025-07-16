@@ -4,6 +4,9 @@ import io.github.cdimascio.dotenv.Dotenv;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 
 @MapperScan("com.example.blogbackend.mapper")
 @SpringBootApplication
@@ -25,6 +28,19 @@ public class BlogBackendApplication {
         }
 
         SpringApplication.run(BlogBackendApplication.class, args);
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        RestTemplate restTemplate = new RestTemplate();
+
+        // 配置超时设置
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(10000); // 10秒连接超时
+        factory.setReadTimeout(30000); // 30秒读取超时
+        restTemplate.setRequestFactory(factory);
+
+        return restTemplate;
     }
 
 }

@@ -26,6 +26,10 @@ public class ArticleDTO {
     // 新增：标签ID列表
     private List<Integer> tagIds;
 
+    // 新增：推送相关字段
+    private Boolean shouldNotify; // 是否推送邮件
+    private List<Long> notifyUserIds; // 推送给哪些用户ID
+
     // getter/setter 省略，可用 Lombok @Data
     public Integer getId() {
         return id;
@@ -42,5 +46,21 @@ public class ArticleDTO {
 
     public void setTagIds(List<Integer> tagIds) {
         this.tagIds = tagIds;
+    }
+
+    public Boolean getShouldNotify() {
+        return shouldNotify;
+    }
+
+    public void setShouldNotify(Boolean shouldNotify) {
+        this.shouldNotify = shouldNotify;
+    }
+
+    public List<Long> getNotifyUserIds() {
+        return notifyUserIds;
+    }
+
+    public void setNotifyUserIds(List<Long> notifyUserIds) {
+        this.notifyUserIds = notifyUserIds;
     }
 }

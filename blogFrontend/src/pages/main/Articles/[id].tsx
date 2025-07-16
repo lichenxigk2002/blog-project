@@ -17,9 +17,9 @@ import { FaArrowLeft } from "react-icons/fa";  // FontAwesome图标库
 import Head from "next/head";               // Next.js头部组件
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner'; // 加载动画组件
 import RecentArticles from "@/components/RecentArticles/RecentArticles"; // 最近文章组件
-import SequenceDiagram from '@/components/SequenceDiagram/SequenceDiagram'; // 渲染序列图组件
 import ArticleSidebar from '@/components/ArticleSidebar/ArticleSidebar';   // 文章侧边栏组件
 import { useLoading } from "@/hooks/useLoading"; // 自定义加载状态钩子
+import dynamic from 'next/dynamic';
 
 
 // 定义标题对象的类型
@@ -29,10 +29,13 @@ interface Heading {
     level: number;  // 标题级别（1-6对应h1-h6）
 }
 
+
 const ArticleDetail: React.FC = () => {
     // 使用路由钩子获取路由参数
+    const SequenceDiagram = dynamic(() => import('@/components/SequenceDiagram/SequenceDiagram'), { ssr: false });
     const router = useRouter(); // Next.js路由对象
     const { id } = router.query; // 从URL中获取文章ID
+
 
     // 状态管理
     const [article, setArticle] = useState<Article | null>(null); // 存储文章数据
@@ -177,7 +180,7 @@ const ArticleDetail: React.FC = () => {
             </Link>
         </motion.div>
     );
-    
+
     // 文章不存在状态UI
     if (!article) return (
         <motion.div
@@ -202,304 +205,355 @@ const ArticleDetail: React.FC = () => {
         >
             <Head>
                 <title>{article.title}</title>
-            </Head>
-            {isMobile ? null : <div
-                onClick={() => routerBack.back()}
-                className={styles.backLinkButton}>
-                <FaArrowLeft style={{ color: "var(--text)" }} />
-            </div>}
-
-            <motion.h1
-                className={styles.articleTitle}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2 }}
-            >
-                {article.title}
-            </motion.h1>
-
-            <ArticleSidebar
-                articleContent={article.content}
-                onFontSizeChange={handleFontSizeChange}
-                readingTime={article.readingTime}
-                onExportOutline={handleExportOutline}
-                onResultClick={handleResultClick}
-            />
-
-            <motion.div
-                className={styles.articleDetail}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
-            >
-                <motion.div
-                    className={styles.articleMeta}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.4 }}
-                >
-                    <span className={styles.date}>
-                        发布时间: {new Date(article.publishedAt).toLocaleDateString()}
-                    </span>
-                    <span className={styles.status}>
-                        文章状态: {
-                            article.status === 'published'
-                                ? '已发布'
-                                : article.status === 'archived'
-                                    ? '已归档'
-                                    : '草稿'
-                        }
-                    </span>
-                    <motion.span
-                        className={styles.likeButton}
-                        whileHover={{ scale: 1.05 }}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleLike();
-                        }}
-                        style={{ cursor: 'pointer' }}
-                    >
-                        <motion.div
-                            className={styles.heartWrapper}
-                            animate={{
-                                scale: [1, 1.2, 1],
-                                rotate: [0, -10, 10, 0],
-                            }}
-                            transition={{
-                                duration: 0.5,
-                                ease: "easeInOut",
-                                times: [0, 0.2, 0.4, 1]
-                            }}
-                        >
-                            {isLiked ? (
-                                <FaHeart className={styles.heartIcon} style={{ color: 'var(--like)' }} />
-                            ) : (
-                                <FaRegHeart className={styles.heartIcon} />
-                            )}
-                        </motion.div>
-                        <motion.span
-                            className={styles.likeCount}
-                            animate={{
-                                scale: [1, 1.2, 1],
-                                y: [0, -10, 0]
-                            }}
-                            transition={{
-                                duration: 0.5,
-                                ease: "easeInOut"
-                            }}
-                        >
-                            {likeCount}
-                        </motion.span>
-                    </motion.span>
-                </motion.div>
-                <motion.div
-                    className={styles.articleContent}
-                    ref={contentRef}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.5 }}
-                >
-                    <ReactMarkdown
-                        rehypePlugins={[[rehypeRaw], [remarkGfm]]}
-                        components={{
-                            // 自定义标题渲染，添加锚点ID和样式
-                            h1: ({ node, ...props }) => (
-                                <h1
-                                    id={props.children?.toString().toLowerCase().replace(/\s+/g, '-')}
-                                    className={styles.heading}
-                                    style={{ fontFamily: "'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', sans-serif" }}
-                                    {...props}
-                                />
-                            ),
-                            h2: ({ node, ...props }) => (
-                                <h2
-                                    id={props.children?.toString().toLowerCase().replace(/\s+/g, '-')}
-                                    className={styles.heading}
-                                    style={{ fontFamily: "'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', sans-serif" }}
-                                    {...props}
-                                />
-                            ),
-                            h3: ({ node, ...props }) => (
-                                <h3
-                                    id={props.children?.toString().toLowerCase().replace(/\s+/g, '-')}
-                                    className={styles.heading}
-                                    style={{ fontFamily: "'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', sans-serif" }}
-                                    {...props}
-                                />
-                            ),
-                            h4: ({ node, ...props }) => (
-                                <h4
-                                    id={props.children?.toString().toLowerCase().replace(/\s+/g, '-')}
-                                    className={styles.heading}
-                                    style={{ fontFamily: "'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', sans-serif" }}
-                                    {...props}
-                                />
-                            ),
-                            h5: ({ node, ...props }) => (
-                                <h5
-                                    id={props.children?.toString().toLowerCase().replace(/\s+/g, '-')}
-                                    className={styles.heading}
-                                    style={{ fontFamily: "'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', sans-serif" }}
-                                    {...props}
-                                />
-                            ),
-                            h6: ({ node, ...props }) => (
-                                <h6
-                                    id={props.children?.toString().toLowerCase().replace(/\s+/g, '-')}
-                                    className={styles.heading}
-                                    style={{ fontFamily: "'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', sans-serif" }}
-                                    {...props}
-                                />
-                            ),
-                            // 段落样式
-                            p: ({ node, ...props }) => (
-                                <p
-                                    className="article-content-text-size"
-                                    style={{ fontFamily: "'Noto Serif SC', 'SimSun', 'STSong', serif" }}
-                                    {...props}
-                                />
-                            ),
-
-                            //列表样式
-                            ul: ({ node, ...props }) => (
-                                <ul
-                                    className={styles.list}
-                                    style={{ fontFamily: "'Noto Serif SC', 'SimSun', 'STSong', serif" }}
-                                    {...props}
-                                />
-                            ),
-                            ol: ({ node, ...props }) => (
-                                <ol
-                                    className={styles.list}
-                                    style={{ fontFamily: "'Noto Serif SC', 'SimSun', 'STSong', serif" }}
-                                    {...props}
-                                />
-                            ),
-                            li: ({ node, ...props }) => (
-                                <li
-                                    className="article-content-text-size"
-                                    style={{ fontFamily: "'Noto Serif SC', 'SimSun', 'STSong', serif" }}
-                                    {...props}
-                                />
-                            ),
-
-                            // 引用样式
-                            blockquote: ({ node, ...props }) => (
-                                <blockquote
-                                    className="article-content-text-size"
-                                    style={{ fontFamily: "'Noto Serif SC', 'SimSun', 'STSong', serif" }}
-                                    {...props}
-                                />
-                            ),
-
-                            // 代码块处理
-                            code: ({ node, className, children, ...props }) => {
-                                const match = /language-(\w+)/.exec(className || '');
-                                const language = match ? match[1] : 'text';
-
-                                // 处理序列图
-                                if (language === 'sequence') {
-                                    return (
-                                        <SequenceDiagram diagram={String(children).replace(/\n$/, '')} />
-                                    );
-                                }
-
-                                // 行内代码
-                                if (!match) {
-                                    return (
-                                        <code className={styles.inlineCode} {...props}>
-                                            {children}
-                                        </code>
-                                    );
-                                }
-
-                                // 代码块
-                                return (
-                                    <CodeBlock
-                                        language={language}
-                                        value={String(children).replace(/\n$/, '')}
-                                    />
-                                );
+                <meta name="description" content={article.content.substring(0, 160)} />
+                <meta property="og:title" content={article.title} />
+                <meta property="og:description" content={article.content.substring(0, 160)} />
+                <meta property="og:type" content="article" />
+                <meta property="article:published_time" content={article.publishedAt} />
+                <meta property="article:author" content="博主" />
+                <meta name="twitter:card" content="summary" />
+                <meta name="twitter:title" content={article.title} />
+                <meta name="twitter:description" content={article.content.substring(0, 160)} />
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify({
+                            "@context": "https://schema.org",
+                            "@type": "BlogPosting",
+                            "headline": article.title,
+                            "datePublished": article.publishedAt,
+                            "dateModified": article.updatedAt || article.publishedAt,
+                            "author": {
+                                "@type": "Person",
+                                "name": "孤芳不自赏"
                             },
-                            // 预格式化标签样式
-                            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                            pre: ({ node, ...props }) => <pre className={styles.pre} {...props} />,
+                            "publisher": {
+                                "@type": "Organization",
+                                "name": "孤芳不自赏的Blog",
+                                "logo": {
+                                    "@type": "ImageObject",
+                                    "url": "/favicon.ico"
+                                }
+                            },
+                            "description": article.content.substring(0, 160),
+                            "mainEntityOfPage": {
+                                "@type": "WebPage",
+                                "@id": typeof window !== 'undefined' ? window.location.href : ''
+                            }
+                        })
+                    }}
+                />
+            </Head>
+            <div className={styles.grailLayout}>
+                {/* 左侧栏 ArticleToc，大屏显示 */}
+                {headings.length > 0 && (
+                    <aside className={styles.leftSidebar}>
+                        <div className={styles.sidebarInner}>
+                            <ArticleToc
+                                headings={headings}
+                                title={article.title}
+                                contentHeight={contentHeight}
+                                contentTop={contentTop}
+                            />
+                        </div>
+                    </aside>
+                )}
 
-                            // 添加表格相关组件
-                            table: ({ node, ...props }) => (
-                                <div className={styles.tableContainer}>
-                                    <table className={styles.table} {...props} />
-                                </div>
-                            ),
-                            thead: ({ node, ...props }) => <thead className={styles.tableHead} {...props} />,
-                            tbody: ({ node, ...props }) => <tbody className={styles.tableBody} {...props} />,
-                            tr: ({ node, ...props }) => <tr className={styles.tableRow} {...props} />,
-                            th: ({ node, ...props }) => <th className={styles.tableHeader} {...props} />,
-                            td: ({ node, ...props }) => <td className={styles.tableCell} {...props} />,
+                {/* 手机端 ArticleToc，独立显示 */}
+                {headings.length > 0 && (
+                    <div className={styles.mobileTocWrapper}>
+                        <ArticleToc
+                            headings={headings}
+                            title={article.title}
+                            contentHeight={contentHeight}
+                            contentTop={contentTop}
+                        />
+                    </div>
+                )}
 
-                            // 添加图片渲染组件
-                            // img: ({ node, src, alt, ...props }) => {
-                            //     // 检查是否是相对路径
-                            //     const isRelativePath = src?.startsWith('/');
-                            //     // 如果是相对路径，添加基础URL
-                            //     const imageUrl = isRelativePath ? `${process.env.NEXT_PUBLIC_API_URL}/api/images${src}` : src;
-                            //
-                            //     return (
-                            //         <div className={styles.imageWrapper}>
-                            //             <Image
-                            //                 src={imageUrl || ''}
-                            //                 alt={alt || ''}
-                            //                 width={800}
-                            //                 height={400}
-                            //                 className={styles.markdownImage}
-                            //                 style={{
-                            //                     maxWidth: '100%',
-                            //                     height: 'auto',
-                            //                     borderRadius: '8px',
-                            //                     margin: '1rem 0'
-                            //                 }}
-                            //                 {...props}
-                            //             />
-                            //             {alt && <p className={styles.imageCaption}>{alt}</p>}
-                            //         </div>
-                            //     );
-                            // },
-                        }}
-                    >
-                        {article.content}
-                    </ReactMarkdown>
-                </motion.div>
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.6 }}
-                >
-                    <Link href="/main/Articles" className={styles.backLink}>
-                        ←返回文章列表
-                    </Link>
-                </motion.div>
-            </motion.div>
+                {/* 主内容区，宽度固定居中 */}
+                <main className={styles.articleMain}>
+                    {!isMobile ? (
+                        <div
+                            onClick={() => routerBack.back()}
+                            className={styles.backLinkButton}>
+                            <FaArrowLeft style={{ color: "var(--text)" }} />
+                        </div>
+                    ) : null}
 
-            {headings.length > 0 && (
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.7 }}
-                >
-                    <ArticleToc
-                        headings={headings}
-                        title={article.title}
-                        contentHeight={contentHeight}
-                        contentTop={contentTop}
-                    />
-                </motion.div>
-            )}
-            <RecentArticles />
-            <Comments articleId={article.id} />
+                    <article className={styles.articleContainer} itemScope itemType="https://schema.org/BlogPosting">
+                        <header className={styles.articleHeader}>
+                            <motion.h1
+                                className={styles.articleTitle}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 0.2 }}
+                                itemProp="headline"
+                            >
+                                {article.title}
+                            </motion.h1>
+                            <motion.div
+                                className={styles.articleMeta}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 0.4 }}
+                            >
+                                <time
+                                    className={styles.date}
+                                    dateTime={article.publishedAt}
+                                    itemProp="datePublished"
+                                >
+                                    发布时间: {new Date(article.publishedAt).toLocaleDateString()}
+                                </time>
+                                <span className={styles.status}>
+                                    文章状态: {
+                                        article.status === 'published'
+                                            ? '已发布'
+                                            : article.status === 'archived'
+                                                ? '已归档'
+                                                : '草稿'
+                                    }
+                                </span>
+                                <motion.span
+                                    className={styles.likeButton}
+                                    whileHover={{ scale: 1.05 }}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        handleLike();
+                                    }}
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                    <motion.div
+                                        className={styles.heartWrapper}
+                                        animate={{
+                                            scale: [1, 1.2, 1],
+                                            rotate: [0, -10, 10, 0],
+                                        }}
+                                        transition={{
+                                            duration: 0.5,
+                                            ease: "easeInOut",
+                                            times: [0, 0.2, 0.4, 1]
+                                        }}
+                                    >
+                                        {isLiked ? (
+                                            <FaHeart className={styles.heartIcon} style={{ color: 'var(--like)' }} />
+                                        ) : (
+                                            <FaRegHeart className={styles.heartIcon} />
+                                        )}
+                                    </motion.div>
+                                    <motion.span
+                                        className={styles.likeCount}
+                                        animate={{
+                                            scale: [1, 1.2, 1],
+                                            y: [0, -10, 0]
+                                        }}
+                                        transition={{
+                                            duration: 0.5,
+                                            ease: "easeInOut"
+                                        }}
+                                    >
+                                        {likeCount}
+                                    </motion.span>
+                                </motion.span>
+                            </motion.div>
+                        </header>
 
+                        <motion.div
+                            className={styles.articleContent}
+                            ref={contentRef}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.5 }}
+                            itemProp="articleBody"
+                        >
+                            <ReactMarkdown
+                                rehypePlugins={[[rehypeRaw], [remarkGfm]]}
+                                components={{
+                                    // 自定义标题渲染，添加锚点ID和样式
+                                    h1: ({ node, ...props }) => (
+                                        <h1
+                                            id={props.children?.toString().toLowerCase().replace(/\s+/g, '-')}
+                                            className={styles.heading}
+                                            // style={{ fontFamily: "'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', sans-serif" }}
+                                            {...props}
+                                        />
+                                    ),
+                                    h2: ({ node, ...props }) => (
+                                        <h2
+                                            id={props.children?.toString().toLowerCase().replace(/\s+/g, '-')}
+                                            className={styles.heading}
+                                            // style={{ fontFamily: "'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', sans-serif" }}
+                                            {...props}
+                                        />
+                                    ),
+                                    h3: ({ node, ...props }) => (
+                                        <h3
+                                            id={props.children?.toString().toLowerCase().replace(/\s+/g, '-')}
+                                            className={styles.heading}
+                                            // style={{ fontFamily: "'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', sans-serif" }}
+                                            {...props}
+                                        />
+                                    ),
+                                    h4: ({ node, ...props }) => (
+                                        <h4
+                                            id={props.children?.toString().toLowerCase().replace(/\s+/g, '-')}
+                                            className={styles.heading}
+                                            // style={{ fontFamily: "'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', sans-serif" }}
+                                            {...props}
+                                        />
+                                    ),
+                                    h5: ({ node, ...props }) => (
+                                        <h5
+                                            id={props.children?.toString().toLowerCase().replace(/\s+/g, '-')}
+                                            className={styles.heading}
+                                            // style={{ fontFamily: "'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', sans-serif" }}
+                                            {...props}
+                                        />
+                                    ),
+                                    h6: ({ node, ...props }) => (
+                                        <h6
+                                            id={props.children?.toString().toLowerCase().replace(/\s+/g, '-')}
+                                            className={styles.heading}
+                                            // style={{ fontFamily: "'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', sans-serif" }}
+                                            {...props}
+                                        />
+                                    ),
+                                    // 段落样式
+                                    p: ({ node, ...props }) => (
+                                        <p
+                                            className="article-content-text-size"
+                                            itemProp="text"
+                                            // style={{ fontFamily: "'Noto Serif SC', 'SimSun', 'STSong', serif" }}
+                                            {...props}
+                                        />
+                                    ),
+
+                                    //列表样式
+                                    ul: ({ node, ...props }) => (
+                                        <ul
+                                            className={styles.list}
+                                            // style={{ fontFamily: "'Noto Serif SC', 'SimSun', 'STSong', serif" }}
+                                            {...props}
+                                        />
+                                    ),
+                                    ol: ({ node, ...props }) => (
+                                        <ol
+                                            className={styles.list}
+                                            // style={{ fontFamily: "'Noto Serif SC', 'SimSun', 'STSong', serif" }}
+                                            {...props}
+                                        />
+                                    ),
+                                    li: ({ node, ...props }) => (
+                                        <li
+                                            className="article-content-text-size"
+                                            // style={{ fontFamily: "'Noto Serif SC', 'SimSun', 'STSong', serif" }}
+                                            {...props}
+                                        />
+                                    ),
+
+                                    // 引用样式
+                                    blockquote: ({ node, ...props }) => (
+                                        <blockquote
+                                            className="article-content-text-size"
+                                            // style={{ fontFamily: "'Noto Serif SC', 'SimSun', 'STSong', serif" }}
+                                            {...props}
+                                        />
+                                    ),
+
+                                    // 代码块处理
+                                    code: ({ node, className, children, ...props }) => {
+                                        const match = /language-(\w+)/.exec(className || '');
+                                        const language = match ? match[1] : 'text';
+
+                                        // 处理序列图
+                                        if (language === 'sequence') {
+                                            return (
+                                                <SequenceDiagram diagram={String(children).replace(/\n$/, '')} />
+                                            );
+                                        }
+
+                                        // 行内代码
+                                        if (!match) {
+                                            return (
+                                                <code className={styles.inlineCode} {...props}>
+                                                    {children}
+                                                </code>
+                                            );
+                                        }
+
+                                        // 代码块
+                                        return (
+                                            <CodeBlock
+                                                language={language}
+                                                value={String(children).replace(/\n$/, '')}
+                                            />
+                                        );
+                                    },
+                                    // 预格式化标签样式
+                                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                                    pre: ({ node, ...props }) => <pre className={styles.pre} {...props} />,
+
+                                    // 添加表格相关组件
+                                    table: ({ node, ...props }) => (
+                                        <div className={styles.tableContainer}>
+                                            <table className={styles.table} {...props} />
+                                        </div>
+                                    ),
+                                    thead: ({ node, ...props }) => <thead className={styles.tableHead} {...props} />,
+                                    tbody: ({ node, ...props }) => <tbody className={styles.tableBody} {...props} />,
+                                    tr: ({ node, ...props }) => <tr className={styles.tableRow} {...props} />,
+                                    th: ({ node, ...props }) => <th className={styles.tableHeader} {...props} />,
+                                    td: ({ node, ...props }) => <td className={styles.tableCell} {...props} />,
+
+                                    // 添加视频组件
+                                    video: ({ node, ...props }) => (
+                                        <div className={styles.videoContainer}>
+                                            <video
+                                                className={styles.video}
+                                                controls
+                                                preload="metadata"
+                                                {...props}
+                                            />
+                                        </div>
+                                    ),
+                                }}
+                            >
+                                {article.content}
+                            </ReactMarkdown>
+                        </motion.div>
+
+                        <footer className={styles.articleFooter}>
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 0.6 }}
+                            >
+                                <Link href="/main/Articles" className={styles.backLink}>
+                                    ←返回文章列表
+                                </Link>
+                            </motion.div>
+                        </footer>
+                    </article>
+
+                    <RecentArticles />
+                    <Comments articleId={article.id} />
+                </main>
+                {/* 右侧栏 ArticleSidebar，大屏显示 */}
+                <aside className={styles.rightSidebar}>
+                    <div className={styles.sidebarInner}>
+                        <ArticleSidebar
+                            articleContent={article.content}
+                            onFontSizeChange={handleFontSizeChange}
+                            readingTime={article.readingTime}
+                            onExportOutline={handleExportOutline}
+                            onResultClick={handleResultClick}
+                            contentRef={contentRef}
+                        />
+                    </div>
+                </aside>
+            </div>
         </motion.div>
-
     );
 }
 export default ArticleDetail;

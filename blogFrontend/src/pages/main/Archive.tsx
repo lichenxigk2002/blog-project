@@ -21,6 +21,11 @@ interface ApiResponse {
     error?: string;
 }
 
+// 新增：定义props类型
+interface ArchiveProps {
+    initialGroupedArticles: GroupedArticles;
+}
+
 // 工具函数
 const getExcerpt = (content: string): string => {
     const plainText = content
@@ -133,18 +138,19 @@ const articleVariants = {
     hover: {
         x: 10,
         transition: {
-            type: "spring",
-            stiffness: 300
+            duration: 0.3
         }
     }
 };
 
-const Archive: React.FC = () => {
-    const [groupedArticles, setGroupedArticles] = useState<GroupedArticles>({});
+const Archive: React.FC<ArchiveProps> = ({ initialGroupedArticles }) => {
+    const [groupedArticles, setGroupedArticles] = useState<GroupedArticles>(initialGroupedArticles || {});
     const [error, setError] = useState<string | null>(null);
     const { isLoading, withLoading } = useLoading();
 
     useEffect(() => {
+        // 如果props有数据则不再请求
+        if (initialGroupedArticles && Object.keys(initialGroupedArticles).length > 0) return;
         const fetchArticles = async () => {
             try {
                 setError(null);
@@ -172,7 +178,7 @@ const Archive: React.FC = () => {
         };
 
         fetchArticles();
-    }, [withLoading]);
+    }, [withLoading, initialGroupedArticles]);
 
     if (error) {
         return (
@@ -273,6 +279,37 @@ const Archive: React.FC = () => {
             <RecentArticles />
         </motion.div>
     );
+};
+
+// 新增：getStaticProps实现SSG+ISR
+import { GetStaticProps } from 'next';
+export const getStaticProps: GetStaticProps = async () => {
+    try {
+        const response = await ArticlesAPI.getArticles();
+        if (!response || !Array.isArray(response.data)) {
+            return {
+                props: {
+                    initialGroupedArticles: {}
+                },
+                revalidate: 600
+            };
+        }
+        const processedData = processArticleData(response.data);
+        const grouped = groupArticlesByDate(processedData);
+        return {
+            props: {
+                initialGroupedArticles: grouped
+            },
+            revalidate: 600 // ISR: 每10分钟自动更新
+        };
+    } catch (err) {
+        return {
+            props: {
+                initialGroupedArticles: {}
+            },
+            revalidate: 600
+        };
+    }
 };
 
 export default Archive;

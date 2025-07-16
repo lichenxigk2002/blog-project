@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import ReactMarkdown from 'react-markdown';
-import rehypeRaw from 'rehype-raw';
-import remarkGfm from 'remark-gfm';
 import WordCount from '@/components/WordCount/WordCount';
 import styles from './ArticleForm.module.scss';
 import MarkdownEditor from './MarkdownEditor';
-import { marked } from 'marked';
 import MarkdownToolbar from './MarkdownToolbar';
 import { MarkdownImageAPI } from '@/api/MarkdownImageAPI';
+import { SubscribeAPI, Subscriber } from '@/api/SubscribeAPI';
+import {ArticlesAPI} from "@/api/ArticlesAPI";
+import OperationTipModal from '../ui/OperationTipModal/OperationTipModal';
+import { buildArticleData } from '@/utils/articleUtils';
+import { useSelector} from "react-redux";
+import {RootState} from "@/redux/store";
 
 interface Tag {
   id: number;
@@ -15,6 +17,7 @@ interface Tag {
 }
 
 interface ArticleFormData {
+  id?: number; // 这里加上
   title: string;
   content: string;
   excerpt: string;
@@ -23,6 +26,8 @@ interface ArticleFormData {
   status: 'draft' | 'published' | 'archived';
   postType: 'post' | 'page' | 'thought' | 'diary';
   tags: number[];
+  shouldNotify: boolean;
+  notifyUserIds: number[];
 }
 
 interface ArticleFormProps {
@@ -42,6 +47,8 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
     status: 'draft',
     postType: 'post',
     tags: [],
+    shouldNotify: false,
+    notifyUserIds: [],
     ...initialValues
   });
 
@@ -49,11 +56,48 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
   const [isStatusOpen, setIsStatusOpen] = useState(false);
   const [isPostTypeOpen, setIsPostTypeOpen] = useState(false);
   const [isTagsOpen, setIsTagsOpen] = useState(false);
+  const [isUsersOpen, setIsUsersOpen] = useState(false);
   const statusRef = useRef<HTMLDivElement>(null);
   const postTypeRef = useRef<HTMLDivElement>(null);
   const tagsRef = useRef<HTMLDivElement>(null);
+  const usersRef = useRef<HTMLDivElement>(null);
   const [showToolbar, setShowToolbar] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
+  const [loadingSubscribers, setLoadingSubscribers] = useState(false);
+  const saveTimeout = useRef<NodeJS.Timeout | null>(null)
+  const lastSaveData = useRef<ArticleFormData | null>(null);
+  const autoSaveEnabled = useSelector((state:RootState) =>state.settings.contentSettings.autoSaveEnabled)
+  const newArticleNotification = useSelector((state:RootState) => state.settings.notificationSettings.newArticleNotification);
+  const [autoSaveTip, setAutoSaveTip] = useState<{ open: boolean, message: string, type: 'success' | 'failure' }>({
+    open: false,
+    message: '',
+    type: 'success'
+  });
+
+
+
+
+  const autoSave = async (data: ArticleFormData) => {
+    try{
+      const dataForBackend = buildArticleData(data, data.id ? data : undefined);
+      if(data.id){
+        await ArticlesAPI.updateArticle(data.id, dataForBackend)
+      }else{
+        const response = await ArticlesAPI.createArticle(dataForBackend)
+        if(response && response.data && response.data.id){
+          setFormData(prev => ({...prev, id: response.data.id}))
+          lastSaveData.current = {...dataForBackend, id: response.data.id}
+          setAutoSaveTip({ open: true, message: '自动保存成功', type: 'success' });
+          return;
+        }
+      }
+      lastSaveData.current = dataForBackend;
+      setAutoSaveTip({ open: true, message: '自动保存成功', type: 'success' });
+    }catch (e){
+      setAutoSaveTip({ open: true, message: '自动保存失败', type: 'failure' });
+    }
+  }
 
   useEffect(() => {
     if (initialValues) {
@@ -65,6 +109,25 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
   }, [initialValues]);
 
   useEffect(() => {
+    // 获取订阅用户列表
+    const fetchSubscribers = async () => {
+      setLoadingSubscribers(true);
+      try {
+        const response = await SubscribeAPI.getSubscribers();
+        if (response.success && response.data) {
+          setSubscribers(response.data);
+        }
+      } catch (error) {
+        console.error('获取订阅用户失败:', error);
+      } finally {
+        setLoadingSubscribers(false);
+      }
+    };
+
+    fetchSubscribers();
+  }, []);
+
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (statusRef.current && !statusRef.current.contains(event.target as Node)) {
         setIsStatusOpen(false);
@@ -74,6 +137,9 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
       }
       if (tagsRef.current && !tagsRef.current.contains(event.target as Node)) {
         setIsTagsOpen(false);
+      }
+      if (usersRef.current && !usersRef.current.contains(event.target as Node)) {
+        setIsUsersOpen(false);
       }
     };
 
@@ -93,6 +159,10 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
     setFormData(prev => ({ ...prev, [name]: value }));
     if (name === 'status') setIsStatusOpen(false);
     if (name === 'postType') setIsPostTypeOpen(false);
+  };
+
+  const handleCheckboxChange = (name: string, checked: boolean) => {
+    setFormData(prev => ({ ...prev, [name]: checked }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -158,6 +228,21 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
       input.remove();
     }
   };
+
+  useEffect(() => {
+    if (!autoSaveEnabled) return;
+
+    if(JSON.stringify(formData) === JSON.stringify(lastSaveData.current)){
+      return;
+    }
+    if(saveTimeout.current) clearTimeout(saveTimeout.current);
+    saveTimeout.current = setTimeout(() => {
+      autoSave(formData)
+    },10000)
+    return () => {
+      if(saveTimeout.current) clearTimeout(saveTimeout.current);
+    }
+  }, [formData, autoSaveEnabled]);
 
   // @ts-ignore
   return (
@@ -340,11 +425,99 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
         </div>
       </div>
 
+      {/* 推送选项 */}
+      {newArticleNotification ? <><div className={styles.formItem}>
+        <div className={styles.checkboxGroup}>
+          <label className={styles.checkboxLabel}>
+            <input
+                type="checkbox"
+                checked={formData.shouldNotify}
+                onChange={(e) => handleCheckboxChange('shouldNotify', e.target.checked)}
+                className={styles.checkbox}
+            />
+            <span>推送邮件通知</span>
+          </label>
+        </div>
+      </div>
+
+        {/* 用户选择 */}
+        {formData.shouldNotify && (
+            <div className={styles.formItem} ref={usersRef}>
+              <label className={styles.formLabel}>推送用户</label>
+              <div className={styles.select}>
+                <div
+                    className={styles.selectSelector}
+                    onClick={() => setIsUsersOpen(!isUsersOpen)}
+                >
+                  {formData.notifyUserIds.length > 0
+                      ? `已选择 ${formData.notifyUserIds.length} 个用户`
+                      : '推送给所有订阅用户'}
+                </div>
+                {isUsersOpen && (
+                    <div className={styles.userDropdown}>
+                      {loadingSubscribers ? (
+                          <div className={styles.loadingText}>加载中...</div>
+                      ) : (
+                          <>
+                            <div className={styles.userOption}>
+                              <label className={styles.userCheckbox}>
+                                <input
+                                    type="checkbox"
+                                    className={styles.checkbox}
+                                    checked={formData.notifyUserIds.length === 0}
+                                    onChange={() => setFormData(prev => ({ ...prev, notifyUserIds: [] }))}
+                                />
+                                <span>推送给所有订阅用户</span>
+                              </label>
+                            </div>
+                            <div className={styles.userDivider}></div>
+                            {subscribers.map(subscriber => (
+                                <div key={subscriber.id} className={styles.userOption}>
+                                  <label className={styles.userCheckbox}>
+                                    <input
+                                        className={styles.checkbox}
+                                        type="checkbox"
+                                        checked={formData.notifyUserIds.includes(subscriber.id)}
+                                        onChange={(e) => {
+                                          const newUserIds = e.target.checked
+                                              ? [...formData.notifyUserIds, subscriber.id]
+                                              : formData.notifyUserIds.filter(id => id !== subscriber.id);
+                                          setFormData(prev => ({ ...prev, notifyUserIds: newUserIds }));
+                                        }}
+                                    />
+                                    <span>{subscriber.name} ({subscriber.email})</span>
+                                  </label>
+                                </div>
+                            ))}
+                          </>
+                      )}
+                    </div>
+                )}
+              </div>
+            </div>
+        )}</> : <>
+        <div className={styles.formItem}>
+          <div className={styles.checkboxGroup}>
+            <label className={styles.checkboxLabel}>
+
+              <span>推送邮件通知已关闭</span>
+            </label>
+          </div>
+        </div>
+      </>}
+
+
       <div className={styles.formItem}>
         <button type="submit" className={styles.submitButton}>
           保存
         </button>
       </div>
+      <OperationTipModal
+          open={autoSaveTip.open}
+          onClose={() => setAutoSaveTip(prev => ({ ...prev, open: false }))}
+          message={autoSaveTip.message}
+          type={autoSaveTip.type}
+      />
     </form>
   );
 };

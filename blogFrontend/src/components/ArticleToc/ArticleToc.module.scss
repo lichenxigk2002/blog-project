@@ -4,6 +4,12 @@ $text: var(--text);
 $bg-secondary: var(--bg-secondary);
 $bg-tertiary: var(--bg-tertiary);
 
+@mixin bg-desktopProgressBar {
+  background: linear-gradient(90deg, #4ade80, #22c55e);
+  border-radius: 0.125rem;
+  transition: width 0.3s;
+}
+
 @mixin custom-scrollbar {
   &::-webkit-scrollbar {
     width: 0.25rem;
@@ -72,6 +78,181 @@ $bg-tertiary: var(--bg-tertiary);
     }
   }
 
+  // 手机端优化
+  &.mobile {
+    position: fixed;
+    left: 1rem !important;
+    right: 1rem !important;
+    top: auto !important;
+    bottom: 1rem !important;
+    width: auto !important;
+    height: 3.5rem;
+    transform: none !important;
+    z-index: 1000;
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15);
+
+    &.expanded {
+      height: 70vh;
+      max-height: 500px;
+      bottom: 1rem;
+      left: 1rem !important;
+      right: 1rem !important;
+      width: auto !important;
+    }
+
+    .tocHeader {
+      height: 3.5rem;
+      padding: 0 1rem;
+      background: transparent;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .mobileToggleButton {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      width: 100%;
+      height: 100%;
+      background: none;
+      border: none;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 0 0.5rem;
+      min-width: 0; // 防止内容溢出
+      box-sizing: border-box;
+      gap: 0.75rem;
+    }
+
+    .mobileLeft {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-width: 0;
+      flex-shrink: 1;
+      max-width: 60%;
+    }
+
+    .mobileRight {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      min-width: 0;
+      flex-shrink: 1;
+      max-width: 40%;
+    }
+
+    .backButton {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.75rem;
+      height: 1.75rem;
+      border-radius: 50%;
+      background: rgba(var(--primary-rgb), 0.1);
+      color: var(--primary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+
+      &:hover {
+        background: var(--primary);
+        color: white;
+        transform: scale(1.1);
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
+    }
+
+    .mobileToggleIcon {
+      font-size: 1.1rem;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    .progressText {
+      font-size: 0.75rem;
+      color: var(--text);
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+
+    .toc {
+      top: 3.5rem;
+      height: calc(100% - 3.5rem);
+      padding: 1rem;
+      background: transparent;
+
+      .tocList {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .tocItem {
+        padding: 0.75rem 0;
+        font-size: 0.95rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        &.active {
+          background: rgba(var(--primary-rgb), 0.1);
+          border-radius: 0.5rem;
+          padding: 0.75rem;
+          margin: 0.25rem 0;
+          border-left: 3px solid var(--primary);
+        }
+
+        .tocLink {
+          color: var(--text);
+          text-decoration: none;
+          display: block;
+          transition: color 0.2s ease;
+
+          &:hover {
+            color: var(--primary);
+          }
+        }
+
+        // 层级缩进
+        &.level1 {
+          font-weight: 600;
+          margin-left: 0;
+        }
+
+        &.level2 {
+          margin-left: 1rem;
+          font-size: 0.9rem;
+        }
+
+        &.level3 {
+          margin-left: 2rem;
+          font-size: 0.85rem;
+        }
+
+        &.level4,
+        &.level5,
+        &.level6 {
+          margin-left: 3rem;
+          font-size: 0.8rem;
+        }
+      }
+    }
+  }
+
   .tocHeader {
     position: absolute;
     top: 0;
@@ -82,6 +263,7 @@ $bg-tertiary: var(--bg-tertiary);
     align-items: center;
     justify-content: space-between;
     padding: 0 0.5rem;
+    border-bottom: 1px solid rgba(135, 135, 135, 0.26);
     background: var(--bg-secondary);
     z-index: 1;
     transition: all 0.3s ease;
@@ -92,30 +274,6 @@ $bg-tertiary: var(--bg-tertiary);
     align-items: center;
     gap: 0.5rem;
 
-    .progressCircle {
-      width: 1.5rem;
-      height: 1.5rem;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      background: conic-gradient(var(--primary) 0deg, transparent 0deg);
-
-      .progressInner {
-        width: 1.2rem;
-        height: 1.2rem;
-        background: var(--bg-secondary);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
-    }
 
     .progressText {
       font-size: 0.8rem;
@@ -320,4 +478,58 @@ $bg-tertiary: var(--bg-tertiary);
       }
     }
   }
+}
+
+.tocTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.progressText {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.desktopProgressBar {
+  flex: 1 1 auto;
+  height: 0.25rem;
+  background: #cfffe5;
+  border-radius: 1rem;
+  overflow: hidden;
+  margin: 0 0.5rem;
+  min-width: 40px;
+  max-width: 200px;
+  position: relative;
+  top: 0.2rem;
+  appearance: none;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+
+  &::-webkit-progress-bar {
+    background: #e6f9ed;
+    border-radius: 0.125rem;
+  }
+
+  &::-webkit-progress-value {
+    @include bg-desktopProgressBar;
+  }
+
+  &::-moz-progress-bar {
+    @include bg-desktopProgressBar;
+  }
+
+  &::-ms-fill {
+    @include bg-desktopProgressBar;
+  }
+}
+
+.toggleButton {
+  flex-shrink: 0;
 }

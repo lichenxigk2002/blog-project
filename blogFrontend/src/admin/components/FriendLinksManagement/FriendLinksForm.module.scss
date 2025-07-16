@@ -1,0 +1,196 @@
+@import '../../styles/shared.module.scss';
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(162, 89, 255, 0.1);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(162, 89, 255, 0.2);
+  border: 2px solid #fbeaff;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, #fbeaff 0%, #e0f7fa 80%);
+    opacity: 0.3;
+    border-radius: 50%;
+    z-index: 0;
+  }
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 2px solid #fbeaff;
+  position: relative;
+  z-index: 1;
+
+  h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: $primary;
+    font-family: $font-main;
+  }
+}
+
+.closeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  color: $primary;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba($primary-light, 0.5);
+    color: $primary;
+    transform: rotate(90deg);
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.form {
+  padding: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: $primary;
+  margin-bottom: 8px;
+  font-family: $font-main;
+}
+
+.required {
+  color: $danger;
+}
+
+.input,
+.textarea,
+.select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid $primary-light;
+  border-radius: 8px;
+  font-size: 14px;
+  color: $primary-dark;
+  background: rgba(255, 255, 255, 0.9);
+  transition: border-color 0.3s ease;
+  font-family: $font-main;
+
+  &:hover {
+    border-color: $primary;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba($primary, 0.2);
+  }
+
+  &::placeholder {
+    color: $primary;
+    opacity: 0.6;
+  }
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+}
+
+.select {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: 40px;
+  appearance: none;
+}
+
+.formActions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 2px solid #fbeaff;
+  position: relative;
+  z-index: 1;
+}
+
+.cancelButton {
+  @extend .button;
+  background: none;
+  border: 2px solid $primary-light;
+  color: $primary;
+
+  &:hover {
+    background: rgba($primary-light, 0.2);
+    transform: translateY(-1px);
+  }
+}
+
+.submitButton {
+  @extend .button;
+  background: linear-gradient(90deg, $accent 0%, $primary-light 100%);
+  color: $white;
+  box-shadow: $shadow;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-hover;
+    background: linear-gradient(90deg, $primary-light 0%, $accent 100%);
+    color: $primary;
+  }
+
+  &:disabled {
+    background: $primary-light;
+    color: $primary;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+}

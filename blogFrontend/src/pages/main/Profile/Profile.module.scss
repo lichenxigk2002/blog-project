@@ -1,0 +1,206 @@
+@mixin common-btn {
+  border-radius: 6px;
+  color: #fff;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 15px;
+  margin-right: 8px;
+  transition: background 0.2s;
+  flex: 1 1 0;
+  min-width: 80px;
+  max-width: 120px;
+  box-sizing: border-box;
+  height: 40px;
+  line-height: 40px;
+}
+
+.profileCard {
+  width: min(25rem, 90%);
+  margin: 2rem auto;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(1.25rem);
+  animation: float 10s ease-in-out infinite;
+  font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+  color: var(--text);
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-0.3125rem);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.avatarWrapper {
+  width: 100%;
+  display: flex;
+  position: relative;
+  margin-bottom: 24px;
+  justify-content: center;
+  align-content: center;
+
+  .avatarImg {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #eee;
+    cursor: pointer;
+    transition: box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+  }
+}
+
+
+
+.avatarUploading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #888;
+}
+
+.formGroup {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.label {
+  width: 70px;
+  color: var(--text);
+  font-weight: 500;
+  margin-right: 8px;
+  text-align: right;
+}
+
+.input {
+  flex: 2 1 0;
+  min-width: 0;
+  max-width: 220px;
+  box-sizing: border-box;
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid rgba(202, 202, 202, 0.3);
+  background: rgba(250, 251, 252, 0);
+  font-size: 15px;
+  transition: border 0.2s;
+  height: 40px;
+  line-height: 40px;
+  color: var(--text);
+}
+
+
+
+.input:focus {
+  border: 1px solid #ff6f91;
+  outline: none;
+}
+
+.input[readonly] {
+  background: #f8f8f8;
+  color: #aaa;
+}
+
+.button {
+  @include common-btn;
+  background: #ff6f91;
+  color: white;
+}
+
+.button:hover:not(:disabled) {
+  background: #ff4f7a;
+}
+
+.button:disabled {
+  background: #ffd6e0;
+  cursor: not-allowed;
+}
+
+.inputGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.codeInputContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sendCodeButton {
+  @include common-btn;
+  background: #ff6f91;
+  min-width: 100px;
+  white-space: nowrap;
+  color: white;
+}
+
+.sendCodeButton:hover:not(:disabled) {
+  background: #ff4f7a;
+}
+
+.sendCodeButton:disabled {
+  background: #ffd6e0;
+  cursor: not-allowed;
+}
+
+.unbindButton {
+  @include common-btn;
+  background: #bbb;
+  color: white;
+}
+
+.unbindButton:hover:not(:disabled) {
+  background: #888;
+}
+
+.unbindButton:disabled {
+  background: #ffd6e0;
+  cursor: not-allowed;
+}
+
+.successMsg {
+  color: #27ae60;
+  margin-top: 12px;
+  text-align: center;
+}
+
+.errorMsg {
+  color: #e74c3c;
+  margin-top: 12px;
+  text-align: center;
+}
+
+.buttonRow {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  justify-content: flex-end;
+}
+.bottomButton{
+  width: 100%;
+  display: flex;
+}

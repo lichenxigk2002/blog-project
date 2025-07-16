@@ -326,7 +326,7 @@ $shadow: var(--shadow);
 // 平板设备 (768px-1024px)
 @media (min-width: 48rem) and (max-width: 64rem) {
     .container {
-        margin-top: 2rem;
+        margin-top: 0.8rem;
     }
 
     .showTop {

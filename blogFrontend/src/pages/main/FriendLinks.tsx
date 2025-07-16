@@ -8,7 +8,13 @@ import Head from "next/head";
 import PageHeader from '../../components/PageHeader/PageHeader';
 import type { FriendLinks } from "@/types/FriendLinks";
 import OperationTipModal from '@/components/OperationTipModal/OperationTipModal';
+import DOMPurify from 'dompurify';
+import {useSelector} from "react-redux";
 
+// 新增：定义props类型
+interface FriendLinksPageProps {
+    initialFriendLinks: FriendLinks[];
+}
 
 const SITE_INFO = {
     name: "孤芳不自赏的Blog",
@@ -24,10 +30,10 @@ const REQUIREMENTS = [
     "添加后请邮件告知您的网站名称、链接及简介"
 ];
 
-const FriendLinks: React.FC = () => {
+const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => {
     const { isDarkMode } = useTheme();
     const { isLoading } = useLoading();
-    const [friendLinks, setFriendLinks] = useState<FriendLinks[]>([]);
+    const [friendLinks, setFriendLinks] = useState<FriendLinks[]>(initialFriendLinks || []);
     const [formData, setFormData] = useState({
         name: '',
         url: '',
@@ -81,8 +87,10 @@ const FriendLinks: React.FC = () => {
     };
 
     useEffect(() => {
+        // SSG兜底：如果props有数据则不再请求
+        if (initialFriendLinks && initialFriendLinks.length > 0) return;
         fetchFriendLinks();
-    }, []);
+    }, [initialFriendLinks]);
 
     // 处理输入变化
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -166,8 +174,14 @@ const FriendLinks: React.FC = () => {
                                         <img src={link.avatarUrl} alt={link.name + '背景'} />
                                     </div>
                                     <div className={styles.info}>
-                                        <h3 style={hoverColors[link.id.toString()]?.h3 ? { color: hoverColors[link.id.toString()].h3 } : {}}>{link.name}</h3>
-                                        <p style={hoverColors[link.id.toString()]?.p ? { color: hoverColors[link.id.toString()].p } : {}}>{link.description}</p>
+                                        <h3
+                                            style={hoverColors[link.id.toString()]?.h3 ? { color: hoverColors[link.id.toString()].h3 } : {}}
+                                            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(link.name) }}
+                                        />
+                                        <p
+                                            style={hoverColors[link.id.toString()]?.p ? { color: hoverColors[link.id.toString()].p } : {}}
+                                            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(link.description) }}
+                                        />
                                     </div>
                                 </a>
                             ))}
@@ -279,6 +293,27 @@ const FriendLinks: React.FC = () => {
             />
         </div>
     );
+};
+
+// 新增：getStaticProps实现SSG+ISR
+import { GetStaticProps } from 'next';
+export const getStaticProps: GetStaticProps = async () => {
+    try {
+        const response = await FriendLinksAPI.getAllFriendLinks();
+        return {
+            props: {
+                initialFriendLinks: Array.isArray(response) ? response : []
+            },
+            revalidate: 600 // ISR: 每10分钟自动更新
+        };
+    } catch (err) {
+        return {
+            props: {
+                initialFriendLinks: []
+            },
+            revalidate: 600
+        };
+    }
 };
 
 export default FriendLinks;

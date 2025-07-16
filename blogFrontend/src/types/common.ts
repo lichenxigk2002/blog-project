@@ -5,6 +5,15 @@ export interface ApiResponse<T> {
     data: T;
 }
 
+export interface AdminApiResponse<T> extends ApiResponse<any> {
+    code: number;
+    message: string;
+    error?: string;
+    token?: string;
+    admin?: string;
+    data: T;
+}
+
 export interface PaginatedResponse<T> {
     total: number;
     current: number;

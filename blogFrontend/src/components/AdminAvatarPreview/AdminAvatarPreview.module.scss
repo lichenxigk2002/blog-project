@@ -1,0 +1,35 @@
+$avatar-border: var(--border);
+
+.avatarContainer {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: inline-block;
+}
+
+.avatar {
+  margin: auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 30%;
+  object-fit: cover;
+  border: 2px solid $avatar-border;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+.onlineDot {
+  position: absolute;
+  right: -7px;
+  bottom: -5px;
+  width: 10px;
+  height: 10px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.15);
+  z-index: 2;
+}

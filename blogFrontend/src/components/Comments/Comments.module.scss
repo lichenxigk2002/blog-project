@@ -41,7 +41,7 @@ $gap-small: 0.4rem;
 }
 
 @mixin btn-login {
-  @include btn-base($primary-color, white);
+  @include btn-base($primary-color, #9a9a9a);
 }
 
 @mixin btn-emoji {

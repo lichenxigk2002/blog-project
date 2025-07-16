@@ -1,0 +1,340 @@
+@import '../../styles/shared.module.scss';
+
+$primary: #a259ff;
+$primary-light: #fbeaff;
+$primary-dark: #6c3ec1;
+$accent: #a7e9ff;
+$danger: #ffb6b9;
+$white: #fff;
+$shadow: 0 2px 8px rgba(162, 89, 255, 0.2);
+$shadow-hover: 0 4px 12px rgba(162, 89, 255, 0.3);
+$font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
+
+.container {
+  margin: 0 auto;
+  padding: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 30px;
+  color: $primary;
+  font-weight: bold;
+}
+
+.settingsCard {
+  background: $white;
+  border-radius: 18px;
+  box-shadow: $shadow;
+  padding: 32px 28px 24px 28px;
+  margin-bottom: 32px;
+  transition: box-shadow 0.3s;
+  position: relative;
+  z-index: 1;
+  border: 2px solid $primary-light;
+  @include transition();
+
+  &:hover {
+    box-shadow: $shadow-hover;
+    border-color: $primary;
+  }
+}
+
+.cardTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: $primary-dark;
+  margin-bottom: 18px;
+  letter-spacing: 1px;
+  font-family: $font-main;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cardDivider {
+  height: 2px;
+  background: linear-gradient(90deg, $primary-light 0%, $accent 100%);
+  border: none;
+  margin: 18px 0 24px 0;
+  border-radius: 2px;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 2px solid $accent;
+}
+
+.settingItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.settingInfo {
+  flex: 1;
+}
+
+.settingLabel {
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.settingDescription {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+}
+
+.settingControl {
+  margin-left: 16px;
+}
+
+.settingsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 900px) {
+  .settingsGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+.miniCard {
+  background: $white;
+  border-radius: 12px;
+  box-shadow: $shadow;
+  padding: 12px 10px 10px 10px;
+  margin-bottom: 0;
+  border: 1.2px solid $primary-light;
+  @include transition();
+  width: 100%;
+  max-width: 420px;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: stretch;
+  justify-content: flex-start;
+
+  &:hover {
+    box-shadow: $shadow-hover;
+    border-color: $primary;
+  }
+}
+
+.miniCardTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: $primary-dark;
+  margin-bottom: 2px;
+  font-family: $font-main;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.miniCardDesc {
+  color: #666;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.miniCardControl {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+// Switch 美化
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 34px;
+  height: 18px;
+  vertical-align: middle;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #e0e0e0;
+  transition: .3s;
+  border-radius: 18px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.slider:before {
+  position: absolute;
+  content: '';
+  height: 14px;
+  width: 14px;
+  left: 2px;
+  bottom: 2px;
+  background-color: #fff;
+  transition: .3s;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+input:checked+.slider {
+  background: linear-gradient(90deg, $primary 0%, $accent 100%);
+}
+
+input:checked+.slider:before {
+  transform: translateX(16px);
+}
+
+// 按钮美化
+.submitButton {
+  @include button-base;
+  font-size: 12px;
+  padding: 3px 12px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, $primary 0%, $accent 100%);
+  color: $white;
+  box-shadow: 0 1px 4px rgba($primary, 0.08);
+  margin-left: 2px;
+  min-width: 56px;
+
+  &:hover:enabled {
+    background: linear-gradient(90deg, $accent 0%, $primary 100%);
+    color: $primary;
+    transform: translateY(-1px) scale(1.04);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// 评论框美化
+.commentFormContainer {
+  background: #f7f7fa;
+  border-radius: 6px;
+  padding: 7px 6px;
+  margin-bottom: 6px;
+}
+
+.formTitle {
+  font-size: 12px;
+  color: $primary-dark;
+  margin-bottom: 4px;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 28px;
+  border: 1px solid $primary-light;
+  border-radius: 5px;
+  padding: 4px 6px;
+  font-size: 12px;
+  background: #fff;
+  resize: none;
+  margin-bottom: 4px;
+  font-family: $font-main;
+}
+
+.miniCardPreview {
+  background: $primary-light;
+  border-radius: 7px;
+  padding: 7px 8px;
+  font-size: 12px;
+  color: $primary-dark;
+  margin-top: 2px;
+}
+
+// 让卡片两列并排
+.settingsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 900px) {
+  .settingsGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .miniCard {
+    padding: 8px 3px 7px 3px;
+    max-width: 100%;
+  }
+
+  .miniCardTitle {
+    font-size: 14px;
+  }
+
+  .miniCardDesc {
+    font-size: 11px;
+  }
+
+  .miniCardPreview {
+    font-size: 11px;
+    padding: 6px 3px;
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .settingsCard {
+    padding: 16px 8px 12px 8px;
+  }
+
+  .actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .miniCard {
+    padding: 12px 6px 10px 6px;
+  }
+
+  .miniCardTitle {
+    font-size: 15px;
+  }
+
+  .miniCardDesc {
+    font-size: 12px;
+  }
+
+  .miniCardPreview {
+    font-size: 12px;
+    padding: 8px 6px;
+  }
+}

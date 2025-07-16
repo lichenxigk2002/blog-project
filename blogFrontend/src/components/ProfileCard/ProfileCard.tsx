@@ -68,7 +68,7 @@ const ProfileCard: React.FC = () => {
                         className={styles.userBio}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        transition={{ delay: 0.6, duration: 0.5 }}
+                        transition={{ duration: 0.2 }} // 去掉 delay，缩短 duration
                     >
                         Java+TypeScript全栈开发者，正在学习HarmonyOS Next，励志成为Web3.0的先锋
                     </motion.p>

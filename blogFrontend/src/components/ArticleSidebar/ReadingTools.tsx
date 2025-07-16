@@ -2,17 +2,21 @@ import React, { useState } from 'react';
 import { FaFont, FaMoon, FaSun, FaFileExport, FaShareAlt, FaChevronUp } from 'react-icons/fa';
 import { useTheme } from '@/hooks/useTheme';
 import { useAppDispatch } from '@/redux/store';
-import { toggleTheme } from '@/redux/theme/actions';
+import { toggleTheme } from '@/redux/themeSlice';
 import styles from './ReadingTools.module.scss';
 
 interface ReadingToolsProps {
   onFontSizeChange: (size: number) => void;
   readingTime: number;
+  articleContent: string;
+  contentRef: React.RefObject<HTMLDivElement>;
 }
 
 const ReadingTools: React.FC<ReadingToolsProps> = ({
   onFontSizeChange,
   readingTime,
+  articleContent,
+  contentRef,
 }) => {
   const [fontSize, setFontSize] = React.useState(16);
   const [isCopied, setIsCopied] = React.useState(false);
@@ -35,6 +39,27 @@ const ReadingTools: React.FC<ReadingToolsProps> = ({
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
   };
+
+  const handleExportMarkdown = () => {
+    const blob = new Blob([articleContent], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'article.md';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // const handleExportPDF = async () => {
+  //   if (!contentRef.current) return;
+  //   const html2pdf = (await import('html2pdf.js')).default;
+  //   html2pdf(contentRef.current, {
+  //     margin: 0.5,
+  //     filename: 'article.pdf',
+  //     html2canvas: { scale: 2 },
+  //     jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+  //   });
+  // };
 
   return (
     <div className={`${styles.tools} ${isCollapsed ? styles.collapsed : ''}`}>
@@ -92,13 +117,30 @@ const ReadingTools: React.FC<ReadingToolsProps> = ({
 
         <div className={styles.toolItem}>
           <button
-            className={`${styles.exportButton} ${styles.shareButton}`}
-            onClick={handleShareClick}
+              className={`${styles.exportButton} ${styles.shareButton}`}
+              onClick={handleShareClick}
           >
             <FaShareAlt className={styles.toolIcon} />
             {isCopied ? '已复制' : '分享文章'}
           </button>
+          <button
+              className={`${styles.exportButton} ${styles.shareButton}`}
+              onClick={handleExportMarkdown}
+          >
+            <FaFileExport className={styles.toolIcon} />
+            导出 Markdown
+          </button>
         </div>
+        {/*<div className={styles.toolItem}>*/}
+        {/*  */}
+        {/*  <button*/}
+        {/*    className={styles.exportButton}*/}
+        {/*    onClick={handleExportPDF}*/}
+        {/*  >*/}
+        {/*    <FaFileExport className={styles.toolIcon} />*/}
+        {/*    导出 PDF*/}
+        {/*  </button>*/}
+        {/*</div>*/}
       </div>
     </div>
   );

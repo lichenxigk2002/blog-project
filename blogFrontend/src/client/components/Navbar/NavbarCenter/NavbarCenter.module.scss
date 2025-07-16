@@ -101,7 +101,7 @@
     transition: all 0.3s ease;
 
     &:hover {
-        background-color: #f8f9fa;
+        background: var(--navbar-hover-background, rgba(145, 145, 145, 0.1));
         color: var(--nav-active-color, #333);
     }
 }

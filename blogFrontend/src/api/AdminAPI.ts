@@ -1,25 +1,10 @@
 import { http } from '@/utils/request';
 import { Admin } from '@/types/Admin';
-
-export interface AdminLoginResponse {
-    code: number;
-    msg: string;
-    token?: string;
-    admin?: Admin;
-}
+import { AdminApiResponse } from '@/types/common';
 
 export const AdminAPI = {
-    login: async (credentials: { username: string; password: string }) => {
-        try {
-            const response = await http.post<AdminLoginResponse>('/admin/login', credentials);
-            if ('error' in response) {
-                console.error('Admin login failed:', response.error);
-                throw new Error(response.error);
-            }
-            return response as AdminLoginResponse;
-        } catch (error) {
-            console.error('Admin login error:', error);
-            throw error;
-        }
-    }
+    // 管理员登录
+    login: (credentials: { username: string; password: string }) =>
+        http.post<AdminApiResponse<{ token: string; admin: Admin }>>('/admin/login', credentials),
+
 };

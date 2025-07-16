@@ -17,6 +17,52 @@ spring:
   web:
     resources:
       static-locations: classpath:/static/,file:./uploads/
+  mail:
+    host: gz-smtp.qcloudmail.com
+    port: 465
+    username: ${TENCENT_CLOUD_MAIL_USERNAME}   # 你的发信邮箱
+    password: ${TENCENT_CLOUD_MAIL_PASSWORD}   # 腾讯云邮件推送后台生成的SMTP密码
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.ssl.enable: true
+    default-encoding: UTF-8
+  # mail:
+  #   host: smtp.qq.com
+  #   port: 465
+  #   username: ${TENCENT_MAIL_USERNAME}
+  #   password: ${TENCENT_MAIL_PASSWORD}
+  #   properties:
+  #     mail.smtp.auth: true
+  #     mail.smtp.ssl.enable: true
+#  mail:
+#    host: smtp.larksuite.com
+#    port: 587
+#    username: ${CODEBYTE_MAIL_USERNAME}
+#    password: ${CODEBYTE_MAIL_PASSWORD}
+#    properties:
+#      mail.smtp.auth: true
+#      mail.smtp.starttls.enable: true
+#      mail.smtp.starttls.required: true
+#    default-encoding: UTF-8
+  thymeleaf:
+    cache: false
+    mode: HTML
+    encoding: UTF-8
+    servlet:
+      content-type: text/html
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 108110635820-8p2t4d0a3jvsippksa77485o876e2rno.apps.googleusercontent.com
+            client-secret: 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
+
+# 安全配置
+security:
+  allowed-origins: "*"
+  allowed-methods: "*"
+  allowed-headers: "*"
 
 file:
   upload:
@@ -30,3 +76,6 @@ cos:
   bucketName: ${COS_BUCKET_NAME}
   region: ${COS_REGION}
   url: ${COS_URL}
+
+app:
+  frontend-home: https://www.gfbzsblog.site

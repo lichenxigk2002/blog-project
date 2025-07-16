@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { useAppDispatch } from '@/redux/store';
-import { register } from '@/redux/auth/actions';
+import {RootState, useAppDispatch} from '@/redux/store';
+import {useSelector} from "react-redux";
+import { register } from '@/redux/authSlice';
 import styles from './Register.module.scss';
+import { validatePassword } from '@/utils/validate';
 
 interface RegisterProps {
     onClose: () => void;
@@ -21,6 +23,7 @@ const Register: React.FC<RegisterProps> = ({ onClose }) => {
     const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
     const [passwordStrength, setPasswordStrength] = useState<'weak' | 'medium' | 'strong'>('weak');
     const [showPassword, setShowPassword] = useState(false);
+    const userRegistration = useSelector((state:RootState) => state.settings.contentSettings.userRegistration)
 
     const validateForm = () => {
         const newErrors: Record<string, string> = {};
@@ -54,30 +57,6 @@ const Register: React.FC<RegisterProps> = ({ onClose }) => {
                 return newErrors;
             });
         }
-    };
-
-    const validatePassword = (password: string): { isValid: boolean; message: string } => {
-        if (password.length < 8) {
-            return { isValid: false, message: '密码长度至少8位' };
-        }
-
-        if (!/[A-Z]/.test(password)) {
-            return { isValid: false, message: '密码必须包含至少一个大写字母' };
-        }
-
-        if (!/[a-z]/.test(password)) {
-            return { isValid: false, message: '密码必须包含至少一个小写字母' };
-        }
-
-        if (!/[0-9]/.test(password)) {
-            return { isValid: false, message: '密码必须包含至少一个数字' };
-        }
-
-        if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
-            return { isValid: false, message: '密码必须包含至少一个特殊字符' };
-        }
-
-        return { isValid: true, message: '密码强度符合要求' };
     };
 
     const updatePasswordStrength = (password: string) => {
@@ -157,7 +136,7 @@ const Register: React.FC<RegisterProps> = ({ onClose }) => {
                     <h2>注册账号</h2>
                 </div>
 
-                <form onSubmit={handleSubmit} className={styles.form}>
+                {userRegistration ? <form onSubmit={handleSubmit} className={styles.form}>
                     <div className={styles.inputGroup}>
                         <label className={styles.label} htmlFor="username">用户名</label>
                         <input
@@ -220,7 +199,10 @@ const Register: React.FC<RegisterProps> = ({ onClose }) => {
                     >
                         {isLoading ? '注册中...' : '注册'}
                     </button>
-                </form>
+                </form>:<div className={styles.info}>
+                    <label className={styles.labelInfo}>站长已将账号密码注册功能关闭啦，可以使用邮箱登录哦</label>
+                </div>
+                }
 
                 <div className={styles.footer}>
                     <button className={styles.switchButton} onClick={onClose}>

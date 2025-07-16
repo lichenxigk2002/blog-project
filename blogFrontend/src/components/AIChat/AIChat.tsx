@@ -227,16 +227,28 @@ const AIChat: React.FC = () => {
       }
 
       // 循环读取流数据
+      // let readCount = 0;
       while (true) {
+        // readCount++;
+        // console.log(`\n=== 第${readCount}次读取 ===`);
+
+        // 创建Promise但不立即await
+        // const readPromise = reader.read();
+        // console.log('Promise状态:', readPromise); // 观察Pending状态
+
+        // 等待Promise完成
         const { done, value: contentValue } = await reader.read();
-        console.log('未解码的value:', contentValue); // 这里就是 Uint8Array
+        // console.log('Promise完成，结果:', { done, value: contentValue }); // 观察Fulfilled状态
+
         if (done) break;
 
         buffer += decoder.decode(contentValue, { stream: true });
         const lines = buffer.split('\n');
+        console.log('分割后的lines数组:', lines); // 调试：查看数组内容
         buffer = lines.pop() || '';
 
         for (const line of lines) {
+          console.log('当前处理的line:', `"${line}"`); // 调试：查看每个line
           if (line.startsWith('data: ')) {
             const data = line.slice(6);
             if (data === '[DONE]') {
@@ -266,7 +278,15 @@ const AIChat: React.FC = () => {
             }
 
             try {
+              // console.log('原始data字符串:', data);
               const parsed = JSON.parse(data);
+              // console.log('JSON解析后的对象:', parsed);
+              // console.log('对象结构:', JSON.stringify(parsed, null, 2));
+              // console.log('choices数组:', parsed.choices);
+              // console.log('choices[0]:', parsed.choices?.[0]);
+              // console.log('delta:', parsed.choices?.[0]?.delta);
+              // console.log('content:', parsed.choices?.[0]?.delta?.content);
+
               const content = parsed.choices[0]?.delta?.content || '';
 
               if (content) {
@@ -285,6 +305,7 @@ const AIChat: React.FC = () => {
         }
       }
     } catch (error) {
+      // console.log('Promise被拒绝:', error); // 观察Rejected状态
       console.error('AI response error:', error);
       setError('发生错误，请稍后再试');
       const errorMessage: Message = {

@@ -20,12 +20,19 @@ const cardTransforms = [
     // ...可继续扩展
 ];
 
-const Thoughts: React.FC = () => {
-    const [thoughtsList, setThoughtsList] = useState<ThoughtsProps[]>([]);
+// 新增：定义props类型
+interface ThoughtsPageProps {
+    initialThoughts: ThoughtsProps[];
+}
+
+const Thoughts: React.FC<ThoughtsPageProps> = ({ initialThoughts }) => {
+    const [thoughtsList, setThoughtsList] = useState<ThoughtsProps[]>(initialThoughts || []);
     const { isLoading, withLoading } = useLoading();
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        // 如果props有数据则不再请求
+        if (initialThoughts && initialThoughts.length > 0) return;
         const fetchThoughts = async () => {
             try {
                 const response = await ThoughtsAPI.getAllThoughts();
@@ -39,12 +46,10 @@ const Thoughts: React.FC = () => {
                 setError('获取数据失败，请稍后重试');
                 console.error('Error fetching thoughts:', err);
                 setThoughtsList([]);
-            } finally {
             }
         };
-
         fetchThoughts();
-    }, []);
+    }, [initialThoughts]);
 
     if (isLoading) {
         return <LoadingSpinner />;
@@ -92,6 +97,27 @@ const Thoughts: React.FC = () => {
             </div>
         </div>
     );
+};
+
+// 新增：getStaticProps实现SSG+ISR
+import { GetStaticProps } from 'next';
+export const getStaticProps: GetStaticProps = async () => {
+    try {
+        const response = await ThoughtsAPI.getAllThoughts();
+        return {
+            props: {
+                initialThoughts: Array.isArray(response) ? response : []
+            },
+            revalidate: 600 // ISR: 每10分钟自动更新
+        };
+    } catch (err) {
+        return {
+            props: {
+                initialThoughts: []
+            },
+            revalidate: 600
+        };
+    }
 };
 
 export default Thoughts;

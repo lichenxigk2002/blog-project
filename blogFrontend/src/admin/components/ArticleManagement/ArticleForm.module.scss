@@ -875,3 +875,74 @@
     }
   }
 }
+
+//复选框样式
+.checkboxGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: $primary-dark;
+  font-family: $font-main;
+  font-weight: 500;
+  cursor: pointer;
+  gap: 6px;
+}
+
+.checkbox {
+  width: 15px;
+  height: 15px;
+  accent-color: $primary;
+  margin-right: 6px;
+  cursor: pointer;
+  border: 1px solid $primary;
+}
+
+//用户选择区域样式
+.userDropdown {
+  background: #fff;
+  border: 2px solid $primary-light;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(180, 120, 255, 0.15);
+  padding: 12px;
+  margin-top: 8px;
+  min-width: 220px;
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.userOption {
+  display: flex;
+  align-items: center;
+  padding: 6px 0;
+}
+
+.userCheckbox {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: $primary-dark;
+  font-family: $font-main;
+  gap: 6px;
+}
+
+.userDivider {
+  height: 1px;
+  background: $primary-light;
+  margin: 8px 0;
+  width: 100%;
+}
+
+.loadingText {
+  color: $primary;
+  font-size: 14px;
+  text-align: center;
+  padding: 12px 0;
+}

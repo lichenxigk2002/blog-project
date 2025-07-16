@@ -3,7 +3,7 @@ $text-color: var(--text);
 $text-color-secondary: #838383;
 $border-color: var(--border-color);
 $background-color: var(--background-color);
-$card-bg: #fafafa;
+$card-bg: var(--background);
 $radius: 12px;
 $shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 $shadow-hover: 0 8px 16px rgba(0, 0, 0, 0.12);

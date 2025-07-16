@@ -11,23 +11,23 @@ import { Article } from '@/types/Article';
 import { ArticlesAPI } from '@/api/ArticlesAPI';
 import PageHeader from '../../components/PageHeader/PageHeader';
 
-type ErrorType = {
-    message: string;
-    code?: string;
-};
+// 新增：定义props类型
+interface ArticlesProps {
+    initialArticles: Article[];
+}
 
 const ITEMS_PER_PAGE = 10; // 每次加载的文章数量
 
-const Articles: React.FC = () => {
-    const [articles, setArticles] = useState<Article[]>([]);
-    const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
-    const [error, setError] = useState<ErrorType | null>(null);
+const Articles: React.FC<ArticlesProps> = ({ initialArticles }) => {
+    const [articles, setArticles] = useState<Article[]>(initialArticles || []);
+    const [filteredArticles, setFilteredArticles] = useState<Article[]>(initialArticles || []);
+    const [error, setError] = useState<{ message: string; code?: string } | null>(null);
     const { isLoading, withLoading } = useLoading();
     const [searchInput, setSearchInput] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-    const [visibleArticles, setVisibleArticles] = useState<Article[]>([]);
-    const [hasMore, setHasMore] = useState(true);
+    const [visibleArticles, setVisibleArticles] = useState<Article[]>(initialArticles.slice(0, ITEMS_PER_PAGE) || []);
+    const [hasMore, setHasMore] = useState(initialArticles.length > ITEMS_PER_PAGE);
     const observer = useRef<IntersectionObserver | null>(null);
     const loadingRef = useRef<HTMLDivElement>(null);
 
@@ -45,8 +45,9 @@ const Articles: React.FC = () => {
         return plainText.slice(0, 200) + (plainText.length > 200 ? '...' : '');
     };
 
-    // 获取文章的函数
+    // useEffect兜底，防止props为空时依然能获取数据
     useEffect(() => {
+        if (initialArticles && initialArticles.length > 0) return;
         const fetchArticles = async () => {
             try {
                 setError(null);
@@ -80,7 +81,6 @@ const Articles: React.FC = () => {
 
                 setArticles(processedData);
                 setFilteredArticles(processedData);
-                // 初始显示第一页的文章
                 setVisibleArticles(processedData.slice(0, ITEMS_PER_PAGE));
                 setHasMore(processedData.length > ITEMS_PER_PAGE);
             } catch (err) {
@@ -93,7 +93,7 @@ const Articles: React.FC = () => {
             }
         };
         fetchArticles();
-    }, []);
+    }, [initialArticles, withLoading]);
 
     // 处理搜索和排序
     useEffect(() => {
@@ -112,7 +112,6 @@ const Articles: React.FC = () => {
             return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
         });
         setFilteredArticles(result);
-        // 重置可见文章
         setVisibleArticles(result.slice(0, ITEMS_PER_PAGE));
         setHasMore(result.length > ITEMS_PER_PAGE);
     }, [searchQuery, sortOrder, articles]);
@@ -130,7 +129,6 @@ const Articles: React.FC = () => {
     useEffect(() => {
         if (observer.current) {
             observer.current.disconnect();
-            console.log(observer)
         }
         observer.current = new IntersectionObserver(entries => {
             if (entries[0].isIntersecting && hasMore) {
@@ -185,7 +183,7 @@ const Articles: React.FC = () => {
             setArticles(prevArticles =>
                 prevArticles.map(article =>
                     article.id === articleId
-                        ? { ...article, likeCount: response.likeCount }
+                        ? { ...article, likeCount: response.data?.likeCount ?? article.likeCount }
                         : article
                 )
             );
@@ -194,7 +192,7 @@ const Articles: React.FC = () => {
             setVisibleArticles(prevArticles =>
                 prevArticles.map(article =>
                     article.id === articleId
-                        ? { ...article, likeCount: response.likeCount }
+                        ? { ...article, likeCount: response.data?.likeCount ?? article.likeCount }
                         : article
                 )
             );
@@ -305,7 +303,7 @@ const Articles: React.FC = () => {
                             <div>
                                 <h1 className={styles.articleTitle}>{article.title}</h1>
                                 <div className={styles.articleMeta}>
-                                    <span>{new Date(article.createdAt).toLocaleDateString()}</span>
+                                    <span>{new Date(article.publishedAt).toLocaleDateString()}</span>
                                 </div>
                                 <div className={styles.articleExcerpt}>
                                     {article.excerpt}
@@ -364,5 +362,56 @@ const Articles: React.FC = () => {
         </div>
     );
 }
+
+// 新增：getStaticProps实现SSG+ISR
+import { GetStaticProps } from 'next';
+
+export const getStaticProps: GetStaticProps = async () => {
+    let initialArticles: Article[] = [];
+    // 这里的getExcerpt逻辑与组件内一致
+    const getExcerpt = (content: string) => {
+        const plainText = content
+            .replace(/```[\s\S]*?```/g, '')
+            .replace(/#{1,6}\s.*?\n/g, '')
+            .replace(/\[.*?\]\(.*?\)/g, '')
+            .replace(/\*\*.*?\*\*/g, '')
+            .replace(/\*.*?\*/g, '')
+            .replace(/\n/g, ' ')
+            .trim();
+        return plainText.slice(0, 200) + (plainText.length > 200 ? '...' : '');
+    };
+    try {
+        const response = await ArticlesAPI.getArticles();
+        if (response && Array.isArray(response.data)) {
+            initialArticles = response.data
+                .filter((item: any) => item.status === 'published')
+                .map((item: any) => ({
+                    ...item,
+                    slug: item.slug || `article-${item.id}`,
+                    htmlContent: item.htmlContent || item.content,
+                    excerpt: item.excerpt || getExcerpt(item.content),
+                    coverImage: item.coverImage || '',
+                    images: Array.isArray(item.images) ? item.images : [],
+                    createdAt: item.createdAt || new Date().toISOString(),
+                    updatedAt: item.updatedAt || new Date().toISOString(),
+                    publishedAt: item.publishedAt || new Date().toISOString(),
+                    viewCount: item.viewCount || 0,
+                    likeCount: item.likeCount || 0,
+                    readingTime: item.readingTime || 5,
+                    authorId: item.authorId || 0,
+                    status: item.status || 'published',
+                    postType: item.postType || 'article'
+                }));
+        }
+    } catch (e) {
+        // 忽略错误
+    }
+    return {
+        props: {
+            initialArticles
+        },
+        revalidate: 600 // ISR: 每10分钟自动更新一次
+    };
+};
 
 export default Articles;

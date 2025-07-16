@@ -8,18 +8,24 @@ import LoadingSpinner from "@/components/LoadingSpinner/LoadingSpinner";
 import Head from "next/head";
 import PageHeader from '../../components/PageHeader/PageHeader';
 import { http } from '@/utils/request';
-import { ApiResponse } from '@/types/common';
 import Typewriter from '@/components/Typewriter/Typewriter';
 import OperationTipModal from '@/components/OperationTipModal/OperationTipModal';
 
-const BulletinBoard: React.FC = () => {
+
+// 新增：定义props类型
+interface BulletinBoardPageProps {
+    initialMessages: BulletinBoardProps[];
+}
+
+const BulletinBoard: React.FC<BulletinBoardPageProps> = ({ initialMessages }) => {
     const { isDarkMode } = useTheme();
     const { isLoading, withLoading } = useLoading();
-    const [messages, setMessages] = useState<BulletinBoardProps[]>([]);
+    const [messages, setMessages] = useState<BulletinBoardProps[]>(initialMessages || []);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const [avatarPreview, setAvatarPreview] = useState<string>('');
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const maxUploadSize = useSelector((state:RootState) => state.settings.contentSettings.maxUploadSize)
     const [formData, setFormData] = useState<BulletinBoardProps>({
         id: 0,
         name: '',
@@ -54,8 +60,10 @@ const BulletinBoard: React.FC = () => {
 
     // 初始加载留言
     useEffect(() => {
+        // SSR兜底：如果props有数据则不再请求
+        if (initialMessages && initialMessages.length > 0) return;
         fetchMessages();
-    }, []);
+    }, [initialMessages]);
 
     // 处理输入变化
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -78,7 +86,17 @@ const BulletinBoard: React.FC = () => {
     const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
+            const maxSizeBytes = maxUploadSize * 1024 * 1024;
+            if(file.size > maxSizeBytes){
+                setTipMessage(`头像文件过大，最大允许 ${maxUploadSize} MB`);
+                setTipType('warning');
+                setTipOpen(true);
+                return;
+            }
             setAvatarFile(file);
+            setTipMessage('上传成功')
+            setTipType('success');
+            setTipOpen(true);
             const reader = new FileReader();
             reader.onloadend = () => {
                 setAvatarPreview(reader.result as string);
@@ -371,6 +389,27 @@ const BulletinBoard: React.FC = () => {
             />
         </div>
     );
+};
+
+// 新增：getServerSideProps实现SSR
+import { GetServerSideProps } from 'next';
+import {useSelector} from "react-redux";
+import {RootState} from "@/redux/store";
+export const getServerSideProps: GetServerSideProps = async () => {
+    try {
+        const response = await BulletinBoardAPI.getMessages(1);
+        return {
+            props: {
+                initialMessages: response && response.records ? response.records : []
+            }
+        };
+    } catch (err) {
+        return {
+            props: {
+                initialMessages: []
+            }
+        };
+    }
 };
 
 export default BulletinBoard;

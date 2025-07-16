@@ -2,21 +2,41 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useAppSelector } from '@/redux/store';
 import { CommentsAPI } from '@/api/CommentsAPI';
 import type { Comment } from '@/types/Comment';
-import EmojiPicker from '../EmojiPicker/EmojiPicker';
 import styles from './Comments.module.scss';
 import { LoginModalContext } from '@/context/LoginModalContext';
 import { CommentIcon, HeartIcon, TrashIcon, LoginIcon, SmileIcon } from '@/client/components/ui/Icons'
 import OperationTipModal from '@/components/OperationTipModal/OperationTipModal';
+import DOMPurify from 'dompurify';
+import dynamic from 'next/dynamic';
 
 interface CommentsProps {
   articleId: number;
+  previewCommentsEnabled?: boolean; // 新增
 }
+const EmojiPicker = dynamic(() => import('../EmojiPicker/EmojiPicker'), { ssr: false });
+const isValidAvatar = (avatar?: string | null) => {
+  if (!avatar) return false;
+  if (avatar.trim() === '') return false;
+  if (avatar === '/default-avatar.png') return false;
+  return true;
+};
+
 // 用户头像组件
-const UserAvatar: React.FC<{ username: string }> = ({ username }) => {
+const UserAvatar: React.FC<{ username: string; avatar?: string | null }> = ({ username, avatar }) => {
   const firstLetter = username.charAt(0).toUpperCase();
   const colors = ['#1890ff', '#52c41a', '#722ed1', '#eb2f96', '#fa8c16'];
   const colorIndex = username.charCodeAt(0) % colors.length;
 
+  if (isValidAvatar(avatar)) {
+    return (
+      <img
+        src={avatar}
+        alt={username}
+        className={styles.avatar}
+        style={{ objectFit: 'cover', borderRadius: '50%' }}
+      />
+    );
+  }
   return (
     <div
       className={styles.avatar}
@@ -86,7 +106,7 @@ const CommentForm: React.FC<{
   onCancel?: () => void;
   placeholder?: string;
   isLoggedIn: boolean;
-}> = ({ onSubmit, loading, parentId, onCancel, placeholder = "写下你的评论...", isLoggedIn }) => {
+}> = ({ onSubmit, loading, parentId, onCancel, placeholder = "本评论区采用业界主流的 DOMPurify 过滤技术防御 XSS 攻击，安全可靠，请放心评论。", isLoggedIn }) => {
   const [content, setContent] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -220,7 +240,7 @@ const CommentItem: React.FC<{
   return (
     <div className={`${styles.commentItem} ${level > 0 ? styles.replyItem : ''}`}>
       <div className={styles.commentMain}>
-        <UserAvatar username={comment.username} />
+        <UserAvatar username={comment.username} avatar={comment.avatar} />
         <div className={styles.commentContent}>
           {parentComment && (
             <div className={styles.replyTo}>
@@ -233,7 +253,9 @@ const CommentItem: React.FC<{
               {new Date(comment.createdAt).toLocaleString()}
             </span>
           </div>
-          <div className={styles.commentText}>{comment.content}</div>
+          <div className={styles.commentText}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(comment.content) }}
+          />
           <CommentActions
             onReply={() => onReply(comment)}
             onLike={handleLike}
@@ -324,7 +346,7 @@ const CommentList: React.FC<{
 };
 
 // 主评论组件
-const Comments: React.FC<CommentsProps> = ({ articleId }) => {
+const Comments: React.FC<CommentsProps> = ({ articleId, previewCommentsEnabled }) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -334,6 +356,8 @@ const Comments: React.FC<CommentsProps> = ({ articleId }) => {
   const [tipOpen, setTipOpen] = useState(false);
   const [tipMessage, setTipMessage] = useState('');
   const [tipType, setTipType] = useState<'success' | 'error' | 'info' | 'warning'>('error');
+  const reduxCommentsEnabled = useAppSelector(state => state.settings.contentSettings.commentsEnabled);
+  const commentsEnabled = typeof previewCommentsEnabled === 'boolean' ? previewCommentsEnabled : reduxCommentsEnabled;
 
   // 恢复 useEffect 钩子，确保组件挂载时加载评论
   useEffect(() => {
@@ -370,7 +394,7 @@ const Comments: React.FC<CommentsProps> = ({ articleId }) => {
         userId: user.id,
         content,
         parentId: parentId || null
-      });
+      } as any);
 
       // 处理字符串响应（成功消息）
       if (typeof response === 'string') {
@@ -425,13 +449,13 @@ const Comments: React.FC<CommentsProps> = ({ articleId }) => {
         return;
       }
       // 如果是 CommentOperationResponse
-      if (response.success) {
+      if ('message' in response) {
         setComments(prev => prev.filter(c => c.id !== id));
-        setTipMessage('删除成功');
+        setTipMessage(response.message || '删除成功');
         setTipType('success');
         setTipOpen(true);
       } else {
-        setTipMessage(response.message || '删除失败');
+        setTipMessage('删除失败');
         setTipType('error');
         setTipOpen(true);
       }
@@ -466,28 +490,35 @@ const Comments: React.FC<CommentsProps> = ({ articleId }) => {
   return (
     <div className={styles.commentsContainer}>
       <h2 className={styles.title}>评论 ({comments.length})</h2>
-      <OperationTipModal
-        open={tipOpen}
-        onClose={() => setTipOpen(false)}
-        message={tipMessage}
-        type={tipType}
-      />
-      <CommentForm
-        onSubmit={handleSubmit}
-        loading={loading}
-        parentId={replyingTo?.id}
-        onCancel={replyingTo ? () => setReplyingTo(null) : undefined}
-        placeholder={replyingTo ? `回复 ${replyingTo.username}...` : undefined}
-        isLoggedIn={isLoggedIn}
-      />
-      <CommentList
-        comments={comments}
-        onDelete={handleDeleteComment}
-        onLike={handleLike}
-        loading={loading}
-        onReply={handleReply}
-        isLoggedIn={isLoggedIn}
-      />
+      {commentsEnabled ? <>
+        <OperationTipModal
+          open={tipOpen}
+          onClose={() => setTipOpen(false)}
+          message={tipMessage}
+          type={tipType}
+        />
+        <CommentForm
+          onSubmit={handleSubmit}
+          loading={loading}
+          parentId={replyingTo?.id}
+          onCancel={replyingTo ? () => setReplyingTo(null) : undefined}
+          placeholder={replyingTo ? `回复 ${replyingTo.username}...` : undefined}
+          isLoggedIn={isLoggedIn}
+        />
+        <CommentList
+          comments={comments}
+          onDelete={handleDeleteComment}
+          onLike={handleLike}
+          loading={loading}
+          onReply={handleReply}
+          isLoggedIn={isLoggedIn}
+        />
+      </> : <div className={styles.commentFormContainer}>
+        <div className={styles.loginPrompt}>
+          <p>作者已关闭了评论功能</p>
+        </div>
+      </div>}
+
     </div>
   );
 };

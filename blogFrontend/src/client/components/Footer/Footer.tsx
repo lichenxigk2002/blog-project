@@ -7,7 +7,10 @@ import { Article } from '@/types/Article';
 import { FaGithub, FaWeixin, FaEnvelope, FaMapMarkerAlt, FaCloud, FaTachometerAlt } from 'react-icons/fa';
 import { SiBilibili, SiTiktok } from 'react-icons/si';
 import Link from "next/link";
-import { navRoutesItem } from "@/client/routes/nav-routes";
+import { navRoutesItem } from "@/routes/nav-routes";
+import SubscribeModal from '@/components/SubscribeModal/SubscribeModal';
+import {useSelector} from "react-redux";
+
 
 // 扩展 Performance 接口以包含 memory 属性
 declare global {
@@ -21,6 +24,7 @@ declare global {
 }
 
 const PerformanceMonitor: React.FC = () => {
+  const emailNotifications = useSelector((state) => state.settings.notificationSettings.emailNotifications)
   const [metrics, setMetrics] = useState({
     loadTime: 0,
     memory: 0
@@ -64,6 +68,7 @@ const Footer: React.FC = () => {
     articles: 0,
     galleries: 0
   });
+  const [showSubscribe, setShowSubscribe] = useState(false);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -138,7 +143,7 @@ const Footer: React.FC = () => {
           </div>
           <div className={styles.quickLinks}>
             {navRoutesItem
-              .filter(item => item.id !== 8)
+              .filter(item => item.id < 8)
               .map((item) => (
                 <Link
                   key={item.id}
@@ -147,6 +152,14 @@ const Footer: React.FC = () => {
                   {item.name}
                 </Link>
               ))}
+            <button
+              className={styles.quickLinkBtn}
+              onClick={() => setShowSubscribe(true)}
+              type="button"
+            >
+              <FaEnvelope style={{ marginRight: '0.4em', verticalAlign: '-0.1em' }} />
+              邮件订阅
+            </button>
           </div>
         </div>
       </div>
@@ -177,27 +190,37 @@ const Footer: React.FC = () => {
               alt="CDN"
               style={{ width: '0.75rem', verticalAlign: 'middle' }}
             />
-            腾讯云CDN
+            CDN
           </a>
           <span>、</span>
 
-          <a href="https://cloud.tencent.com/product/lighthouse" target="_blank" rel="noopener noreferrer">
+          <a href="https://cloud.tencent.com/product/cos" target="_blank" rel="noopener noreferrer">
             <img
-              src="/images/TencentCloudLighthouse.svg"  // 轻量服务器图标
-              alt="轻量应用服务器"
-              style={{ width: '0.75rem', verticalAlign: 'middle' }}
+                src="/images/CloudObjectStorage.svg"
+                alt="COS"
+                style={{ width: '0.75rem', verticalAlign: 'middle' }}
             />
-            腾讯云轻量服务器
+            COS
+          </a>
+          <span>、</span>
+
+          <a href="https://cloud.tencent.com/product/ses" target="_blank" rel="noopener noreferrer">
+            <img
+                src="/images/SimpleEmailService.svg"  // 邮件推送
+                alt="SES"
+                style={{ width: '0.75rem', verticalAlign: 'middle' }}
+            />
+            SES
           </a>
           <span>和</span>
 
-          <a href="https://cloud.tencent.com/product/cos" target="_blank" rel="noopener noreferrer">
+          <a href="https://cloud.tencent.com/product/lighthouse" target="_blank" rel="noopener noreferrer">
             <img
-              src="/images/CloudObjectStorage.svg"
-              alt="COS"
-              style={{ width: '0.75rem', verticalAlign: 'middle' }}
+                src="/images/TencentCloudLighthouse.svg"  // 轻量服务器图标
+                alt="轻量服务器"
+                style={{ width: '0.75rem', verticalAlign: 'middle' }}
             />
-            腾讯云COS
+            轻量应用服务器
           </a>
           <span>提供技术支持</span>
         </div>
@@ -206,6 +229,7 @@ const Footer: React.FC = () => {
           晋ICP备2025060785号
         </a>
       </div>
+      <SubscribeModal open={showSubscribe} onClose={() => setShowSubscribe(false)} />
     </footer>
   );
 };

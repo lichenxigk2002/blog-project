@@ -1,0 +1,506 @@
+@import '../../styles/shared.module.scss';
+
+$primary: #a259ff;
+$primary-light: #fbeaff;
+$primary-dark: #6c3ec1;
+$accent: #a7e9ff;
+$danger: #ffb6b9;
+$white: #fff;
+$shadow: 0 4px 24px rgba(162, 89, 255, 0.10);
+$shadow-hover: 0 8px 32px rgba(162, 89, 255, 0.18);
+$font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
+
+
+
+.settingsCard {
+  background: $white;
+  border-radius: 18px;
+  box-shadow: $shadow;
+  padding: 32px 28px 24px 28px;
+  margin-bottom: 32px;
+  transition: box-shadow 0.3s;
+  position: relative;
+  z-index: 1;
+  border: 2px solid $primary-light;
+  @include transition();
+
+  &:hover {
+    box-shadow: $shadow-hover;
+    border-color: $primary;
+  }
+}
+
+.cardTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: $primary-dark;
+  margin-bottom: 18px;
+  letter-spacing: 1px;
+  font-family: $font-main;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cardDivider {
+  height: 2px;
+  background: linear-gradient(90deg, $primary-light 0%, $accent 100%);
+  border: none;
+  margin: 18px 0 24px 0;
+  border-radius: 2px;
+}
+
+
+
+.panelContainer {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  gap: 32px;
+  padding: 12px 0 32px 0;
+  flex-wrap: wrap;
+
+  .miniCard {
+    min-height: 260px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid $primary-light;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(180, 120, 255, 0.1);
+    padding: 8px 8px 8px 8px; // 缩小内边距
+    display: flex;
+    flex-direction: column;
+    gap: 6px; // 缩小卡片内元素间距
+    align-items: stretch;
+    justify-content: flex-start;
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s ease;
+    flex: 0 0 calc(33.333% - 22px); // 关键修改！固定宽度并减去gap补偿
+    box-sizing: border-box; // 确保padding和border不撑大宽度
+
+    &:hover {
+      box-shadow: 0 8px 24px rgba(180, 120, 255, 0.15);
+      transform: translateY(-4px);
+    }
+  }
+}
+
+
+
+.miniCardTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: $primary;
+  margin: 0 0 2px 0;
+  font-family: $font-main;
+  text-shadow: 2px 2px 4px rgba($primary, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 4px; // 缩小标题内元素间距
+  letter-spacing: 0.3px;
+}
+
+.miniCardDesc {
+  color: #888;
+  font-size: 13px;
+  margin-bottom: 2px; // 缩小描述下边距
+  line-height: 1.5;
+}
+
+.miniCardControl {
+  display: flex;
+  align-items: center;
+  gap: 6px; // 缩小控件间距
+  margin-bottom: 2px; // 缩小底部间距
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+  vertical-align: middle;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, $accent 0%, $primary-light 100%);
+  border-radius: 22px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(162, 89, 255, 0.10);
+  border: 2px solid $accent;
+
+  &:before {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    width: 14px;
+    height: 14px;
+    background: linear-gradient(135deg, #fff 0%, #fbeaff 100%);
+    border-radius: 50%;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 6px rgba(162, 89, 255, 0.12), 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+}
+
+input:checked+.slider {
+  background: linear-gradient(90deg, $primary-light 0%, $accent 100%);
+  border-color: $primary-light;
+  box-shadow: 0 4px 12px rgba(162, 89, 255, 0.18);
+}
+
+input:checked+.slider:before {
+  transform: translateX(16px);
+  background: linear-gradient(135deg, #fff 0%, $accent 100%);
+  box-shadow: 0 3px 8px rgba(162, 89, 255, 0.15), 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.submitButton {
+  @include button-base;
+  font-size: 13px;
+  padding: 4px 16px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, $accent 0%, $primary-light 100%);
+  color: $white;
+  box-shadow: 0 2px 8px rgba($primary, 0.10);
+  max-width: 64px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  border: none;
+  transition: all 0.2s;
+  margin-left: 0; // 缩小按钮左边距
+
+  &:hover:enabled {
+    background: linear-gradient(90deg, $primary-light 0%, $accent 100%);
+    color: $primary;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba($primary, 0.18);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.commentFormContainer {
+  background: #f7f7fa;
+  border-radius: 8px;
+  padding: 6px 6px; // 缩小表单内边距
+  margin-bottom: 4px; // 缩小底部间距
+  box-shadow: 0 1px 4px rgba($primary, 0.04);
+
+  .textarea {
+    width: 100%;
+    min-height: 28px;
+    border: 1.5px solid $primary-light;
+    border-radius: 6px;
+    padding: 4px 6px; // 缩小输入框内边距
+    font-size: 13px;
+    background: #fff;
+    resize: none;
+    margin-bottom: 4px; // 缩小下边距
+    font-family: $font-main;
+    transition: border 0.2s;
+    box-sizing: border-box;
+
+    &:focus {
+      border: 1.5px solid $primary;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba($primary, 0.08);
+    }
+  }
+}
+
+.formTitle {
+  font-size: 13px;
+  color: $primary-dark;
+  margin-bottom: 2px; // 缩小下边距
+  font-weight: 600;
+}
+
+.miniCardPreview {
+  min-height: 150px;
+  background: $primary-light;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  padding: 6px 8px; // 缩小预览区内边距
+  font-size: 12px;
+  color: $primary-dark;
+  margin-top: 2px; // 缩小上边距
+  box-shadow: 0 1px 4px rgba($primary, 0.04);
+}
+
+.empty {
+  color: #bbb;
+  font-size: 12px;
+  text-align: center;
+  margin: 4px 0; // 缩小上下间距
+}
+
+.loginPrompt {
+  color: #d97706;
+  font-size: 13px;
+  text-align: center;
+  margin: 4px 0; // 缩小上下间距
+}
+
+//自动保存
+.autoSaveDemo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 8px 0;
+  position: relative;
+}
+
+.demoTitle {
+  font-weight: bold;
+  margin-bottom: 6px;
+  color: #a259ff;
+}
+
+.demoInput {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  background: #fafaff;
+  color: #bbb;
+}
+
+.demoTip {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.demoClock {
+  font-size: 15px;
+}
+
+.demoStatusSuccess {
+  color: #27ae60;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.demoSuccessIcon {
+  font-size: 16px;
+}
+
+.demoStatusOff {
+  color: #aaa;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.demoOffIcon {
+  font-size: 16px;
+}
+
+.uploadDemo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0 0 0;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 14px 12px 12px 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  position: relative;
+  min-width: 220px;
+}
+
+.demoInput {
+  padding: 6px 10px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 15px;
+  background: #fff;
+  transition: border 0.2s;
+  outline: none;
+  width: 140px;
+  margin-bottom: 4px;
+}
+
+.demoInput:focus {
+  border: 1.5px solid #6c63ff;
+}
+
+.submitButton {
+  width: 100px;
+  margin-bottom: 4px;
+}
+
+.demoTip {
+  color: #6c757d;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #eef1f6;
+  border-radius: 4px;
+  padding: 2px 8px;
+  margin-top: 2px;
+}
+
+.demoInfoIcon {
+  font-size: 15px;
+}
+
+.uploadModal {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  animation: fadeIn 0.25s;
+  border-radius: 8px;
+}
+
+.uploadModalContent {
+  background: #fff;
+  border-radius: 10px;
+  padding: 24px 36px;
+  box-shadow: 0 2px 16px rgba(108, 99, 255, 0.10);
+  animation: scaleIn 0.25s;
+  min-width: 180px;
+  text-align: center;
+  border: 1.5px solid #e0e3ea;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modalSuccess {
+  color: #27ae60;
+  font-size: 18px;
+  text-align: center;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+.modalError {
+  color: #e74c3c;
+  font-size: 18px;
+  text-align: center;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 20px;
+  padding: 8px 12px;
+  border: 2px solid $primary-light;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  color: $primary-dark;
+  font-size: 14px;
+  line-height: 1.6;
+  resize: vertical;
+  @include transition();
+  font-family: $font-main;
+  box-sizing: border-box;
+
+  &:focus {
+    border: 2px solid $primary;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba($primary, 0.08);
+  }
+}
+
+
+
+@media (max-width: 900px) {
+  .miniCard {
+    padding: 4px 2px 4px 2px;
+    max-width: 100%;
+  }
+
+  .miniCardTitle {
+    font-size: 14px;
+  }
+
+  .miniCardDesc {
+    font-size: 11px;
+  }
+
+  .miniCardPreview {
+    font-size: 11px;
+    padding: 4px 4px;
+  }
+}
+
+@media (max-width: 768px) {
+  .panelContainer {
+    gap: 4px;
+    padding: 0 0 4px 0;
+  }
+
+  .miniCard {
+    padding: 2px 1px 2px 1px;
+  }
+
+  .miniCardTitle {
+    font-size: 12px;
+  }
+
+  .miniCardDesc {
+    font-size: 10px;
+  }
+
+  .miniCardPreview {
+    font-size: 10px;
+    padding: 2px 2px;
+  }
+}

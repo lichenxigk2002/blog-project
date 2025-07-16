@@ -2,6 +2,7 @@ package com.example.blogbackend.controller;
 
 import com.example.blogbackend.entity.Friendlinks;
 import com.example.blogbackend.service.IFriendlinksService;
+import com.example.blogbackend.utils.EmailUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +20,14 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/friendlinks")
+@CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "false")
 public class FriendlinksController {
 
   @Autowired
   private IFriendlinksService friendlinksService;
+
+  @Autowired
+  private EmailUtil emailUtil;
 
   /**
    * 获取所有友链
@@ -48,6 +53,12 @@ public class FriendlinksController {
     friendlinks.setCreatedAt(LocalDateTime.now());
     friendlinks.setUpdatedAt(LocalDateTime.now());
     friendlinksService.save(friendlinks);
+    // 新增：保存后自动邮件通知
+    emailUtil.sendNewFriendLinkMail(
+        friendlinks.getName(),
+        friendlinks.getUrl(),
+        friendlinks.getDescription(),
+        "");
     return ResponseEntity.ok(friendlinks);
   }
 

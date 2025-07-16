@@ -1,4 +1,4 @@
-@use './fonts.scss';
+@import './fonts.scss';
 
 // 滚动条样式 Mixin
 @mixin custom-scrollbar($thumb-bg, $track-border) {
@@ -59,8 +59,8 @@
   --text-reverse: white;
   --icon-invert: black;
   --border: rgba(143, 143, 143, 0.27);
-  --AI-background-color: rgb(182, 248, 197);
-  --AI-background-color-reverse: #f7c0c0;
+  --AI-background-color: rgba(221, 221, 221, 0.18);
+  --AI-background-color-reverse: rgba(0, 0, 0, 0.85);
   --input-background: rgba(199, 199, 199, 0.2);
   --background: rgba(255, 255, 255);
   --code-header-bg: #f1f1f1;
@@ -95,8 +95,8 @@
   --text-reverse: #333;
   --icon-invert: white;
   --border: rgba(161, 161, 161, 0.63);
-  --AI-background-color: #f7c0c0;
-  --AI-background-color-reverse: rgb(182, 248, 197);
+  --AI-background-color: rgba(101, 101, 101, 0.22);
+  --AI-background-color-reverse: rgb(255, 255, 255);
   --input-background: rgba(255, 255, 255, 0.2);
   --background: rgb(58, 58, 58);
   --code-header-bg: #212121;
@@ -105,7 +105,7 @@
   --code-text: #d4d4d4;
   --shadow: rgba(255, 255, 255, 0.03);
   --background-color: #1a1a1a;
-  --border-color: #333333;
+  --border-color: rgba(143, 143, 143, 0.51);
   --hover-color: rgba(162, 89, 255, 0.2);
   --navbar-background: rgb(58, 58, 58);
   --navbar-font-color: #f0f0f0;

@@ -33,3 +33,40 @@ $radius: 0.125rem;
     right: 0.75rem;
   }
 }
+
+/* 手机端优化 */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    width: auto;
+    height: auto;
+    z-index: 1000;
+
+    // 手机端隐藏，改为浮动按钮
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    // 显示浮动工具栏
+    &::before {
+      content: '';
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      width: 3rem;
+      height: 3rem;
+      background: var(--primary);
+      border-radius: 50%;
+      box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.2);
+      z-index: 1001;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+    }
+  }
+}

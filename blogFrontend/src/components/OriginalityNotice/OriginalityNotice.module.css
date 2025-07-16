@@ -1,0 +1,10 @@
+.notice {
+  margin: 2rem 0 1rem 0;
+  padding: 1rem 1.5rem;
+  background: #fffbe6;
+  border-left: 4px solid #faad14;
+  color: #ad6800;
+  font-size: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(250, 173, 20, 0.08);
+}

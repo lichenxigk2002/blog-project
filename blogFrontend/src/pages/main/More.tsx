@@ -75,6 +75,15 @@ const itemVariants = {
     }
 };
 
+// 新增：getStaticProps实现SSG+ISR
+import { GetStaticProps } from 'next';
+export const getStaticProps: GetStaticProps = async () => {
+    return {
+        props: {},
+        revalidate: 600 // ISR: 每10分钟自动更新
+    };
+};
+
 const More: React.FC = () => {
     return (
         <div className={styles.container}>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Link from "next/link";
 import styles from './NavbarCenter.module.scss';
-import { navRoutesItem } from "@/client/routes/nav-routes";
+import { navRoutesItem } from "@/routes/nav-routes";
 import { usePathname, useParams } from 'next/navigation';
 import { ArticlesAPI } from '@/api/ArticlesAPI';
 import { Article } from '@/types/Article';

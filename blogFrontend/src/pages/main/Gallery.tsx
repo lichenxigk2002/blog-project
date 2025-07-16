@@ -16,8 +16,13 @@ interface GroupedGalleries {
     };
 }
 
-const Gallery: React.FC = () => {
-    const [galleries, setGalleries] = useState<GalleryItem[]>([]);
+// 新增：定义props类型
+interface GalleryProps {
+    initialGalleries: GalleryItem[];
+}
+
+const Gallery: React.FC<GalleryProps> = ({ initialGalleries }) => {
+    const [galleries, setGalleries] = useState<GalleryItem[]>(initialGalleries || []);
     const [selectedGallery, setSelectedGallery] = useState<GalleryItem | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<string>('全部');
     const [error, setError] = useState<string | null>(null);
@@ -127,6 +132,8 @@ const Gallery: React.FC = () => {
     };
 
     useEffect(() => {
+        // 如果props有数据则不再请求
+        if (initialGalleries && initialGalleries.length > 0) return;
         const fetchGalleries = async () => {
             try {
                 const data = await GalleryAPI.getGalleries();
@@ -147,7 +154,7 @@ const Gallery: React.FC = () => {
         fetchGalleries();
         const interval = setInterval(fetchGalleries, 5 * 60 * 1000);
         return () => clearInterval(interval);
-    }, []);
+    }, [initialGalleries]);
 
     return (
         <div className={styles.container}>
@@ -239,6 +246,35 @@ const Gallery: React.FC = () => {
             </AnimatePresence>
         </div>
     );
+};
+
+// 新增：getStaticProps实现SSG+ISR
+import { GetStaticProps } from 'next';
+export const getStaticProps: GetStaticProps = async () => {
+    try {
+        const data = await GalleryAPI.getGalleries();
+        const galleryData = Array.isArray(data) ? data : [];
+        const transformedData = galleryData
+            .filter((item: any) => item.category !== '证书')
+            .map((item: any) => ({
+                ...item,
+                date: item.date,
+                coverImage: item.coverImage ? item.coverImage.replace(/\/uploads\/\/uploads\//g, '/uploads/') : '/default-image.jpg'
+            }));
+        return {
+            props: {
+                initialGalleries: transformedData
+            },
+            revalidate: 600 // ISR: 每10分钟自动更新
+        };
+    } catch (err) {
+        return {
+            props: {
+                initialGalleries: []
+            },
+            revalidate: 600
+        };
+    }
 };
 
 export default Gallery;

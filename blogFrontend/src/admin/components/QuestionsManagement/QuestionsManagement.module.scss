@@ -63,6 +63,10 @@ $font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
     }
 }
 
+.button{
+    @extend .button;
+}
+
 .searchButton {
     display: flex;
     align-items: center;
@@ -431,6 +435,7 @@ $font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
     font-size: 12px;
     transition: all 0.3s ease;
 }
+
 
 @keyframes sortIconPop {
     0% {

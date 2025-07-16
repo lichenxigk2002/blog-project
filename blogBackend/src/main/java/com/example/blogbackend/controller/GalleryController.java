@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/gallery")
+@CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "false")
 public class GalleryController {
 
   private final IGalleryService galleryService;

@@ -24,6 +24,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/bulletinboard")
+@CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "false")
 public class BulletinboardController {
 
   @Autowired

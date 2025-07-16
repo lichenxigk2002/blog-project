@@ -11,6 +11,11 @@ import { Question, QuestionListResponse } from '@/types/Question';
 import QuestionModal from '@/components/QuestionModal/QuestionModal';
 import PageHeader from '../../components/PageHeader/PageHeader';
 
+// 新增：定义props类型
+interface QuestionsPageProps {
+  initialQuestions: Question[];
+}
+
 // 更新难度等级为英文
 const DIFFICULTY_LEVELS = [
   { value: 'easy', label: '简单' },
@@ -26,9 +31,8 @@ const SORT_OPTIONS = [
   { value: 'mostLiked', label: '最多点赞' }
 ];
 
-const Questions: React.FC = () => {
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [filteredQuestions, setFilteredQuestions] = useState<Question[]>([]);
+const Questions: React.FC<QuestionsPageProps> = ({ initialQuestions }) => {
+  const [questions, setQuestions] = useState<Question[]>(initialQuestions || []);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('');
   const [showFilters, setShowFilters] = useState(false);
@@ -40,35 +44,30 @@ const Questions: React.FC = () => {
 
   // 获取面试题列表
   useEffect(() => {
+    // SSG兜底：如果props有数据则不再请求
+    if (initialQuestions && initialQuestions.length > 0) return;
     const fetchQuestions = async () => {
       try {
-        const response = await withLoading(QuestionsAPI.getQuestions({
+        const response = await QuestionsAPI.getQuestions({
           page: 1,
-          size: 50, // 可以根据需要调整
-          search: debouncedSearchQuery,
-          difficulty: selectedDifficulty as 'easy' | 'medium' | 'hard' | undefined
-        }));
-
+          size: 50
+        });
         if (response && response.data) {
           const { records } = response.data as unknown as QuestionListResponse;
           if (Array.isArray(records)) {
             setQuestions(records);
-            setFilteredQuestions(records);
           } else {
             setQuestions([]);
-            setFilteredQuestions([]);
           }
         } else {
           setQuestions([]);
-          setFilteredQuestions([]);
         }
       } catch (error) {
         setQuestions([]);
-        setFilteredQuestions([]);
       }
     };
     fetchQuestions();
-  }, [debouncedSearchQuery, selectedDifficulty]);
+  }, [initialQuestions]);
 
   // 使用 useMemo 优化过滤和排序逻辑
   const filteredAndSortedQuestions = useMemo(() => {
@@ -307,6 +306,36 @@ const Questions: React.FC = () => {
       />
     </div>
   );
+};
+
+// 新增：getStaticProps实现SSG+ISR
+import { GetStaticProps } from 'next';
+export const getStaticProps: GetStaticProps = async () => {
+  try {
+    const response = await QuestionsAPI.getQuestions({ page: 1, size: 50 });
+    if (response && response.data) {
+      const { records } = response.data as unknown as QuestionListResponse;
+      return {
+        props: {
+          initialQuestions: Array.isArray(records) ? records : []
+        },
+        revalidate: 600 // ISR: 每10分钟自动更新
+      };
+    }
+    return {
+      props: {
+        initialQuestions: []
+      },
+      revalidate: 600
+    };
+  } catch (err) {
+    return {
+      props: {
+        initialQuestions: []
+      },
+      revalidate: 600
+    };
+  }
 };
 
 export default Questions; 

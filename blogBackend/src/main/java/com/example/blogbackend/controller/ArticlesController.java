@@ -9,15 +9,24 @@ import com.example.blogbackend.dto.ArticleDTO;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/articles")
+@CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "false")
 public class ArticlesController {
     private static final Logger logger = LoggerFactory.getLogger(ArticlesController.class);
     private final IArticlesService iarticlesService;
+
+    @Autowired
+    private com.example.blogbackend.service.ISubscribeEmailsService subscribeEmailsService;
+    @Autowired
+    private com.example.blogbackend.utils.EmailUtil emailUtil;
 
     public ArticlesController(IArticlesService iarticlesService) {
         this.iarticlesService = iarticlesService;
@@ -42,9 +51,44 @@ public class ArticlesController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createArticle(@RequestBody ArticleDTO articleDTO) {
+    public ResponseEntity<?> createArticle(@RequestBody ArticleDTO articleDTO, HttpServletRequest request) {
         // 1. 保存文章和标签关联
         Articles article = iarticlesService.saveArticleWithTags(articleDTO);
+
+        // 2. 选择性推送邮件通知
+        if (Boolean.TRUE.equals(articleDTO.getShouldNotify())) {
+            String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+
+            // 根据选择的用户ID获取订阅用户
+            List<com.example.blogbackend.entity.SubscribeEmails> subscribers;
+            if (articleDTO.getNotifyUserIds() != null && !articleDTO.getNotifyUserIds().isEmpty()) {
+                // 推送给指定用户
+                subscribers = subscribeEmailsService
+                        .lambdaQuery()
+                        .in(com.example.blogbackend.entity.SubscribeEmails::getId, articleDTO.getNotifyUserIds())
+                        .eq(com.example.blogbackend.entity.SubscribeEmails::getSubscribed, true)
+                        .list();
+            } else {
+                // 推送给所有订阅用户
+                subscribers = subscribeEmailsService
+                        .lambdaQuery()
+                        .eq(com.example.blogbackend.entity.SubscribeEmails::getSubscribed, true)
+                        .list();
+            }
+
+            // 发送邮件通知
+            for (com.example.blogbackend.entity.SubscribeEmails sub : subscribers) {
+                String unsubscribeToken = sub.getUnsubscribeToken();
+                emailUtil.sendArticleNotifyMail(
+                        sub.getEmail(),
+                        sub.getName(),
+                        article.getTitle(),
+                        article.getExcerpt(), // 摘要
+                        article.getId().toString(),
+                        unsubscribeToken);
+            }
+        }
+
         return ResponseEntity.status(HttpStatus.CREATED).body(article);
     }
 

@@ -5,7 +5,7 @@ import { useAppDispatch } from '@/redux/store';
 // 自定义的认证hook
 import { useAuth } from '@/hooks/useAuth';
 // Redux的登录/登出action
-import { login, logout } from '@/redux/auth/actions';
+import { login, logout } from '@/redux/authSlice';
 // 样式文件
 import styles from './Login.module.scss';
 // 全局登录模态框的Context
@@ -14,25 +14,28 @@ import { LoginModalContext } from '@/context/LoginModalContext';
 import Register from '../Register/Register';
 // 导入API
 import { AuthAPI } from '@/api/AuthAPI';
+import OperationTipModal from '@/components/OperationTipModal/OperationTipModal';
+import {useThrottle} from "@/hooks/useThrottle";
 
 // 定义登录组件
 const Login: React.FC = () => {
 
   const MoreLoginOptions: React.FC<{
     onClose: () => void;
-    onSelect: (type: 'sms' | 'github' | 'google') => void;
+    onSelect: (type: 'email' | 'github' | 'google') => void;
   }> = ({ onClose, onSelect }) => {
     return (
       <div className={styles.moreLoginPopup}>
         <div className={styles.moreLoginContent}>
           <button
             className={styles.loginOption}
-            onClick={() => onSelect('sms')}
-            title="短信登录"
+            onClick={() => onSelect('email')}
+            title="邮箱登录"
           >
             <span className={styles.icon}>
+              {/* 邮箱图标 */}
               <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z" />
+                <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 2v.01L12 13 4 6.01V6h16zM4 20v-9.99l8 6.99 8-6.99V20H4z" />
               </svg>
             </span>
           </button>
@@ -67,11 +70,11 @@ const Login: React.FC = () => {
       </div>
     );
   };
-  // 表单数据状态（用户名和密码）
+  // 表单数据状态（邮箱和验证码）
   const [formData, setFormData] = useState({
     username: '',
     password: '',
-    phone: '',
+    email: '',
     code: ''
   });
 
@@ -79,8 +82,8 @@ const Login: React.FC = () => {
   const [showSocialLogin, setShowSocialLogin] = useState(false);
   // 控制是否显示注册界面
   const [showRegister, setShowRegister] = useState(false);
-  // 控制是否显示短信验证登录
-  const [showSmsLogin, setShowSmsLogin] = useState(false);
+  // 控制是否显示邮箱验证登录
+  const [showEmailLogin, setShowEmailLogin] = useState(false);
   // 倒计时状态
   const [countdown, setCountdown] = useState(0);
 
@@ -95,6 +98,44 @@ const Login: React.FC = () => {
   // 使用全局Context控制登录模态框显示
   const { setShowLogin } = useContext(LoginModalContext);
 
+
+  // tip modal state
+  const [tipOpen, setTipOpen] = useState(false);
+  const [tipType, setTipType] = useState<'success' | 'error' | 'info' | 'warning' | 'loading'>('success');
+  const [tipMessage, setTipMessage] = useState('');
+  // 新增：登录成功状态
+  const [loginSuccess, setLoginSuccess] = useState(false);
+
+  const showTip = (type: 'success' | 'error' | 'info' | 'warning' | 'loading', message: string, autoCloseDelay = 1500, onClose?: () => void) => {
+    setTipType(type);
+    setTipMessage(message);
+    setTipOpen(true);
+    // 关闭后回调
+    setTimeout(() => {
+      setTipOpen(false);
+      if (onClose) onClose();
+    }, autoCloseDelay + 500); // 500ms动画
+  };
+
+  // 登录成功时弹窗提示，并延迟关闭登录模态框
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      setLoginSuccess(true);
+      setTipType('success');
+      setTipMessage('登录成功');
+      setTipOpen(true);
+      // 1.5s 后关闭模态框
+      setTimeout(() => {
+        setTipOpen(false);
+        setTimeout(() => {
+          setShowLogin(false);
+          setLoginSuccess(false);
+        }, 500); // tip modal leave 动画
+      }, 1500);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated, user]);
+
   // 处理输入框变化
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -104,17 +145,18 @@ const Login: React.FC = () => {
     }));
   };
 
-  const handleLoginTypeSelect = (type: 'sms' | 'github' | 'google') => {
+  const handleLoginTypeSelect = (type: 'email' | 'github' | 'google') => {
     setShowMoreOptions(false);
     switch (type) {
-      case 'sms':
-        setShowSmsLogin(true);
+      case 'email':
+        setShowEmailLogin(true);
         break;
       case 'github':
         // 处理 GitHub 登录
         break;
       case 'google':
-        // 处理 Google 登录
+        // 跳转到后端 Google OAuth 授权地址
+        window.location.href = 'https://www.gfbzsblog.site/auth/google';
         break;
     }
   };
@@ -122,60 +164,71 @@ const Login: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (showSmsLogin) {
-      // 短信验证登录
-      if (!formData.phone || !formData.code) {
-        console.error('Phone or code is empty');
+    if (showEmailLogin) {
+      // 邮箱验证登录
+      if (!formData.email || !formData.code) {
+        showTip('warning', '邮箱或验证码不能为空');
         return;
       }
-
       try {
+        showTip('loading', '登录中...');
         const loginData = {
-          phone: formData.phone.trim(),
+          email: formData.email.trim(),
           code: formData.code.trim()
         };
-        await dispatch(login(loginData));
+        const result = await dispatch(login(loginData));
+        if (login.fulfilled.match(result)) {
+          showTip('success', '登录成功', 1200, () => handleClose());
+        } else {
+          showTip('error', result.payload || '登录失败');
+        }
       } catch (error) {
-        console.error('SMS login failed:', error);
+        showTip('error', '邮箱登录失败');
       }
     } else {
       // 用户名密码登录
       if (!formData.username || !formData.password) {
-        console.error('Username or password is empty');
+        showTip('warning', '用户名或密码不能为空');
         return;
       }
-
       try {
+        showTip('loading', '登录中...');
         const loginData = {
           username: formData.username.trim(),
           password: formData.password.trim()
         };
-        await dispatch(login(loginData));
+        const result = await dispatch(login(loginData));
+        if (login.fulfilled.match(result)) {
+          showTip('success', '登录成功', 1200, () => handleClose());
+        } else {
+          // @ts-ignore
+          showTip('error', result.payload || '登录失败');
+        }
       } catch (error) {
-        console.error('Login failed:', error);
+        showTip('error', '登录失败');
       }
     }
   };
 
   // 发送验证码
   const handleSendCode = async () => {
-    if (!formData.phone) {
-      console.error('Phone number is empty');
+    if (!formData.email) {
+      showTip('warning', '请输入邮箱');
       return;
     }
-
     try {
-      const response = await AuthAPI.sendSmsCode(formData.phone, 'login');
-      if (response.code === 200) {
-        // 开始倒计时
+      showTip('loading', '正在发送验证码...');
+      const response = await AuthAPI.sendEmailCode(formData.email, 'login');
+      if (response.message === '验证码已发送') {
         setCountdown(60);
-      } else {
-        console.error('Failed to send verification code:', response.message);
+        showTip('success', '验证码已发送',1200);
       }
     } catch (error) {
-      console.error('Error sending verification code:', error);
+      showTip('error', '验证码发送失败');
     }
   };
+
+  const throttledSendCode = useThrottle(handleSendCode, 3000); // 3秒内只能点一次
 
   // 倒计时效果
   useEffect(() => {
@@ -190,45 +243,29 @@ const Login: React.FC = () => {
     setShowLogin(false);
     setShowSocialLogin(false);
     setShowRegister(false);
-    setShowSmsLogin(false);
+    setShowEmailLogin(false);
   };
 
   // 处理登出操作
-  const handleLogout = () => {
-    dispatch(logout());
-    handleClose();
-  };
+  // const handleLogout = () => {
+  //   dispatch(logout());
+  //   handleClose();
+  // };
 
   // 如果显示注册界面
   if (showRegister) {
     return <Register onClose={() => setShowRegister(false)} />;
   }
 
-  // 如果已认证且存在用户信息，显示登录成功界面
-  if (isAuthenticated && user) {
+  // 登录成功后只显示 OperationTipModal，动画结束后自动关闭
+  if (loginSuccess) {
     return (
-      <div className={styles.modalOverlay}>
-        <div className={styles.loginCard}>
-          {/* 关闭按钮 */}
-          <button className={styles.closeButton} onClick={handleClose}>×</button>
-
-          <div className={styles.header}>
-            <h2>登录成功</h2>
-          </div>
-
-          <div className={styles.form}>
-            <div className={styles.successMessage}>
-              <p style={{ color: 'var(--text)' }}>欢迎用户 {user.username}!</p>
-              <p style={{ color: 'var(--text)' }}>登录状态: 已登录</p>
-            </div>
-
-            {/* 登出按钮 */}
-            <button className={styles.logoutButton} onClick={handleLogout}>
-              退出登录
-            </button>
-          </div>
-        </div>
-      </div>
+      <OperationTipModal
+        open={tipOpen}
+        onClose={() => setTipOpen(false)}
+        message={tipMessage}
+        type={tipType}
+      />
     );
   }
 
@@ -258,7 +295,7 @@ const Login: React.FC = () => {
             </button>
 
             {/* Google登录按钮 */}
-            <button className={`${styles.socialButtonLarge} ${styles.googleButton}`}>
+            <button className={`${styles.socialButtonLarge} ${styles.googleButton}`} onClick={() => window.location.href = 'https://www.gfbzsblog.site/auth/google'}>
               <span className={styles.socialIcon}>
                 {/* Google图标 */}
                 <svg viewBox="0 0 24 24" width="24" height="24">
@@ -283,137 +320,138 @@ const Login: React.FC = () => {
     );
   }
 
-  // 默认显示邮箱登录界面
+  // 默认显示邮箱/用户名登录界面
   return (
-    <div className={styles.modalOverlay}>
-      <div className={styles.loginCard}>
-        {/* 关闭按钮 */}
-        <button className={styles.closeButton} onClick={handleClose}>×</button>
+    <>
+      <OperationTipModal
+        open={tipOpen}
+        onClose={() => setTipOpen(false)}
+        message={tipMessage}
+        type={tipType}
+      />
+      <div className={styles.modalOverlay}>
+        <div className={styles.loginCard}>
+          {/* 关闭按钮 */}
+          <button className={styles.closeButton} onClick={handleClose}>×</button>
 
-        <div className={styles.header}>
-          <h2>用户登录</h2>
-        </div>
+          <div className={styles.header}>
+            <h2>用户登录</h2>
+          </div>
 
-        {/* 登录表单 */}
-        <form onSubmit={handleSubmit} className={styles.form}>
-          {/* 错误提示 */}
-          {error && (
-            <div className={styles.error}>
-              登录失败: {error}
-            </div>
-          )}
+          {/* 登录表单 */}
+          <form onSubmit={handleSubmit} className={styles.form}>
+            {showEmailLogin ? (
+              // 邮箱验证登录表单
+              <>
+                <div className={styles.inputGroup}>
+                  <label className={styles.label} htmlFor="email">邮箱</label>
+                  <input
+                    className={styles.input}
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    required
+                    placeholder="请输入邮箱"
+                    maxLength={50}
+                  />
+                </div>
 
-          {showSmsLogin ? (
-            // 短信验证登录表单
-            <>
-              <div className={styles.inputGroup}>
-                <label className={styles.label} htmlFor="phone">手机号</label>
-                <input
-                  className={styles.input}
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  required
-                  placeholder="请输入手机号"
-                  maxLength={11}
-                />
-              </div>
-
-              <div className={styles.inputGroup}>
-                <label className={styles.label} htmlFor="code">验证码</label>
-                <div className={styles.codeInputContainer}>
+                <div className={styles.inputGroup}>
+                  <label className={styles.label} htmlFor="code">验证码</label>
+                  <div className={styles.codeInputContainer}>
+                    <input
+                      className={styles.input}
+                      type="text"
+                      id="code"
+                      name="code"
+                      value={formData.code}
+                      onChange={handleInputChange}
+                      required
+                      placeholder="请输入验证码"
+                      maxLength={6}
+                    />
+                    <button
+                      type="button"
+                      className={styles.sendCodeButton}
+                      onClick={throttledSendCode}
+                      disabled={countdown > 0}
+                    >
+                      {countdown > 0 ? `${countdown}秒后重试` : '获取验证码'}
+                    </button>
+                  </div>
+                </div>
+              </>
+            ) : (
+              // 用户名密码登录表单
+              <>
+                <div className={styles.inputGroup}>
+                  <label className={styles.label} htmlFor="username">用户名</label>
                   <input
                     className={styles.input}
                     type="text"
-                    id="code"
-                    name="code"
-                    value={formData.code}
+                    id="username"
+                    name="username"
+                    value={formData.username}
                     onChange={handleInputChange}
                     required
-                    placeholder="请输入验证码"
-                    maxLength={6}
+                    autoComplete="username"
                   />
-                  <button
-                    type="button"
-                    className={styles.sendCodeButton}
-                    onClick={handleSendCode}
-                    disabled={countdown > 0}
-                  >
-                    {countdown > 0 ? `${countdown}秒后重试` : '获取验证码'}
-                  </button>
                 </div>
-              </div>
-            </>
-          ) : (
-            // 用户名密码登录表单
-            <>
-              <div className={styles.inputGroup}>
-                <label className={styles.label} htmlFor="username">用户名</label>
-                <input
-                  className={styles.input}
-                  type="text"
-                  id="username"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleInputChange}
-                  required
-                  autoComplete="username"
+
+                <div className={styles.inputGroup}>
+                  <label className={styles.label} htmlFor="password">密码</label>
+                  <input
+                    className={styles.input}
+                    type="password"
+                    id="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    required
+                    autoComplete="current-password"
+                  />
+                </div>
+              </>
+            )}
+
+            {/* 提交按钮 */}
+            <button
+              type="submit"
+              className={`${styles.submitButton} ${isLoading ? styles.loading : ''}`}
+              disabled={isLoading}
+            >
+              {isLoading ? '登录中...' : '登录'}
+            </button>
+          </form>
+
+          {/* 底部链接 */}
+          <div className={styles.footer}>
+            <div className={styles.moreLoginContainer}>
+              <button
+                className={styles.switchButton}
+                onClick={() => setShowMoreOptions(!showMoreOptions)}
+              >
+                更多登录方式
+              </button>
+              {showMoreOptions && (
+                <MoreLoginOptions
+                  onClose={() => setShowMoreOptions(false)}
+                  onSelect={handleLoginTypeSelect}
                 />
-              </div>
-
-              <div className={styles.inputGroup}>
-                <label className={styles.label} htmlFor="password">密码</label>
-                <input
-                  className={styles.input}
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  required
-                  autoComplete="current-password"
-                />
-              </div>
-            </>
-          )}
-
-          {/* 提交按钮 */}
-          <button
-            type="submit"
-            className={`${styles.submitButton} ${isLoading ? styles.loading : ''}`}
-            disabled={isLoading}
-          >
-            {isLoading ? '登录中...' : '登录'}
-          </button>
-        </form>
-
-        {/* 底部链接 */}
-        <div className={styles.footer}>
-          <div className={styles.moreLoginContainer}>
+              )}
+            </div>
             <button
               className={styles.switchButton}
-              onClick={() => setShowMoreOptions(!showMoreOptions)}
+              onClick={() => setShowRegister(true)}
             >
-              更多登录方式
+              注册账号
             </button>
-            {showMoreOptions && (
-              <MoreLoginOptions
-                onClose={() => setShowMoreOptions(false)}
-                onSelect={handleLoginTypeSelect}
-              />
-            )}
           </div>
-          <button
-            className={styles.switchButton}
-            onClick={() => setShowRegister(true)}
-          >
-            注册账号
-          </button>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

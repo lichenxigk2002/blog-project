@@ -119,9 +119,11 @@ $hover-color: var(--hover-color);
 /* 列表样式 */
 .messageContent ul,
 .messageContent ol {
-  margin: 0.1em 0;
-  padding: 0 0 0 1.5em;
-  list-style-position: outside;
+  margin: 0 !important;
+  padding-left: 1.5em !important;
+  list-style-position: inside !important;
+  font-size: 15px !important;
+  line-height: 1.5 !important;
 }
 
 .messageContent ul {
@@ -133,9 +135,15 @@ $hover-color: var(--hover-color);
 }
 
 .messageContent li {
-  margin: 0;
-  padding: 0;
-  line-height: 1.4;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 15px !important;
+  line-height: 1.5 !important;
+  list-style-position: inside !important;
+}
+
+.messageContent li:empty {
+  display: none;
 }
 
 .messageContent li+li {
@@ -523,6 +531,10 @@ $hover-color: var(--hover-color);
   max-height: 300px;
   overflow-y: auto;
   padding: 0.5rem;
+}
+
+.messageContent {
+  white-space: normal !important;
 }
 
 .sessionItem {

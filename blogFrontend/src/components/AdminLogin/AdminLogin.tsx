@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useRouter } from 'next/router';
 import { useAppDispatch } from '@/redux/store';
-import { adminLogin } from '@/redux/adminAuth/actions';
+import { adminLogin } from '@/redux/adminAuthSlice';
 import { LoginModalContext } from '@/context/LoginModalContext';
 import styles from './AdminLogin.module.scss';
 

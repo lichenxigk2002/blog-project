@@ -1,7 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import mermaid from 'mermaid';
 import styles from './SequenceDiagram.module.scss';
-import { FaCode, FaDownload, FaEye, } from 'react-icons/fa';
 
 interface SequenceDiagramProps {
   diagram: string;
@@ -22,7 +20,7 @@ const SequenceDiagram: React.FC<SequenceDiagramProps> = ({ diagram }) => {
       try {
         setIsLoading(true);
         setError(null);
-
+        const mermaid = (await import('mermaid')).default;
         // Initialize mermaid
         mermaid.initialize({
           startOnLoad: true,

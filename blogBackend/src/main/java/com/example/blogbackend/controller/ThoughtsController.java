@@ -17,6 +17,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/thoughts")
+@CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "false")
 public class ThoughtsController {
 
   @Autowired

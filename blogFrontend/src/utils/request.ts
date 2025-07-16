@@ -1,10 +1,11 @@
-import { BASE_URL } from '../../next.config';
+
 import { StatusHandler } from '@/http/handlers/statusHandler';
 import { HeadersBuilder } from '@/http/builders/headers';
 import { UrlBuilder } from '@/http/builders/url';
 import RequestConfig from '@/http/core/types';
 import { httpError } from '@/http/core/error';
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || '/api';
 
 const request = async<T>(url: string, config: RequestConfig = {}): Promise<T> => {
 
@@ -20,14 +21,9 @@ const request = async<T>(url: string, config: RequestConfig = {}): Promise<T> =>
     .setContentType(restConfig.method || 'GET', restConfig.body);
 
   // 处理认证
-  if (finalUrl.includes('/api/admin/')) {
-    const token = localStorage.getItem('admin_token');
-    if (token) {
-      headersBuilder.setAuthHeader(token);
-    }
-// 或者提供默认值
-    headersBuilder.setAuthHeader(token || '');
-  }
+  const token = localStorage.getItem('token');
+  headersBuilder.setAuthHeader(token || '');
+
   // 处理自定义头
   if (restConfig.headers) {
     headersBuilder.setCustomHeaders(restConfig.headers);
@@ -45,21 +41,21 @@ const request = async<T>(url: string, config: RequestConfig = {}): Promise<T> =>
       throw error;
     }
     throw new httpError(
-        error instanceof Error ? error.message : '请求失败',
-        0,
-        finalUrl,
-        { originalError: error }
+      error instanceof Error ? error.message : '请求失败',
+      0,
+      finalUrl,
+      { originalError: error }
     );
   }
 }
 
 export const http = {
   get: <T>(url: string, params?: Record<string, any>) =>
-      request<T>(url, { method: 'GET', params }),
+    request<T>(url, { method: 'GET', params }),
   post: <T>(url: string, data?: any, config?: RequestConfig) =>
-      request<T>(url, { method: 'POST', ...config, body: data instanceof FormData ? data : JSON.stringify(data) }),
+    request<T>(url, { method: 'POST', ...config, body: data instanceof FormData ? data : JSON.stringify(data) }),
   put: <T>(url: string, data?: any) =>
-      request<T>(url, { method: 'PUT', body: JSON.stringify(data) }),
+    request<T>(url, { method: 'PUT', body: JSON.stringify(data) }),
   delete: <T>(url: string) =>
-      request<T>(url, { method: 'DELETE' })
+    request<T>(url, { method: 'DELETE' })
 }

@@ -3,9 +3,10 @@ import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
 // 导入各个模块的 reducer
-import themeReducer from './theme/reducer';
-import authReducer from './auth/reducer';
-import adminAuthReducer from './adminAuth/reducer';
+import themeReducer from './themeSlice';
+import authReducer from './authSlice';
+import adminAuthReducer from './adminAuthSlice';
+import settingsReducer from './systemSettingsSlice';
 
 // 使用 configureStore 创建 Redux store
 const store = configureStore({
@@ -13,6 +14,7 @@ const store = configureStore({
         theme: themeReducer,  // 主题相关的状态管理
         auth: authReducer,   // 认证相关的状态管理
         adminAuth: adminAuthReducer,// 管理员认证相关的状态管理
+        settings: settingsReducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
