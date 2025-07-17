@@ -28,7 +28,7 @@
 
 - /hooks：自定义 Hook，业务逻辑彻底解耦，useAIChat、useAuth、useLoading、useDebounce、useThrottle、useTheme、useError……用起来就是顺手。
 
-- /utils：工具函数库，http 封装、加密、节流、防抖、格式化、AI 工具、文章工具、校验……全都类型安全，随用随取。
+- /utils：工具函数库，http 封装、加密、格式化、AI 工具、文章工具、类型安全、校验……全都有，随用随取。
 
 - /routes：路由集中配置，导航菜单自动生成，嵌套路由、权限控制一目了然。
 
