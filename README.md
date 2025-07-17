@@ -154,7 +154,7 @@
 
 <img src="https://images-1359353257.cos.ap-beijing.myqcloud.com/images/026cad66-9562-483b-82d6-eebf24eacbc2.png" alt="图片" width="1000" />
 
-这是全局系统设置，由于主包实在没什么UI经验，仅仅将功能实现了一下
+**这是全局系统设置，由于主包实在没什么UI经验，仅仅将功能实现了一下，你们可以自行扩展啊，欢迎提建议**
 
 <img src="https://images-1359353257.cos.ap-beijing.myqcloud.com/images/e24431c4-75f7-4a44-8c0c-c7194d21cb8d.png" alt="图片" width="1000" />
 
