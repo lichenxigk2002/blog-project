@@ -14,7 +14,7 @@
 - 前端：Next.js 15 + React 18 + TypeScript + Redux Toolkit + SCSS + Framer Motion
 - 后端：Spring Boot 3 + MyBatis Plus + MySQL
 - 部署：宝塔Linux + Nginx
-- 其他：腾讯云 COS、邮箱推送、AI 接口、CDN
+- 其他：腾讯云COS、腾讯云SES、DeepSeek API 接口、腾讯云CDN内容分发与全球加速
 
 ## 目录结构，极致清晰
 
