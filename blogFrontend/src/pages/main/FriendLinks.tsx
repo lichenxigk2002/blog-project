@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FriendLinksAPI } from '@/api/FriendLinkAPI';
 import styles from './FriendLinks/FriendLinks.module.scss';
-import { useTheme } from '@/hooks/useTheme';
 import { useLoading } from "@/hooks/useLoading";
 import LoadingSpinner from "@/components/LoadingSpinner/LoadingSpinner";
 import Head from "next/head";
@@ -9,7 +8,6 @@ import PageHeader from '../../components/PageHeader/PageHeader';
 import type { FriendLinks } from "@/types/FriendLinks";
 import OperationTipModal from '@/components/OperationTipModal/OperationTipModal';
 import DOMPurify from 'dompurify';
-import {useSelector} from "react-redux";
 
 // 新增：定义props类型
 interface FriendLinksPageProps {
@@ -31,7 +29,6 @@ const REQUIREMENTS = [
 ];
 
 const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => {
-    const { isDarkMode } = useTheme();
     const { isLoading } = useLoading();
     const [friendLinks, setFriendLinks] = useState<FriendLinks[]>(initialFriendLinks || []);
     const [formData, setFormData] = useState({
@@ -45,6 +42,68 @@ const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => 
     const [tipOpen, setTipOpen] = useState(false);
     const [tipMessage, setTipMessage] = useState('');
     const [tipType, setTipType] = useState<'success' | 'error' | 'info' | 'warning'>('success');
+    const [selectedFriendLink, setSelectedFriendLink] = useState<FriendLinks | null>(null);
+    const [isDetailView, setIsDetailView] = useState(false);
+    const DESIGN_WIDTH = 1200;
+    const DESIGN_HEIGHT = 800;
+    const previewRef = useRef<HTMLDivElement>(null);
+    const [scale, setScale] = useState(1);
+    const detailSectionRef = useRef<HTMLDivElement>(null);
+    const detailHeaderRef = useRef<HTMLDivElement>(null);
+    const iframeContainerRef = useRef<HTMLDivElement>(null);
+    const leftListRef = useRef<HTMLDivElement>(null);
+    // const [iframeLoaded, setIframeLoaded] = useState<boolean | 'fail'>(false);
+
+
+    useEffect(() => {
+        function updateScale() {
+            if (!previewRef.current) return;
+            const container = previewRef.current.parentElement;
+            if (!container) return;
+            const containerWidth = container.clientWidth;
+            const containerHeight = container.clientHeight;
+            const scaleW = containerWidth / DESIGN_WIDTH;
+            const scaleH = containerHeight / DESIGN_HEIGHT;
+            setScale(Math.min(scaleW, scaleH, 1)); // 不放大，只缩小
+        }
+        updateScale();
+        window.addEventListener('resize', updateScale);
+        return () => window.removeEventListener('resize', updateScale);
+    }, [isDetailView, selectedFriendLink]);
+
+    // 彻底修正：每次都用最新宽度计算高度，所有相关容器高度同步
+    useEffect(() => {
+        function updateDetailSectionHeight() {
+            if (
+                detailSectionRef.current &&
+                detailHeaderRef.current &&
+                iframeContainerRef.current
+            ) {
+                const sectionWidth = detailSectionRef.current.offsetWidth;
+                const headerHeight = detailHeaderRef.current.offsetHeight;
+                const iframeHeight = Math.round(sectionWidth * 2 / 3);
+                const totalHeight = headerHeight + iframeHeight;
+                iframeContainerRef.current.style.height = `${iframeHeight}px`;
+                detailSectionRef.current.style.height = `${totalHeight}px`;
+                if (leftListRef.current) {
+                    leftListRef.current.style.height = `${totalHeight}px`;
+                }
+            }
+        }
+        updateDetailSectionHeight();
+        window.addEventListener('resize', updateDetailSectionHeight);
+        return () => window.removeEventListener('resize', updateDetailSectionHeight);
+    }, [isDetailView, selectedFriendLink]);
+
+    // useEffect(() => {
+    //     setIframeLoaded(false);
+    //     let timer = setTimeout(() => {
+    //         if (!iframeLoaded) {
+    //             setIframeLoaded('fail');
+    //         }
+    //     }, 3000);
+    //     return () => clearTimeout(timer);
+    // }, [selectedFriendLink]);
 
     function getRandomColor() {
         const letters = '89ABCDEF';
@@ -70,6 +129,26 @@ const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => 
             delete newColors[id];
             return newColors;
         });
+    };
+
+    const handleFriendLinkClick = (e: React.MouseEvent, friendLink: FriendLinks) => {
+        e.preventDefault();
+        setSelectedFriendLink(friendLink);
+        setIsDetailView(true);
+
+    };
+
+    // 新增：返回友链列表
+    const handleBackToList = () => {
+        setIsDetailView(false);
+        setSelectedFriendLink(null);
+    };
+
+    // 新增：跳转到友链网站
+    const handleVisitWebsite = () => {
+        if (selectedFriendLink) {
+            window.open(selectedFriendLink.url, '_blank', 'noopener,noreferrer');
+        }
     };
 
     // 获取友链列表
@@ -101,6 +180,7 @@ const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => 
         }));
     };
 
+
     // 处理表单提交
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -128,7 +208,7 @@ const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => 
             setFormData({ name: '', url: '', description: '', avatarUrl: '' });
             await fetchFriendLinks();
             setModalOpen(false);
-            setTipMessage('友链申请已提交！');
+            setTipMessage('友链申请已提交！记得在留言板留言，站长会第一时间回复哦！');
             setTipType('success');
             setTipOpen(true);
         } catch (error) {
@@ -139,164 +219,281 @@ const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => 
     };
 
     return (
-        <div className={styles.container}>
-            <Head>
-                <title>友人帐 | 海内存知己，天涯若比邻</title>
-                <meta name="description" content="友链交换，让我们的博客世界更加精彩" />
-            </Head>
-            {isLoading && <LoadingSpinner />}
-            <PageHeader
-                headerText="朋友们"
-                introText="互联网的美好，在于让有趣的灵魂跨越山海相遇。这里是我在数字世界里遇到的宝藏创作者——他们用文字编织思想的星空，用真诚分享点亮彼此的世界。每一篇文章都是独特的礼物，每一次阅读都是一场温暖的邂逅。。"
-                englishTitle="FriendLinks"
-            />
-
-            {/* 友链列表 */}
-            <div className={styles.friendLinksSection}>
-                {Array.isArray(friendLinks) && friendLinks.length > 0 ? (
-                    <div className={styles.friendLinksGrid}>
-                        {friendLinks
-                            .filter((link) => link.status === 'approved')
-                            .map((link) => (
-                                <a
-                                    key={link.id}
-                                    href={link.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className={styles.friendLinkCard}
-                                    onMouseEnter={() => handleCardMouseEnter(link.id.toString())}
-                                    onMouseLeave={() => handleCardMouseLeave(link.id.toString())}
-                                >
-                                    <div className={styles.avatar}>
-                                        <img src={link.avatarUrl} alt={link.name} />
-                                    </div>
-                                    <div className={styles.bgAvatar}>
-                                        <img src={link.avatarUrl} alt={link.name + '背景'} />
-                                    </div>
-                                    <div className={styles.info}>
-                                        <h3
-                                            style={hoverColors[link.id.toString()]?.h3 ? { color: hoverColors[link.id.toString()].h3 } : {}}
-                                            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(link.name) }}
-                                        />
-                                        <p
-                                            style={hoverColors[link.id.toString()]?.p ? { color: hoverColors[link.id.toString()].p } : {}}
-                                            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(link.description) }}
-                                        />
-                                    </div>
-                                </a>
-                            ))}
+        <>
+            <div className={styles.container} >
+                <Head>
+                    <title>友人帐 | 海内存知己，天涯若比邻</title>
+                    <meta name="description" content="友链交换，让我们的博客世界更加精彩" />
+                </Head>
+                {isLoading && <LoadingSpinner />}
+                {/*<div className={isDetailView ? styles.fadeOut : styles.fadeIn}>*/}
+                <PageHeader
+                    headerText="朋友们"
+                    introText="互联网的美好，在于让有趣的灵魂跨越山海相遇。这里是我在数字世界里遇到的宝藏创作者——他们用文字编织思想的星空，用真诚分享点亮彼此的世界。每一篇文章都是独特的礼物，每一次阅读都是一场温暖的邂逅。。"
+                    englishTitle="FriendLinks"
+                />
+                {/*</div>*/}
+                {/* 友链列表 */}
+                {/*{isDetailView && (*/}
+                {/*    <div className={styles.backButtonContainer}>*/}
+                {/*        <button className={styles.backButton} onClick={handleBackToList}>*/}
+                {/*            <span>←</span> 返回友链列表*/}
+                {/*        </button>*/}
+                {/*    </div>*/}
+                {/*)}*/}
+                <div className={`${styles.mainContent} ${isDetailView ? styles.detailView : ''}`}>
+                    {/* 友链列表 */}
+                    <div className={`${styles.friendLinksSection} ${!isDetailView ? styles.fadeIn : styles.fadeOut}`}>
+                        {Array.isArray(friendLinks) && friendLinks.length > 0 ? (
+                            <div className={`${styles.friendLinksGrid} ${isDetailView ? styles.verticalList : ''}`}>
+                                {friendLinks
+                                    .filter((link) => link.status === 'approved')
+                                    .map((link) => (
+                                        <div
+                                            key={link.id}
+                                            className={styles.friendLinkCard}
+                                            onClick={(e) => handleFriendLinkClick(e, link)}
+                                            onMouseEnter={() => handleCardMouseEnter(link.id.toString())}
+                                            onMouseLeave={() => handleCardMouseLeave(link.id.toString())}
+                                            role="button"
+                                            tabIndex={0}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter' || e.key === ' ') {
+                                                    e.preventDefault();
+                                                    handleFriendLinkClick(e as any, link);
+                                                }
+                                            }}
+                                        >
+                                            <div className={styles.avatar}>
+                                                <img src={link.avatarUrl} alt={link.name} />
+                                            </div>
+                                            <div className={styles.bgAvatar}>
+                                                <img src={link.avatarUrl} alt={link.name + '背景'} />
+                                            </div>
+                                            <div className={styles.info}>
+                                                <h3
+                                                    style={hoverColors[link.id.toString()]?.h3 ? { color: hoverColors[link.id.toString()].h3 } : {}}
+                                                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(link.name) }}
+                                                />
+                                                <p
+                                                    style={hoverColors[link.id.toString()]?.p ? { color: hoverColors[link.id.toString()].p } : {}}
+                                                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(link.description) }}
+                                                />
+                                            </div>
+                                        </div>
+                                    ))}
+                            </div>
+                        ) : (
+                            <p className={styles.emptyMessage}>暂无友链，快来申请吧！</p>
+                        )}
                     </div>
-                ) : (
-                    <p className={styles.emptyMessage}>暂无友链，快来申请吧！</p>
+                </div> {/* 主要内容区域的结束标签 - 只包裹友链列表 */}
+
+
+
+
+                {/* 本站信息 */}
+                {/* 本站信息 - 在详情视图时隐藏 */}
+                <div className={`${styles.siteInfoWrapper} ${isDetailView ? styles.fadeOut : styles.fadeIn}`}>
+                    <section className={styles.siteInfoSection}>
+                        <h2 style={{ color: 'var(--text)' }}>本站信息</h2>
+                        <div className={styles.siteInfoCard}>
+                            <div className={styles.siteInfoText}>
+                                <div><b>头像链接：</b><a href={SITE_INFO.avatarUrl} target="_blank" rel="noopener noreferrer">点我获取</a></div>
+                                <div><b>网站名称：</b>{SITE_INFO.name}</div>
+                                <div><b>网站地址：</b><a href={SITE_INFO.url} target="_blank" rel="noopener noreferrer">{SITE_INFO.url}</a></div>
+                                <div><b>网站描述：</b>{SITE_INFO.description}</div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                {/* 申请友链按钮 - 在详情视图时隐藏 */}
+                <div className={`${styles.applyButtonWrapper} ${isDetailView ? styles.fadeOut : styles.fadeIn}`}>
+                    <div style={{ textAlign: 'center', margin: '2.5rem 0 1.5rem 0' }}>
+                        <button className={styles.simpleButton} style={{ maxWidth: 180 }} onClick={() => setModalOpen(true)}>
+                            申请友链
+                        </button>
+                    </div>
+                </div>
+
+                {/* 友链要求 - 在详情视图时隐藏 */}
+                <div className={`${styles.requirementsWrapper} ${isDetailView ? styles.fadeOut : styles.fadeIn}`}>
+                    <section className={styles.requirementsSection}>
+                        <h3 style={{ color: 'var(--text)' }}>友链要求</h3>
+                        <ul className={styles.requirementsList}>
+                            {REQUIREMENTS.map((item, idx) => <li key={idx}>{item}</li>)}
+                        </ul>
+                    </section>
+                </div>
+
+
+
+                {/* 申请友链模态框 */}
+                {modalOpen && (
+                    <div className={styles.friendLinksFormWrapper}>
+                        <div className={styles.loginCard}>
+                            <button className={styles.closeButton} onClick={() => setModalOpen(false)} title="关闭">×</button>
+                            <form className={styles.form} onSubmit={handleSubmit} autoComplete="off">
+                                <h2 className={styles.header}>申请友链</h2>
+                                <div className={styles.inputGroup}>
+                                    <label className={styles.label} htmlFor="name">网站名称</label>
+                                    <input
+                                        type="text"
+                                        id="name"
+                                        name="name"
+                                        value={formData.name}
+                                        onChange={handleInputChange}
+                                        placeholder="网站名称"
+                                        className={styles.input}
+                                        required
+                                    />
+                                </div>
+                                <div className={styles.inputGroup}>
+                                    <label className={styles.label} htmlFor="url">网站地址</label>
+                                    <input
+                                        type="url"
+                                        id="url"
+                                        name="url"
+                                        value={formData.url}
+                                        onChange={handleInputChange}
+                                        placeholder="网站地址"
+                                        className={styles.input}
+                                        required
+                                    />
+                                </div>
+                                <div className={styles.inputGroup}>
+                                    <label className={styles.label} htmlFor="avatarUrl">头像图片地址</label>
+                                    <input
+                                        type="url"
+                                        id="avatarUrl"
+                                        name="avatarUrl"
+                                        value={formData.avatarUrl}
+                                        onChange={handleInputChange}
+                                        placeholder="头像图片地址"
+                                        className={styles.input}
+                                        required
+                                    />
+                                </div>
+                                <div className={styles.inputGroup}>
+                                    <label className={styles.label} htmlFor="description">网站描述</label>
+                                    <textarea
+                                        id="description"
+                                        name="description"
+                                        value={formData.description}
+                                        onChange={handleInputChange}
+                                        placeholder="网站描述"
+                                        className={styles.input}
+                                        required
+                                    />
+                                </div>
+                                <button type="submit" className={styles.submitButton}>提交申请</button>
+                            </form>
+                        </div>
+                    </div>
+                )}
+                <OperationTipModal
+                    open={tipOpen}
+                    onClose={() => setTipOpen(false)}
+                    message={tipMessage}
+                    type={tipType}
+                />
+            </div>
+            <div className={styles.ViewContainer}>
+                {isDetailView && selectedFriendLink && (
+                    <div className={`${styles.detailViewWrapper} ${isDetailView ? styles.fadeIn : styles.fadeOut}`}>
+                        <div className={styles.verticalListSection}>
+                            <div className={styles.verticalList} ref={leftListRef}>
+                                {friendLinks
+                                    .filter((link) => link.status === 'approved')
+                                    .map((link) => (
+                                        <div
+                                            key={link.id}
+                                            className={`${styles.friendLinkCard} ${styles.narrowCard}`}
+                                            onClick={(e) => handleFriendLinkClick(e, link)}
+                                            onMouseEnter={() => handleCardMouseEnter(link.id.toString())}
+                                            onMouseLeave={() => handleCardMouseLeave(link.id.toString())}
+                                            role="button"
+                                            tabIndex={0}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter' || e.key === ' ') {
+                                                    e.preventDefault();
+                                                    handleFriendLinkClick(e as any, link);
+                                                }
+                                            }}
+                                        >
+                                            <div className={styles.avatar}>
+                                                <img src={link.avatarUrl} alt={link.name} />
+                                            </div>
+                                            <div className={styles.bgAvatar}>
+                                                <img src={link.avatarUrl} alt={link.name + '背景'} />
+                                            </div>
+                                            <div className={styles.info}>
+                                                <h3
+                                                    style={hoverColors[link.id.toString()]?.h3 ? { color: hoverColors[link.id.toString()].h3 } : {}}
+                                                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(link.name) }}
+                                                />
+                                                <p
+                                                    style={hoverColors[link.id.toString()]?.p ? { color: hoverColors[link.id.toString()].p } : {}}
+                                                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(link.description) }}
+                                                />
+                                            </div>
+                                        </div>
+                                    ))}
+                            </div>
+                        </div>
+                        <div className={styles.detailSection} ref={detailSectionRef}>
+                            <div className={styles.detailHeader} ref={detailHeaderRef}>
+                                <div className={styles.detailInfo}>
+                                    <img src={selectedFriendLink.avatarUrl} alt={selectedFriendLink.name} className={styles.detailAvatar} />
+                                    <div className={styles.detailText}>
+                                        <h2>{selectedFriendLink.name}</h2>
+                                        <p>{selectedFriendLink.description}</p>
+                                    </div>
+                                </div>
+                                <div style={{ display: 'flex', gap: '1rem' }}>
+                                    <button className={styles.visitButton} onClick={handleBackToList}>
+                                        返回<FaLink />
+                                    </button>
+                                    <button className={styles.visitButton} onClick={handleVisitWebsite}>
+                                        去浏览🚀
+                                    </button>
+
+                                </div>
+                            </div>
+                            <div className={styles.iframeContainer} ref={iframeContainerRef}>
+                                <div
+                                    ref={previewRef}
+                                    className={styles.previewWrapper}
+                                >
+                                    <iframe
+                                        src={selectedFriendLink.url}
+                                        title={`${selectedFriendLink.name} - 博客预览`}
+                                        className={styles.previewIframe}
+                                        sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
+                                    // onLoad={() => setIframeLoaded(true)}
+                                    />
+                                    {/*
+                                    {iframeLoaded === 'fail' && (
+                                        <div className={styles.iframeError}>
+                                            <img src="/images/cannotPreview.png" alt="无法预览" />
+                                            该网站不允许嵌入预览，请点击右上角“去浏览”按钮访问。
+                                        </div>
+                                    )}
+                                    */}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 )}
             </div>
-
-            {/* 本站信息 */}
-            <section className={styles.siteInfoSection}>
-                <h2 style={{ color: 'var(--text)' }}>本站信息</h2>
-                <div className={styles.siteInfoCard}>
-                    <div className={styles.siteInfoText}>
-                        <div><b>头像链接：</b><a href={SITE_INFO.avatarUrl} target="_blank" rel="noopener noreferrer">点我获取</a></div>
-                        <div><b>网站名称：</b>{SITE_INFO.name}</div>
-                        <div><b>网站地址：</b><a href={SITE_INFO.url} target="_blank" rel="noopener noreferrer">{SITE_INFO.url}</a></div>
-                        <div><b>网站描述：</b>{SITE_INFO.description}</div>
-                    </div>
-                </div>
-            </section>
-
-
-            {/* 申请友链按钮 */}
-            <div style={{ textAlign: 'center', margin: '2.5rem 0 1.5rem 0' }}>
-                <button className={styles.simpleButton} style={{ maxWidth: 180 }} onClick={() => setModalOpen(true)}>
-                    申请友链
-                </button>
-            </div>
-
-            {/* 友链要求 */}
-            <section className={styles.requirementsSection}>
-                <h3 style={{ color: 'var(--text)' }}>友链要求</h3>
-                <ul className={styles.requirementsList}>
-                    {REQUIREMENTS.map((item, idx) => <li key={idx}>{item}</li>)}
-                </ul>
-            </section>
-
-
-
-            {/* 申请友链模态框 */}
-            {modalOpen && (
-                <div className={styles.friendLinksFormWrapper}>
-                    <div className={styles.loginCard}>
-                        <button className={styles.closeButton} onClick={() => setModalOpen(false)} title="关闭">×</button>
-                        <form className={styles.form} onSubmit={handleSubmit} autoComplete="off">
-                            <h2 className={styles.header}>申请友链</h2>
-                            <div className={styles.inputGroup}>
-                                <label className={styles.label} htmlFor="name">网站名称</label>
-                                <input
-                                    type="text"
-                                    id="name"
-                                    name="name"
-                                    value={formData.name}
-                                    onChange={handleInputChange}
-                                    placeholder="网站名称"
-                                    className={styles.input}
-                                    required
-                                />
-                            </div>
-                            <div className={styles.inputGroup}>
-                                <label className={styles.label} htmlFor="url">网站地址</label>
-                                <input
-                                    type="url"
-                                    id="url"
-                                    name="url"
-                                    value={formData.url}
-                                    onChange={handleInputChange}
-                                    placeholder="网站地址"
-                                    className={styles.input}
-                                    required
-                                />
-                            </div>
-                            <div className={styles.inputGroup}>
-                                <label className={styles.label} htmlFor="avatarUrl">头像图片地址</label>
-                                <input
-                                    type="url"
-                                    id="avatarUrl"
-                                    name="avatarUrl"
-                                    value={formData.avatarUrl}
-                                    onChange={handleInputChange}
-                                    placeholder="头像图片地址"
-                                    className={styles.input}
-                                    required
-                                />
-                            </div>
-                            <div className={styles.inputGroup}>
-                                <label className={styles.label} htmlFor="description">网站描述</label>
-                                <textarea
-                                    id="description"
-                                    name="description"
-                                    value={formData.description}
-                                    onChange={handleInputChange}
-                                    placeholder="网站描述"
-                                    className={styles.input}
-                                    required
-                                />
-                            </div>
-                            <button type="submit" className={styles.submitButton}>提交申请</button>
-                        </form>
-                    </div>
-                </div>
-            )}
-            <OperationTipModal
-                open={tipOpen}
-                onClose={() => setTipOpen(false)}
-                message={tipMessage}
-                type={tipType}
-            />
-        </div>
+        </>
     );
 };
 
 // 新增：getStaticProps实现SSG+ISR
 import { GetStaticProps } from 'next';
+import { FaLink } from "react-icons/fa";
 export const getStaticProps: GetStaticProps = async () => {
     try {
         const response = await FriendLinksAPI.getAllFriendLinks();
