@@ -286,6 +286,12 @@ npm run dev
 欢迎 PR、Issue、建议和吐槽！  
 如需本地开发、二次开发、定制功能，欢迎联系我或直接提 Issue。
 
+## License / 许可证
+
+This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
+
+本项目采用 MIT 开源许可证，详见 [LICENSE](./LICENSE) 文件。
+
 ## 📬联系方式
 
 - 我的邮箱：624787243@qq.com
