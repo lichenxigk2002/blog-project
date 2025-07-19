@@ -73,8 +73,11 @@ const ArticleToc: React.FC<ArticleTocProps> = ({ headings, contentHeight, conten
    * 实现阅读进度追踪和智能标题高亮功能
    */
   useEffect(() => {
+    // 滚动和窗口变化时的处理函数
     const handleScroll = () => {
+      // window.innerHeight: 获取浏览器窗口的高度（单位：像素）
       const viewportHeight = window.innerHeight;
+      // window.scrollY: 获取页面当前垂直滚动的距离（单位：像素）
       const scrollTop = window.scrollY;
 
       /**
@@ -86,12 +89,14 @@ const ArticleToc: React.FC<ArticleTocProps> = ({ headings, contentHeight, conten
           return 100; // 如果文章不超过视口高度，直接返回100%
         }
 
-        // 获取导航栏高度，用于调整计算基准
+        // document.querySelector('nav'): 获取页面上的 <nav> 元素
         const nav = document.querySelector('nav') as HTMLElement;
+        // nav?.offsetHeight: 获取导航栏元素的高度（单位：像素），如果没有导航栏则为0
         const navHeight = nav?.offsetHeight || 0;
 
-        // 调整滚动位置和内容位置，排除导航栏影响
+        // 计算去除导航栏后，实际滚动的距离
         const adjustedScrollTop = scrollTop - navHeight;
+        // 计算内容顶部距离去除导航栏后的距离
         const adjustedContentTop = contentTop - navHeight;
 
         // 计算阅读进度百分比
@@ -105,12 +110,15 @@ const ArticleToc: React.FC<ArticleTocProps> = ({ headings, contentHeight, conten
        * 智能标题高亮算法
        * 找到距离视口顶部最近的标题，并标记为激活状态
        */
+      // document.querySelectorAll('h1, h2, h3, h4, h5, h6'): 获取所有标题元素（h1~h6）
       const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
       let currentActiveId = '';
       let minDistance = Infinity;
 
       headings.forEach((heading) => {
+        // heading.getBoundingClientRect(): 获取标题元素相对于视口的位置和尺寸
         const rect = heading.getBoundingClientRect();
+        // 计算标题顶部距离视口顶部100px的距离
         const distance = Math.abs(rect.top - 100); // 距离视口顶部100px的距离
 
         // 选择距离视口顶部最近且已进入视口的标题
@@ -123,15 +131,18 @@ const ArticleToc: React.FC<ArticleTocProps> = ({ headings, contentHeight, conten
       setActiveId(currentActiveId);
     };
 
-    // 添加滚动和窗口大小变化监听
+    // window.addEventListener: 添加滚动事件监听器
     window.addEventListener('scroll', handleScroll);
+    // window.addEventListener: 添加窗口大小变化事件监听器
     window.addEventListener('resize', handleScroll);
 
     // 初始化时执行一次计算
     handleScroll();
 
     return () => {
+      // window.removeEventListener: 移除滚动事件监听器
       window.removeEventListener('scroll', handleScroll);
+      // window.removeEventListener: 移除窗口大小变化事件监听器
       window.removeEventListener('resize', handleScroll);
     };
   }, [contentHeight, contentTop]);

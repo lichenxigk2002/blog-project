@@ -2,7 +2,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
-import styles from './AdminRouteGuard.module.scss';
 import UnauthorizedAccess from "@/admin/components/UnauthorizedAccess/UnauthorizedAccess";
 
 const AdminRouteGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -11,9 +10,8 @@ const AdminRouteGuard: React.FC<{ children: React.ReactNode }> = ({ children }) 
     // 如果正在加载，显示加载状态
     if (loading) {
         return (
-            <div className={styles.loadingContainer}>
-                <div className={styles.loadingSpinner}></div>
-                <div className={styles.loadingText}>加载中...</div>
+            <div>
+                <div>加载中...</div>
             </div>
         );
     }

@@ -116,21 +116,6 @@ const SystemSettings: React.FC = () => {
             ...prev,
             contentSettings: { ...prev.contentSettings, ...newSettings }
         }));
-        // try {
-        //     // 先请求后端
-        //     const response = await SystemSettingsAPI.setCommentsEnabled(newSettings.commentsEnabled!);
-        //     console.log('保存成功:', response);
-        //
-        //     // 保存成功后，拉一次最新设置
-        //     if (response.success) {
-        //         const latestSettings = await SystemSettingsAPI.getSettings();
-        //         // 假设 latestSettings.contentSettings 是最新的内容设置
-        //         dispatch(modifyCommentsEnabled(latestSettings.commentsEnabled));
-        //     }
-        // } catch (error) {
-        //     console.error('保存失败:', error);
-        //     // 可以在这里添加错误提示
-        // }
     }
 
     const handleNotificationChange = (newSettings: Partial<NotificationSettings>) => {
