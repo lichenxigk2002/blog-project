@@ -31,9 +31,31 @@ deploy() {
     # 进入项目根目录
     cd $PROJECT_ROOT || { echo "项目根目录不存在！"; return 1; }
     
-    # 拉取最新代码（只拉取 blogFrontend 目录）
+    # 配置 Git 超时和重试
+    git config --global http.timeout 300
+    git config --global http.postBuffer 524288000
+    git config --global http.lowSpeedLimit 0
+    git config --global http.lowSpeedTime 999999
+    
+    # 拉取最新代码（只拉取 blogFrontend 目录）- 增加重试机制
     echo "开始拉取最新代码..."
-    git fetch origin deploy || { echo "拉取代码失败！"; return 1; }
+    
+    # 重试 3 次
+    for i in {1..3}; do
+        echo "尝试第 $i 次拉取代码..."
+        if git fetch origin deploy; then
+            echo "拉取代码成功！"
+            break
+        else
+            echo "第 $i 次拉取失败，等待 10 秒后重试..."
+            sleep 10
+            if [ $i -eq 3 ]; then
+                echo "拉取代码失败！已重试 3 次"
+                return 1
+            fi
+        fi
+    done
+    
     git checkout origin/deploy -- blogFrontend/ || { echo "拉取 blogFrontend 目录失败！"; return 1; }
 
     # 复制到部署位置（增量更新，保留现有文件）
