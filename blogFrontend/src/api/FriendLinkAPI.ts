@@ -1,4 +1,4 @@
-import { http } from '@/utils/request';
+import { http } from '@/http/request';
 import { FriendLinks } from "@/types/FriendLinks";
 import { ApiResponse } from '@/types/common';
 

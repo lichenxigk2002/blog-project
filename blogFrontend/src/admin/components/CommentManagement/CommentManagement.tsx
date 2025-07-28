@@ -4,6 +4,7 @@ import { Comment } from '@/types/Comment'
 import styles from './CommentManagement.module.scss'
 import Pagination from "@/admin/components/ui/Pagination/Pagination";
 import OperationTipModal from '../ui/OperationTipModal/OperationTipModal';
+import Button from '../ui/Button/Button';
 
 const CommentManagement: React.FC = () => {
     // 状态管理
@@ -193,16 +194,16 @@ const CommentManagement: React.FC = () => {
                         }
                     }}
                 />
-                <button
-                    className={styles.searchButton}
+                <Button
+                    variant="search"
                     onClick={handleSearch}
-                >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                    搜索
-                </button>
+                    icon={
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    }
+                >搜索</Button>
             </div>
 
             {/* 表格 */}
@@ -264,20 +265,21 @@ const CommentManagement: React.FC = () => {
                                     {new Date(item.createdAt).toLocaleString()}
                                 </div>
                                 <div className={styles.tableCell}>
-                                    <button
-                                        className={styles.dangerButton}
+                                    <Button
+                                        variant="danger"
+                                        size="medium"
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             setDeletingComment(item);
                                             setDeleteModalVisible(true);
                                         }}
-                                    >
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <polyline points="3 6 5 6 21 6"></polyline>
-                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                        </svg>
-                                        删除
-                                    </button>
+                                        icon={
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                <polyline points="3 6 5 6 21 6"></polyline>
+                                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                            </svg>
+                                        }
+                                    >删除</Button>
                                 </div>
                             </div>
                         ))
@@ -312,18 +314,14 @@ const CommentManagement: React.FC = () => {
                         </div>
                         <p>确定要删除这条评论吗？此操作不可恢复。</p>
                         <div className={styles.modalFooter}>
-                            <button
+                            <Button
                                 className={styles.button}
                                 onClick={() => setDeleteModalVisible(false)}
-                            >
-                                取消
-                            </button>
-                            <button
-                                className={styles.dangerButton}
+                            >取消</Button>
+                            <Button
+                                variant="danger"
                                 onClick={handleDelete}
-                            >
-                                确认删除
-                            </button>
+                            >确认删除</Button>
                         </div>
                     </div>
                 </div>

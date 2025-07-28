@@ -1,4 +1,4 @@
-import { http } from '@/utils/request';
+import { http } from '@/http/request';
 import type { Comment, CommentOperationResponse } from '@/types/Comment';
 
 export const CommentsAPI = {

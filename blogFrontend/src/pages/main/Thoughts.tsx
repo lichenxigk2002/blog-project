@@ -7,6 +7,8 @@ import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
 import Head from "next/head";
 import { useLoading } from "@/hooks/useLoading";
 import PageHeader from '../../components/PageHeader/PageHeader';
+import { useGlobalTip } from '@/hooks/useGlobalTip';
+import { httpError } from '@/http/core/error';
 
 const cardTransforms = [
     { rotate: -12, translateY: 0 },
@@ -28,7 +30,8 @@ interface ThoughtsPageProps {
 const Thoughts: React.FC<ThoughtsPageProps> = ({ initialThoughts }) => {
     const [thoughtsList, setThoughtsList] = useState<ThoughtsProps[]>(initialThoughts || []);
     const { isLoading, withLoading } = useLoading();
-    const [error, setError] = useState<string | null>(null);
+    // const [error, setError] = useState<string | null>(null); // 移除
+    const { showTip } = useGlobalTip();
 
     useEffect(() => {
         // 如果props有数据则不再请求
@@ -43,7 +46,11 @@ const Thoughts: React.FC<ThoughtsPageProps> = ({ initialThoughts }) => {
                     setThoughtsList([]);
                 }
             } catch (err) {
-                setError('获取数据失败，请稍后重试');
+                if (err instanceof httpError) {
+                    showTip(err.message, 'error');
+                } else {
+                    showTip('获取数据失败，请稍后重试', 'error');
+                }
                 console.error('Error fetching thoughts:', err);
                 setThoughtsList([]);
             }
@@ -55,9 +62,9 @@ const Thoughts: React.FC<ThoughtsPageProps> = ({ initialThoughts }) => {
         return <LoadingSpinner />;
     }
 
-    if (error) {
-        return <div className={styles.wall}>{error}</div>;
-    }
+    // if (error) {
+    //     return <div className={styles.wall}>{error}</div>;
+    // }
 
     if (!Array.isArray(thoughtsList)) {
         console.error('thoughtsList is not an array:', thoughtsList);

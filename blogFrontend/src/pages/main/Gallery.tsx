@@ -8,6 +8,8 @@ import { GalleryAPI } from '@/api/GalleryAPI';
 import { Gallery as GalleryItem } from '@/types/Gallery';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import Image from 'next/image';
+import { useGlobalTip } from '@/hooks/useGlobalTip';
+import { httpError } from '@/http/core/error';
 
 // 添加类型定义
 interface GroupedGalleries {
@@ -25,8 +27,8 @@ const Gallery: React.FC<GalleryProps> = ({ initialGalleries }) => {
     const [galleries, setGalleries] = useState<GalleryItem[]>(initialGalleries || []);
     const [selectedGallery, setSelectedGallery] = useState<GalleryItem | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<string>('全部');
-    const [error, setError] = useState<string | null>(null);
     const { isLoading, withLoading } = useLoading();
+    const { showTip } = useGlobalTip();
 
     // 添加默认分类
     const defaultCategories = ['全部', '风景', '人物', '美食', '旅行', '生活'];
@@ -147,7 +149,11 @@ const Gallery: React.FC<GalleryProps> = ({ initialGalleries }) => {
                     }));
                 setGalleries(transformedData);
             } catch (err) {
-                setError(err instanceof Error ? err.message : 'An error occurred');
+                if (err instanceof httpError) {
+                    showTip(err.message, 'error');
+                } else {
+                    showTip('加载相册失败，请稍后重试', 'error');
+                }
             }
         };
 
@@ -190,8 +196,6 @@ const Gallery: React.FC<GalleryProps> = ({ initialGalleries }) => {
             </motion.div>
 
             {isLoading && <LoadingSpinner />}
-
-            {error && <div className={styles.error}>Error: {error}</div>}
 
             <motion.div className={styles.gallery} layout>
                 {filteredGalleries.length > 0 ? (

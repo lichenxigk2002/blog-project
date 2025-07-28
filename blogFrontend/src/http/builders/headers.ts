@@ -22,9 +22,8 @@ export class HeadersBuilder {
         if (body instanceof URLSearchParams) {
             this.headers.set('Content-Type', 'application/x-www-form-urlencoded');
         } else {
-            { // 默认使用 application/json
-                this.headers.set('Content-Type', 'application/json');
-            }
+            // 默认使用 application/json
+            this.headers.set('Content-Type', 'application/json');
         }
         return this;
     }

@@ -1,4 +1,4 @@
-import { http } from '@/utils/request';
+import { http } from '@/http/request';
 import {Tag} from "@/types/Tags";
 
 export const TagsAPI = {

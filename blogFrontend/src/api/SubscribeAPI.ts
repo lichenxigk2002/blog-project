@@ -1,4 +1,4 @@
-import { http } from '@/utils/request';
+import { http } from '@/http/request';
 import { SubscribeResponse } from "@/types/Subscribe";
 
 export interface Subscriber {

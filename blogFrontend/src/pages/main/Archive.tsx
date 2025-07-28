@@ -8,6 +8,8 @@ import { useLoading } from '@/hooks/useLoading';
 import Head from "next/head";
 import RecentArticles from "@/components/RecentArticles/RecentArticles";
 import PageHeader from '../../components/PageHeader/PageHeader';
+import { useGlobalTip } from '@/hooks/useGlobalTip';
+import { httpError } from '@/http/core/error';
 
 // 类型定义
 interface GroupedArticles {
@@ -145,15 +147,16 @@ const articleVariants = {
 
 const Archive: React.FC<ArchiveProps> = ({ initialGroupedArticles }) => {
     const [groupedArticles, setGroupedArticles] = useState<GroupedArticles>(initialGroupedArticles || {});
-    const [error, setError] = useState<string | null>(null);
+    // const [error, setError] = useState<string | null>(null); // 移除
     const { isLoading, withLoading } = useLoading();
+    const { showTip } = useGlobalTip();
 
     useEffect(() => {
         // 如果props有数据则不再请求
         if (initialGroupedArticles && Object.keys(initialGroupedArticles).length > 0) return;
         const fetchArticles = async () => {
             try {
-                setError(null);
+                // setError(null);
                 const response = await withLoading(ArticlesAPI.getArticles()) as ApiResponse;
 
                 if (!response) {
@@ -173,23 +176,28 @@ const Archive: React.FC<ArchiveProps> = ({ initialGroupedArticles }) => {
                 setGroupedArticles(grouped);
             } catch (err) {
                 console.error('获取文章失败:', err);
-                setError('加载文章失败，请稍后重试');
+                if (err instanceof httpError) {
+                    showTip(err.message, 'error');
+                } else {
+                    showTip('加载文章失败，请稍后重试', 'error');
+                }
             }
         };
 
         fetchArticles();
-    }, [withLoading, initialGroupedArticles]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [initialGroupedArticles]);
 
-    if (error) {
-        return (
-            <div className={styles.error}>
-                <p>{error}</p>
-                <Link href="/main/Articles" className={styles.backLink}>
-                    返回文章列表
-                </Link>
-            </div>
-        );
-    }
+    // if (error) {
+    //     return (
+    //         <div className={styles.error}>
+    //             <p>{error}</p>
+    //             <Link href="/main/Articles" className={styles.backLink}>
+    //                 返回文章列表
+    //             </Link>
+    //         </div>
+    //     );
+    // }
 
     return (
         <motion.div
@@ -276,7 +284,7 @@ const Archive: React.FC<ArchiveProps> = ({ initialGroupedArticles }) => {
                 </motion.div>
             </div>
 
-            <RecentArticles />
+            {/* <RecentArticles /> */}
         </motion.div>
     );
 };

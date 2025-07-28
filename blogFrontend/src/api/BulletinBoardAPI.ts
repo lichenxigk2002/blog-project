@@ -1,4 +1,4 @@
-import { http } from '@/utils/request';
+import { http } from '@/http/request';
 import { BulletinBoardProps, BulletinBoardResponse } from '@/types/BulletinBoard';
 import { ApiResponse } from '@/types/common';
 
@@ -15,7 +15,7 @@ export const BulletinBoardAPI = {
   // 删除留言
   deleteMessage: (id: number) => http.delete<boolean>(`/bulletinboard/${id}`),
   // 回复留言
-  replyMessage: (id: number, reply: string, sendEmail: boolean) => http.post<BulletinBoardProps>(`/bulletinboard/${id}/reply`, {  reply, sendEmail }),
+  replyMessage: (id: number, reply: string, sendEmail: boolean) => http.post<BulletinBoardProps>(`/bulletinboard/${id}/reply`, { reply, sendEmail }),
   // 更新留言状态
   updateStatus: (id: number, status: 'pending' | 'approved' | 'rejected') => http.put<BulletinBoardProps>(`/bulletinboard/${id}/status`, { status })
 }

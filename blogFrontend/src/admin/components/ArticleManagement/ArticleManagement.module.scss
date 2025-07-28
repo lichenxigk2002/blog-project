@@ -52,34 +52,6 @@
   }
 }
 
-.primaryButton {
-  @extend .button;
-  background: linear-gradient(90deg, $accent 0%, $primary-light 100%);
-  color: $white;
-  box-shadow: $shadow;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: $shadow-hover;
-    background: linear-gradient(90deg, $primary-light 0%, $accent 100%);
-    color: $primary;
-  }
-}
-
-.dangerButton {
-  @extend .button;
-  background: linear-gradient(90deg, $danger 0%, $primary-light 100%);
-  color: $white;
-  box-shadow: $shadow;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: $shadow-hover;
-    background: linear-gradient(90deg, $primary-light 0%, $danger 100%);
-    color: $primary;
-  }
-}
-
 .table:hover {
   box-shadow: 0 6px 24px rgba(180, 120, 255, 0.15);
 }

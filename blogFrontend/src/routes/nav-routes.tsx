@@ -40,6 +40,9 @@ const FriendLinks = dynamic(() => import('@/pages/main/FriendLinks'), {
 const Questions = dynamic(() => import('@/pages/main/Questions'), {
     loading: () => <LoadingSpinner />
 })
+const TechnologyStack = dynamic(() => import('@/pages/main/TechnologyStack'), {
+    loading: () => <LoadingSpinner />
+})
 
 interface Route {
     id: number;
@@ -146,6 +149,13 @@ export const navRoutesItem: Route[] = [
                 name: '面试题汇总',
                 component: Questions,
                 renderType: 'ssg', // 面试题汇总建议SSG
+                showInNav: false
+            },{
+                id: 805,
+                path: '/main/TechnologyStack',
+                name: '技术栈',
+                component: TechnologyStack,
+                renderType: 'csr', // 技术栈建议CSR
                 showInNav: false
             }
 

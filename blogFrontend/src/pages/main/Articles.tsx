@@ -10,6 +10,8 @@ import LoadingMore from '@/components/LoadingMore/LoadingMore';
 import { Article } from '@/types/Article';
 import { ArticlesAPI } from '@/api/ArticlesAPI';
 import PageHeader from '../../components/PageHeader/PageHeader';
+import { useGlobalTip } from '@/hooks/useGlobalTip';
+import { httpError } from '@/http/core/error';
 
 // 新增：定义props类型
 interface ArticlesProps {
@@ -21,7 +23,6 @@ const ITEMS_PER_PAGE = 10; // 每次加载的文章数量
 const Articles: React.FC<ArticlesProps> = ({ initialArticles }) => {
     const [articles, setArticles] = useState<Article[]>(initialArticles || []);
     const [filteredArticles, setFilteredArticles] = useState<Article[]>(initialArticles || []);
-    const [error, setError] = useState<{ message: string; code?: string } | null>(null);
     const { isLoading, withLoading } = useLoading();
     const [searchInput, setSearchInput] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
@@ -30,6 +31,7 @@ const Articles: React.FC<ArticlesProps> = ({ initialArticles }) => {
     const [hasMore, setHasMore] = useState(initialArticles.length > ITEMS_PER_PAGE);
     const observer = useRef<IntersectionObserver | null>(null);
     const loadingRef = useRef<HTMLDivElement>(null);
+    const { showTip } = useGlobalTip();
 
     // 添加一个函数来处理文章摘要
     const getExcerpt = (content: string) => {
@@ -50,7 +52,6 @@ const Articles: React.FC<ArticlesProps> = ({ initialArticles }) => {
         if (initialArticles && initialArticles.length > 0) return;
         const fetchArticles = async () => {
             try {
-                setError(null);
                 const response = await withLoading(ArticlesAPI.getArticles());
                 if (!response) {
                     throw new Error('Empty response from server');
@@ -85,15 +86,15 @@ const Articles: React.FC<ArticlesProps> = ({ initialArticles }) => {
                 setHasMore(processedData.length > ITEMS_PER_PAGE);
             } catch (err) {
                 console.error('Fetch error:', err);
-                const errorMessage = err instanceof Error ? err.message : '未知错误';
-                setError({
-                    message: '加载文章失败，请稍后重试',
-                    code: errorMessage
-                });
+                if (err instanceof httpError) {
+                    showTip(err.message, 'error');
+                } else {
+                    showTip('加载文章失败，请稍后重试', 'error');
+                }
             }
         };
         fetchArticles();
-    }, [initialArticles, withLoading]);
+    }, [initialArticles]);
 
     // 处理搜索和排序
     useEffect(() => {
@@ -225,8 +226,6 @@ const Articles: React.FC<ArticlesProps> = ({ initialArticles }) => {
             console.error('更新浏览量失败:', error);
         }
     };
-
-    if (error) return <div className={styles.error}>{error.message}</div>;
 
     return (
         <div className={styles.container}>

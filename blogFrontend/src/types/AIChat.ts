@@ -1,5 +1,5 @@
 // AIChat.ts
-import { ApiResponse, PaginatedResponse, Timestamped, Identifiable } from './common';
+import { ApiResponse, Timestamped, Identifiable } from './common';
 
 // 消息角色类型
 export type MessageRole = 'user' | 'assistant';

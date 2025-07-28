@@ -1,4 +1,4 @@
-import { http } from '@/utils/request';
+import { http } from '@/http/request';
 import { Question, QuestionListResponse } from '@/types/Question';
 import { ApiResponse } from '@/types/common';
 

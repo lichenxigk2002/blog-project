@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import type { BulletinBoardProps } from '@/types/BulletinBoard';
 import styles from './BulletinBoardForm.module.scss';
-import { http } from '@/utils/request';
+import { http } from '@/http/request';
 import { ApiResponse } from '@/types/common';
 
 interface BulletinBoardFormProps {

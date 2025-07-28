@@ -1,0 +1,111 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.primary {
+  background: linear-gradient(90deg, #a7e9ff 0%, #fbeaff 100%);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(162, 89, 255, 0.2);
+}
+
+.primary:hover {
+  background: linear-gradient(90deg, #fbeaff 0%, #a7e9ff 100%);
+  color: #a259ff;
+}
+
+.danger {
+  background: linear-gradient(90deg, #ffb6b9 0%, #fbeaff 100%);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(255, 182, 185, 0.2);
+}
+
+.danger:hover {
+  background: linear-gradient(90deg, #fbeaff 0%, #ffb6b9 100%);
+  color: #a259ff;
+}
+
+.default {
+  background: #eee;
+  color: #6c3ec1;
+}
+
+.default:hover {
+  background: #fbeaff;
+  color: #a259ff;
+}
+
+.search {
+  background: linear-gradient(90deg, #e0f7fa 0%, #a7e9ff 100%);
+  color: #2196f3;
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.08);
+  transition: all 0.3s;
+}
+
+.search:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.18);
+  background: linear-gradient(90deg, #a7e9ff 0%, #2196f3 100%);
+  color: #fff;
+}
+
+.success {
+  background: linear-gradient(90deg, #e0ffe0 0%, #b2f7b2 100%);
+  color: #2ecc40;
+  box-shadow: 0 2px 8px rgba(46, 204, 64, 0.08);
+  transition: all 0.3s;
+}
+
+.success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(46, 204, 64, 0.18);
+  background: linear-gradient(90deg, #b2f7b2 0%, #e0ffe0 100%);
+  color: #fff;
+}
+
+.warning {
+  background: linear-gradient(90deg, #fffbe0 0%, #fff3b2 100%);
+  color: #e6b800;
+  box-shadow: 0 2px 8px rgba(230, 184, 0, 0.08);
+  transition: all 0.3s;
+}
+
+.warning:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(230, 184, 0, 0.18);
+  background: linear-gradient(90deg, #fff3b2 0%, #fffbe0 100%);
+  color: #fff;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 4px;
+}
+
+.small {
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+}
+
+.medium {
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 8px;
+}
+
+.large {
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 10px;
+}

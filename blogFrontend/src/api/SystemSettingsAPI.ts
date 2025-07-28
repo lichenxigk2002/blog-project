@@ -1,4 +1,4 @@
-import { http } from '@/utils/request';
+import { http } from '@/http/request';
 import { SystemSettings } from '@/admin/components/SystemSettings/types';
 import {SystemSettingsApiResponse} from "@/admin/components/SystemSettings/types";
 

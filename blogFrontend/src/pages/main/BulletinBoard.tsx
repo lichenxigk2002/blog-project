@@ -7,7 +7,7 @@ import { useLoading } from "@/hooks/useLoading";
 import LoadingSpinner from "@/components/LoadingSpinner/LoadingSpinner";
 import Head from "next/head";
 import PageHeader from '../../components/PageHeader/PageHeader';
-import { http } from '@/utils/request';
+import { http } from '@/http/request';
 import Typewriter from '@/components/Typewriter/Typewriter';
 import OperationTipModal from '@/components/OperationTipModal/OperationTipModal';
 import { getQQAvatarUrl } from '@/utils/qqAvatar';
@@ -26,7 +26,7 @@ const BulletinBoard: React.FC<BulletinBoardPageProps> = ({ initialMessages }) =>
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const [avatarPreview, setAvatarPreview] = useState<string>('');
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const maxUploadSize = useSelector((state:RootState) => state.settings.contentSettings.maxUploadSize)
+    const maxUploadSize = useSelector((state: RootState) => state.settings.contentSettings.maxUploadSize)
     const [formData, setFormData] = useState<BulletinBoardProps>({
         id: 0,
         name: '',
@@ -109,7 +109,7 @@ const BulletinBoard: React.FC<BulletinBoardPageProps> = ({ initialMessages }) =>
         const file = e.target.files?.[0];
         if (file) {
             const maxSizeBytes = maxUploadSize * 1024 * 1024;
-            if(file.size > maxSizeBytes){
+            if (file.size > maxSizeBytes) {
                 setTipMessage(`头像文件过大，最大允许 ${maxUploadSize} MB`);
                 setTipType('warning');
                 setTipOpen(true);
@@ -422,8 +422,8 @@ const BulletinBoard: React.FC<BulletinBoardPageProps> = ({ initialMessages }) =>
 
 // 新增：getServerSideProps实现SSR
 import { GetServerSideProps } from 'next';
-import {useSelector} from "react-redux";
-import {RootState} from "@/redux/store";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 export const getServerSideProps: GetServerSideProps = async () => {
     try {
         const response = await BulletinBoardAPI.getMessages(1);

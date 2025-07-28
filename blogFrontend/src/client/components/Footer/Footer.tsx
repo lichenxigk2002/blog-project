@@ -9,7 +9,7 @@ import { SiBilibili, SiTiktok } from 'react-icons/si';
 import Link from "next/link";
 import { navRoutesItem } from "@/routes/nav-routes";
 import SubscribeModal from '@/components/SubscribeModal/SubscribeModal';
-import {useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 
 
 // 扩展 Performance 接口以包含 memory 属性
@@ -196,9 +196,9 @@ const Footer: React.FC = () => {
 
           <a href="https://cloud.tencent.com/product/cos" target="_blank" rel="noopener noreferrer">
             <img
-                src="/images/CloudObjectStorage.svg"
-                alt="COS"
-                style={{ width: '0.75rem', verticalAlign: 'middle' }}
+              src="/images/CloudObjectStorage.svg"
+              alt="COS"
+              style={{ width: '0.75rem', verticalAlign: 'middle' }}
             />
             COS
           </a>
@@ -206,9 +206,9 @@ const Footer: React.FC = () => {
 
           <a href="https://cloud.tencent.com/product/ses" target="_blank" rel="noopener noreferrer">
             <img
-                src="/images/SimpleEmailService.svg"  // 邮件推送
-                alt="SES"
-                style={{ width: '0.75rem', verticalAlign: 'middle' }}
+              src="/images/SimpleEmailService.svg"  // 邮件推送
+              alt="SES"
+              style={{ width: '0.75rem', verticalAlign: 'middle' }}
             />
             SES
           </a>
@@ -216,18 +216,29 @@ const Footer: React.FC = () => {
 
           <a href="https://cloud.tencent.com/product/lighthouse" target="_blank" rel="noopener noreferrer">
             <img
-                src="/images/TencentCloudLighthouse.svg"  // 轻量服务器图标
-                alt="轻量服务器"
-                style={{ width: '0.75rem', verticalAlign: 'middle' }}
+              src="/images/TencentCloudLighthouse.svg"  // 轻量服务器图标
+              alt="轻量服务器"
+              style={{ width: '0.75rem', verticalAlign: 'middle' }}
             />
             轻量应用服务器
           </a>
           <span>提供技术支持</span>
         </div>
-
-        <a href="https://beian.miit.gov.cn" className={styles.beian} target="_blank" rel="noopener noreferrer">
-          晋ICP备2025060785号
-        </a>
+        <div className={styles.footerBottomBox}>
+          <a href="https://beian.miit.gov.cn" className={styles.beianBadge} target="_blank" rel="noopener noreferrer">
+            晋ICP备2025060785号
+          </a>
+          <a href="https://bloginc.kamyang.com/tech-expert/18852.html">
+            <div className={styles.footerBadgeWrapper}>
+              <div className={styles.footerBadgeLeft}>
+                晓梦羊&reg;
+              </div>
+              <div className={styles.footerBadgeRight}>
+                18852号
+              </div>
+            </div>
+          </a>
+        </div>
       </div>
       <SubscribeModal open={showSubscribe} onClose={() => setShowSubscribe(false)} />
     </footer>

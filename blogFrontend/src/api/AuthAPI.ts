@@ -1,4 +1,4 @@
-import { http } from '@/utils/request';
+import { http } from '@/http/request';
 import { ApiResponse } from '@/types/common';
 import { User, LoginCredentials } from '@/types/auth';
 

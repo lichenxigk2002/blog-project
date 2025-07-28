@@ -10,6 +10,7 @@ import OperationTipModal from '../ui/OperationTipModal/OperationTipModal';
 import { buildArticleData } from '@/utils/articleUtils';
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import Button from '../ui/Button/Button';
 
 interface Tag {
   id: number;
@@ -508,9 +509,9 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
 
 
       <div className={styles.formItem}>
-        <button type="submit" className={styles.submitButton}>
+        <Button type="submit" variant="primary" className={styles.submitButton}>
           保存
-        </button>
+        </Button>
       </div>
       <OperationTipModal
         open={autoSaveTip.open}

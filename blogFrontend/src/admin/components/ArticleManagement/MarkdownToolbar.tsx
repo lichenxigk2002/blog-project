@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styles from './ArticleForm.module.scss';
 import { FiTool } from "react-icons/fi";
 import Modal from '../ui/Modal/Modal';
+import Button from '../ui/Button/Button';
 
 interface MarkdownToolbarProps {
   showToolbar: boolean;
@@ -68,16 +69,14 @@ const MarkdownToolbar: React.FC<MarkdownToolbarProps> = ({
 
   return (
     <>
-      <button
+      <Button
         type="button"
-        id="md-fab-btn"
-        className={styles.primaryButton}
+        variant="primary"
         style={{ marginLeft: 8 }}
         onClick={() => setShowToolbar((v: boolean) => !v)}
         aria-label="Markdown 工具栏"
-      >
-        <FiTool size={15} />
-      </button>
+        icon={<FiTool size={15} />}
+      />
       {showToolbar && (
         <div
           id="md-toolbar-popover"
@@ -147,8 +146,8 @@ const MarkdownToolbar: React.FC<MarkdownToolbarProps> = ({
         onClose={() => setTableModalOpen(false)}
         footer={
           <>
-            <button type="button" className={styles.button} onClick={() => setTableModalOpen(false)}>取消</button>
-            <button type="button" className={styles.primaryButton} onClick={e => { e.preventDefault(); e.stopPropagation(); handleInsertTable(); }}>插入</button>
+            <Button type="button" onClick={() => setTableModalOpen(false)}>取消</Button>
+            <Button type="button" variant="primary" onClick={e => { e.preventDefault(); e.stopPropagation(); handleInsertTable(); }}>插入</Button>
           </>
         }
         width={500}

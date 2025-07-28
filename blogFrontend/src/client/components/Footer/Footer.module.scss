@@ -511,3 +511,80 @@ $bg-secondary: var(--bg-secondary);
     border: none;
   }
 }
+
+
+.footerBadgeWrapper {
+  display: inline-flex;
+  height: 18px; // 更小的高度
+  font-family: Arial, sans-serif;
+  font-size: 11px; // 更小的字体
+  line-height: 18px;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 5px; // 更小的圆角
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08); // 更轻的阴影
+}
+
+.footerBadgeLeft {
+  background-color: #04314D;
+  color: white;
+  padding: 0 7px; // 更小的内边距
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+.footerBadgeRight {
+  background-color: #FF6A00;
+  color: white;
+  padding: 0 7px; // 更小的内边距
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+.footerBottomBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.beianBadge {
+  display: inline-flex;
+  height: 18px;
+  font-family: Arial, sans-serif;
+  font-size: 11px;
+  line-height: 18px;
+  text-align: center;
+  border: 1px solid rgba(124, 124, 124, 0.21);
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  background: var(--background-color, #fff);
+  color: var(--text-color, #04314D);
+  padding: 0 10px;
+  align-items: center;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.beianBadge,
+.footerBadgeWrapper {
+  transition:
+          background 0.2s,
+          color 0.2s,
+          border 0.2s,
+          transform 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+  will-change: transform;
+}
+
+.beianBadge:hover,
+.footerBadgeWrapper:hover {
+  /* 轻微的3D旋转，perspective让旋转有立体感 */
+  transform: perspective(400px) rotateY(-8deg) scale(1.03);
+  /* 你也可以试试 rotateX(6deg) 或 rotateY(8deg) 看哪个更喜欢 */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+}
+

@@ -16,7 +16,7 @@ interface FriendLinksPageProps {
 
 const SITE_INFO = {
     name: "孤芳不自赏的Blog",
-    url: "https://gfbzsblog.site",
+    url: "https://www.gfbzsblog.site/",
     description: "日益努力，而后风生水起",
     avatarUrl: "/images/avatar_20250520_215057.png"
 };
@@ -25,7 +25,7 @@ const REQUIREMENTS = [
     "网站内容健康积极，定期更新原创内容，保持活跃度",
     "申请前请先在贵站友链专区添加本站链接（名称+网址）",
     "网站需备案且能稳定访问，无恶意弹窗/违规内容",
-    "添加后请邮件告知您的网站名称、链接及简介"
+    "添加后请在本站留言板留言，站长会第一时间回复，记得真实邮箱才能收到回复哦！",
 ];
 
 const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => {
@@ -220,19 +220,22 @@ const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => 
 
     return (
         <>
-            <div className={styles.container} >
+        {!isDetailView && (
+            <div className={styles.container}
+                 style={isDetailView ? { padding: 0 } : undefined}
+            >
                 <Head>
                     <title>友人帐 | 海内存知己，天涯若比邻</title>
                     <meta name="description" content="友链交换，让我们的博客世界更加精彩" />
                 </Head>
                 {isLoading && <LoadingSpinner />}
-                {/*<div className={isDetailView ? styles.fadeOut : styles.fadeIn}>*/}
-                <PageHeader
-                    headerText="朋友们"
-                    introText="互联网的美好，在于让有趣的灵魂跨越山海相遇。这里是我在数字世界里遇到的宝藏创作者——他们用文字编织思想的星空，用真诚分享点亮彼此的世界。每一篇文章都是独特的礼物，每一次阅读都是一场温暖的邂逅。。"
-                    englishTitle="FriendLinks"
-                />
-                {/*</div>*/}
+                <div className={isDetailView ? styles.fadeOut : styles.fadeIn}>
+                    <PageHeader
+                        headerText="朋友们"
+                        introText="互联网的美好，在于让有趣的灵魂跨越山海相遇。这里是我在数字世界里遇到的宝藏创作者——他们用文字编织思想的星空，用真诚分享点亮彼此的世界。每一篇文章都是独特的礼物，每一次阅读都是一场温暖的邂逅。。"
+                        englishTitle="FriendLinks"
+                    />
+                </div>
                 {/* 友链列表 */}
                 {/*{isDetailView && (*/}
                 {/*    <div className={styles.backButtonContainer}>*/}
@@ -248,10 +251,13 @@ const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => 
                             <div className={`${styles.friendLinksGrid} ${isDetailView ? styles.verticalList : ''}`}>
                                 {friendLinks
                                     .filter((link) => link.status === 'approved')
-                                    .map((link) => (
-                                        <div
+                                    .map((link, index) => (
+                                        <motion.div
                                             key={link.id}
                                             className={styles.friendLinkCard}
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            transition={{ delay: index * 0.1, duration: 0.5 }}
                                             onClick={(e) => handleFriendLinkClick(e, link)}
                                             onMouseEnter={() => handleCardMouseEnter(link.id.toString())}
                                             onMouseLeave={() => handleCardMouseLeave(link.id.toString())}
@@ -280,7 +286,7 @@ const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => 
                                                     dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(link.description) }}
                                                 />
                                             </div>
-                                        </div>
+                                        </motion.div>
                                     ))}
                             </div>
                         ) : (
@@ -399,6 +405,8 @@ const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => 
                     type={tipType}
                 />
             </div>
+        )}
+
             <div className={styles.ViewContainer}>
                 {isDetailView && selectedFriendLink && (
                     <div className={`${styles.detailViewWrapper} ${isDetailView ? styles.fadeIn : styles.fadeOut}`}>
@@ -494,6 +502,7 @@ const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => 
 // 新增：getStaticProps实现SSG+ISR
 import { GetStaticProps } from 'next';
 import { FaLink } from "react-icons/fa";
+import { motion } from 'framer-motion';
 export const getStaticProps: GetStaticProps = async () => {
     try {
         const response = await FriendLinksAPI.getAllFriendLinks();

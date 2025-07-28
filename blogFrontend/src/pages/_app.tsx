@@ -16,12 +16,13 @@ import {modifyAllSettings} from "@/redux/systemSettingsSlice";
 import { useAppDispatch } from '@/redux/store';
 import {flatToGroupedSettings} from "@/utils/settingTransform";
 import {adminLoginFromStorage}  from '@/redux/adminAuthSlice';
+import {GlobalTipProvider} from "@/context/GlobalTipContext";
 
 // 创建主题包装组件
 function ThemeWrapper({ children }: { children: React.ReactNode }) {
     const { isDarkMode } = useTheme();
 
-    React.useEffect(() => {
+    useEffect(() => {
         // 动态更新 HTML 的 data-theme 属性
         document.documentElement.setAttribute(
             'data-theme',
@@ -75,35 +76,37 @@ function AppContent({ Component, pageProps }: AppProps) {
     }, [dispatch]);
 
     return (
-        <LoginModalProvider>
-            <ThemeWrapper>
-                <OperationTipModal
-                    open={showThemeModal}
-                    onClose={() => setShowThemeModal(false)}
-                    message={themeModalInfo.message}
-                    type={themeModalInfo.type as any}
-                    // @ts-ignore
-                    icon={themeModalInfo.icon}
-                />
-                {isAdminPage ? (
-                    <AdminRouteGuard>
-                        <Component {...pageProps} />
-                        // </AdminRouteGuard>
-                ) : (
-                    <AppLayout>
-                        <Component {...pageProps} />
-                    </AppLayout>
-                )}
-                <LoginModalContext.Consumer>
-                    {({ showLogin, showAdminLogin }) => (
-                        <>
-                            {showLogin && <Login />}
-                            {showAdminLogin && <AdminLogin />}
-                        </>
+        <GlobalTipProvider>
+            <LoginModalProvider>
+                <ThemeWrapper>
+                    <OperationTipModal
+                        open={showThemeModal}
+                        onClose={() => setShowThemeModal(false)}
+                        message={themeModalInfo.message}
+                        type={themeModalInfo.type as any}
+                        // @ts-ignore
+                        icon={themeModalInfo.icon}
+                    />
+                    {isAdminPage ? (
+                        <AdminRouteGuard>
+                            <Component {...pageProps} />
+                            // </AdminRouteGuard>
+                    ) : (
+                        <AppLayout>
+                            <Component {...pageProps} />
+                        </AppLayout>
                     )}
-                </LoginModalContext.Consumer>
-            </ThemeWrapper>
-        </LoginModalProvider>
+                    <LoginModalContext.Consumer>
+                        {({ showLogin, showAdminLogin }) => (
+                            <>
+                                {showLogin && <Login />}
+                                {showAdminLogin && <AdminLogin />}
+                            </>
+                        )}
+                    </LoginModalContext.Consumer>
+                </ThemeWrapper>
+            </LoginModalProvider>
+        </GlobalTipProvider>
     );
 }
 

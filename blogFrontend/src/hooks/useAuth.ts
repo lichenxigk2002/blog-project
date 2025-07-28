@@ -5,6 +5,7 @@ import { RootState } from '@/redux/store';  // 之前定义的 RootState 类型
 // 定义 useAuth 自定义 Hook
 export const useAuth = () => {
     // 使用 useSelector 从 Redux store 中提取 auth 状态
+    // @ts-ignore
     const { user, loading, error } = useAppSelector(
         (state: RootState) => state.auth  // 选择 state 中的 auth 切片
     );

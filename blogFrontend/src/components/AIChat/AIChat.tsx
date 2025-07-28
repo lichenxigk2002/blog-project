@@ -4,13 +4,16 @@ import remarkGfm from 'remark-gfm';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import styles from './AIChat.module.scss';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { generateSystemPrompt } from '@/config/aiAssistant';
 import { useAIChat } from '@/hooks/useAIChat';
 import { useAuth } from '@/hooks/useAuth';
 import { Message } from '@/types/AIChat';
 import { AIChatAPI } from '@/api/AIChatAPI';
+import OperationTipModal from '@/components/OperationTipModal/OperationTipModal';
 import AIChatCodeBlock from '@/components/Code/AIChatCodeBlock';
+import { AI_MODELS, AIMessage } from '@/config/aiModels';
+
 
 // 代码块渲染属性定义
 interface CodeBlockProps {
@@ -23,7 +26,6 @@ interface CodeBlockProps {
 const AIChat: React.FC = () => {
   const { user } = useAuth();
   const userId = user?.id || 1; // 默认用户ID，实际应该从登录状态获取
-
   // 使用AI聊天Hook
   const {
     sessions,
@@ -36,14 +38,22 @@ const AIChat: React.FC = () => {
     saveMessage,
     saveMessagesBatch
   } = useAIChat({ userId });
-
   // 本地状态
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [streamingMessage, setStreamingMessage] = useState<string>('');
   const [showSessionList, setShowSessionList] = useState(false);
+  const [selectedModelKey, setSelectedModelKey] = useState('deepseek');
+  const currentModel = AI_MODELS.find(m => m.key === selectedModelKey) || AI_MODELS[0];
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [tipModal, setTipModal] = useState({
+    open: false,
+    message: '',
+    type: 'info' as 'success' | 'error' | 'info' | 'warning' | 'loading'
+  });
 
   // 各种 ref 用于滚动、输入框自适应等
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -51,9 +61,13 @@ const AIChat: React.FC = () => {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const isInitialMount = useRef(true);
 
-  // deepseek API 配置
-  const apiEndpoint = process.env.NEXT_PUBLIC_API_ENDPOINT || 'https://api.deepseek.com/v1/chat/completions';
-  const apiKey = process.env.NEXT_PUBLIC_API_KEY || '';
+  // 动态获取API Key
+  let apiKey = '';
+  if (currentModel.key === 'ark') {
+    apiKey = process.env.NEXT_PUBLIC_ARK_API_KEY || '';
+  } else if (currentModel.key === 'deepseek') {
+    apiKey = process.env.NEXT_PUBLIC_DEEPSEEK_API_KEY || '';
+  }
 
   // 同步Hook中的消息到本地状态
   useEffect(() => {
@@ -101,6 +115,18 @@ const AIChat: React.FC = () => {
 
   // 创建新会话
   const handleNewChat = async () => {
+    if (
+        !currentSession ||
+        (!currentSession.title || currentSession.title === '新对话') && messages.length === 0
+    ) {
+      setTipModal({
+        open: true,
+        message: '已经是新对话，无需重复创建',
+        type: 'info'
+      });
+      return;
+    }
+
     try {
       const newSession = await createNewSession();
       if (newSession) {
@@ -109,7 +135,11 @@ const AIChat: React.FC = () => {
         setMessages([]); // 清空本地消息
       }
     } catch (err) {
-      setError('创建新会话失败');
+      setTipModal({
+        open: true,
+        message: '创建新会话失败，请稍后再试',
+        type: 'error'
+      });
     }
   };
 
@@ -175,32 +205,19 @@ const AIChat: React.FC = () => {
     setError(null);
     setStreamingMessage('');
 
-    const responseBody = {
-      model: "deepseek-chat",
-      messages: [
-        {
-          role: "system",
-          content: generateSystemPrompt()
-        },
-        ...messages.map(msg => ({
-          role: msg.type === 'user' ? 'user' : 'assistant',
-          content: msg.content
-        })),
-        { role: 'user', content: userMessage.content }
-      ],
-      temperature: 0.7,
-      max_tokens: 2000,
-      stream: true
-    }
+    // 动态组装请求体
+    const systemPrompt = generateSystemPrompt();
+    const aiMessages: AIMessage[] = messages.map(msg => ({
+      role: msg.type === 'user' ? 'user' : 'assistant',
+      content: msg.content
+    }));
+    const responseBody = currentModel.buildRequestBody(aiMessages, systemPrompt, userMessage.content);
 
     try {
-      // 请求 deepseek 的流式接口
-      const response = await fetch(apiEndpoint, {
+      // 请求当前模型的流式接口
+      const response = await fetch(currentModel.endpoint, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
-        },
+        headers: currentModel.getHeaders(apiKey),
         body: JSON.stringify(responseBody)
       });
 
@@ -210,7 +227,7 @@ const AIChat: React.FC = () => {
         console.error('API请求失败:', {
           status,
           errorText,
-          endpoint: apiEndpoint,
+          endpoint: currentModel.endpoint,
           hasApiKey: !!apiKey
         });
         throw new Error(`API请求失败 (${status}): ${errorText}`);
@@ -226,86 +243,51 @@ const AIChat: React.FC = () => {
         throw new Error('No reader available');
       }
 
-      // 循环读取流数据
-      // let readCount = 0;
       while (true) {
-        // readCount++;
-        // console.log(`\n=== 第${readCount}次读取 ===`);
-
-        // 创建Promise但不立即await
-        // const readPromise = reader.read();
-        // console.log('Promise状态:', readPromise); // 观察Pending状态
-
-        // 等待Promise完成
         const { done, value: contentValue } = await reader.read();
-        // console.log('Promise完成，结果:', { done, value: contentValue }); // 观察Fulfilled状态
-
         if (done) break;
 
         buffer += decoder.decode(contentValue, { stream: true });
         const lines = buffer.split('\n');
-        console.log('分割后的lines数组:', lines); // 调试：查看数组内容
         buffer = lines.pop() || '';
 
         for (const line of lines) {
-          console.log('当前处理的line:', `"${line}"`); // 调试：查看每个line
-          if (line.startsWith('data: ')) {
-            const data = line.slice(6);
-            if (data === '[DONE]') {
-              // 流结束，归档为正式 AI 消息
-              const finalMessage: Message = {
-                id: (Date.now() + 1).toString(),
-                content: finalContent
-                  .replace(/\r\n/g, '\n')
-                  .split('\n')
-                  .map(line => line.trim())
-                  .filter(line => line.length > 0)
-                  .join('\n'),
-                type: 'ai',
-                timestamp: new Date(),
-              };
-
-              // 保存AI回复到后端
-              try {
-                await saveMessage(finalMessage);
-              } catch (err) {
-                console.error('保存AI消息失败:', err);
-              }
-
-              setMessages(prev => [...prev, finalMessage]);
-              setStreamingMessage('');
-              break;
-            }
-
+          const parsed = currentModel.parseStream(line);
+          if (parsed?.done) {
+            // 流结束，归档为正式 AI 消息
+            const finalMessage: Message = {
+              id: (Date.now() + 1).toString(),
+              content: finalContent
+                .replace(/\r\n/g, '\n')
+                .split('\n')
+                .map(line => line.trim())
+                .filter(line => line.length > 0)
+                .join('\n'),
+              type: 'ai',
+              timestamp: new Date(),
+            };
+            // 保存AI回复到后端
             try {
-              // console.log('原始data字符串:', data);
-              const parsed = JSON.parse(data);
-              // console.log('JSON解析后的对象:', parsed);
-              // console.log('对象结构:', JSON.stringify(parsed, null, 2));
-              // console.log('choices数组:', parsed.choices);
-              // console.log('choices[0]:', parsed.choices?.[0]);
-              // console.log('delta:', parsed.choices?.[0]?.delta);
-              // console.log('content:', parsed.choices?.[0]?.delta?.content);
-
-              const content = parsed.choices[0]?.delta?.content || '';
-
-              if (content) {
-                finalContent += content;
-                setStreamingMessage(finalContent
-                  .replace(/\r\n/g, '\n')
-                  .split('\n')
-                  .map(line => line.trim())
-                  .filter(line => line.length > 0)
-                  .join('\n'));
-              }
-            } catch (e) {
-              console.error('Error parsing stream data:', e);
+              await saveMessage(finalMessage);
+            } catch (err) {
+              console.error('保存AI消息失败:', err);
             }
+            setMessages(prev => [...prev, finalMessage]);
+            setStreamingMessage('');
+            break;
+          }
+          if (parsed?.content) {
+            finalContent += parsed.content;
+            setStreamingMessage(finalContent
+              .replace(/\r\n/g, '\n')
+              .split('\n')
+              .map(line => line.trim())
+              .filter(line => line.length > 0)
+              .join('\n'));
           }
         }
       }
     } catch (error) {
-      // console.log('Promise被拒绝:', error); // 观察Rejected状态
       console.error('AI response error:', error);
       setError('发生错误，请稍后再试');
       const errorMessage: Message = {
@@ -337,15 +319,15 @@ const AIChat: React.FC = () => {
           code({ className, children, inline, ...props }: CodeBlockProps) {
             const match = /language-(\w+)/.exec(className || '');
             const lang = match ? match[1] : 'text';
-            if (inline) {
+            if (inline|| !lang || lang === 'text') {
               return (
                 <code
                   style={{
-                    background: '#f7f8fa',
+                    background: 'rgba(247,248,250,0.11)',
                     borderRadius: '4px',
                     padding: '0.1em 0.4em',
                     fontSize: '0.92em',
-                    color: '#a259ff'
+                    color: 'var(--text-color)',
                   }}
                   {...props}
                 >
@@ -367,6 +349,7 @@ const AIChat: React.FC = () => {
   // @ts-ignore
   return (
     <div className={styles.chatContainer}>
+
       {/* 会话管理头部 */}
       <div className={styles.chatHeader}>
         <div className={styles.sessionInfo}>
@@ -385,26 +368,14 @@ const AIChat: React.FC = () => {
             onClick={() => setShowSessionList(!showSessionList)}
             title="历史会话"
           >
-            📚
+            🕙
           </button>
-          {/*<button*/}
-          {/*    className={styles.sessionButton}*/}
-          {/*    onClick={() => {*/}
-          {/*      console.log('点击历史会话按钮');*/}
-          {/*      console.log('当前showSessionList:', showSessionList);*/}
-          {/*      console.log('当前sessions:', sessions);*/}
-          {/*      setShowSessionList(!showSessionList);*/}
-          {/*    }}*/}
-          {/*    title="历史会话"*/}
-          {/*>*/}
-          {/*  📚*/}
-          {/*</button>*/}
           <button
             className={styles.sessionButton}
             onClick={handleNewChat}
             title="新对话"
           >
-            ➕
+            🌟
           </button>
         </div>
       </div>
@@ -494,7 +465,6 @@ const AIChat: React.FC = () => {
           >
             <motion.div
               className={`${styles.message} ${message.type === 'user' ? styles.userMessage : styles.aiMessage}`}
-              whileHover={{ scale: 1.01 }}
               transition={{ duration: 0.2 }}
             >
               <div className={styles.messageContent}>
@@ -522,12 +492,10 @@ const AIChat: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            whileHover={{ y: -2, transition: { duration: 0.2 } }}
             className={styles.aiMessageContainer}
           >
             <motion.div
               className={`${styles.message} ${styles.aiMessage}`}
-              whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.2 }}
             >
               <div className={styles.messageContent}>
@@ -563,7 +531,43 @@ const AIChat: React.FC = () => {
         )}
         <div ref={messagesEndRef} />
       </motion.div>
-
+      {/* 模型切换下拉框 */}
+      <div className={styles.modelSelectorCustom}>
+        <div
+            className={styles.modelSelectorSelected}
+            onClick={() => setDropdownOpen(v => !v)}
+            tabIndex={0}
+            onBlur={() => setDropdownOpen(false)}
+        >
+          <img className={styles.modelIcon} src={currentModel.icon} alt={currentModel.name} />
+          <span>{currentModel.name}</span>
+        </div>
+        <AnimatePresence>
+          {dropdownOpen && (
+              <motion.div
+                  className={styles.modelSelectorDropdown}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 8 }}
+                  transition={{ duration: 0.18 }}
+              >
+                {AI_MODELS.map(model => (
+                    <div
+                        key={model.key}
+                        className={`${styles.modelSelectorOption} ${selectedModelKey === model.key ? styles.selected : ''}`}
+                        onClick={() => {
+                          setSelectedModelKey(model.key);
+                          setDropdownOpen(false);
+                        }}
+                    >
+                      <img className={styles.modelIcon} src={model.icon} alt={model.name} />
+                      <span>{model.name}</span>
+                    </div>
+                ))}
+              </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
       {/* 输入区域 */}
       <form onSubmit={handleSubmit} className={styles.inputForm}>
         <textarea
@@ -580,6 +584,12 @@ const AIChat: React.FC = () => {
           发送
         </button>
       </form>
+      <OperationTipModal
+          open={tipModal.open}
+          onClose={() => setTipModal(prev => ({ ...prev, open: false }))}
+          message={tipModal.message}
+          type={tipModal.type}
+      />
     </div>
   );
 };

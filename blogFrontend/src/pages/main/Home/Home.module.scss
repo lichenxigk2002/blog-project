@@ -302,6 +302,17 @@ $shadow: var(--shadow);
     }
 }
 
+.hidden {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.5s, transform 0.5s;
+}
+.fadeIn {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.5s, transform 0.5s;
+}
+
 // 响应式设计
 // 笔记本屏幕 (1440px以下)
 @media (max-width: 90rem) {

@@ -43,7 +43,7 @@ $shadow-hover: 0 8px 16px rgba(0, 0, 0, 0.12);
 
 /* Site Information Section */
 .siteInfoSection {
-  margin: 1.5rem 0;
+  margin: 1.5rem 0 3rem 0; // 下方多加点距离
   text-align: center;
 }
 
@@ -468,23 +468,16 @@ $shadow-hover: 0 8px 16px rgba(0, 0, 0, 0.12);
 // 渐隐渐现动画
 .fadeIn {
   opacity: 1;
-  transform: translateY(0);
-  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: auto;
   visibility: visible;
-  max-height: 1000px; // 设置一个足够大的高度
-  margin-bottom: 2rem; // 保持间距
+  transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .fadeOut {
   opacity: 0;
-  transform: translateY(-20px);
-  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
   visibility: hidden;
-  max-height: 0; // 高度变为0
-  margin-bottom: 0; // 间距也变为0
-  overflow: hidden; // 隐藏溢出内容
+  transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 // 包装器样式

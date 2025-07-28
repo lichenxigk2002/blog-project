@@ -109,7 +109,7 @@ $shadow-modal: 0 20px 40px rgba(0, 0, 0, 0.2);
 
   &.active {
     background: $primary-color;
-    color: black;
+    color: var(--text);
     border-color: $primary-color;
     font-weight: bold;
     transform: scale(1.01);
@@ -227,8 +227,8 @@ $shadow-modal: 0 20px 40px rgba(0, 0, 0, 0.2);
 
 .modalContent {
   position: relative;
-  max-width: 90vw;
-  max-height: 90vh;
+  max-width: 80vw;
+  max-height: 80vh;
   width: auto;
   height: auto;
   overflow: hidden;
@@ -268,16 +268,11 @@ $shadow-modal: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 
 .modalImageContainer {
-  width: 600px;
-  height: 600px;
+  box-sizing: border-box;
+  width: auto;
+  height: auto;
   @include flex-center;
-  padding: 20px;
-  overflow: hidden;
-
-  @media (min-width: 75rem) {
-    width: 800px;
-    height: 800px;
-  }
+  //overflow: hidden;
 
   @media (min-width: 62rem) and (max-width: 74.9375rem) {
     width: 600px;
@@ -308,8 +303,8 @@ $shadow-modal: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 
 .modalImage {
-  max-width: 100%;
-  max-height: 100%;
+  max-width: 70%;
+  max-height: 70%;
   width: auto;
   height: auto;
   object-fit: contain;
@@ -325,7 +320,6 @@ $shadow-modal: 0 20px 40px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   border-left: 1px solid #eee;
-  max-height: 600px;
 
   @media (max-width: 48rem) {
     width: 12.5rem;
@@ -345,13 +339,13 @@ $shadow-modal: 0 20px 40px rgba(0, 0, 0, 0.2);
   position: absolute;
   top: 16px;
   right: 16px;
-  background: rgba(255, 255, 255, 0.9);
+  background: $background;
   border: none;
   width: 36px;
   height: 36px;
   border-radius: 50%;
   font-size: 24px;
-  color: #333;
+  color: var(--text);
   cursor: pointer;
   @include flex-center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -359,7 +353,6 @@ $shadow-modal: 0 20px 40px rgba(0, 0, 0, 0.2);
   z-index: 2;
 
   &:hover {
-    background: #fff;
     transform: scale(1.1);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
@@ -401,7 +394,9 @@ $shadow-modal: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 
 .modalCategory {
+  max-width: 2rem;
   display: inline-block;
+  text-align: center;
   font-size: 0.9rem;
   color: #a259ff;
   margin-bottom: 16px;

@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Tag } from '@/types/Tags';
 import styles from '../ArticleManagement/ArticleManagement.module.scss';
+import Button from '../ui/Button/Button';
 
 interface TagArticlesModalProps {
   visible: boolean;
@@ -62,9 +63,9 @@ const TagArticlesModal: React.FC<TagArticlesModalProps> = ({
         </div>
 
         <div className={styles.modalFooter}>
-          <button className={styles.button} onClick={onClose}>
+          <Button className={styles.button} onClick={onClose}>
             关闭
-          </button>
+          </Button>
         </div>
       </div>
 

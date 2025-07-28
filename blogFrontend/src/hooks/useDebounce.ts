@@ -1,11 +1,5 @@
 import { useState, useEffect } from 'react';
 
-/**
- * 自定义 Hook：用于实现输入值的去抖功能
- * @param value 需要去抖的值
- * @param delay 延迟时间（毫秒）
- * @returns 去抖后的值
- */
 export function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
 

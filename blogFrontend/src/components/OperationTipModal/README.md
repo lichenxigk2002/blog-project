@@ -1,144 +1,202 @@
-# OperationTipModal 组件
+# OperationTipModal 组件技术文档
 
-一个通用的操作提示模态框组件，支持多种类型、动画效果和自定义配置。
+## 1. 组件用途与功能
 
-## 功能特性
+OperationTipModal 是一个通用的操作提示模态框组件，支持多种提示类型（成功、错误、信息、警告、加载），具备自动关闭、动画、响应式、可自定义图标和样式等特性，适用于全局操作反馈、表单提交、异步处理等场景。
 
-- ✅ 多种提示类型：success、error、info、warning、loading
-- ✅ 自动关闭功能（可配置）
-- ✅ 平滑的淡入淡出动画
-- ✅ 可自定义图标、大小、位置
-- ✅ 支持点击遮罩关闭
-- ✅ 可选的手动关闭按钮
-- ✅ 响应式设计
-- ✅ TypeScript 支持
+---
 
-## 基本用法
+## 2. 主要 props/类型定义
+
+组件 props 类型定义如下，支持丰富的自定义能力：
+
+```ts
+interface OperationTipModalProps {
+  open: boolean; // 是否显示模态框
+  onClose: () => void; // 关闭回调
+  message: string; // 提示信息
+  type?: 'success' | 'error' | 'info' | 'warning' | 'loading';
+  width?: number;
+  iconSize?: number;
+  icon?: string;
+  theme?: string;
+  autoClose?: boolean;
+  autoCloseDelay?: number;
+  clickOverlayToClose?: boolean;
+  showCloseButton?: boolean;
+  position?: 'center' | 'top' | 'bottom';
+  className?: string;
+}
+```
+
+---
+
+## 3. 关键状态与交互逻辑
+
+- 组件内部通过 useState 管理显示/离开动画状态。
+- 支持自动关闭（autoClose），可配置延迟时间。
+- 支持点击遮罩关闭（clickOverlayToClose）和手动关闭按钮（showCloseButton）。
+- 动画分为淡入（fadeInUp）和淡出（fadeOutDown），离开动画结束后自动卸载。
 
 ```tsx
-import OperationTipModal from '@/components/OperationTipModal/OperationTipModal';
+const [show, setShow] = useState(open);
+const [leaving, setLeaving] = useState(false);
+const leaveTimer = useRef<NodeJS.Timeout | null>(null);
 
-// 基本使用
+useEffect(() => {
+  if (open) {
+    setShow(true);
+    setLeaving(false);
+    if (autoClose) {
+      leaveTimer.current = setTimeout(() => {
+        setLeaving(true);
+        setTimeout(() => {
+          setShow(false);
+          setLeaving(false);
+          onClose();
+        }, 500); // 离开动画时长
+      }, autoCloseDelay);
+    }
+  } else if (show) {
+    setLeaving(true);
+    leaveTimer.current = setTimeout(() => {
+      setShow(false);
+      setLeaving(false);
+    }, 350); // 动画时长
+  }
+  return () => {
+    if (leaveTimer.current) clearTimeout(leaveTimer.current);
+  };
+}, [open, autoClose, autoCloseDelay, onClose, show]);
+
+const handleOverlayClick = () => {
+  if (!leaving && clickOverlayToClose) {
+    onClose();
+  }
+};
+```
+
+---
+
+## 4. 主要渲染结构
+
+- 组件由遮罩层（overlay）和内容卡片（card）组成。
+- 支持自定义图标、宽度、位置、关闭按钮。
+
+```tsx
+if (!show) return null;
+
+return (
+  <div className={styles.overlay} onClick={handleOverlayClick}>
+    <div
+      className={cardClassName}
+      style={{ width }}
+      onClick={handleCardClick}
+    >
+      <Image
+        src={icon || iconMap[type] || iconMap.success}
+        alt={type}
+        className={styles.icon}
+        width={iconSize}
+        height={iconSize}
+        priority
+        quality={60}
+        placeholder="blur"
+        blurDataURL="/images/placeholder.png"
+      />
+      <div className={styles.message}>{message}</div>
+      {showCloseButton && (
+        <button
+          className={styles.closeButton}
+          onClick={onClose}
+          aria-label="关闭"
+        >
+          ×
+        </button>
+      )}
+    </div>
+  </div>
+);
+```
+
+---
+
+## 5. 关键样式与动画
+
+- 使用 SCSS 模块化，支持毛玻璃、圆角、阴影、响应式。
+- 动画分为淡入（fadeInUp）和淡出（fadeOutDown），z-index 9999，适配多种位置。
+
+```scss
+.overlay {
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(1.25rem);
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(162, 89, 255, 0.12), 0 1.5px 6px rgba(0, 0, 0, 0.06);
+  padding: 32px 24px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 180px;
+  position: relative;
+  animation: fadeInUp 0.35s cubic-bezier(.23, 1.01, .32, 1) both;
+}
+
+.card-leave {
+  animation: fadeOutDown 1s cubic-bezier(.23, 1.01, .32, 1) both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOutDown {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+}
+```
+
+---
+
+## 6. 主要知识点
+
+- TypeScript 类型定义与 props 约束
+- React useState/useEffect/useRef 状态与副作用管理
+- 条件渲染与动画控制
+- 遮罩点击、关闭按钮、自动关闭等交互
+- SCSS 模块化、毛玻璃、动画、响应式
+- 可访问性（aria-label）、自定义样式扩展
+
+---
+
+## 7. 示例
+
+```tsx
 <OperationTipModal
   open={showModal}
   onClose={() => setShowModal(false)}
   message="操作成功！"
   type="success"
 />
-```
-
-## 高级用法
-
-```tsx
-// 自定义配置
-<OperationTipModal
-  open={showModal}
-  onClose={() => setShowModal(false)}
-  message="这是一个自定义的提示信息"
-  type="warning"
-  width={320}
-  iconSize={96}
-  autoClose={false}
-  showCloseButton={true}
-  position="top"
-  clickOverlayToClose={false}
-/>
-```
-
-## Props 说明
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `open` | `boolean` | - | 是否显示模态框（必需） |
-| `onClose` | `() => void` | - | 关闭回调函数（必需） |
-| `message` | `string` | - | 提示信息（必需） |
-| `type` | `'success' \| 'error' \| 'info' \| 'warning' \| 'loading'` | `'success'` | 提示类型 |
-| `width` | `number` | `280` | 模态框宽度（像素） |
-| `iconSize` | `number` | `128` | 图标大小（像素） |
-| `icon` | `string` | - | 自定义图标路径 |
-| `theme` | `string` | - | 主题（预留，暂未使用） |
-| `autoClose` | `boolean` | `true` | 是否自动关闭 |
-| `autoCloseDelay` | `number` | `1500` | 自动关闭延迟（毫秒） |
-| `clickOverlayToClose` | `boolean` | `true` | 是否允许点击遮罩关闭 |
-| `showCloseButton` | `boolean` | `false` | 是否显示关闭按钮 |
-| `position` | `'center' \| 'top' \| 'bottom'` | `'center'` | 模态框位置 |
-| `className` | `string` | `''` | 自定义 CSS 类名 |
-
-## 使用场景示例
-
-### 1. 成功提示
-```tsx
-<OperationTipModal
-  open={showSuccess}
-  onClose={() => setShowSuccess(false)}
-  message="保存成功！"
-  type="success"
-/>
-```
-
-### 2. 错误提示（不自动关闭）
-```tsx
-<OperationTipModal
-  open={showError}
-  onClose={() => setShowError(false)}
-  message="操作失败，请重试"
-  type="error"
-  autoClose={false}
-  showCloseButton={true}
-/>
-```
-
-### 3. 加载提示
-```tsx
-<OperationTipModal
-  open={isLoading}
-  onClose={() => setIsLoading(false)}
-  message="正在处理中..."
-  type="loading"
-  autoClose={false}
-  clickOverlayToClose={false}
-/>
-```
-
-### 4. 顶部提示
-```tsx
-<OperationTipModal
-  open={showTopTip}
-  onClose={() => setShowTopTip(false)}
-  message="有新消息"
-  type="info"
-  position="top"
-  width={200}
-  iconSize={64}
-/>
-```
-
-## 注意事项
-
-1. **图标映射**：`error` 类型使用 `failure.png` 图标
-2. **动画时长**：淡入动画 0.35s，淡出动画 0.5s
-3. **z-index**：模态框层级为 9999
-4. **响应式**：组件会自动适应不同屏幕尺寸
-5. **无障碍**：关闭按钮包含 `aria-label` 属性
-
-## 样式自定义
-
-可以通过 `className` 属性传入自定义样式类：
-
-```tsx
-<OperationTipModal
-  open={showModal}
-  onClose={() => setShowModal(false)}
-  message="自定义样式"
-  className="my-custom-modal"
-/>
-```
-
-然后在你的 CSS 中定义：
-
-```css
-.my-custom-modal {
-  background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-  border: 2px solid #fff;
-}
 ``` 

@@ -134,7 +134,7 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <div className={styles.logo}>
           <h1>{collapsed ? 'B' : 'Blog Admin'}</h1>
           <img
-            src="/images/avatar_20250520_215057.png"
+            src="/images/avatar_20250520_215057_01.png"
             alt="管理员头像"
             className={styles.sidebarAvatar}
           />
@@ -181,7 +181,7 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           <div className={styles.headerRight}>
             <span>
               <img
-                src="/images/avatar_20250520_215057.png"
+                src="/images/avatar_20250520_215057_01.png"
                 alt="管理员头像"
                 className={styles.avatar}
               />

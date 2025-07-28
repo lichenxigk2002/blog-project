@@ -44,7 +44,7 @@ $pinned-blue-bg: #b6b9ff;
 .messageItem {
   background: rgba(255, 255, 255, 0.95);
   border-radius: 16px;
-  padding: 1.2rem;
+  padding: 1rem;
   box-shadow: 0 4px 20px rgba(31, 38, 135, 0.1);
   transition:
     box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
@@ -75,7 +75,7 @@ $pinned-blue-bg: #b6b9ff;
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.4rem;
 }
 
 .avatar,
@@ -178,7 +178,7 @@ $pinned-blue-bg: #b6b9ff;
   font-size: 0.85rem;
   line-height: 1.4;
   color: var(--text);
-  margin: 0.8rem 0;
+  margin: 0.2rem 0;
   white-space: pre-wrap;
   padding: 0.4rem;
   border-radius: 8px;
@@ -229,10 +229,10 @@ $pinned-blue-bg: #b6b9ff;
 
 .replyContent {
   font-size: 0.8rem;
-  line-height: 1.5;
+  line-height: 1.3;
   color: var(--text);
   background: linear-gradient(135deg, rgba(162, 89, 255, 0.05), rgba(251, 234, 255, 0.05));
-  padding: 0.8rem;
+  padding: 0.4rem;
   border-radius: 8px;
   margin-top: 0.5rem;
   border: 1px solid rgba(162, 89, 255, 0.1);
@@ -241,7 +241,7 @@ $pinned-blue-bg: #b6b9ff;
 .replyTime {
   font-size: 0.7rem;
   color: #888;
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
   text-align: right;
   font-style: italic;
 }

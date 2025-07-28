@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styles from './TagForm.module.scss';
+import Button from '../ui/Button/Button';
 
 interface TagFormProps {
   initialValues?: {
@@ -64,20 +65,21 @@ const TagForm: React.FC<TagFormProps> = ({ initialValues, onSubmit, onCancel }) 
       </div>
       <div className={styles.buttonRow}>
         {onCancel && (
-          <button
+          <Button
             type="button"
             className={`${styles.formButton} ${styles.cancel}`}
             onClick={onCancel}
           >
             取消
-          </button>
+          </Button>
         )}
-        <button
+        <Button
           type="submit"
+          variant="primary"
           className={styles.formButton}
         >
           确定
-        </button>
+        </Button>
       </div>
     </form>
   );

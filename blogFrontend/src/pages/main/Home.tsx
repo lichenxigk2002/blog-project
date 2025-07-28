@@ -30,6 +30,9 @@ const Home: React.FC<HomeProps> = ({ latestArticles: initialArticles, tags: init
     const [recentPhotos, setRecentPhotos] = useState<Gallery[]>(initialPhotos || []);
     const [showMainContent, setShowMainContent] = useState(false);
     const mainContentRef = useRef<HTMLDivElement>(null);
+    const [visibleArticleIndexes, setVisibleArticleIndexes] = useState<number[]>([]);
+    const [visiblePhotoIndexes, setVisiblePhotoIndexes] = useState<number[]>([]);
+    const articlesRef = useRef<HTMLDivElement>(null);
 
     // 添加滚动处理函数
     const handleArrowClick = () => {
@@ -127,6 +130,37 @@ const Home: React.FC<HomeProps> = ({ latestArticles: initialArticles, tags: init
         return () => observer.disconnect();
     }, []);
 
+    // 依次浮现动画，只监听最新文章区
+    useEffect(() => {
+        if (!showMainContent) return;
+
+        let observed = false;
+        const observer = new window.IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && !observed) {
+                    observed = true;
+                    setVisibleArticleIndexes([]);
+                    setVisiblePhotoIndexes([]);
+                    latestArticles.forEach((_, idx) => {
+                        setTimeout(() => {
+                            setVisibleArticleIndexes(prev => [...prev, idx]);
+                        }, idx * 120);
+                    });
+                    recentPhotos.forEach((_, idx) => {
+                        setTimeout(() => {
+                            setVisiblePhotoIndexes(prev => [...prev, idx]);
+                        }, idx * 120);
+                    });
+                    observer.disconnect();
+                }
+            },
+            { threshold: 0.2 }
+        );
+        if (articlesRef.current) observer.observe(articlesRef.current);
+
+        return () => observer.disconnect();
+    }, [showMainContent, latestArticles, recentPhotos]);
+
     // 格式化日期
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
@@ -173,12 +207,12 @@ const Home: React.FC<HomeProps> = ({ latestArticles: initialArticles, tags: init
                 <div ref={mainContentRef} id="mainContent" className={styles.mainContentArea}>
                     {showMainContent && (
                         <>
-                            <div className={styles.mainContentLeft}>
+                            <div className={styles.mainContentLeft} ref={articlesRef}>
                                 <h2 className={styles.latestArticlesTitle}>最新文章</h2>
                                 <div className={styles.articlesGrid}>
-                                    {latestArticles.map((article: Article) => (
+                                    {latestArticles.map((article: Article, idx) => (
                                         <Link href={`/main/Articles/${article.id}`} key={article.id}>
-                                            <div className={styles.articleCard}>
+                                            <div className={`${styles.articleCard} ${visibleArticleIndexes.includes(idx) ? styles.fadeIn : styles.hidden}`}>
                                                 <div>
                                                     <h3 className={styles.articleTitle}>{article.title}</h3>
                                                     <p className={styles.articleDescription}>
@@ -198,9 +232,9 @@ const Home: React.FC<HomeProps> = ({ latestArticles: initialArticles, tags: init
                             <div className={styles.mainContentRight}>
                                 <h2 className={styles.latestArticlesTitle}>近期照片</h2>
                                 <div className={styles.photosGrid}>
-                                    {recentPhotos.map((photo) => (
+                                    {recentPhotos.map((photo, idx) => (
                                         <Link href="/main/Gallery" key={photo.id}>
-                                            <div className={styles.photoCard}>
+                                            <div className={`${styles.photoCard} ${visiblePhotoIndexes.includes(idx) ? styles.fadeIn : styles.hidden}`}>
                                                 <Image
                                                     src={photo.coverImage || '/default-image.jpg'}
                                                     alt={photo.title}

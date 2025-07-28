@@ -9,6 +9,8 @@ import { Tag } from "@/types/Tags";
 import PageHeader from '../../components/PageHeader/PageHeader';
 import TagCloudBackground from "@/components/TagCloudBackground/TagCloudBackground";
 import { motion } from 'framer-motion';
+import { useGlobalTip } from '@/hooks/useGlobalTip';
+import { httpError } from '@/http/core/error';
 
 // 常量
 const MAX_TAGS = 100;
@@ -43,8 +45,8 @@ interface TagsProps {
 const Tags: React.FC<TagsProps> = ({ initialTags }) => {
     const router = useRouter();
     const [tags, setTags] = useState<Tag[]>(initialTags || []);
-    const [error, setError] = useState<string | null>(null);
     const { isLoading, withLoading } = useLoading();
+    const { showTip } = useGlobalTip();
 
     // 处理标签点击
     const handleTagClick = (tag: Tag) => {
@@ -65,15 +67,15 @@ const Tags: React.FC<TagsProps> = ({ initialTags }) => {
                 setTags(data.slice(0, MAX_TAGS));
             } catch (err) {
                 console.error('Error fetching tags:', err);
-                setError('加载标签失败，请稍后重试');
+                if (err instanceof httpError) {
+                    showTip(err.message, 'error');
+                } else {
+                    showTip('加载标签失败，请稍后重试', 'error');
+                }
             }
         };
         fetchTags();
-    }, [withLoading, initialTags]);
-
-    if (error) {
-        return <div className={styles.error}>{error}</div>;
-    }
+    }, [initialTags]);
 
     return (
         <div className={styles.container}>

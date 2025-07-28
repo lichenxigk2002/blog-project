@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { Gallery } from '@/types/Gallery';
 import styles from './GalleryForm.module.scss';
+import Button from '../ui/Button/Button';
 
 interface GalleryFormProps {
   initialData?: Gallery;
@@ -134,16 +135,16 @@ const GalleryForm: React.FC<GalleryFormProps> = ({
         )}
       </div>
       <div className={styles.modalFooter}>
-        <button
+        <Button
           type="button"
           className={styles.secondaryButton}
           onClick={onCancel}
         >
           取消
-        </button>
-        <button type="submit" className={styles.primaryButton}>
+        </Button>
+        <Button type="submit" variant="primary" className={styles.primaryButton}>
           {initialData ? '更新' : '创建'}
-        </button>
+        </Button>
       </div>
     </form>
   );
