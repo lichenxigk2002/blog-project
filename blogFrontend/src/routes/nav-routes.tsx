@@ -150,14 +150,15 @@ export const navRoutesItem: Route[] = [
                 component: Questions,
                 renderType: 'ssg', // 面试题汇总建议SSG
                 showInNav: false
-            },{
-                id: 805,
-                path: '/main/TechnologyStack',
-                name: '技术栈',
-                component: TechnologyStack,
-                renderType: 'csr', // 技术栈建议CSR
-                showInNav: false
             }
+            // ,{
+            //     id: 805,
+            //     path: '/main/TechnologyStack',
+            //     name: '技术栈',
+            //     component: TechnologyStack,
+            //     renderType: 'csr', // 技术栈建议CSR
+            //     showInNav: false
+            // }
 
         ]
     }, {
