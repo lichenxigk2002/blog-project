@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# 加载环境变量（解决 GitHub Actions 环境问题）
+source ~/.bashrc
+source ~/.profile
+
 # 自动化部署脚本 for blogFrontend
 # 适用宝塔面板，分支 deploy，pm2 进程名 blog
 
@@ -27,11 +31,10 @@ deploy() {
     # 进入项目根目录
     cd $PROJECT_ROOT || { echo "项目根目录不存在！"; return 1; }
     
-    # 拉取最新代码（直接在 demo 目录）
+    # 拉取最新代码（只拉取 blogFrontend 目录）
     echo "开始拉取最新代码..."
     git fetch origin deploy || { echo "拉取代码失败！"; return 1; }
     git checkout origin/deploy -- blogFrontend/ || { echo "拉取 blogFrontend 目录失败！"; return 1; }
-
 
     # 复制到部署位置（增量更新，保留现有文件）
     echo "开始复制前端代码..."

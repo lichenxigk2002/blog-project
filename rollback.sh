@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# 加载环境变量（解决 GitHub Actions 环境问题）
+source ~/.bashrc
+source ~/.profile
+
 # 回滚脚本 for blogFrontend
 BACKUP_DIR="/root/backups"
 PROJECT_DIR="/root/blogFrontend"
@@ -7,15 +11,15 @@ PROJECT_DIR="/root/blogFrontend"
 # 检查是否有参数传入（自动模式）
 if [ "$1" = "auto" ]; then
     echo "==== 自动回滚模式 ===="
-
+    
     # 获取最新的备份
     LATEST_BACKUP=$(ls -t "$BACKUP_DIR" | grep "blogFrontend_backup_" | head -1)
-
+    
     if [ -z "$LATEST_BACKUP" ]; then
         echo "没有找到可用的备份！"
         exit 1
     fi
-
+    
     BACKUP_NAME="$LATEST_BACKUP"
     echo "自动选择最新备份：$BACKUP_NAME"
 else
