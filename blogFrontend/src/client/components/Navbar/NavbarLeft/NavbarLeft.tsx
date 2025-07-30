@@ -9,14 +9,14 @@ const NavbarLeft: React.FC = () => {
     const { setShowAdminLogin } = useContext(LoginModalContext);
     const showAdminLoginEntry = useAppSelector((state) => state.settings.notificationSettings.showAdminLoginEntry)
 
-    const handleAvatarClick = () => {
-        setShowAdminLogin(true);
-    };
+    // const handleAvatarClick = () => {
+    //     setShowAdminLogin(true);
+    // };
 
     return (
         <div
             className={styles.avatarContainer}
-            onClick={handleAvatarClick}
+            // onClick={handleAvatarClick}
             style={{ cursor: 'pointer' }}
         >
             <AdminAvatarPreview showAdminLoginEntry={showAdminLoginEntry}/>
