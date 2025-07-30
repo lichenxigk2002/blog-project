@@ -73,15 +73,15 @@ public class RssController {
       for (Articles article : articles) {
         rss.append("  <item>\n");
         rss.append("    <title>").append(escapeXml(article.getTitle())).append("</title>\n");
-        rss.append("    <link>").append(baseUrl).append("/articles/").append(article.getId()).append("</link>\n");
-        rss.append("    <comments>").append(baseUrl).append("/articles/").append(article.getId())
+        rss.append("    <link>").append(baseUrl).append("/main/Articles/").append(article.getId()).append("</link>\n");
+        rss.append("    <comments>").append(baseUrl).append("/main/Articles/").append(article.getId())
             .append("#comments</comments>\n");
         rss.append("    <dc:creator><![CDATA[孤芳不自赏]]></dc:creator>\n");
         rss.append("    <pubDate>")
             .append(formatRssDate(Date.from(article.getCreatedAt().atZone(ZoneId.systemDefault()).toInstant())))
             .append("</pubDate>\n");
         rss.append("    <category><![CDATA[技术博客]]></category>\n");
-        rss.append("    <guid isPermaLink=\"false\">").append(baseUrl).append("/articles/").append(article.getId())
+        rss.append("    <guid isPermaLink=\"false\">").append(baseUrl).append("/main/Articles/").append(article.getId())
             .append("</guid>\n");
         rss.append("\n");
         rss.append("    <description><![CDATA[")
