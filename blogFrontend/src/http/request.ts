@@ -32,7 +32,12 @@ const request = async<T>(url: string, config: RequestConfig = {}): Promise<T> =>
     url.startsWith('http') ? url : `${BASE_URL}${url}`
   );
 
-  const finalUrl = urlBuilder.addParams(params || {}).build();
+  // 只有当params存在且不为空时才添加参数
+  if (params && Object.keys(params).length > 0) {
+    urlBuilder.addParams(params);
+  }
+
+  const finalUrl = urlBuilder.build();
 
   const headersBuilder = new HeadersBuilder()
     .setContentType(restConfig.method || 'GET', restConfig.body);

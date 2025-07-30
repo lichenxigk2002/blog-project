@@ -12,12 +12,21 @@ export class UrlBuilder {
     }
 
     build(): string {
-        if (!this.params) return this.baseUrl;
+        // 检查参数是否为空
+        if (!this.params || Object.keys(this.params).length === 0) {
+            return this.baseUrl;
+        }
 
         const queryString = Object.entries(this.params)
+            .filter(([key, value]) => value !== undefined && value !== null && value !== '')
             .map(([key, value]) =>
                 `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
             .join('&');
+
+        // 如果没有有效的查询参数，返回原始URL
+        if (!queryString) {
+            return this.baseUrl;
+        }
 
         return `${this.baseUrl}${this.baseUrl.includes('?') ? '&' : '?'}${queryString}`;
     }
