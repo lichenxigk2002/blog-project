@@ -41,39 +41,59 @@ public class RssController {
           .last("LIMIT 20")
           .list();
 
-      String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+      // 使用固定的域名
+      String baseUrl = "https://www.gfbzsblog.site";
 
       StringBuilder rss = new StringBuilder();
       rss.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-      rss.append("<rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\">\n");
-      rss.append("  <channel>\n");
-      rss.append("    <title>孤芳不自赏的博客</title>\n");
-      rss.append("    <link>").append(baseUrl).append("</link>\n");
-      rss.append("    <description>分享技术心得，记录生活感悟</description>\n");
-      rss.append("    <language>zh-CN</language>\n");
-      rss.append("    <lastBuildDate>").append(formatRssDate(new Date())).append("</lastBuildDate>\n");
-      rss.append("    <atom:link href=\"").append(baseUrl)
+      rss.append("<rss version=\"2.0\"\n");
+      rss.append("  xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"\n");
+      rss.append("  xmlns:wfw=\"http://wellformedweb.org/CommentAPI/\"\n");
+      rss.append("  xmlns:dc=\"http://purl.org/dc/elements/1.1/\"\n");
+      rss.append("  xmlns:atom=\"http://www.w3.org/2005/Atom\"\n");
+      rss.append("  xmlns:sy=\"http://purl.org/rss/1.0/modules/syndication/\"\n");
+      rss.append("  xmlns:slash=\"http://purl.org/rss/1.0/modules/slash/\"\n");
+      rss.append(">\n");
+      rss.append("\n");
+      rss.append("<channel>\n");
+      rss.append("  <title>孤芳不自赏的博客</title>\n");
+      rss.append("  <atom:link href=\"").append(baseUrl)
           .append("/rss/feed\" rel=\"self\" type=\"application/rss+xml\" />\n");
+      rss.append("  <link>").append(baseUrl).append("</link>\n");
+      rss.append("  <description>分享技术心得，记录生活感悟</description>\n");
+      rss.append("  <lastBuildDate>").append(formatRssDate(new Date())).append("</lastBuildDate>\n");
+      rss.append("  <language>zh-CN</language>\n");
+      rss.append("  <sy:updatePeriod>hourly</sy:updatePeriod>\n");
+      rss.append("  <sy:updateFrequency>1</sy:updateFrequency>\n");
+      rss.append("  <generator>https://www.gfbzsblog.site</generator>\n");
+      rss.append("\n");
 
       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
       for (Articles article : articles) {
-        rss.append("    <item>\n");
-        rss.append("      <title>").append(escapeXml(article.getTitle())).append("</title>\n");
-        rss.append("      <link>").append(baseUrl).append("/articles/").append(article.getId()).append("</link>\n");
-        rss.append("      <guid>").append(baseUrl).append("/articles/").append(article.getId()).append("</guid>\n");
-        rss.append("      <description>")
-            .append(escapeXml(article.getExcerpt() != null ? article.getExcerpt()
-                : article.getContent().substring(0, Math.min(200, article.getContent().length()))))
-            .append("</description>\n");
-        rss.append("      <pubDate>")
+        rss.append("  <item>\n");
+        rss.append("    <title>").append(escapeXml(article.getTitle())).append("</title>\n");
+        rss.append("    <link>").append(baseUrl).append("/articles/").append(article.getId()).append("</link>\n");
+        rss.append("    <comments>").append(baseUrl).append("/articles/").append(article.getId())
+            .append("#comments</comments>\n");
+        rss.append("    <dc:creator><![CDATA[孤芳不自赏]]></dc:creator>\n");
+        rss.append("    <pubDate>")
             .append(formatRssDate(Date.from(article.getCreatedAt().atZone(ZoneId.systemDefault()).toInstant())))
             .append("</pubDate>\n");
-        rss.append("      <author>孤芳不自赏</author>\n");
-        rss.append("    </item>\n");
+        rss.append("    <category><![CDATA[技术博客]]></category>\n");
+        rss.append("    <guid isPermaLink=\"false\">").append(baseUrl).append("/articles/").append(article.getId())
+            .append("</guid>\n");
+        rss.append("\n");
+        rss.append("    <description><![CDATA[")
+            .append(article.getExcerpt() != null ? article.getExcerpt() : article.getContent())
+            .append("]]></description>\n");
+        rss.append("    <content:encoded><![CDATA[").append(article.getContent()).append("]]></content:encoded>\n");
+        rss.append("    <wfw:commentRss>").append(baseUrl).append("/rss/feed</wfw:commentRss>\n");
+        rss.append("  </item>\n");
       }
 
-      rss.append("  </channel>\n");
+      rss.append("\n");
+      rss.append("</channel>\n");
       rss.append("</rss>");
 
       return rss.toString();
@@ -97,25 +117,14 @@ public class RssController {
   @GetMapping("/info")
   @ResponseBody
   public Map<String, Object> getRssInfo(HttpServletRequest request) {
-    String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-
-    // 获取最新文章的发布时间作为最后更新时间
-    Articles latestArticle = articlesService.lambdaQuery()
-        .eq(Articles::getStatus, "published")
-        .orderByDesc(Articles::getCreatedAt)
-        .last("LIMIT 1")
-        .one();
-
-    Date lastBuildDate = latestArticle != null
-        ? Date.from(latestArticle.getCreatedAt().atZone(ZoneId.systemDefault()).toInstant())
-        : new Date();
+    // 使用固定的域名，而不是动态获取
+    String baseUrl = "https://www.gfbzsblog.site";
 
     Map<String, Object> info = new HashMap<>();
     info.put("feedUrl", baseUrl + "/rss/feed");
     info.put("title", "孤芳不自赏的博客");
     info.put("description", "分享技术心得，记录生活感悟");
     info.put("language", "zh-CN");
-    info.put("lastBuildDate", formatRssDate(lastBuildDate));
 
     return info;
   }
