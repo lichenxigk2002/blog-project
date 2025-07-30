@@ -11,17 +11,13 @@ import { http } from '@/http/request';
 import Typewriter from '@/components/Typewriter/Typewriter';
 import OperationTipModal from '@/components/OperationTipModal/OperationTipModal';
 import { getQQAvatarUrl } from '@/utils/qqAvatar';
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
-
-// 新增：定义props类型
-interface BulletinBoardPageProps {
-    initialMessages: BulletinBoardProps[];
-}
-
-const BulletinBoard: React.FC<BulletinBoardPageProps> = ({ initialMessages }) => {
+const BulletinBoard: React.FC = () => {
     const { isDarkMode } = useTheme();
     const { isLoading, withLoading } = useLoading();
-    const [messages, setMessages] = useState<BulletinBoardProps[]>(initialMessages || []);
+    const [messages, setMessages] = useState<BulletinBoardProps[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const [avatarPreview, setAvatarPreview] = useState<string>('');
@@ -62,10 +58,8 @@ const BulletinBoard: React.FC<BulletinBoardPageProps> = ({ initialMessages }) =>
 
     // 初始加载留言
     useEffect(() => {
-        // SSR兜底：如果props有数据则不再请求
-        if (initialMessages && initialMessages.length > 0) return;
         fetchMessages();
-    }, [initialMessages]);
+    }, []);
 
     // 处理输入变化
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -418,27 +412,6 @@ const BulletinBoard: React.FC<BulletinBoardPageProps> = ({ initialMessages }) =>
             />
         </div>
     );
-};
-
-// 新增：getServerSideProps实现SSR
-import { GetServerSideProps } from 'next';
-import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
-export const getServerSideProps: GetServerSideProps = async () => {
-    try {
-        const response = await BulletinBoardAPI.getMessages(1);
-        return {
-            props: {
-                initialMessages: response && response.records ? response.records : []
-            }
-        };
-    } catch (err) {
-        return {
-            props: {
-                initialMessages: []
-            }
-        };
-    }
 };
 
 export default BulletinBoard;
