@@ -4,11 +4,12 @@ import { useTheme } from '@/hooks/useTheme';
 import { ArticlesAPI } from '@/api/ArticlesAPI';
 import { GalleryAPI } from '@/api/GalleryAPI';
 import { Article } from '@/types/Article';
-import { FaGithub, FaWeixin, FaEnvelope, FaMapMarkerAlt, FaCloud, FaTachometerAlt } from 'react-icons/fa';
+import { FaGithub, FaWeixin, FaEnvelope, FaMapMarkerAlt, FaCloud, FaTachometerAlt, FaRss } from 'react-icons/fa';
 import { SiBilibili, SiTiktok } from 'react-icons/si';
 import Link from "next/link";
 import { navRoutesItem } from "@/routes/nav-routes";
 import SubscribeModal from '@/components/SubscribeModal/SubscribeModal';
+import RssSubscribe from '@/components/RssSubscribe/RssSubscribe';
 import { useSelector } from "react-redux";
 
 
@@ -24,7 +25,7 @@ declare global {
 }
 
 const PerformanceMonitor: React.FC = () => {
-  const emailNotifications = useSelector((state) => state.settings.notificationSettings.emailNotifications)
+  const emailNotifications = useSelector((state: any) => state.settings.notificationSettings.emailNotifications)
   const [metrics, setMetrics] = useState({
     loadTime: 0,
     memory: 0
@@ -69,6 +70,7 @@ const Footer: React.FC = () => {
     galleries: 0
   });
   const [showSubscribe, setShowSubscribe] = useState(false);
+  const [showRssSubscribe, setShowRssSubscribe] = useState(false);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -160,12 +162,20 @@ const Footer: React.FC = () => {
               <FaEnvelope style={{ marginRight: '0.4em', verticalAlign: '-0.1em' }} />
               邮件订阅
             </button>
+            <button
+              className={styles.quickLinkBtn}
+              onClick={() => setShowRssSubscribe(true)}
+              type="button"
+            >
+              <FaRss style={{ marginRight: '0.4em', verticalAlign: '-0.1em' }} />
+              RSS订阅
+            </button>
           </div>
         </div>
       </div>
       <div className={styles.footerBottom}>
         <PerformanceMonitor />
-        <p>© {currentYear} 孤芳不自赏的博客已持续运行 {Math.floor((Date.now() - new Date('2025-05-26')) / 86400000)} 天 | 所有内容均为原创，保留所有权利 | Powered by Next.js + Spring Boot</p>
+        <p>© {currentYear} 孤芳不自赏的博客已持续运行 {Math.floor((Date.now() - new Date('2025-05-26').getTime()) / 86400000)} 天 | 所有内容均为原创，保留所有权利 | Powered by Next.js + Spring Boot</p>
 
         <div className={styles.serviceProviders}>
           {/* 添加腾讯云主品牌图标 */}
@@ -241,6 +251,7 @@ const Footer: React.FC = () => {
         </div>
       </div>
       <SubscribeModal open={showSubscribe} onClose={() => setShowSubscribe(false)} />
+      <RssSubscribe open={showRssSubscribe} onClose={() => setShowRssSubscribe(false)} />
     </footer>
   );
 };
