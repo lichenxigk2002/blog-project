@@ -43,6 +43,9 @@ const Questions = dynamic(() => import('@/pages/main/Questions'), {
 const TechnologyStack = dynamic(() => import('@/pages/main/TechnologyStack'), {
     loading: () => <LoadingSpinner />
 })
+const About = dynamic(() => import('@/pages/main/About'), {
+    loading: () => <LoadingSpinner />
+})
 
 interface Route {
     id: number;
@@ -53,6 +56,7 @@ interface Route {
     renderType: 'ssr' | 'ssg' | 'csr'; // 新增渲染类型标记
     children?: Route[]; // 新增嵌套路由支持
     showInNav: boolean;
+    showInDropdown?: boolean; // 新增：是否在下拉菜单中显示
 }
 export const navRoutesItem: Route[] = [
     {
@@ -62,9 +66,20 @@ export const navRoutesItem: Route[] = [
         component: Home,
         renderType: 'ssg', // 首页建议SSG
         showInNav: true,
+        children: [
+            {
+                id: 101,
+                path: '/main/About',
+                name: '关于我',
+                component: About,
+                renderType: 'ssg',
+                showInNav: false,
+                showInDropdown: true
+            },
+        ]
     }, {
         id: 2,
-        path: ' /main/Articles',
+        path: '/main/Articles',
         name: '文章',
         component: Articles,
         renderType: 'ssg', // 文章列表建议SSG
@@ -76,7 +91,8 @@ export const navRoutesItem: Route[] = [
                 name: '文章详情',
                 component: ArticleDetail,
                 renderType: 'ssg', // 文章详情建议SSG+ISR
-                showInNav: false
+                showInNav: false,
+                showInDropdown: false
             }
         ]
     }, {
@@ -128,28 +144,32 @@ export const navRoutesItem: Route[] = [
                 name: '留言板',
                 component: BulletinBoard,
                 renderType: 'csr', // 改为CSR以提高加载速度
-                showInNav: false
+                showInNav: false,
+                showInDropdown: true
             }, {
                 id: 802,
                 path: '/main/FriendLinks',
                 name: '友链',
                 component: FriendLinks,
                 renderType: 'ssg', // 友链建议SSG
-                showInNav: false
+                showInNav: false,
+                showInDropdown: true
             }, {
                 id: 803,
                 path: '/main/WritingStats',
                 name: '创作统计',
                 component: WritingStats,
                 renderType: 'csr', // 创作统计建议CSR
-                showInNav: false
+                showInNav: false,
+                showInDropdown: true
             }, {
                 id: 804,
                 path: '/main/Questions',
                 name: '面试题汇总',
                 component: Questions,
                 renderType: 'ssg', // 面试题汇总建议SSG
-                showInNav: false
+                showInNav: false,
+                showInDropdown: true
             }
             // ,{
             //     id: 805,

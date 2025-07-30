@@ -11,8 +11,8 @@ const NavbarCenter: React.FC = () => {
     const params = useParams();
     const [currentArticle, setCurrentArticle] = useState<Article | null>(null);
     const [showArticleInfo, setShowArticleInfo] = useState(false);
-    const [isMoreOpen, setIsMoreOpen] = useState(false);
-    const closeTimerRef = useRef<NodeJS.Timeout>();
+    const [openDropdowns, setOpenDropdowns] = useState<{ [key: number]: boolean }>({});
+    const closeTimerRefs = useRef<{ [key: number]: NodeJS.Timeout }>({});
 
     // 监听滚动事件
     useEffect(() => {
@@ -49,26 +49,28 @@ const NavbarCenter: React.FC = () => {
     }, [pathname, params?.id]);
 
     // 处理鼠标进入
-    const handleMouseEnter = () => {
-        if (closeTimerRef.current) {
-            clearTimeout(closeTimerRef.current);
+    const handleMouseEnter = (itemId: number) => {
+        if (closeTimerRefs.current[itemId]) {
+            clearTimeout(closeTimerRefs.current[itemId]);
         }
-        setIsMoreOpen(true);
+        setOpenDropdowns(prev => ({ ...prev, [itemId]: true }));
     };
 
     // 处理鼠标离开
-    const handleMouseLeave = () => {
-        closeTimerRef.current = setTimeout(() => {
-            setIsMoreOpen(false);
+    const handleMouseLeave = (itemId: number) => {
+        closeTimerRefs.current[itemId] = setTimeout(() => {
+            setOpenDropdowns(prev => ({ ...prev, [itemId]: false }));
         }, 300); // 300ms 延迟关闭
     };
 
     // 清理定时器
     useEffect(() => {
         return () => {
-            if (closeTimerRef.current) {
-                clearTimeout(closeTimerRef.current);
-            }
+            Object.values(closeTimerRefs.current).forEach(timer => {
+                if (timer) {
+                    clearTimeout(timer);
+                }
+            });
         };
     }, []);
 
@@ -85,52 +87,48 @@ const NavbarCenter: React.FC = () => {
         );
     }
 
-    const mainNavItems = navRoutesItem.filter(item => item.showInNav && item.name !== '更多');
-    const moreNavItem = navRoutesItem.find(item => item.name === '更多');
+    const mainNavItems = navRoutesItem.filter(item => item.showInNav);
+
     // 否则显示常规导航
     return (
         <ul className={styles.navList}>
-            {mainNavItems.map((item) => (
-                <li
-                    key={item.id}
-                    className={styles.navItem}
-                >
-                    <Link
-                        href={item.path}
-                        prefetch={true}
-                        className={styles.navLink}
+            {mainNavItems.map((item) => {
+                const hasChildren = item.children && item.children.length > 0;
+                const hasVisibleChildren = hasChildren && item.children!.some(child => child.showInDropdown);
+                const isDropdownOpen = openDropdowns[item.id] || false;
+
+                return (
+                    <li
+                        key={item.id}
+                        className={`${styles.navItem} ${hasVisibleChildren ? styles.dropdownContainer : ''}`}
+                        onMouseEnter={hasVisibleChildren ? () => handleMouseEnter(item.id) : undefined}
+                        onMouseLeave={hasVisibleChildren ? () => handleMouseLeave(item.id) : undefined}
                     >
-                        {item.name}
-                    </Link>
-                </li>
-            ))}
-            {moreNavItem && (
-                <li
-                    className={`${styles.navItem} ${styles.moreContainer}`}
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
-                >
-                    <Link
-                        href={moreNavItem.path}
-                        className={`${styles.navLink} ${pathname === moreNavItem.path ? styles.activeLink : ''}`}
-                    >
-                        更多
-                    </Link>
-                    {isMoreOpen && moreNavItem.children && (
-                        <div className={styles.dropdown}>
-                            {moreNavItem.children.map((child) => (
-                                <Link
-                                    key={child.id}
-                                    href={child.path}
-                                    className={`${styles.dropdownItem} ${pathname === child.path ? styles.activeLink : ''}`}
-                                >
-                                    {child.name}
-                                </Link>
-                            ))}
-                        </div>
-                    )}
-                </li>
-            )}
+                        <Link
+                            href={item.path}
+                            prefetch={true}
+                            className={`${styles.navLink} ${pathname === item.path ? styles.activeLink : ''}`}
+                        >
+                            {item.name}
+                        </Link>
+                        {hasVisibleChildren && isDropdownOpen && (
+                            <div className={styles.dropdown}>
+                                {item.children!
+                                    .filter(child => child.showInDropdown) // 只显示 showInDropdown: true 的子路由
+                                    .map((child) => (
+                                        <Link
+                                            key={child.id}
+                                            href={child.path}
+                                            className={`${styles.dropdownItem} ${pathname === child.path ? styles.activeLink : ''}`}
+                                        >
+                                            {child.name}
+                                        </Link>
+                                    ))}
+                            </div>
+                        )}
+                    </li>
+                );
+            })}
         </ul>
     );
 };
