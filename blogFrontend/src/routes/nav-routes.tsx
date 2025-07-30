@@ -48,7 +48,7 @@ interface Route {
     id: number;
     path: string;
     name: string;
-    component: React.ComponentType;
+    component: React.ComponentType<any>; // 改为any以支持不同props类型
     exact?: boolean
     renderType: 'ssr' | 'ssg' | 'csr'; // 新增渲染类型标记
     children?: Route[]; // 新增嵌套路由支持
@@ -127,7 +127,7 @@ export const navRoutesItem: Route[] = [
                 path: '/main/BulletinBoard',
                 name: '留言板',
                 component: BulletinBoard,
-                renderType: 'ssr', // 留言板建议SSR
+                renderType: 'csr', // 改为CSR以提高加载速度
                 showInNav: false
             }, {
                 id: 802,
