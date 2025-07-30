@@ -36,7 +36,6 @@ const AIChat: React.FC = () => {
     createNewSession,
     selectSession,
     saveMessage,
-    saveMessagesBatch
   } = useAIChat({ userId });
   // 本地状态
 
@@ -168,7 +167,6 @@ const AIChat: React.FC = () => {
         setError('创建会话失败');
         return;
       }
-      newSessionId = newSession.id;
       // 这里 currentSession 还没更新，等 selectSession 后再更新标题
       const title = input.trim().slice(0, 10) || '新对话';
       try {
@@ -238,52 +236,85 @@ const AIChat: React.FC = () => {
       const decoder = new TextDecoder();
       let buffer = '';
       let finalContent = '';
+      let processedCount = 0;
+      let startTime = performance.now();
 
       if (!reader) {
         throw new Error('No reader available');
       }
 
       while (true) {
+        //通过reader.read()方法读取数据，返回一个Promise对象，包含done和value属性
         const { done, value: contentValue } = await reader.read();
+        // done为true表示流已结束
         if (done) break;
 
+        // 将数据解码成字符串，并将结果添加到buffer中
         buffer += decoder.decode(contentValue, { stream: true });
+        // 处理buffer中的数据
         const lines = buffer.split('\n');
+        // 将处理后的数据重新组合成字符串，删除处理过的数据，保存到finalContent中
         buffer = lines.pop() || '';
 
-        for (const line of lines) {
-          const parsed = currentModel.parseStream(line);
-          if (parsed?.done) {
-            // 流结束，归档为正式 AI 消息
-            const finalMessage: Message = {
-              id: (Date.now() + 1).toString(),
-              content: finalContent
+        // 判断是否需要批量渲染数据
+        const shouldBatch = (totalLines:number, processedCount:number, startTime: number) => {
+
+          // 条件1：数据量大
+          if (totalLines > 100) return true;
+
+          // 条件2：处理时间长
+          const currentTime = performance.now();
+          if (currentTime - startTime > 16) return true;
+
+          // 条件3：处理数量多
+          return processedCount > 200;
+
+        }
+        // 定义数据批次大小
+        const DATA_BATCH_SIZE = 50;
+
+        for(let i = 0; i < lines.length; i += DATA_BATCH_SIZE){
+          const dataBatch = lines.slice(i, i + DATA_BATCH_SIZE);
+          for (const line of dataBatch) {
+            const parsed = currentModel.parseStream(line);
+            if (parsed?.done) {
+              // 流结束，归档为正式 AI 消息
+              const finalMessage: Message = {
+                id: (Date.now() + 1).toString(),
+                content: finalContent
+                    .replace(/\r\n/g, '\n')
+                    .split('\n')
+                    .map(line => line.trim())
+                    .filter(line => line.length > 0)
+                    .join('\n'),
+                type: 'ai',
+                timestamp: new Date(),
+              };
+              // 保存AI回复到后端
+              try {
+                await saveMessage(finalMessage);
+              } catch (err) {
+                console.error('保存AI消息失败:', err);
+              }
+              setMessages(prev => [...prev, finalMessage]);
+              setStreamingMessage('');
+              break;
+            }
+            if (parsed?.content) {
+              finalContent += parsed.content;
+              processedCount++; // 新增：增加计数器
+            }
+          }
+          if(shouldBatch(lines.length, processedCount, startTime)) {
+            setStreamingMessage(finalContent
                 .replace(/\r\n/g, '\n')
                 .split('\n')
                 .map(line => line.trim())
                 .filter(line => line.length > 0)
-                .join('\n'),
-              type: 'ai',
-              timestamp: new Date(),
-            };
-            // 保存AI回复到后端
-            try {
-              await saveMessage(finalMessage);
-            } catch (err) {
-              console.error('保存AI消息失败:', err);
-            }
-            setMessages(prev => [...prev, finalMessage]);
-            setStreamingMessage('');
-            break;
-          }
-          if (parsed?.content) {
-            finalContent += parsed.content;
-            setStreamingMessage(finalContent
-              .replace(/\r\n/g, '\n')
-              .split('\n')
-              .map(line => line.trim())
-              .filter(line => line.length > 0)
-              .join('\n'));
+                .join('\n'));
+            await new Promise(resolve => setTimeout(resolve, 0))
+
+            startTime = performance.now();
           }
         }
       }
