@@ -1,14 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './AdminLayout.module.scss';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { adminRoutes } from '@/routes/admin-routes';
 import { motion, AnimatePresence } from 'framer-motion';
 import Watermark from '@/components/Watermark/Watermark';
-import {useSelector} from "react-redux";
-import {RootState} from "@/redux/store";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [collapsed, setCollapsed] = useState(() => {
@@ -19,9 +19,20 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     }
     return false;
   });
-  const showWatermark = useSelector((state:RootState) => state.settings.uiSettings.showWatermark);
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const showWatermark = useSelector((state: RootState) => state.settings.uiSettings.showWatermark);
+  const version = useSelector((state: RootState) => state.settings.systemInfo.version);
   const router = useRouter();
   const pathname = router.pathname;
+
+  // 实时更新时间
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   // 更新 collapsed 状态时同时保存到 localStorage
   const handleCollapse = (newState: boolean) => {
@@ -198,43 +209,70 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </div>
         </header>
         {/* 内容区 */}
-          {showWatermark ? <Watermark
-              content="孤芳不自赏"
-              opacity={0.2} // 设置水印透明度
-              gap={[150, 150]} // 设置水印间隔
-              debug={true}
-          >
-              <main className={styles.content}>
-                  <AnimatePresence mode="wait">
-                      <motion.div
-                          key={pathname}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -20 }}
-                          transition={{ duration: 0.2 }}
-                      >
-                          {children}
-                      </motion.div>
-                  </AnimatePresence>
-              </main>
-          </Watermark> : <main className={styles.content}>
-              <AnimatePresence mode="wait">
-                  <motion.div
-                      key={pathname}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      transition={{ duration: 0.2 }}
-                  >
-                      {children}
-                  </motion.div>
-              </AnimatePresence>
-          </main> }
+        {showWatermark ? <Watermark
+          content="孤芳不自赏"
+          opacity={0.2} // 设置水印透明度
+          gap={[150, 150]} // 设置水印间隔
+          debug={true}
+        >
+          <main className={styles.content}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={pathname}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.2 }}
+              >
+                {children}
+              </motion.div>
+            </AnimatePresence>
+          </main>
+        </Watermark> : <main className={styles.content}>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={pathname}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2 }}
+            >
+              {children}
+            </motion.div>
+          </AnimatePresence>
+        </main>}
 
 
         {/* 底部 */}
         <footer className={styles.footer}>
-          <p>© 孤芳不自赏的博客管理系统 | 技术支持：Next.js + TypeScript</p>
+          <div className={styles.footerContent}>
+            <div className={styles.footerLeft}>
+              <p>© 孤芳不自赏的博客管理系统 | 技术支持：Next.js + TypeScript</p>
+            </div>
+            <div className={styles.footerRight}>
+              <span className={styles.footerItem}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12,6 12,12 16,14"></polyline>
+                </svg>
+                当前时间: {currentTime.toLocaleString()}
+              </span>
+              <span className={styles.footerItem}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                  <path d="M2 17l10 5 10-5"></path>
+                  <path d="M2 12l10 5 10-5"></path>
+                </svg>
+                版本: v{version}
+              </span>
+              <span className={styles.footerItem}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                </svg>
+                响应时间: {performance.now().toFixed(0)}ms
+              </span>
+            </div>
+          </div>
         </footer>
       </div>
     </div>
