@@ -6,7 +6,7 @@ import { ApiResponse } from '@/types/common';
 
 interface BulletinBoardFormProps {
     initialValues?: BulletinBoardProps;
-    onSubmit: (values: BulletinBoardProps) => void;
+    onSubmit: (values: BulletinBoardProps, action: 'update' | 'reply' | 'create') => void;
 }
 
 interface AvatarUploadResponse {
@@ -87,7 +87,7 @@ const BulletinBoardForm: React.FC<BulletinBoardFormProps> = ({
                 sendEmail // 这里要加上 sendEmail
             };
 
-            onSubmit(submitData);
+            onSubmit(submitData, 'create');
         } catch (error: any) {
             console.error('提交失败:', error);
             alert(error.message || '提交失败');
@@ -215,9 +215,32 @@ const BulletinBoardForm: React.FC<BulletinBoardFormProps> = ({
             </div>
 
             <div className={styles.formButtons}>
-                <button type="submit" className={styles.submitButton}>
-                    {initialValues ? '更新' : '创建'}
-                </button>
+                {initialValues ? (
+                    <>
+                        <button
+                            type="button"
+                            className={styles.submitButton}
+                            onClick={() => onSubmit(formData, 'update')}
+                        >
+                            更新留言
+                        </button>
+                        <button
+                            type="button"
+                            className={styles.submitButton}
+                            onClick={() => {
+                                console.log('点击回复按钮，sendEmail:', sendEmail); // 调试日志
+                                onSubmit({ ...formData, sendEmail }, 'reply');
+                            }}
+                            disabled={!formData.reply?.trim()}
+                        >
+                            回复留言
+                        </button>
+                    </>
+                ) : (
+                    <button type="submit" className={styles.submitButton}>
+                        创建
+                    </button>
+                )}
             </div>
         </form>
     );

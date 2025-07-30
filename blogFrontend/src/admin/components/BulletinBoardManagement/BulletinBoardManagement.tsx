@@ -63,18 +63,33 @@ const BulletinBoardManagement: React.FC = () => {
         setModalVisible(true);
     };
 
-    const handleSubmit = async (values: BulletinBoardProps) => {
+    const handleSubmit = async (values: BulletinBoardProps, action: 'update' | 'reply' | 'create') => {
         try {
-            if (editingMessage) {
-                await BulletinBoardAPI.replyMessage(
-                    editingMessage.id,
-                    values.reply || '',
-                    !!values.sendEmail // 保证是布尔值
-                );
-                setTipModal({ open: true, message: '更新成功', type: 'success' });
-            } else {
+            if (action === 'create') {
                 await BulletinBoardAPI.createMessage(values);
                 setTipModal({ open: true, message: '创建成功', type: 'success' });
+            } else if (action === 'update') {
+                // 更新留言基本信息
+                const updateData = {
+                    ...values,
+                    id: editingMessage!.id,
+                    reply: undefined // 移除回复字段，避免更新时包含
+                };
+                await BulletinBoardAPI.updateMessage(editingMessage!.id, updateData);
+                setTipModal({ open: true, message: '更新成功', type: 'success' });
+            } else if (action === 'reply') {
+                // 回复留言
+                if (!values.reply?.trim()) {
+                    setTipModal({ open: true, message: '回复内容不能为空', type: 'failure' });
+                    return;
+                }
+                console.log('回复留言，sendEmail:', values.sendEmail); // 调试日志
+                await BulletinBoardAPI.replyMessage(
+                    editingMessage!.id,
+                    values.reply,
+                    !!values.sendEmail
+                );
+                setTipModal({ open: true, message: '回复成功', type: 'success' });
             }
             setModalVisible(false);
             fetchMessages();
