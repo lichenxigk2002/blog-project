@@ -16,7 +16,7 @@ const nextConfig: NextConfig = {
                 protocol: 'https',
                 hostname: 'images-1359353257.cos.ap-beijing.myqcloud.com',
                 port: '',
-                pathname: '/images/**',
+                pathname: '/**',
             },
         ],
     },
