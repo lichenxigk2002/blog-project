@@ -344,284 +344,284 @@ const AIChat: React.FC = () => {
   // 渲染 markdown 内容，支持代码高亮
   const renderMarkdown = (content: string) => {
     return (
-      <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
-        components={{
-          code({ className, children, inline, ...props }: CodeBlockProps) {
-            const match = /language-(\w+)/.exec(className || '');
-            const lang = match ? match[1] : 'text';
-            if (inline|| !lang || lang === 'text') {
-              return (
-                <code
-                  style={{
-                    background: 'rgba(247,248,250,0.11)',
-                    borderRadius: '4px',
-                    padding: '0.1em 0.4em',
-                    fontSize: '0.92em',
-                    color: 'var(--text-color)',
-                  }}
-                  {...props}
-                >
-                  {children}
-                </code>
-              );
-            }
-            return (
-              <AIChatCodeBlock language={lang} value={Array.isArray(children) ? children.join('') : String(children)} />
-            );
-          }
-        }}
-      >
-        {content}
-      </ReactMarkdown>
+        <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+              code({ className, children, inline, ...props }: CodeBlockProps) {
+                const match = /language-(\w+)/.exec(className || '');
+                const lang = match ? match[1] : 'text';
+                if (inline|| !lang || lang === 'text') {
+                  return (
+                      <code
+                          style={{
+                            background: 'rgba(247,248,250,0.11)',
+                            borderRadius: '4px',
+                            padding: '0.1em 0.4em',
+                            fontSize: '0.92em',
+                            color: 'var(--text-color)',
+                          }}
+                          {...props}
+                      >
+                        {children}
+                      </code>
+                  );
+                }
+                return (
+                    <AIChatCodeBlock language={lang} value={Array.isArray(children) ? children.join('') : String(children)} />
+                );
+              }
+            }}
+        >
+          {content}
+        </ReactMarkdown>
     );
   };
 
   // @ts-ignore
   return (
-    <div className={styles.chatContainer}>
+      <div className={styles.chatContainer}>
 
-      {/* 会话管理头部 */}
-      <div className={styles.chatHeader}>
-        <div className={styles.sessionInfo}>
+        {/* 会话管理头部 */}
+        <div className={styles.chatHeader}>
+          <div className={styles.sessionInfo}>
           <span className={styles.currentSessionTitle}>
             {currentSession?.title || '新对话'}
           </span>
-          {currentSession && (
-            <span className={styles.sessionTime}>
+            {currentSession && (
+                <span className={styles.sessionTime}>
               {new Date(currentSession.updatedAt).toLocaleDateString()}
             </span>
-          )}
-        </div>
-        <div className={styles.sessionActions}>
-          <button
-            className={styles.sessionButton}
-            onClick={() => setShowSessionList(!showSessionList)}
-            title="历史会话"
-          >
-            🕙
-          </button>
-          <button
-            className={styles.sessionButton}
-            onClick={handleNewChat}
-            title="新对话"
-          >
-            🌟
-          </button>
-        </div>
-      </div>
-
-      {/* 会话列表 */}
-      {showSessionList && (
-        <div className={styles.sessionList}>
-          <div className={styles.sessionListHeader}>
-            <h3>历史会话 ({sessions.length})</h3>
-            <button
-              className={styles.closeButton}
-              onClick={() => setShowSessionList(false)}
-            >
-              ✕
-            </button>
-          </div>
-          <div className={styles.sessionItems}>
-            {sessions.map(session => (
-              <div
-                key={session.id}
-                className={`${styles.sessionItem} ${currentSession?.id === session.id ? styles.activeSession : ''
-                  }`}
-                onClick={() => handleSelectSession(session.id)}
-              >
-                <div className={styles.sessionTitle}>{session.title}</div>
-                <div className={styles.sessionTime}>
-                  {new Date(session.updatedAt).toLocaleDateString()}
-                </div>
-              </div>
-            ))}
-            {sessions.length === 0 && (
-              <div className={styles.emptySessions}>
-                暂无历史会话
-              </div>
             )}
           </div>
-        </div>
-      )}
-
-      {/* 错误提示 */}
-      {error && (
-        <div className={styles.errorMessage}>
-          {error}
-        </div>
-      )}
-
-      {/* 消息列表区域，支持动画 */}
-      <motion.div
-        className={styles.messagesContainer}
-        ref={messagesContainerRef}
-        initial="hidden"
-        animate="visible"
-        variants={{
-          visible: {
-            transition: {
-              staggerChildren: 0.1,
-              delayChildren: 0.1
-            }
-          }
-        }}
-      >
-        {/* 欢迎语 */}
-        {messages.length === 0 && (
-          <motion.div
-            className={styles.welcomeMessage}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            whileHover={{ y: -2, transition: { duration: 0.2 } }}
-          >
-            <span>你好！欢迎来到孤芳不自赏的博客，我是小熙，有什么不懂的可以问我！</span>😊
-          </motion.div>
-        )}
-
-        {/* 渲染历史消息 */}
-        {messages.map((message, index) => (
-          <motion.div
-            key={message.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.6,
-              delay: index * 0.1
-            }}
-            whileHover={{ y: -2, transition: { duration: 0.2 } }}
-            className={message.type === 'user' ? styles.userMessageContainer : styles.aiMessageContainer}
-          >
-            <motion.div
-              className={`${styles.message} ${message.type === 'user' ? styles.userMessage : styles.aiMessage}`}
-              transition={{ duration: 0.2 }}
+          <div className={styles.sessionActions}>
+            <button
+                className={styles.sessionButton}
+                onClick={() => setShowSessionList(!showSessionList)}
+                title="历史会话"
             >
-              <div className={styles.messageContent}>
-                {message.type === 'ai' ? (
-                  renderMarkdown(message.content)
-                ) : (
-                  message.content
-                )}
+              🕙
+            </button>
+            <button
+                className={styles.sessionButton}
+                onClick={handleNewChat}
+                title="新对话"
+            >
+              🌟
+            </button>
+          </div>
+        </div>
+
+        {/* 会话列表 */}
+        {showSessionList && (
+            <div className={styles.sessionList}>
+              <div className={styles.sessionListHeader}>
+                <h3>历史会话 ({sessions.length})</h3>
+                <button
+                    className={styles.closeButton}
+                    onClick={() => setShowSessionList(false)}
+                >
+                  ✕
+                </button>
               </div>
-            </motion.div>
-            <motion.div
-              className={styles.messageTime}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              {message.timestamp.toLocaleTimeString()}
-            </motion.div>
-          </motion.div>
-        ))}
-
-        {/* 流式输出中的消息实时渲染 */}
-        {isLoading && streamingMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className={styles.aiMessageContainer}
-          >
-            <motion.div
-              className={`${styles.message} ${styles.aiMessage}`}
-              transition={{ duration: 0.2 }}
-            >
-              <div className={styles.messageContent}>
-                {renderMarkdown(streamingMessage)}
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-
-        {/* AI 正在思考时的 loading 动画 */}
-        {isLoading && !streamingMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className={`${styles.message} ${styles.aiMessage}`}
-          >
-            <div className={styles.loadingDots}>
-              <motion.span
-                animate={{ opacity: [0.2, 1, 0.2] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-              >.</motion.span>
-              <motion.span
-                animate={{ opacity: [0.2, 1, 0.2] }}
-                transition={{ duration: 1.5, repeat: Infinity, delay: 0.5 }}
-              >.</motion.span>
-              <motion.span
-                animate={{ opacity: [0.2, 1, 0.2] }}
-                transition={{ duration: 1.5, repeat: Infinity, delay: 1 }}
-              >.</motion.span>
-            </div>
-          </motion.div>
-        )}
-        <div ref={messagesEndRef} />
-      </motion.div>
-      {/* 模型切换下拉框 */}
-      <div className={styles.modelSelectorCustom}>
-        <div
-            className={styles.modelSelectorSelected}
-            onClick={() => setDropdownOpen(v => !v)}
-            tabIndex={0}
-            onBlur={() => setDropdownOpen(false)}
-        >
-          <img className={styles.modelIcon} src={currentModel.icon} alt={currentModel.name} />
-          <span>{currentModel.name}</span>
-        </div>
-        <AnimatePresence>
-          {dropdownOpen && (
-              <motion.div
-                  className={styles.modelSelectorDropdown}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 8 }}
-                  transition={{ duration: 0.18 }}
-              >
-                {AI_MODELS.map(model => (
+              <div className={styles.sessionItems}>
+                {sessions.map(session => (
                     <div
-                        key={model.key}
-                        className={`${styles.modelSelectorOption} ${selectedModelKey === model.key ? styles.selected : ''}`}
-                        onClick={() => {
-                          setSelectedModelKey(model.key);
-                          setDropdownOpen(false);
-                        }}
+                        key={session.id}
+                        className={`${styles.sessionItem} ${currentSession?.id === session.id ? styles.activeSession : ''
+                        }`}
+                        onClick={() => handleSelectSession(session.id)}
                     >
-                      <img className={styles.modelIcon} src={model.icon} alt={model.name} />
-                      <span>{model.name}</span>
+                      <div className={styles.sessionTitle}>{session.title}</div>
+                      <div className={styles.sessionTime}>
+                        {new Date(session.updatedAt).toLocaleDateString()}
+                      </div>
                     </div>
                 ))}
+                {sessions.length === 0 && (
+                    <div className={styles.emptySessions}>
+                      暂无历史会话
+                    </div>
+                )}
+              </div>
+            </div>
+        )}
+
+        {/* 错误提示 */}
+        {error && (
+            <div className={styles.errorMessage}>
+              {error}
+            </div>
+        )}
+
+        {/* 消息列表区域，支持动画 */}
+        <motion.div
+            className={styles.messagesContainer}
+            ref={messagesContainerRef}
+            initial="hidden"
+            animate="visible"
+            variants={{
+              visible: {
+                transition: {
+                  staggerChildren: 0.1,
+                  delayChildren: 0.1
+                }
+              }
+            }}
+        >
+          {/* 欢迎语 */}
+          {messages.length === 0 && (
+              <motion.div
+                  className={styles.welcomeMessage}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6 }}
+                  whileHover={{ y: -2, transition: { duration: 0.2 } }}
+              >
+                <span>你好！欢迎来到孤芳不自赏的博客，我是小熙，有什么不懂的可以问我！</span>😊
               </motion.div>
           )}
-        </AnimatePresence>
-      </div>
-      {/* 输入区域 */}
-      <form onSubmit={handleSubmit} className={styles.inputForm}>
+
+          {/* 渲染历史消息 */}
+          {messages.map((message, index) => (
+              <motion.div
+                  key={message.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.6,
+                    delay: index * 0.1
+                  }}
+                  whileHover={{ y: -2, transition: { duration: 0.2 } }}
+                  className={message.type === 'user' ? styles.userMessageContainer : styles.aiMessageContainer}
+              >
+                <motion.div
+                    className={`${styles.message} ${message.type === 'user' ? styles.userMessage : styles.aiMessage}`}
+                    transition={{ duration: 0.2 }}
+                >
+                  <div className={styles.messageContent}>
+                    {message.type === 'ai' ? (
+                        renderMarkdown(message.content)
+                    ) : (
+                        message.content
+                    )}
+                  </div>
+                </motion.div>
+                <motion.div
+                    className={styles.messageTime}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                >
+                  {message.timestamp.toLocaleTimeString()}
+                </motion.div>
+              </motion.div>
+          ))}
+
+          {/* 流式输出中的消息实时渲染 */}
+          {isLoading && streamingMessage && (
+              <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6 }}
+                  className={styles.aiMessageContainer}
+              >
+                <motion.div
+                    className={`${styles.message} ${styles.aiMessage}`}
+                    transition={{ duration: 0.2 }}
+                >
+                  <div className={styles.messageContent}>
+                    {renderMarkdown(streamingMessage)}
+                  </div>
+                </motion.div>
+              </motion.div>
+          )}
+
+          {/* AI 正在思考时的 loading 动画 */}
+          {isLoading && !streamingMessage && (
+              <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6 }}
+                  className={`${styles.message} ${styles.aiMessage}`}
+              >
+                <div className={styles.loadingDots}>
+                  <motion.span
+                      animate={{ opacity: [0.2, 1, 0.2] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                  >.</motion.span>
+                  <motion.span
+                      animate={{ opacity: [0.2, 1, 0.2] }}
+                      transition={{ duration: 1.5, repeat: Infinity, delay: 0.5 }}
+                  >.</motion.span>
+                  <motion.span
+                      animate={{ opacity: [0.2, 1, 0.2] }}
+                      transition={{ duration: 1.5, repeat: Infinity, delay: 1 }}
+                  >.</motion.span>
+                </div>
+              </motion.div>
+          )}
+          <div ref={messagesEndRef} />
+        </motion.div>
+        {/* 模型切换下拉框 */}
+        <div className={styles.modelSelectorCustom}>
+          <div
+              className={styles.modelSelectorSelected}
+              onClick={() => setDropdownOpen(v => !v)}
+              tabIndex={0}
+              onBlur={() => setDropdownOpen(false)}
+          >
+            <img className={styles.modelIcon} src={currentModel.icon} alt={currentModel.name} />
+            <span>{currentModel.name}</span>
+          </div>
+          <AnimatePresence>
+            {dropdownOpen && (
+                <motion.div
+                    className={styles.modelSelectorDropdown}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 8 }}
+                    transition={{ duration: 0.18 }}
+                >
+                  {AI_MODELS.map(model => (
+                      <div
+                          key={model.key}
+                          className={`${styles.modelSelectorOption} ${selectedModelKey === model.key ? styles.selected : ''}`}
+                          onClick={() => {
+                            setSelectedModelKey(model.key);
+                            setDropdownOpen(false);
+                          }}
+                      >
+                        <img className={styles.modelIcon} src={model.icon} alt={model.name} />
+                        <span>{model.name}</span>
+                      </div>
+                  ))}
+                </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+        {/* 输入区域 */}
+        <form onSubmit={handleSubmit} className={styles.inputForm}>
         <textarea
-          ref={inputRef}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder="快告诉我你的疑惑吧~😁 (按 Enter 发送，Shift + Enter 换行)"
-          className={styles.input}
-          disabled={isLoading || isApiLoading}
-          rows={1}
+            ref={inputRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="快告诉我你的疑惑吧~😁 (按 Enter 发送，Shift + Enter 换行)"
+            className={styles.input}
+            disabled={isLoading || isApiLoading}
+            rows={1}
         />
-        <button type="submit" className={styles.sendButton} disabled={isLoading || isApiLoading}>
-          发送
-        </button>
-      </form>
-      <OperationTipModal
-          open={tipModal.open}
-          onClose={() => setTipModal(prev => ({ ...prev, open: false }))}
-          message={tipModal.message}
-          type={tipModal.type}
-      />
-    </div>
+          <button type="submit" className={styles.sendButton} disabled={isLoading || isApiLoading}>
+            发送
+          </button>
+        </form>
+        <OperationTipModal
+            open={tipModal.open}
+            onClose={() => setTipModal(prev => ({ ...prev, open: false }))}
+            message={tipModal.message}
+            type={tipModal.type}
+        />
+      </div>
   );
 };
 
