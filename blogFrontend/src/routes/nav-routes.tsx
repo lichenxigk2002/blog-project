@@ -43,9 +43,9 @@ const Questions = dynamic(() => import('@/pages/main/Questions'), {
 const TechnologyStack = dynamic(() => import('@/pages/main/TechnologyStack'), {
     loading: () => <LoadingSpinner />
 })
-const About = dynamic(() => import('@/pages/main/About'), {
-    loading: () => <LoadingSpinner />
-})
+// const About = dynamic(() => import('@/pages/main/About'), {
+//     loading: () => <LoadingSpinner />
+// })
 
 interface Route {
     id: number;
@@ -67,15 +67,15 @@ export const navRoutesItem: Route[] = [
         renderType: 'ssg', // 首页建议SSG
         showInNav: true,
         children: [
-            {
-                id: 101,
-                path: '/main/About',
-                name: '关于我',
-                component: About,
-                renderType: 'ssg',
-                showInNav: false,
-                showInDropdown: true
-            },
+            // {
+            //     id: 101,
+            //     path: '/main/About',
+            //     name: '关于我',
+            //     component: About,
+            //     renderType: 'ssg',
+            //     showInNav: false,
+            //     showInDropdown: true
+            // },
         ]
     }, {
         id: 2,
