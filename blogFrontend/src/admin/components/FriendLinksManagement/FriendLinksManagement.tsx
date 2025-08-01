@@ -4,6 +4,11 @@ import FriendLinksForm from './FriendLinksForm';
 import type { FriendLinks } from '@/types/FriendLinks';
 import styles from './FriendLinksManagement.module.scss';
 import OperationTipModal from '../ui/OperationTipModal/OperationTipModal';
+import StatsCard from '../ui/StatsCard/StatsCard';
+import FormModal from '../ui/FormModal/FormModal';
+import Switch from '../ui/Switch/Switch';
+import Button from '../ui/Button/Button';
+import { PlusIcon, DeleteIcon, EditIcon } from '../ui/Icons/Icons';
 
 const FriendLinksManagement: React.FC = () => {
   const [friendLinks, setFriendLinks] = useState<FriendLinks[]>([]);
@@ -12,7 +17,7 @@ const FriendLinksManagement: React.FC = () => {
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [editingFriendLink, setEditingFriendLink] = useState<FriendLinks | null>(null);
   const [deletingFriendLink, setDeletingFriendLink] = useState<FriendLinks | null>(null);
-  const [tipModal, setTipModal] = useState<{ open: boolean, message: string, type: 'success' | 'failure' }>({ open: false, message: '', type: 'success' });
+  const [tipModal, setTipModal] = useState<{ open: boolean, message: string, type: 'success' | 'error' }>({ open: false, message: '', type: 'success' });
 
   useEffect(() => {
     fetchFriendLinks();
@@ -28,7 +33,7 @@ const FriendLinksManagement: React.FC = () => {
       setFriendLinks(response);
     } catch (error: any) {
       console.error('Failed to fetch friend links:', error);
-      setTipModal({ open: true, message: (error instanceof Error ? error.message : '获取友链列表失败'), type: 'failure' });
+      setTipModal({ open: true, message: (error instanceof Error ? error.message : '获取友链列表失败'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -57,7 +62,7 @@ const FriendLinksManagement: React.FC = () => {
       fetchFriendLinks();
     } catch (e: any) {
       console.error('操作失败:', e);
-      setTipModal({ open: true, message: e.message || '操作失败', type: 'failure' });
+      setTipModal({ open: true, message: e.message || '操作失败', type: 'error' });
     }
   };
 
@@ -72,7 +77,7 @@ const FriendLinksManagement: React.FC = () => {
       setDeletingFriendLink(null);
       await fetchFriendLinks();
     } catch (error: any) {
-      setTipModal({ open: true, message: error.message || '删除失败', type: 'failure' });
+      setTipModal({ open: true, message: error.message || '删除失败', type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -85,7 +90,7 @@ const FriendLinksManagement: React.FC = () => {
       setTipModal({ open: true, message: '状态更新成功', type: 'success' });
       fetchFriendLinks();
     } catch (error: any) {
-      setTipModal({ open: true, message: error.message || '状态更新失败', type: 'failure' });
+      setTipModal({ open: true, message: error.message || '状态更新失败', type: 'error' });
     }
   };
 
@@ -107,38 +112,28 @@ const FriendLinksManagement: React.FC = () => {
     <div className={styles.container}>
       <div className={styles.header}>
         <h1 className={styles.title}>友链管理</h1>
-        <button className={styles.primaryButton} onClick={() => openModal()}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
+        <Button variant="primary" onClick={() => openModal()}>
+          <PlusIcon />
           添加友链
-        </button>
+        </Button>
       </div>
 
-      <div className={styles.stats}>
-        <div className={styles.statCard}>
-          <div className={styles.statTitle}>友链总数</div>
-          <div className={styles.statValue}>{stats.totalLinks}</div>
-        </div>
-        <div className={styles.statCard}>
-          <div className={styles.statTitle}>已展示</div>
-          <div className={styles.statValue}>{stats.approvedLinks}</div>
-        </div>
-        <div className={styles.statCard}>
-          <div className={styles.statTitle}>待审核</div>
-          <div className={styles.statValue}>{stats.pendingLinks}</div>
-        </div>
-      </div>
+      <StatsCard
+        stats={[
+          { title: '友链总数', value: stats.totalLinks },
+          { title: '已展示', value: stats.approvedLinks },
+          { title: '待审核', value: stats.pendingLinks }
+        ]}
+      />
 
       <div className={styles.cardsContainer}>
         {friendLinks.length === 0 ? (
           <div className={styles.emptyState}>
             <div className={styles.emptyIcon}>🔗</div>
             <div className={styles.emptyText}>暂无友链</div>
-            <button className={styles.emptyButton} onClick={() => openModal()}>
+            <Button variant="primary" onClick={() => openModal()}>
               添加第一个友链
-            </button>
+            </Button>
           </div>
         ) : (
           friendLinks.map((friendLink) => (
@@ -159,27 +154,22 @@ const FriendLinksManagement: React.FC = () => {
                   <p className={styles.cardUrl}>{friendLink.url}</p>
                 </div>
                 <div className={styles.cardActions}>
-                  <label className={styles.switch}>
-                    <input
-                      type="checkbox"
-                      checked={friendLink.status === 'approved'}
-                      onChange={() => handleStatusToggle(friendLink)}
-                    />
-                    <span className={styles.slider}></span>
-                  </label>
-                  <button
-                    className={styles.deleteButton}
+                  <Switch
+                    checked={friendLink.status === 'approved'}
+                    onChange={() => handleStatusToggle(friendLink)}
+                    size="small"
+                  />
+                  <Button
+                    variant="danger"
+                    size="small"
                     onClick={(e) => {
                       e.stopPropagation();
                       setDeletingFriendLink(friendLink);
                       setDeleteModalVisible(true);
                     }}
                   >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polyline points="3,6 5,6 21,6"></polyline>
-                      <path d="M19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"></path>
-                    </svg>
-                  </button>
+                    <DeleteIcon />
+                  </Button>
                 </div>
               </div>
               <div className={styles.cardContent} onClick={() => openModal(friendLink)}>
@@ -199,38 +189,45 @@ const FriendLinksManagement: React.FC = () => {
       </div>
 
       {/* 编辑/新增模态框 */}
-      {modalVisible && (
+      <FormModal
+        open={modalVisible}
+        title={editingFriendLink ? '编辑友链' : '添加友链'}
+        onClose={() => setModalVisible(false)}
+        size="medium"
+      >
         <FriendLinksForm
           visible={modalVisible}
           onCancel={() => setModalVisible(false)}
           onSubmit={handleSubmit}
           initialValues={editingFriendLink}
         />
-      )}
+      </FormModal>
 
       {/* 删除确认模态框 */}
-      {deleteModalVisible && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.deleteModal}>
-            <h3>确认删除</h3>
-            <p>确定要删除友链 "{deletingFriendLink?.name}" 吗？此操作不可撤销。</p>
-            <div className={styles.modalActions}>
-              <button
-                className={styles.cancelButton}
-                onClick={() => setDeleteModalVisible(false)}
-              >
-                取消
-              </button>
-              <button
-                className={styles.deleteConfirmButton}
-                onClick={handleDelete}
-              >
-                删除
-              </button>
-            </div>
+      <FormModal
+        open={deleteModalVisible}
+        title="确认删除"
+        onClose={() => setDeleteModalVisible(false)}
+        size="small"
+      >
+        <div className={styles.deleteModalContent}>
+          <p>确定要删除友链 "{deletingFriendLink?.name}" 吗？此操作不可撤销。</p>
+          <div className={styles.modalActions}>
+            <Button
+              variant="default"
+              onClick={() => setDeleteModalVisible(false)}
+            >
+              取消
+            </Button>
+            <Button
+              variant="danger"
+              onClick={handleDelete}
+            >
+              删除
+            </Button>
           </div>
         </div>
-      )}
+      </FormModal>
 
       {/* 操作提示模态框 */}
       <OperationTipModal

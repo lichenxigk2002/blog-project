@@ -5,6 +5,11 @@ import styles from './ThoughtsManagement.module.scss';
 import Pagination from "@/admin/components/ui/Pagination/Pagination";
 import ThoughtsForm from './ThoughtsForm';
 import OperationTipModal from '../ui/OperationTipModal/OperationTipModal';
+import StatsCard from '../ui/StatsCard/StatsCard';
+import SearchBar from '../ui/SearchBar/SearchBar';
+import DataTable from '../ui/DataTable/DataTable';
+import FormModal from '../ui/FormModal/FormModal';
+import { PlusIcon, EditIcon, DeleteIcon, SearchIcon } from '../ui/Icons/Icons';
 
 const moodMap: Record<string, string> = {
     happy: '😄',
@@ -92,7 +97,8 @@ const ThoughtsManagement: React.FC = () => {
         }
     };
 
-    const handleSearch = () => {
+    const handleSearch = (searchText: string) => {
+        setSearchText(searchText);
         const filtered = thoughts.filter(thought =>
             thought.content.toLowerCase().includes(searchText.toLowerCase()) ||
             thought.location.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -100,7 +106,7 @@ const ThoughtsManagement: React.FC = () => {
         );
         setFilteredThoughts(filtered);
         setTotal(filtered.length);
-        setCurrentPage(1);
+        setCurrentPage(1); // 重置到第一页
     };
 
     const handleSort = (field: string) => {
@@ -136,150 +142,102 @@ const ThoughtsManagement: React.FC = () => {
         neutralThoughts: thoughts.filter(t => t.mood === 'neutral').length,
     };
 
+    const columns = [
+        {
+            key: 'content',
+            title: '内容',
+            sortable: true,
+            width: '35%',
+            render: (value: any, record: ThoughtsProps) => (
+                <div style={{
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    maxWidth: '100%'
+                }}>
+                    {record.content}
+                </div>
+            )
+        },
+        {
+            key: 'mood',
+            title: '心情',
+            sortable: true,
+            width: '15%',
+            render: (value: any, record: ThoughtsProps) => (
+                <span className={styles.moodTag}>
+                    {moodMap[record.mood] || record.mood}
+                </span>
+            )
+        },
+        {
+            key: 'location',
+            title: '位置',
+            sortable: true,
+            width: '20%',
+            render: (value: any, record: ThoughtsProps) => record.location
+        },
+        {
+            key: 'createdAt',
+            title: '创建时间',
+            sortable: true,
+            width: '20%',
+            render: (value: any, record: ThoughtsProps) => new Date(record.createdAt).toLocaleString()
+        }
+    ];
+
+    const actions = [
+        {
+            key: 'edit',
+            label: '编辑',
+            variant: 'primary' as const,
+            icon: <EditIcon />,
+            onClick: (record: ThoughtsProps) => openModal(record)
+        },
+        {
+            key: 'delete',
+            label: '删除',
+            variant: 'danger' as const,
+            icon: <DeleteIcon />,
+            onClick: (record: ThoughtsProps) => {
+                setDeletingThought(record);
+                setDeleteModalVisible(true);
+            }
+        }
+    ];
+
     return (
         <div className={styles.container}>
             <div className={styles.header}>
                 <h1 className={styles.title}>思考管理</h1>
                 <button className={styles.primaryButton} onClick={() => openModal()}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
+                    <PlusIcon />
                     新建思考
                 </button>
             </div>
 
-            <div className={styles.stats}>
-                <div className={styles.statCard}>
-                    <div className={styles.statTitle}>思考总数</div>
-                    <div className={styles.statValue}>{stats.totalThoughts}</div>
-                </div>
-                <div className={styles.statCard}>
-                    <div className={styles.statTitle}>开心</div>
-                    <div className={styles.statValue}>{stats.happyThoughts}</div>
-                </div>
-                <div className={styles.statCard}>
-                    <div className={styles.statTitle}>难过</div>
-                    <div className={styles.statValue}>{stats.sadThoughts}</div>
-                </div>
-                <div className={styles.statCard}>
-                    <div className={styles.statTitle}>平静</div>
-                    <div className={styles.statValue}>{stats.neutralThoughts}</div>
-                </div>
-            </div>
+            <StatsCard
+                stats={[
+                    { title: '思考总数', value: stats.totalThoughts },
+                    { title: '开心', value: stats.happyThoughts },
+                    { title: '难过', value: stats.sadThoughts },
+                    { title: '平静', value: stats.neutralThoughts }
+                ]}
+            />
 
-            <div className={styles.searchBar}>
-                <input
-                    type="text"
-                    className={styles.searchInput}
-                    placeholder="搜索内容、位置或标签..."
-                    value={searchText}
-                    onChange={(e) => setSearchText(e.target.value)}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                            handleSearch();
-                        }
-                    }}
-                />
-                <button
-                    className={styles.searchButton}
-                    onClick={handleSearch}
-                >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                    搜索
-                </button>
-            </div>
+            <SearchBar
+                placeholder="搜索内容、位置或标签..."
+                onSearch={handleSearch}
+                initialValue={searchText}
+            />
 
-            <div className={styles.table}>
-                <div className={styles.tableHeader}>
-                    <div
-                        className={`${styles.tableHeaderCell} ${styles.sortable}`}
-                        onClick={() => handleSort('content')}
-                    >
-                        内容
-                        {sortField === 'content' && (
-                            <span className={styles.sortIcon}>
-                                {sortOrder === 'asc' ? '↑' : '↓'}
-                            </span>
-                        )}
-                    </div>
-                    <div
-                        className={`${styles.tableHeaderCell} ${styles.sortable}`}
-                        onClick={() => handleSort('mood')}
-                    >
-                        心情
-                        {sortField === 'mood' && (
-                            <span className={styles.sortIcon}>
-                                {sortOrder === 'asc' ? '↑' : '↓'}
-                            </span>
-                        )}
-                    </div>
-                    <div
-                        className={`${styles.tableHeaderCell} ${styles.sortable}`}
-                        onClick={() => handleSort('location')}
-                    >
-                        位置
-                        {sortField === 'location' && (
-                            <span className={styles.sortIcon}>
-                                {sortOrder === 'asc' ? '↑' : '↓'}
-                            </span>
-                        )}
-                    </div>
-                    <div
-                        className={`${styles.tableHeaderCell} ${styles.sortable}`}
-                        onClick={() => handleSort('createdAt')}
-                    >
-                        创建时间
-                        {sortField === 'createdAt' && (
-                            <span className={styles.sortIcon}>
-                                {sortOrder === 'asc' ? '↑' : '↓'}
-                            </span>
-                        )}
-                    </div>
-                    <div className={styles.tableHeaderCell}>操作</div>
-                </div>
-
-                <div className={styles.tableBody}>
-                    {filteredThoughts
-                        .slice((currentPage - 1) * pageSize, currentPage * pageSize)
-                        .map((thought) => (
-                            <div key={thought.id} className={styles.tableRow}>
-                                <div className={styles.tableCell}>{thought.content}</div>
-                                <div className={styles.tableCell}>
-                                    <span className={styles.moodTag}>
-                                        {moodMap[thought.mood] || thought.mood}
-                                    </span>
-                                </div>
-                                <div className={styles.tableCell}>{thought.location}</div>
-                                <div className={styles.tableCell}>
-                                    {new Date(thought.createdAt).toLocaleString()}
-                                </div>
-                                <div className={styles.tableCell}>
-                                    <div className={styles.actionButtons}>
-                                        <button
-                                            className={styles.editButton}
-                                            onClick={() => openModal(thought)}
-                                        >
-                                            编辑
-                                        </button>
-                                        <button
-                                            className={styles.deleteButton}
-                                            onClick={() => {
-                                                setDeletingThought(thought);
-                                                setDeleteModalVisible(true);
-                                            }}
-                                        >
-                                            删除
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                </div>
-            </div>
+            <DataTable
+                data={filteredThoughts.slice((currentPage - 1) * pageSize, currentPage * pageSize)}
+                columns={columns}
+                actions={actions}
+                loading={loading}
+                emptyText="暂无思考数据"
+            />
 
             <Pagination
                 currentPage={currentPage}
@@ -289,60 +247,42 @@ const ThoughtsManagement: React.FC = () => {
                 onPageSizeChange={setPageSize}
             />
 
-            {modalVisible && (
-                <div className={styles.modal}>
-                    <div className={styles.modalContent}>
-                        <div className={styles.modalHeader}>
-                            <h2 className={styles.modalTitle}>
-                                {editingThought ? '编辑思考' : '新建思考'}
-                            </h2>
-                            <button
-                                className={styles.modalClose}
-                                onClick={() => setModalVisible(false)}
-                            >
-                                ×
-                            </button>
-                        </div>
-                        <ThoughtsForm
-                            initialValues={editingThought || undefined}
-                            onSubmit={handleSubmit}
-                        />
-                    </div>
-                </div>
-            )}
+            <FormModal
+                open={modalVisible}
+                onClose={() => setModalVisible(false)}
+                title={editingThought ? '编辑思考' : '新建思考'}
+                size="large"
+            >
+                <ThoughtsForm
+                    initialValues={editingThought || undefined}
+                    onSubmit={handleSubmit}
+                />
+            </FormModal>
 
-            {deleteModalVisible && (
-                <div className={styles.modal}>
-                    <div className={styles.modalContent}>
-                        <div className={styles.modalHeader}>
-                            <h2 className={styles.modalTitle}>确认删除</h2>
-                            <button
-                                className={styles.modalClose}
-                                onClick={() => setDeleteModalVisible(false)}
-                            >
-                                ×
-                            </button>
-                        </div>
-                        <div className={styles.modalBody}>
-                            <p>确定要删除这条思考吗？此操作不可恢复。</p>
-                        </div>
-                        <div className={styles.modalFooter}>
-                            <button
-                                className={styles.cancelButton}
-                                onClick={() => setDeleteModalVisible(false)}
-                            >
-                                取消
-                            </button>
-                            <button
-                                className={styles.dangerButton}
-                                onClick={handleDelete}
-                            >
-                                删除
-                            </button>
-                        </div>
-                    </div>
+            <FormModal
+                open={deleteModalVisible}
+                onClose={() => setDeleteModalVisible(false)}
+                title="确认删除"
+                size="small"
+            >
+                <div className={styles.modalBody}>
+                    <p>确定要删除这条思考吗？此操作不可恢复。</p>
                 </div>
-            )}
+                <div className={styles.modalFooter}>
+                    <button
+                        className={styles.cancelButton}
+                        onClick={() => setDeleteModalVisible(false)}
+                    >
+                        取消
+                    </button>
+                    <button
+                        className={styles.dangerButton}
+                        onClick={handleDelete}
+                    >
+                        删除
+                    </button>
+                </div>
+            </FormModal>
 
             {/* 操作提示弹窗 */}
             <OperationTipModal

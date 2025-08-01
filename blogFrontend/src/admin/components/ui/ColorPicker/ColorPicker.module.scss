@@ -1,0 +1,61 @@
+@import '../../../styles/shared.module.scss';
+
+.colorPicker {
+  width: 100%;
+}
+
+.label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: $primary-dark;
+  font-family: $font-main;
+  margin-bottom: 8px;
+  user-select: none;
+
+  .required {
+    color: #ff4d4f;
+    margin-left: 4px;
+  }
+}
+
+.colorRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.colorInput {
+  width: 48px;
+  height: 32px;
+  border: 2px solid $primary-light;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  @include transition();
+
+  &:hover {
+    border-color: $primary;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba($primary, 0.2);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.colorPreview {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 2px solid #d9d9d9;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

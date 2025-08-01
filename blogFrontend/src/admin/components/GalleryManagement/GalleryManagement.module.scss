@@ -23,10 +23,7 @@ $font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
   font-family: $font-main;
 }
 
-.tableHeader,
-.tableRow {
-  grid-template-columns: minmax(120px, 1fr) minmax(200px, 2fr) minmax(300px, 3fr) minmax(120px, 1fr) minmax(150px, 1.5fr) minmax(120px, 1fr);
-}
+
 
 .coverImage {
   width: 80px;
@@ -53,15 +50,7 @@ $font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
   border: 2px solid #a7e9ff;
 }
 
-.actionButtons {
-  display: flex;
-  gap: 16px;
-  justify-content: flex-start;
 
-  button {
-    padding: 4px 12px;
-  }
-}
 
 .formGroup {
   margin-bottom: 16px;

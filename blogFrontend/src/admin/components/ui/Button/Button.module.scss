@@ -92,6 +92,16 @@
   margin-right: 4px;
 }
 
+.iconOnly {
+  padding: 8px;
+  min-width: 36px;
+  justify-content: center;
+
+  .icon {
+    margin-right: 0;
+  }
+}
+
 .small {
   padding: 4px 10px;
   font-size: 12px;

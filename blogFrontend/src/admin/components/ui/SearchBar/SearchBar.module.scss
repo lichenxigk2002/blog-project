@@ -1,0 +1,43 @@
+@import '../../../styles/shared.module.scss';
+
+.searchBar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.searchInput {
+  flex: 1;
+  padding: 8px 12px;
+  border: 2px solid #fbeaff;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #6c3ec1;
+  background: rgba(255, 255, 255, 0.95);
+  font-family: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
+  transition: all 0.3s ease;
+
+  &::placeholder {
+    color: #a259ff;
+    opacity: 0.7;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba($primary, 0.2);
+  }
+
+  &:hover {
+    border-color: $primary-light;
+  }
+}
+
+@media (max-width: 768px) {
+  .searchBar {
+    flex-direction: column;
+    gap: 8px;
+  }
+}

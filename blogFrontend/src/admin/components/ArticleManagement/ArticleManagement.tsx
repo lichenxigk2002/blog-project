@@ -8,6 +8,10 @@ import Pagination from "@/admin/components/ui/Pagination/Pagination";
 import OperationTipModal from '../ui/OperationTipModal/OperationTipModal';
 import { buildArticleData } from "@/utils/articleUtils";
 import Button from '../ui/Button/Button';
+import StatsCard from '../ui/StatsCard/StatsCard';
+import SearchBar from '../ui/SearchBar/SearchBar';
+import FormModal from '../ui/FormModal/FormModal';
+import { PlusIcon, EditIcon, DeleteIcon } from '../ui/Icons/Icons';
 
 
 const ArticleManagement: React.FC = () => {
@@ -20,7 +24,6 @@ const ArticleManagement: React.FC = () => {
   const [editingArticle, setEditingArticle] = useState<Article | null>(null);
   const [deletingArticle, setDeletingArticle] = useState<Article | null>(null);
   const [allTags, setAllTags] = useState<any[]>([]);
-  const [searchText, setSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
@@ -47,9 +50,17 @@ const ArticleManagement: React.FC = () => {
         throw new Error(typeof response?.error === 'string' ? response.error : '获取文章列表失败');
       }
       const data = response.data as unknown as Article[];
+
+      // 根据搜索关键词过滤文章
+      const filteredData = title
+        ? data.filter(article =>
+          article.title.toLowerCase().includes(title.toLowerCase())
+        )
+        : data;
+
       setAllArticles(data);
-      setFilteredArticles(data);
-      setTotal(data.length);
+      setFilteredArticles(filteredData);
+      setTotal(filteredData.length);
     } catch (error: any) {
       console.error('Failed to fetch articles:', error);
       setTipModal({ open: true, message: (error instanceof Error ? error.message : '获取文章列表失败'), type: 'failure' });
@@ -110,17 +121,14 @@ const ArticleManagement: React.FC = () => {
     }
   };
 
-  const stats = {
-    totalArticles: allArticles.length,
-    publishedArticles: allArticles.filter(a => a.status === 'published').length,
-    totalViews: allArticles.reduce((sum, article) => sum + (article.viewCount || 0), 0),
-    totalLikes: allArticles.reduce((sum, article) => sum + (article.likeCount || 0), 0)
-  };
+  const stats = [
+    { title: '文章总数', value: allArticles.length },
+    { title: '已发布', value: allArticles.filter(a => a.status === 'published').length },
+    { title: '总浏览量', value: allArticles.reduce((sum, article) => sum + (article.viewCount || 0), 0) },
+    { title: '总点赞数', value: allArticles.reduce((sum, article) => sum + (article.likeCount || 0), 0) }
+  ];
 
-  const handleSearch = () => {
-    setCurrentPage(1);
-    fetchArticles(searchText);
-  };
+
 
   const handleSort = (field: string) => {
     if (sortField === field) {
@@ -157,57 +165,18 @@ const ArticleManagement: React.FC = () => {
     <div className={styles.container}>
       <div className={styles.header}>
         <h1 className={styles.title}>文章管理</h1>
-        <Button variant="primary" onClick={() => openModal()} icon={
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
-        }>新建文章</Button>
+        <Button variant="primary" onClick={() => openModal()} icon={<PlusIcon />}>新建文章</Button>
       </div>
 
-      <div className={styles.stats}>
-        <div className={styles.statCard}>
-          <div className={styles.statTitle}>文章总数</div>
-          <div className={styles.statValue}>{stats.totalArticles}</div>
-        </div>
-        <div className={styles.statCard}>
-          <div className={styles.statTitle}>已发布</div>
-          <div className={styles.statValue}>{stats.publishedArticles}</div>
-        </div>
-        <div className={styles.statCard}>
-          <div className={styles.statTitle}>总浏览量</div>
-          <div className={styles.statValue}>{stats.totalViews}</div>
-        </div>
-        <div className={styles.statCard}>
-          <div className={styles.statTitle}>总点赞数</div>
-          <div className={styles.statValue}>{stats.totalLikes}</div>
-        </div>
-      </div>
+      <StatsCard stats={stats} />
 
-      <div className={styles.searchBar}>
-        <input
-          type="text"
-          className={styles.searchInput}
-          placeholder="搜索文章标题..."
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              handleSearch();
-            }
-          }}
-        />
-        <Button
-          variant="search"
-          onClick={handleSearch}
-          icon={
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-          }
-        >搜索</Button>
-      </div>
+      <SearchBar
+        placeholder="搜索文章标题..."
+        onSearch={(searchText) => {
+          setCurrentPage(1);
+          fetchArticles(searchText);
+        }}
+      />
 
       <div className={styles.table}>
         <div className={styles.tableHeader}>
@@ -308,12 +277,7 @@ const ArticleManagement: React.FC = () => {
                   <Button
                     variant="primary"
                     onClick={() => openModal(article)}
-                    icon={
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                      </svg>
-                    }
+                    icon={<EditIcon />}
                   >编辑</Button>
                   <Button
                     variant="danger"
@@ -321,12 +285,7 @@ const ArticleManagement: React.FC = () => {
                       setDeletingArticle(article);
                       setDeleteModalVisible(true);
                     }}
-                    icon={
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="3 6 5 6 21 6"></polyline>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                      </svg>
-                    }
+                    icon={<DeleteIcon />}
                   >删除</Button>
                 </div>
               </div>
@@ -346,60 +305,42 @@ const ArticleManagement: React.FC = () => {
         }}
       />
 
-      {modalVisible && (
-        <div className={styles.modal}>
-          <div className={styles.modalContent}>
-            <div className={styles.modalHeader}>
-              <h2 className={styles.modalTitle}>
-                {editingArticle ? '编辑文章' : '新建文章'}
-              </h2>
-              <button
-                className={styles.modalClose}
-                onClick={() => setModalVisible(false)}
-              >
-                ×
-              </button>
-            </div>
-            <ArticleForm
-              allTags={allTags}
-              initialValues={editingArticle ? {
-                ...editingArticle,
-                status: editingArticle.status as 'draft' | 'published',
-                postType: editingArticle.postType as 'post' | 'page',
-                tags: editingArticle.tags?.map(tag => tag.id) || []
-              } : undefined}
-              onSubmit={handleSubmit}
-            />
-          </div>
-        </div>
-      )}
+      <FormModal
+        open={modalVisible}
+        onClose={() => setModalVisible(false)}
+        title={editingArticle ? '编辑文章' : '新建文章'}
+        size="large"
+      >
+        <ArticleForm
+          allTags={allTags}
+          initialValues={editingArticle ? {
+            ...editingArticle,
+            status: editingArticle.status as 'draft' | 'published',
+            postType: editingArticle.postType as 'post' | 'page',
+            tags: editingArticle.tags?.map(tag => tag.id) || []
+          } : undefined}
+          onSubmit={handleSubmit}
+        />
+      </FormModal>
 
-      {deleteModalVisible && (
-        <div className={styles.modal}>
-          <div className={styles.modalContent}>
-            <div className={styles.modalHeader}>
-              <h2 className={styles.modalTitle}>确认删除</h2>
-              <button
-                className={styles.modalClose}
-                onClick={() => setDeleteModalVisible(false)}
-              >
-                ×
-              </button>
-            </div>
-            <p>确定要删除文章 "{deletingArticle?.title}" 吗？此操作不可恢复。</p>
-            <div className={styles.modalFooter}>
-              <Button
-                className={styles.button}
-                onClick={() => setDeleteModalVisible(false)}
-              >取消</Button>
-              <Button
-                variant="danger"
-                onClick={handleDelete}
-              >确认删除</Button>
-            </div>
-          </div>
+      <FormModal
+        open={deleteModalVisible}
+        onClose={() => setDeleteModalVisible(false)}
+        title="确认删除"
+        size="small"
+      >
+        <p>确定要删除文章 "{deletingArticle?.title}" 吗？此操作不可恢复。</p>
+        <div className={styles.modalFooter}>
+          <Button
+            className={styles.button}
+            onClick={() => setDeleteModalVisible(false)}
+          >取消</Button>
+          <Button
+            variant="danger"
+            onClick={handleDelete}
+          >确认删除</Button>
         </div>
-      )}
+      </FormModal>
 
       {loading && (
         <div className={styles.loading}>

@@ -11,6 +11,11 @@ import { buildArticleData } from '@/utils/articleUtils';
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import Button from '../ui/Button/Button';
+import Select, { SelectOption } from '../ui/Select/Select';
+import FormInput from '../ui/FormInput/FormInput';
+import Checkbox from '../ui/Checkbox/Checkbox';
+import MultiSelect, { MultiSelectOption } from '../ui/MultiSelect/MultiSelect';
+import FormItem from '../ui/FormItem/FormItem';
 
 interface Tag {
   id: number;
@@ -54,14 +59,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
   });
 
   const [previewContent, setPreviewContent] = useState(initialValues?.content || '');
-  const [isStatusOpen, setIsStatusOpen] = useState(false);
-  const [isPostTypeOpen, setIsPostTypeOpen] = useState(false);
-  const [isTagsOpen, setIsTagsOpen] = useState(false);
-  const [isUsersOpen, setIsUsersOpen] = useState(false);
-  const statusRef = useRef<HTMLDivElement>(null);
-  const postTypeRef = useRef<HTMLDivElement>(null);
-  const tagsRef = useRef<HTMLDivElement>(null);
-  const usersRef = useRef<HTMLDivElement>(null);
+
   const [showToolbar, setShowToolbar] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
@@ -75,6 +73,21 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
     message: '',
     type: 'success'
   });
+
+  // 定义状态选项
+  const statusOptions: SelectOption[] = [
+    { value: 'draft', label: '草稿' },
+    { value: 'published', label: '已发布' },
+    { value: 'archived', label: '已归档' }
+  ];
+
+  // 定义文章类型选项
+  const postTypeOptions: SelectOption[] = [
+    { value: 'post', label: '文章' },
+    { value: 'page', label: '笔记' },
+    { value: 'thought', label: '想法' },
+    { value: 'diary', label: '日记' }
+  ];
 
 
 
@@ -128,25 +141,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
     fetchSubscribers();
   }, []);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (statusRef.current && !statusRef.current.contains(event.target as Node)) {
-        setIsStatusOpen(false);
-      }
-      if (postTypeRef.current && !postTypeRef.current.contains(event.target as Node)) {
-        setIsPostTypeOpen(false);
-      }
-      if (tagsRef.current && !tagsRef.current.contains(event.target as Node)) {
-        setIsTagsOpen(false);
-      }
-      if (usersRef.current && !usersRef.current.contains(event.target as Node)) {
-        setIsUsersOpen(false);
-      }
-    };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -158,8 +153,6 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
 
   const handleSelectChange = (name: string, value: string) => {
     setFormData(prev => ({ ...prev, [name]: value }));
-    if (name === 'status') setIsStatusOpen(false);
-    if (name === 'postType') setIsPostTypeOpen(false);
   };
 
   const handleCheckboxChange = (name: string, checked: boolean) => {
@@ -248,20 +241,19 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
   // @ts-ignore
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
-      <div className={styles.formItem}>
-        <label className={styles.formLabel}>标题</label>
-        <input
+      <FormItem>
+        <FormInput
           type="text"
           name="title"
           value={formData.title}
           onChange={handleInputChange}
-          className={styles.input}
           placeholder="请输入文章标题"
+          label="标题"
           required
         />
-      </div>
+      </FormItem>
 
-      <div className={styles.formItem}>
+      <FormItem>
         <div className={styles.labelContainer} style={{ position: 'relative' }}>
           <label className={styles.formLabel}>内容</label>
           <WordCount text={formData.content} />
@@ -280,239 +272,127 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
           }}
           textareaRef={textareaRef}
         />
-      </div>
+      </FormItem>
 
-      <div className={styles.formItem}>
-        <label className={styles.formLabel}>摘要</label>
-        <textarea
+      <FormItem>
+        <FormInput
+          type="textarea"
           name="excerpt"
           value={formData.excerpt}
           onChange={handleInputChange}
-          className={styles.textarea}
           placeholder="请输入文章摘要"
+          label="摘要"
         />
-      </div>
+      </FormItem>
       <div className={styles.formItemRow}>
-        <div className={styles.formItem}>
-          <label className={styles.formLabel}>封面图片</label>
-          <input
+        <FormItem>
+          <FormInput
             type="text"
             name="coverImage"
             value={formData.coverImage}
             onChange={handleInputChange}
-            className={styles.input}
             placeholder="请输入封面图片URL"
+            label="封面图片"
           />
-        </div>
+        </FormItem>
 
-        <div className={styles.formItem}>
-          <label className={styles.formLabel}>阅读时间</label>
-          <input
+        <FormItem>
+          <FormInput
             type="text"
             name="readingTime"
             value={formData.readingTime}
             onChange={handleInputChange}
-            className={styles.textarea}
             placeholder="请输入阅读时间"
+            label="阅读时间"
           />
-        </div>
+        </FormItem>
       </div>
       <div className={styles.formItemRow}>
-        <div className={styles.formItem} ref={statusRef}>
-          <label className={styles.formLabel}>状态</label>
-          <div className={styles.select}>
-            <div
-              className={styles.selectSelector}
-              onClick={() => setIsStatusOpen(!isStatusOpen)}
-            >
-              {formData.status === 'draft' ? '草稿' : formData.status === 'published' ? '已发布' : '已归档'}
-            </div>
-            {isStatusOpen && (
-              <div className={styles.selectDropdown}>
-                <div
-                  className={`${styles.selectOption} ${formData.status === 'draft' ? styles.selected : ''}`}
-                  onClick={() => handleSelectChange('status', 'draft')}
-                >
-                  草稿
-                </div>
-                <div
-                  className={`${styles.selectOption} ${formData.status === 'published' ? styles.selected : ''}`}
-                  onClick={() => handleSelectChange('status', 'published')}
-                >
-                  已发布
-                </div>
-                <div
-                  className={`${styles.selectOption} ${formData.status === 'published' ? styles.selected : ''}`}
-                  onClick={() => handleSelectChange('status', 'archived')}
-                >
-                  已归档
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+        <FormItem>
+          <Select
+            value={formData.status}
+            options={statusOptions}
+            onChange={(value) => handleSelectChange('status', value as string)}
+            placeholder="请选择状态"
+            layout="vertical"
+            label="状态"
+            width="100%"
+          />
+        </FormItem>
 
-        <div className={styles.formItem} ref={postTypeRef}>
-          <label className={styles.formLabel}>文章类型</label>
-          <div className={styles.select}>
-            <div
-              className={styles.selectSelector}
-              onClick={() => setIsPostTypeOpen(!isPostTypeOpen)}
-            >
-              {formData.postType === 'post' ? '文章' : formData.postType === 'page' ? '笔记' : formData.postType === 'thought' ? '思考' : '日记'}
-            </div>
-            {isPostTypeOpen && (
-              <div className={styles.selectDropdown}>
-                <div
-                  className={`${styles.selectOption} ${formData.postType === 'post' ? styles.selected : ''}`}
-                  onClick={() => handleSelectChange('postType', 'post')}
-                >
-                  文章
-                </div>
-                <div
-                  className={`${styles.selectOption} ${formData.postType === 'page' ? styles.selected : ''}`}
-                  onClick={() => handleSelectChange('postType', 'page')}
-                >
-                  笔记
-                </div>
-                <div
-                  className={`${styles.selectOption} ${formData.postType === 'thought' ? styles.selected : ''}`}
-                  onClick={() => handleSelectChange('postType', 'thought')}
-                >
-                  想法
-                </div>
-                <div
-                  className={`${styles.selectOption} ${formData.postType === 'diary' ? styles.selected : ''}`}
-                  onClick={() => handleSelectChange('postType', 'diary')}
-                >
-                  日记
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+        <FormItem>
+          <Select
+            value={formData.postType}
+            options={postTypeOptions}
+            onChange={(value) => handleSelectChange('postType', value as string)}
+            placeholder="请选择文章类型"
+            layout="vertical"
+            label="文章类型"
+            width="100%"
+          />
+        </FormItem>
 
-        <div className={styles.formItem} ref={tagsRef}>
-          <label className={styles.formLabel}>标签</label>
-          <div className={styles.select}>
-            <div
-              className={styles.selectSelector}
-              onClick={() => setIsTagsOpen(!isTagsOpen)}
-            >
-              {formData.tags.length > 0
-                ? formData.tags.map(id => allTags.find(tag => tag.id === id)?.name).join(', ')
-                : '请选择标签'}
-            </div>
-            {isTagsOpen && (
-              <div className={styles.tagButtonGroup}>
-                {allTags.map(tag => (
-                  <button
-                    key={tag.id}
-                    type="button"
-                    className={`${styles.tagButton} ${formData.tags.includes(tag.id) ? styles.selected : ''}`}
-                    onClick={() => {
-                      const newTags = formData.tags.includes(tag.id)
-                        ? formData.tags.filter(id => id !== tag.id)
-                        : [...formData.tags, tag.id];
-                      setFormData(prev => ({ ...prev, tags: newTags }));
-                    }}
-                  >
-                    {tag.name}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
+        <FormItem>
+          <MultiSelect
+            options={allTags.map(tag => ({
+              id: tag.id,
+              label: tag.name,
+              value: tag.name
+            }))}
+            selectedIds={formData.tags}
+            onSelectionChange={(ids) => setFormData(prev => ({ ...prev, tags: ids }))}
+            label="标签"
+            placeholder="请选择标签"
+            mode="buttons"
+            dropdownPosition="top"
+          />
+        </FormItem>
       </div>
 
       {/* 推送选项 */}
-      {newArticleNotification ? <><div className={styles.formItem}>
-        <div className={styles.checkboxGroup}>
-          <label className={styles.checkboxLabel}>
-            <input
-              type="checkbox"
-              checked={formData.shouldNotify}
-              onChange={(e) => handleCheckboxChange('shouldNotify', e.target.checked)}
-              className={styles.checkbox}
-            />
-            <span>推送邮件通知</span>
-          </label>
-        </div>
-      </div>
+      {newArticleNotification ? <><FormItem>
+        <Checkbox
+          checked={formData.shouldNotify}
+          onChange={(checked) => handleCheckboxChange('shouldNotify', checked)}
+          label="推送邮件通知"
+        />
+      </FormItem>
 
         {/* 用户选择 */}
         {formData.shouldNotify && (
-          <div className={styles.formItem} ref={usersRef}>
-            <label className={styles.formLabel}>推送用户</label>
-            <div className={styles.select}>
-              <div
-                className={styles.selectSelector}
-                onClick={() => setIsUsersOpen(!isUsersOpen)}
-              >
-                {formData.notifyUserIds.length > 0
-                  ? `已选择 ${formData.notifyUserIds.length} 个用户`
-                  : '推送给所有订阅用户'}
-              </div>
-              {isUsersOpen && (
-                <div className={styles.userDropdown}>
-                  {loadingSubscribers ? (
-                    <div className={styles.loadingText}>加载中...</div>
-                  ) : (
-                    <>
-                      <div className={styles.userOption}>
-                        <label className={styles.userCheckbox}>
-                          <input
-                            type="checkbox"
-                            className={styles.checkbox}
-                            checked={formData.notifyUserIds.length === 0}
-                            onChange={() => setFormData(prev => ({ ...prev, notifyUserIds: [] }))}
-                          />
-                          <span>推送给所有订阅用户</span>
-                        </label>
-                      </div>
-                      <div className={styles.userDivider}></div>
-                      {subscribers.map(subscriber => (
-                        <div key={subscriber.id} className={styles.userOption}>
-                          <label className={styles.userCheckbox}>
-                            <input
-                              className={styles.checkbox}
-                              type="checkbox"
-                              checked={formData.notifyUserIds.includes(subscriber.id)}
-                              onChange={(e) => {
-                                const newUserIds = e.target.checked
-                                  ? [...formData.notifyUserIds, subscriber.id]
-                                  : formData.notifyUserIds.filter(id => id !== subscriber.id);
-                                setFormData(prev => ({ ...prev, notifyUserIds: newUserIds }));
-                              }}
-                            />
-                            <span>{subscriber.name} ({subscriber.email})</span>
-                          </label>
-                        </div>
-                      ))}
-                    </>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        )}</> : <>
-        <div className={styles.formItem}>
-          <div className={styles.checkboxGroup}>
-            <label className={styles.checkboxLabel}>
-
-              <span>推送邮件通知已关闭</span>
-            </label>
-          </div>
-        </div>
+          <FormItem>
+            <MultiSelect
+              options={subscribers.map(subscriber => ({
+                id: subscriber.id,
+                label: `${subscriber.name} (${subscriber.email})`,
+                value: subscriber.email
+              }))}
+              selectedIds={formData.notifyUserIds}
+              onSelectionChange={(ids) => setFormData(prev => ({ ...prev, notifyUserIds: ids }))}
+              label="推送用户"
+              loading={loadingSubscribers}
+              placeholder="推送给所有订阅用户"
+              selectAllLabel="推送给所有订阅用户"
+              dropdownPosition="top"
+            />
+          </FormItem>
+        )}      </> : <>
+        <FormItem>
+          <Checkbox
+            checked={false}
+            onChange={() => { }}
+            label="推送邮件通知已关闭"
+            disabled
+          />
+        </FormItem>
       </>}
 
 
-      <div className={styles.formItem}>
+      <FormItem>
         <Button type="submit" variant="primary" className={styles.submitButton}>
           保存
         </Button>
-      </div>
+      </FormItem>
       <OperationTipModal
         open={autoSaveTip.open}
         onClose={() => setAutoSaveTip(prev => ({ ...prev, open: false }))}

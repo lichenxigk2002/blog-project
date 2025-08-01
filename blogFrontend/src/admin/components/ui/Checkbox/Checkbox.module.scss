@@ -1,0 +1,72 @@
+@import '../../../styles/shared.module.scss';
+
+.checkboxGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: $font-main;
+  color: $primary-dark;
+  user-select: none;
+
+  &:hover {
+    .checkbox {
+      border-color: $primary;
+    }
+  }
+}
+
+.checkbox {
+  width: 16px;
+  height: 16px;
+  border: 2px solid $primary-light;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  @include transition();
+  appearance: none;
+  position: relative;
+
+  &:checked {
+    background: $primary;
+    border-color: $primary;
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 4px;
+      top: 1px;
+      width: 4px;
+      height: 8px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba($primary, 0.2);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: rgba(255, 255, 255, 0.5);
+  }
+}
+
+.checkboxText {
+  font-size: 14px;
+  font-family: $font-main;
+  color: $primary-dark;
+  line-height: 1.4;
+}

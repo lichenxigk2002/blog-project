@@ -5,6 +5,11 @@ import styles from './CommentManagement.module.scss'
 import Pagination from "@/admin/components/ui/Pagination/Pagination";
 import OperationTipModal from '../ui/OperationTipModal/OperationTipModal';
 import Button from '../ui/Button/Button';
+import StatsCard from '../ui/StatsCard/StatsCard';
+import SearchBar from '../ui/SearchBar/SearchBar';
+import DataTable from '../ui/DataTable/DataTable';
+import FormModal from '../ui/FormModal/FormModal';
+import { SearchIcon, DeleteIcon } from '../ui/Icons/Icons';
 
 const CommentManagement: React.FC = () => {
     // 状态管理
@@ -85,8 +90,9 @@ const CommentManagement: React.FC = () => {
     };
 
     // 搜索处理
-    const handleSearch = () => {
+    const handleSearch = (searchText: string) => {
         setCurrentPage(1); // 重置到第一页
+        setSearchText(searchText);
         fetchComments(searchText);
     };
 
@@ -154,138 +160,95 @@ const CommentManagement: React.FC = () => {
         });
     };
 
+    const columns = [
+        {
+            key: 'articleTitle',
+            title: '文章标题',
+            sortable: true,
+            width: '20%',
+            render: (value: any, record: Comment) => record.articleTitle
+        },
+        {
+            key: 'content',
+            title: '评论内容',
+            sortable: false,
+            width: '35%',
+            render: (value: any, record: Comment) => (
+                <div
+                    className={`${expandedComments.has(record.id) ? styles.expanded : ''}`}
+                    onClick={() => toggleComment(record.id, record.content)}
+                    style={{ cursor: 'pointer' }}
+                >
+                    {record.content}
+                </div>
+            )
+        },
+        {
+            key: 'username',
+            title: '评论用户',
+            sortable: true,
+            width: '15%',
+            render: (value: any, record: Comment) => record.username
+        },
+        {
+            key: 'createdAt',
+            title: '评论时间',
+            sortable: true,
+            width: '20%',
+            render: (value: any, record: Comment) => (
+                <div style={{
+                    whiteSpace: 'nowrap',
+                    overflow: 'visible',
+                    minWidth: 'fit-content'
+                }}>
+                    {new Date(record.createdAt).toLocaleString()}
+                </div>
+            )
+        }
+    ];
+
+    const actions = [
+        {
+            key: 'delete',
+            label: '删除',
+            variant: 'danger' as const,
+            icon: <DeleteIcon />,
+            onClick: (record: Comment) => {
+                setDeletingComment(record);
+                setDeleteModalVisible(true);
+            }
+        }
+    ];
+
     return (
         <div className={styles.container}>
             <div className={styles.header}>
                 <h1 className={styles.title}>评论管理</h1>
             </div>
 
-            {/* 统计信息 */}
-            <div className={styles.stats}>
-                <div className={styles.statCard}>
-                    <div className={styles.statTitle}>评论总数</div>
-                    <div className={styles.statValue}>{stats.totalComments}</div>
-                </div>
-                <div className={styles.statCard}>
-                    <div className={styles.statTitle}>今日评论</div>
-                    <div className={styles.statValue}>{stats.todayComments}</div>
-                </div>
-                <div className={styles.statCard}>
-                    <div className={styles.statTitle}>涉及文章</div>
-                    <div className={styles.statValue}>{stats.totalArticles}</div>
-                </div>
-                <div className={styles.statCard}>
-                    <div className={styles.statTitle}>评论用户</div>
-                    <div className={styles.statValue}>{stats.totalUsers}</div>
-                </div>
-            </div>
+            <StatsCard stats={[
+                { title: '评论总数', value: stats.totalComments.toString() },
+                { title: '今日评论', value: stats.todayComments.toString() },
+                { title: '涉及文章', value: stats.totalArticles.toString() },
+                { title: '评论用户', value: stats.totalUsers.toString() }
+            ]} />
 
-            {/* 搜索栏 */}
-            <div className={styles.searchBar}>
-                <input
-                    type="text"
-                    className={styles.searchInput}
-                    placeholder="搜索评论..."
-                    value={searchText}
-                    onChange={(e) => setSearchText(e.target.value)}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                            handleSearch();
-                        }
-                    }}
-                />
-                <Button
-                    variant="search"
-                    onClick={handleSearch}
-                    icon={
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        </svg>
-                    }
-                >搜索</Button>
-            </div>
+            <SearchBar
+                placeholder="搜索评论..."
+                onSearch={handleSearch}
+                initialValue={searchText}
+            />
 
-            {/* 表格 */}
-            <div className={styles.table}>
-                <div className={styles.tableHeader}>
-                    <div
-                        className={`${styles.tableHeaderCell} ${styles.sortable}`}
-                        onClick={() => handleSort('articleTitle')}
-                    >
-                        文章标题
-                        {sortField === 'articleTitle' && (
-                            <span className={styles.sortIcon}>
-                                {sortOrder === 'asc' ? '↑' : '↓'}
-                            </span>
-                        )}
-                    </div>
-                    <div className={styles.tableHeaderCell}>评论内容</div>
-                    <div
-                        className={`${styles.tableHeaderCell} ${styles.sortable}`}
-                        onClick={() => handleSort('username')}
-                    >
-                        评论用户
-                        {sortField === 'username' && (
-                            <span className={styles.sortIcon}>
-                                {sortOrder === 'asc' ? '↑' : '↓'}
-                            </span>
-                        )}
-                    </div>
-                    <div
-                        className={`${styles.tableHeaderCell} ${styles.sortable}`}
-                        onClick={() => handleSort('createdAt')}
-                    >
-                        评论时间
-                        {sortField === 'createdAt' && (
-                            <span className={styles.sortIcon}>
-                                {sortOrder === 'asc' ? '↑' : '↓'}
-                            </span>
-                        )}
-                    </div>
-                    <div className={styles.tableHeaderCell}>操作</div>
-                </div>
-                <div className={styles.tableBody}>
-                    {loading ? (
-                        <div className={styles.loading}>加载中...</div>
-                    ) : paginatedComments.length === 0 ? (
-                        <div className={styles.empty}>暂无评论</div>
-                    ) : (
-                        paginatedComments.map((item) => (
-                            <div key={item.id} className={styles.tableRow}>
-                                <div className={styles.tableCell}>{item.articleTitle}</div>
-                                <div
-                                    className={`${styles.tableCell} ${expandedComments.has(item.id) ? styles.expanded : ''}`}
-                                    onClick={() => toggleComment(item.id, item.content)}
-                                >
-                                    {item.content}
-                                </div>
-                                <div className={styles.tableCell}>{item.username}</div>
-                                <div className={styles.tableCell}>
-                                    {new Date(item.createdAt).toLocaleString()}
-                                </div>
-                                <div className={styles.tableCell}>
-                                    <Button
-                                        variant="danger"
-                                        size="medium"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setDeletingComment(item);
-                                            setDeleteModalVisible(true);
-                                        }}
-                                        icon={
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                <polyline points="3 6 5 6 21 6"></polyline>
-                                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                            </svg>
-                                        }
-                                    >删除</Button>
-                                </div>
-                            </div>
-                        ))
-                    )}
-                </div>
-            </div>
+            <DataTable
+                data={paginatedComments}
+                columns={columns}
+                actions={actions}
+                sortField={sortField}
+                sortOrder={sortOrder}
+                onSort={handleSort}
+                loading={loading}
+                emptyText="暂无评论"
+            />
 
             {/* 分页 */}
             <Pagination
@@ -299,33 +262,24 @@ const CommentManagement: React.FC = () => {
                 }}
             />
 
-            {/* 删除确认弹窗 */}
-            {deleteModalVisible && (
-                <div className={styles.modal}>
-                    <div className={styles.modalContent}>
-                        <div className={styles.modalHeader}>
-                            <h2 className={styles.modalTitle}>确认删除</h2>
-                            <button
-                                className={styles.modalClose}
-                                onClick={() => setDeleteModalVisible(false)}
-                            >
-                                ×
-                            </button>
-                        </div>
-                        <p>确定要删除这条评论吗？此操作不可恢复。</p>
-                        <div className={styles.modalFooter}>
-                            <Button
-                                className={styles.button}
-                                onClick={() => setDeleteModalVisible(false)}
-                            >取消</Button>
-                            <Button
-                                variant="danger"
-                                onClick={handleDelete}
-                            >确认删除</Button>
-                        </div>
-                    </div>
+            <FormModal
+                open={deleteModalVisible}
+                onClose={() => setDeleteModalVisible(false)}
+                title="确认删除"
+                size="small"
+            >
+                <p>确定要删除这条评论吗？此操作不可恢复。</p>
+                <div className={styles.modalFooter}>
+                    <Button
+                        className={styles.button}
+                        onClick={() => setDeleteModalVisible(false)}
+                    >取消</Button>
+                    <Button
+                        variant="danger"
+                        onClick={handleDelete}
+                    >确认删除</Button>
                 </div>
-            )}
+            </FormModal>
 
             {/* 操作提示弹窗 */}
             <OperationTipModal

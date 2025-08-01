@@ -1,0 +1,32 @@
+@import '../../../styles/shared.module.scss';
+
+.formButtons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 2px solid #fbeaff;
+  position: relative;
+  z-index: 1;
+}
+
+.cancelButton {
+  min-width: 80px;
+}
+
+.submitButton {
+  min-width: 80px;
+}
+
+@media (max-width: 768px) {
+  .formButtons {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+
+  .cancelButton,
+  .submitButton {
+    width: 100%;
+  }
+}

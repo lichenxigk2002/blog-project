@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import type { FriendLinks } from '@/types/FriendLinks';
 import styles from './FriendLinksForm.module.scss';
+import Select from '../ui/Select/Select';
+import Button from '../ui/Button/Button';
 
 interface FriendLinksFormProps {
   visible: boolean;
@@ -62,92 +64,93 @@ const FriendLinksForm: React.FC<FriendLinksFormProps> = ({
   if (!visible) return null;
 
   return (
-    <div className={styles.modalOverlay}>
-      <div className={styles.modal}>
-        <div className={styles.modalHeader}>
-          <h2>{initialValues ? '编辑友链' : '添加友链'}</h2>
-          <button className={styles.closeButton} onClick={onCancel}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className={styles.form}>
-          <div className={styles.formGroup}>
-            <label className={styles.label}>
-              网站名称 <span className={styles.required}>*</span>
-            </label>
-            <input
-              type="text"
-              className={styles.input}
-              value={formData.name}
-              onChange={(e) => handleInputChange('name', e.target.value)}
-              placeholder="请输入网站名称"
-              required
-            />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label className={styles.label}>
-              网站地址 <span className={styles.required}>*</span>
-            </label>
-            <input
-              type="url"
-              className={styles.input}
-              value={formData.url}
-              onChange={(e) => handleInputChange('url', e.target.value)}
-              placeholder="https://example.com"
-              required
-            />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label className={styles.label}>头像地址</label>
-            <input
-              type="url"
-              className={styles.input}
-              value={formData.avatarUrl}
-              onChange={(e) => handleInputChange('avatarUrl', e.target.value)}
-              placeholder="https://example.com/avatar.png"
-            />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label className={styles.label}>网站描述</label>
-            <textarea
-              className={styles.textarea}
-              value={formData.description}
-              onChange={(e) => handleInputChange('description', e.target.value)}
-              placeholder="请输入网站描述"
-              rows={3}
-            />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label className={styles.label}>展示状态</label>
-            <select
-              className={styles.select}
-              value={formData.status}
-              onChange={(e) => handleInputChange('status', e.target.value)}
-            >
-              <option value="pending">待审核</option>
-              <option value="approved">已展示</option>
-            </select>
-          </div>
-
-          <div className={styles.formActions}>
-            <button type="button" className={styles.cancelButton} onClick={onCancel}>
-              取消
-            </button>
-            <button type="submit" className={styles.submitButton}>
-              {initialValues ? '更新' : '创建'}
-            </button>
-          </div>
-        </form>
+    <form onSubmit={handleSubmit} className={styles.form}>
+      <div className={styles.formGroup}>
+        <label className={styles.label}>
+          网站名称 <span className={styles.required}>*</span>
+        </label>
+        <input
+          type="text"
+          className={styles.input}
+          value={formData.name}
+          onChange={(e) => handleInputChange('name', e.target.value)}
+          placeholder="请输入网站名称"
+          required
+        />
       </div>
-    </div>
+
+      <div className={styles.formGroup}>
+        <label className={styles.label}>
+          网站地址 <span className={styles.required}>*</span>
+        </label>
+        <input
+          type="url"
+          className={styles.input}
+          value={formData.url}
+          onChange={(e) => handleInputChange('url', e.target.value)}
+          placeholder="https://example.com"
+          required
+        />
+      </div>
+
+      <div className={styles.avatarSection}>
+        <div className={styles.formGroup}>
+          <label className={styles.label}>头像地址</label>
+          <input
+            type="url"
+            className={styles.input}
+            value={formData.avatarUrl}
+            onChange={(e) => handleInputChange('avatarUrl', e.target.value)}
+            placeholder="https://example.com/avatar.png"
+          />
+        </div>
+        {formData.avatarUrl && (
+          <div className={styles.avatarPreview}>
+            <img
+              src={formData.avatarUrl}
+              alt="头像预览"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = '/images/default-avatar.png';
+              }}
+            />
+          </div>
+        )}
+      </div>
+
+      <div className={styles.formGroup}>
+        <label className={styles.label}>网站描述</label>
+        <textarea
+          className={styles.textarea}
+          value={formData.description}
+          onChange={(e) => handleInputChange('description', e.target.value)}
+          placeholder="请输入网站描述"
+          rows={3}
+        />
+      </div>
+
+      <div className={styles.formGroup}>
+        <label className={styles.label}>展示状态</label>
+        <Select
+          value={formData.status}
+          onChange={(value) => handleInputChange('status', value as string)}
+          options={[
+            { value: 'pending', label: '待审核' },
+            { value: 'approved', label: '已展示' }
+          ]}
+          placeholder="选择展示状态"
+        />
+      </div>
+
+      <div className={styles.formActions}>
+        <Button type="button" variant="default" onClick={onCancel}>
+          取消
+        </Button>
+        <Button type="submit" variant="primary">
+          {initialValues ? '更新' : '创建'}
+        </Button>
+      </div>
+    </form>
   );
 };
 

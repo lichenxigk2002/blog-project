@@ -17,11 +17,7 @@ $font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
     transition: all 0.3s ease;
 }
 
-/* 表格列宽调整 */
-.tableHeader,
-.tableRow {
-    grid-template-columns: minmax(200px, 2fr) minmax(300px, 3fr) minmax(100px, 1fr) minmax(150px, 1.5fr) minmax(120px, 1fr);
-}
+
 
 /* 评论内容单元格样式 */
 .tableCell {
@@ -114,124 +110,13 @@ $font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
     }
 }
 
-.stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin-bottom: 16px;
-    position: relative;
-    z-index: 1;
-}
 
-.statCard {
-    @include card;
-    padding: 16px;
 
-    &:hover {
-        transform: translateY(-4px);
-        box-shadow: $card-hover-shadow;
-    }
-}
 
-.statTitle {
-    color: $primary;
-    font-size: 14px;
-    margin-bottom: 8px;
-    font-family: $font-main;
-}
 
-.statValue {
-    font-size: 24px;
-    font-weight: 600;
-    color: $secondary;
-    font-family: $font-main;
-}
 
-.table {
-    @include card;
-    border-radius: $card-radius;
-    overflow: hidden;
-    transition: all 0.3s ease;
-}
 
-.table:hover {
-    box-shadow: $card-hover-shadow;
-}
 
-.tableHeader {
-    background: rgba(251, 234, 255, 0.1);
-    border-bottom: $border;
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    backdrop-filter: blur(8px);
-}
-
-.tableRow {
-    border-bottom: 1px solid #fbeaff;
-    transition: all 0.3s ease;
-    animation: fadeIn 0.3s ease;
-
-    &:hover {
-        background-color: rgba(251, 234, 255, 0.2);
-    }
-}
-
-.sortable {
-    cursor: pointer;
-    user-select: none;
-    position: relative;
-    transition: all 0.3s ease;
-
-    &:hover {
-        background-color: rgba(251, 234, 255, 0.2);
-
-        .sortIcon {
-            background: rgba(251, 234, 255, 0.5);
-            transform: scale(1.1);
-        }
-    }
-
-    &:active .sortIcon {
-        animation: sortIconPop 0.3s ease;
-    }
-}
-
-.modalContent {
-    background: $card-bg;
-    border-radius: 16px;
-    width: 90%;
-    max-width: 500px;
-    padding: 24px;
-    box-shadow: 0 8px 32px rgba(162, 89, 255, 0.2);
-    border: $border;
-    position: relative;
-}
-
-@media (max-width: 768px) {
-    .stats {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .tableHeader,
-    .tableRow {
-        grid-template-columns: 1fr 2fr 1fr;
-    }
-
-    .tableHeaderCell:nth-child(3),
-    .tableCell:nth-child(3) {
-        display: none;
-    }
-
-    .tableHeaderCell:nth-child(4),
-    .tableCell:nth-child(4) {
-        display: none;
-    }
-
-    .tableCell:nth-child(2) {
-        max-width: 200px;
-    }
-}
 
 @keyframes fadeIn {
     from {

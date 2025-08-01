@@ -1,0 +1,59 @@
+@import '../../../styles/shared.module.scss';
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.statCard {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(180, 120, 255, 0.1);
+  border: 2px solid #fbeaff;
+  transition: all 0.3s ease;
+}
+
+.statCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(180, 120, 255, 0.15);
+}
+
+.statTitle {
+  color: #a259ff;
+  font-size: 14px;
+  margin-bottom: 8px;
+  font-family: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
+}
+
+.statValue {
+  font-size: 24px;
+  font-weight: 600;
+  color: #6c3ec1;
+  font-family: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.statUnit {
+  font-size: 14px;
+  font-weight: 400;
+  color: #a259ff;
+}
+
+@media (max-width: 768px) {
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .stats {
+    grid-template-columns: 1fr;
+  }
+}

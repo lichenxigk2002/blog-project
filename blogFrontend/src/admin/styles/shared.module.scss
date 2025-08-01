@@ -31,7 +31,7 @@ $font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
 .container {
   padding: 16px;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 
   &::before {
     content: '';

@@ -287,15 +287,11 @@
   }
 }
 
-.formItem {
-  margin-bottom: 32px;
-  position: relative;
-  width: 100%;
-}
+
 
 .formItemRow {
   display: flex;
-  gap: 32px;
+  gap: 16px;
   margin-bottom: 16px;
   position: relative;
   width: 100%;
@@ -321,54 +317,13 @@
   }
 }
 
-.formLabel {
-  display: inline-block;
-  padding-bottom: 0;
-  font-weight: 600;
-  color: $primary;
-  font-size: 14px;
-  font-family: $font-main;
-  line-height: 24px;
-}
 
-.input {
-  width: 100%;
-  padding: 8px 12px;
-  border: 2px solid $primary-light;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.9);
-  color: $primary-dark;
-  font-size: 14px;
-  @include transition();
-  font-family: $font-main;
-  box-sizing: border-box;
 
-  &:hover {
-    border-color: $primary;
-  }
 
-  &:focus {
-    outline: none;
-    border-color: $primary;
-    box-shadow: 0 0 0 3px rgba($primary, 0.2);
-  }
-}
 
-.textarea {
-  width: 100%;
-  min-height: 20px;
-  padding: 8px 12px;
-  border: 2px solid $primary-light;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.9);
-  color: $primary-dark;
-  font-size: 14px;
-  line-height: 1.6;
-  resize: vertical;
-  @include transition();
-  font-family: $font-main;
-  box-sizing: border-box;
-}
+
+
+
 
 .select {
   position: relative;
@@ -486,53 +441,7 @@
   }
 }
 
-.tagButtonGroup {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding: 12px;
-  min-width: 200px;
-  max-width: 400px;
-  background: rgba(255, 255, 255, 0.95);
-  border: 2px solid $primary-light;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(180, 120, 255, 0.15);
-  position: absolute;
-  bottom: calc(100% + 4px);
-  left: 0;
-  z-index: 1000;
-}
 
-.tagButton {
-  padding: 6px 12px;
-  border: 2px solid $primary-light;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.9);
-  color: $primary-dark;
-  font-size: 14px;
-  cursor: pointer;
-  @include transition();
-  font-family: $font-main;
-  white-space: nowrap;
-  min-width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  &:hover {
-    border-color: $primary;
-    background: rgba($primary, 0.1);
-    transform: translateY(-1px);
-  }
-
-  &.selected {
-    background: rgba($primary, 0.15);
-    color: $primary;
-    border-color: $primary;
-    font-weight: 600;
-  }
-}
 
 .toolbarPopover {
   background: rgba(255, 255, 255, 0.98);
@@ -806,6 +715,65 @@
   }
 }
 
+.toolbarPopover {
+  background: rgba(255, 255, 255, 0.98);
+  border: 2px solid $primary-light;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(180, 120, 255, 0.2);
+  backdrop-filter: blur(10px);
+
+  .toolbarSection {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba($primary-light, 0.3);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .sectionLabel {
+      font-size: 12px;
+      color: $primary;
+      font-weight: 600;
+      min-width: 40px;
+      font-family: $font-main;
+    }
+  }
+}
+
+.tagButton {
+  padding: 6px 12px;
+  border: 2px solid $primary-light;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.9);
+  color: $primary-dark;
+  font-size: 14px;
+  cursor: pointer;
+  @include transition();
+  font-family: $font-main;
+  white-space: nowrap;
+  min-width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    border-color: $primary;
+    background: rgba($primary, 0.1);
+    transform: translateY(-1px);
+  }
+
+  &.selected {
+    background: rgba($primary, 0.15);
+    color: $primary;
+    border-color: $primary;
+    font-weight: 600;
+  }
+}
+
 .submitButton {
   padding: 8px 24px;
   background: linear-gradient(90deg, $accent 0%, $primary-light 100%);
@@ -874,75 +842,4 @@
       background-color: var(--hover-color);
     }
   }
-}
-
-//复选框样式
-.checkboxGroup {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
-}
-
-.checkboxLabel {
-  display: flex;
-  align-items: center;
-  font-size: 14px;
-  color: $primary-dark;
-  font-family: $font-main;
-  font-weight: 500;
-  cursor: pointer;
-  gap: 6px;
-}
-
-.checkbox {
-  width: 15px;
-  height: 15px;
-  accent-color: $primary;
-  margin-right: 6px;
-  cursor: pointer;
-  border: 1px solid $primary;
-}
-
-//用户选择区域样式
-.userDropdown {
-  background: #fff;
-  border: 2px solid $primary-light;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(180, 120, 255, 0.15);
-  padding: 12px;
-  margin-top: 8px;
-  min-width: 220px;
-  max-height: 220px;
-  overflow-y: auto;
-  z-index: 1000;
-}
-
-.userOption {
-  display: flex;
-  align-items: center;
-  padding: 6px 0;
-}
-
-.userCheckbox {
-  display: flex;
-  align-items: center;
-  font-size: 14px;
-  color: $primary-dark;
-  font-family: $font-main;
-  gap: 6px;
-}
-
-.userDivider {
-  height: 1px;
-  background: $primary-light;
-  margin: 8px 0;
-  width: 100%;
-}
-
-.loadingText {
-  color: $primary;
-  font-size: 14px;
-  text-align: center;
-  padding: 12px 0;
 }

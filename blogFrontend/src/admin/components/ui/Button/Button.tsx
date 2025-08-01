@@ -15,9 +15,11 @@ const Button: React.FC<ButtonProps> = ({
   className = '',
   ...rest
 }) => {
+  const isIconOnly = icon && !children;
+
   return (
     <button
-      className={`${styles.button} ${styles[variant]} ${styles[size]} ${className}`}
+      className={`${styles.button} ${styles[variant]} ${styles[size]} ${isIconOnly ? styles.iconOnly : ''} ${className}`}
       {...rest}
     >
       {icon && <span className={styles.icon}>{icon}</span>}

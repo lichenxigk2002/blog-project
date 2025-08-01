@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { Question } from '@/types/Question';
 import styles from './QuestionsForm.module.scss';
+import Select from '../ui/Select/Select';
 
 const difficultyMap: Record<string, { label: string; color: string }> = {
     easy: { label: '简单', color: '#4CAF50' },
@@ -37,8 +38,7 @@ const QuestionsForm: React.FC<QuestionsFormProps> = ({
         ...initialValues
     });
 
-    const [isDifficultyOpen, setIsDifficultyOpen] = useState(false);
-    const [isStatusOpen, setIsStatusOpen] = useState(false);
+
 
     useEffect(() => {
         if (initialValues) {
@@ -56,8 +56,6 @@ const QuestionsForm: React.FC<QuestionsFormProps> = ({
 
     const handleSelectChange = (name: string, value: string) => {
         setFormData(prev => ({ ...prev, [name]: value }));
-        if (name === 'difficulty') setIsDifficultyOpen(false);
-        if (name === 'status') setIsStatusOpen(false);
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -99,57 +97,27 @@ const QuestionsForm: React.FC<QuestionsFormProps> = ({
             <div className={styles.formItemRow}>
                 <div className={styles.formItem}>
                     <label className={styles.formLabel}>难度</label>
-                    <div className={styles.select}>
-                        <div
-                            className={styles.selectSelector}
-                            onClick={() => setIsDifficultyOpen(!isDifficultyOpen)}
-                            style={{ color: difficultyMap[formData.difficulty].color }}
-                        >
-                            {difficultyMap[formData.difficulty].label}
-                        </div>
-                        {isDifficultyOpen && (
-                            <div className={styles.selectDropdown}>
-                                {Object.entries(difficultyMap).map(([key, { label, color }]) => (
-                                    <div
-                                        key={key}
-                                        className={`${styles.selectOption} ${formData.difficulty === key ? styles.selected : ''}`}
-                                        onClick={() => handleSelectChange('difficulty', key)}
-                                        style={{ color }}
-                                    >
-                                        {label}
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
+                    <Select
+                        value={formData.difficulty}
+                        onChange={(value) => handleSelectChange('difficulty', value as string)}
+                        options={Object.entries(difficultyMap).map(([key, { label }]) => ({
+                            value: key,
+                            label: label
+                        }))}
+                        placeholder="选择难度"
+                    />
                 </div>
-            </div>
-
-            <div className={styles.formItem}>
-                <label className={styles.formLabel}>状态</label>
-                <div className={styles.select}>
-                    <div
-                        className={styles.selectSelector}
-                        onClick={() => setIsStatusOpen(!isStatusOpen)}
-                    >
-                        {formData.status === 'draft' ? '草稿' : '已发布'}
-                    </div>
-                    {isStatusOpen && (
-                        <div className={styles.selectDropdown}>
-                            <div
-                                className={`${styles.selectOption} ${formData.status === 'draft' ? styles.selected : ''}`}
-                                onClick={() => handleSelectChange('status', 'draft')}
-                            >
-                                草稿
-                            </div>
-                            <div
-                                className={`${styles.selectOption} ${formData.status === 'published' ? styles.selected : ''}`}
-                                onClick={() => handleSelectChange('status', 'published')}
-                            >
-                                已发布
-                            </div>
-                        </div>
-                    )}
+                <div className={styles.formItem}>
+                    <label className={styles.formLabel}>状态</label>
+                    <Select
+                        value={formData.status}
+                        onChange={(value) => handleSelectChange('status', value as string)}
+                        options={[
+                            { value: 'draft', label: '草稿' },
+                            { value: 'published', label: '已发布' }
+                        ]}
+                        placeholder="选择状态"
+                    />
                 </div>
             </div>
 

@@ -1,13 +1,15 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import styles from './Modal.module.scss';
 
-interface ModalProps {
+export interface ModalProps {
   open: boolean;
   onClose: () => void;
-  title?: string;
+  title: string;
   children: React.ReactNode;
-  footer?: React.ReactNode;
-  width?: string | number;
+  className?: string;
+  size?: 'small' | 'medium' | 'large';
+  closeOnOverlayClick?: boolean;
+  closeOnEscape?: boolean;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -15,51 +17,54 @@ const Modal: React.FC<ModalProps> = ({
   onClose,
   title,
   children,
-  footer,
-  width
-}: ModalProps) => {
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const modalContentRef = useRef<HTMLDivElement>(null);
-
-  // 自动关闭逻辑
+  className = '',
+  size = 'medium',
+  closeOnOverlayClick = true,
+  closeOnEscape = true
+}) => {
   useEffect(() => {
-    if (!open) return;
-    // 定义重置计时器函数
-    const resetTimer = () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && closeOnEscape) {
         onClose();
-      }, 2000);
+      }
     };
-    resetTimer();
-    // 监听弹窗内容区的点击
-    const content = modalContentRef.current;
-    if (content) {
-      content.addEventListener('mousedown', resetTimer);
+
+    if (open) {
+      document.addEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'hidden';
     }
+
     return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      if (content) content.removeEventListener('mousedown', resetTimer);
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
     };
-  }, [open, onClose]);
+  }, [open, onClose, closeOnEscape]);
 
   if (!open) return null;
+
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget && closeOnOverlayClick) {
+      onClose();
+    }
+  };
+
   return (
-    <div className={styles.modal} onClick={onClose}>
-      <div
-        className={styles.modalContent}
-        style={{ width: width || 400, maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}
-        onClick={e => e.stopPropagation()}
-        ref={modalContentRef}
-      >
-        {title && (
-          <div className={styles.modalHeader}>
-            <span className={styles.modalTitle}>{title}</span>
-            <button className={styles.modalClose} onClick={onClose}>×</button>
-          </div>
-        )}
-        <div className={styles.modalBody} style={{ flex: 1, overflowY: 'auto' }}>{children}</div>
-        {footer && <div className={styles.modalFooter}>{footer}</div>}
+    <div className={styles.overlay} onClick={handleOverlayClick}>
+      <div className={`${styles.modal} ${styles[size]} ${className}`}>
+        <div className={styles.header}>
+          <h2 className={styles.title}>{title}</h2>
+          <button
+            type="button"
+            className={styles.closeButton}
+            onClick={onClose}
+            aria-label="关闭"
+          >
+            <span className={styles.closeIcon}>×</span>
+          </button>
+        </div>
+        <div className={styles.content}>
+          {children}
+        </div>
       </div>
     </div>
   );

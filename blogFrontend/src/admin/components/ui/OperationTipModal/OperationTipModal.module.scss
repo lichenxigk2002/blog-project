@@ -1,0 +1,127 @@
+@import '../../../styles/shared.module.scss';
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 8px 32px rgba(162, 89, 255, 0.2);
+  border: 2px solid #fbeaff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  animation: cardEnter 0.35s ease-out;
+  transform: translateY(0);
+  opacity: 1;
+  transition: all 0.35s ease;
+
+  &.card-leave {
+    animation: cardLeave 0.35s ease-in;
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+
+  &.position-top {
+    align-self: flex-start;
+    margin-top: 10vh;
+  }
+
+  &.position-bottom {
+    align-self: flex-end;
+    margin-bottom: 10vh;
+  }
+}
+
+.icon {
+  margin-bottom: 18px;
+  border-radius: 8px;
+}
+
+.message {
+  text-align: center;
+  font-size: 20px;
+  font-family: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
+  color: #a259ff;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.closeButton {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #a259ff;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba(162, 89, 255, 0.1);
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes cardLeave {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+}
+
+@media (max-width: 768px) {
+  .card {
+    margin: 20px;
+    padding: 24px;
+  }
+
+  .message {
+    font-size: 18px;
+  }
+}

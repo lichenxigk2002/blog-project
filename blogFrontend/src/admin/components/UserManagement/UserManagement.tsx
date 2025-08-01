@@ -1,16 +1,29 @@
 import React, { useState, FormEvent, useEffect } from 'react';
 import { AuthAPI } from '@/api/AuthAPI';
-import type { User, UserDTO } from '@/api/AuthAPI';
+import type { UserDTO } from '@/api/AuthAPI';
+import type { User } from '@/types/auth';
 import styles from './UserManagement.module.scss';
 import OperationTipModal from '../ui/OperationTipModal/OperationTipModal';
+import Button from '../ui/Button/Button';
+import Pagination from '../ui/Pagination/Pagination';
+import DataTable from '../ui/DataTable/DataTable';
+import FormModal from '../ui/FormModal/FormModal';
+import SearchBar from '../ui/SearchBar/SearchBar';
+import { PlusIcon, EditIcon, DeleteIcon } from '../ui/Icons/Icons';
 
 const UserManagement: React.FC = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const [loading, setLoading] = useState(false);
     const [users, setUsers] = useState<User[]>([]);
+    const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
     const [editingUser, setEditingUser] = useState<User | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [tipModal, setTipModal] = useState<{ open: boolean, message: string, type: 'success' | 'failure' }>({ open: false, message: '', type: 'success' });
+
+    // 分页状态
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [searchText, setSearchText] = useState('');
 
     useEffect(() => {
         fetchUsers();
@@ -22,6 +35,7 @@ const UserManagement: React.FC = () => {
             const response = await AuthAPI.getUserList();
             if (response.code === 200) {
                 setUsers(response.data);
+                setFilteredUsers(response.data);
             } else {
                 const errorMsg = response.message || '获取用户列表失败';
                 console.error('获取用户列表失败:', errorMsg);
@@ -31,6 +45,21 @@ const UserManagement: React.FC = () => {
             console.error('获取用户列表失败:', error);
             setError(error.message || '获取用户列表失败，请检查后端服务是否正常运行');
         }
+    };
+
+    // 分页逻辑
+    const totalPages = Math.ceil(users.length / pageSize);
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const currentUsers = users.slice(startIndex, endIndex);
+
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+    };
+
+    const handlePageSizeChange = (size: number) => {
+        setPageSize(size);
+        setCurrentPage(1); // 重置到第一页
     };
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -80,17 +109,69 @@ const UserManagement: React.FC = () => {
         setModalVisible(true);
     };
 
+    const handleSearch = (searchText: string) => {
+        setSearchText(searchText);
+        // 在本地数据中进行搜索过滤
+        const filtered = users.filter(user =>
+            user.username.toLowerCase().includes(searchText.toLowerCase()) ||
+            user.phone?.toLowerCase().includes(searchText.toLowerCase())
+        );
+        setFilteredUsers(filtered);
+        setCurrentPage(1); // 重置到第一页
+    };
+
+    const columns = [
+        {
+            key: 'username',
+            title: '用户名',
+            sortable: true,
+            width: '30%',
+            render: (value: any, record: User) => record.username
+        },
+        {
+            key: 'password',
+            title: '密码',
+            sortable: false,
+            width: '25%',
+            render: (value: any, record: User) => '******'
+        },
+        {
+            key: 'phone',
+            title: '手机号',
+            sortable: true,
+            width: '25%',
+            render: (value: any, record: User) => record.phone || '-'
+        }
+    ];
+
+    const actions = [
+        {
+            key: 'edit',
+            label: '编辑',
+            variant: 'primary' as const,
+            icon: <EditIcon />,
+            onClick: (record: User) => openModal(record)
+        },
+        {
+            key: 'delete',
+            label: '删除',
+            variant: 'danger' as const,
+            icon: <DeleteIcon />,
+            onClick: (record: User) => handleDelete(record.id)
+        }
+    ];
+
     return (
         <div className={styles.container}>
             <div className={styles.header}>
                 <h1 className={styles.title}>用户管理</h1>
-                <button className={styles.primaryButton} onClick={() => openModal()}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
+                <Button
+                    variant="primary"
+                    onClick={() => openModal()}
+                    icon={<PlusIcon />}
+                >
                     新建用户
-                </button>
+                </Button>
             </div>
 
             {error && (
@@ -99,55 +180,30 @@ const UserManagement: React.FC = () => {
                 </div>
             )}
 
-            <div className={styles.table}>
-                <div className={styles.tableHeader}>
-                    <div className={styles.tableHeaderCell}>用户名</div>
-                    <div className={styles.tableHeaderCell}>密码</div>
-                    <div className={styles.tableHeaderCell}>手机号</div>
-                    <div className={styles.tableHeaderCell} style={{ textAlign: 'right' }}>操作</div>
-                </div>
-                <div className={styles.tableBody}>
-                    {loading ? (
-                        <div className={styles.loading}>加载中...</div>
-                    ) : users.length === 0 ? (
-                        <div className={styles.empty}>暂无数据</div>
-                    ) : (
-                        users.map((user) => (
-                            <div key={user.id} className={styles.tableRow}>
-                                <div className={styles.tableCell}>{user.username}</div>
-                                <div className={styles.tableCell}>******</div>
-                                <div className={styles.tableCell}>{user.phone || '-'}</div>
-                                <div className={styles.tableCell} style={{ justifyContent: 'flex-end' }}>
-                                    <div className={styles.actionButtons}>
-                                        <button
-                                            className={styles.primaryButton}
-                                            onClick={() => openModal(user)}
-                                            style={{ padding: '4px 8px', marginRight: '8px' }}
-                                        >
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                            </svg>
-                                            编辑
-                                        </button>
-                                        <button
-                                            className={styles.dangerButton}
-                                            onClick={() => handleDelete(user.id)}
-                                            style={{ padding: '4px 8px' }}
-                                        >
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                <polyline points="3 6 5 6 21 6"></polyline>
-                                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                            </svg>
-                                            删除
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        ))
-                    )}
-                </div>
-            </div>
+            <SearchBar
+                placeholder="搜索用户名或手机号..."
+                onSearch={handleSearch}
+                initialValue={searchText}
+            />
+
+            <DataTable
+                data={filteredUsers.slice((currentPage - 1) * pageSize, currentPage * pageSize)}
+                columns={columns}
+                actions={actions}
+                loading={loading}
+                emptyText="暂无用户数据"
+            />
+
+            {/* 分页组件 */}
+            {filteredUsers.length > 0 && (
+                <Pagination
+                    total={filteredUsers.length}
+                    currentPage={currentPage}
+                    pageSize={pageSize}
+                    onPageChange={handlePageChange}
+                    onPageSizeChange={handlePageSizeChange}
+                />
+            )}
 
             <OperationTipModal
                 open={tipModal.open}
@@ -156,78 +212,67 @@ const UserManagement: React.FC = () => {
                 type={tipModal.type}
             />
 
-            {/* 新建/编辑用户的模态框 */}
-            {modalVisible && (
-                <div className={styles.modal}>
-                    <div className={styles.modalContent}>
-                        <div className={styles.modalHeader}>
-                            <h2 className={styles.modalTitle}>
-                                {editingUser ? '编辑用户' : '新增用户'}
-                            </h2>
-                            <button
-                                className={styles.modalClose}
-                                onClick={() => {
-                                    setModalVisible(false);
-                                    setEditingUser(null);
-                                }}
-                            >
-                                ×
-                            </button>
-                        </div>
-                        <form onSubmit={handleSubmit} className={styles.form}>
-                            <div className={styles.formGroup}>
-                                <label htmlFor="username">用户名</label>
-                                <input
-                                    type="text"
-                                    id="username"
-                                    name="username"
-                                    defaultValue={editingUser?.username}
-                                    required
-                                />
-                            </div>
-                            <div className={styles.formGroup}>
-                                <label htmlFor="password">密码</label>
-                                <input
-                                    type="password"
-                                    id="password"
-                                    name="password"
-                                    required={!editingUser}
-                                />
-                            </div>
-                            <div className={styles.formGroup}>
-                                <label htmlFor="phone">手机号</label>
-                                <input
-                                    type="tel"
-                                    id="phone"
-                                    name="phone"
-                                    defaultValue={editingUser?.phone}
-                                    pattern="[0-9]{11}"
-                                    placeholder="请输入11位手机号"
-                                />
-                            </div>
-                            <div className={styles.modalFooter}>
-                                <button
-                                    type="button"
-                                    className={styles.secondaryButton}
-                                    onClick={() => {
-                                        setModalVisible(false);
-                                        setEditingUser(null);
-                                    }}
-                                >
-                                    取消
-                                </button>
-                                <button
-                                    type="submit"
-                                    className={styles.primaryButton}
-                                    disabled={loading}
-                                >
-                                    {loading ? (editingUser ? '更新中...' : '创建中...') : (editingUser ? '更新' : '创建')}
-                                </button>
-                            </div>
-                        </form>
+            <FormModal
+                open={modalVisible}
+                onClose={() => {
+                    setModalVisible(false);
+                    setEditingUser(null);
+                }}
+                title={editingUser ? '编辑用户' : '新增用户'}
+                size="medium"
+            >
+                <form onSubmit={handleSubmit} className={styles.form}>
+                    <div className={styles.formGroup}>
+                        <label htmlFor="username">用户名</label>
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            defaultValue={editingUser?.username}
+                            required
+                        />
                     </div>
-                </div>
-            )}
+                    <div className={styles.formGroup}>
+                        <label htmlFor="password">密码</label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            required={!editingUser}
+                        />
+                    </div>
+                    <div className={styles.formGroup}>
+                        <label htmlFor="phone">手机号</label>
+                        <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            defaultValue={editingUser?.phone}
+                            pattern="[0-9]{11}"
+                            placeholder="请输入11位手机号"
+                        />
+                    </div>
+                    <div className={styles.modalFooter}>
+                        <Button
+                            type="button"
+                            variant="default"
+                            onClick={() => {
+                                setModalVisible(false);
+                                setEditingUser(null);
+                            }}
+                        >
+                            取消
+                        </Button>
+                        <Button
+                            type="submit"
+                            variant="primary"
+                            disabled={loading}
+                        >
+                            {loading ? (editingUser ? '更新中...' : '创建中...') : (editingUser ? '更新' : '创建')}
+                        </Button>
+                    </div>
+                </form>
+            </FormModal>
         </div>
     );
 };

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import styles from './TagForm.module.scss';
-import Button from '../ui/Button/Button';
+import FormInput from '../ui/FormInput/FormInput';
+import ColorPicker from '../ui/ColorPicker/ColorPicker';
+import FormButtons from '../ui/FormButtons/FormButtons';
+import FormItem from '../ui/FormItem/FormItem';
 
 interface TagFormProps {
   initialValues?: {
@@ -13,74 +15,63 @@ interface TagFormProps {
 }
 
 const TagForm: React.FC<TagFormProps> = ({ initialValues, onSubmit, onCancel }) => {
-  const [color, setColor] = useState(initialValues?.color || '#a259ff');
+  const [formData, setFormData] = useState({
+    name: initialValues?.name || '',
+    slug: initialValues?.slug || '',
+    color: initialValues?.color || '#a259ff'
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
 
   return (
-    <form
-      className={styles.tagFormCard}
-      onSubmit={e => {
-        e.preventDefault();
-        const formData = new FormData(e.currentTarget);
-        onSubmit({
-          name: formData.get('name') as string,
-          slug: formData.get('slug') as string,
-          color: formData.get('color') as string,
-        });
-      }}
-    >
-      <div style={{ width: '100%' }}>
-        <label className={styles.formLabel}>标签名称</label>
-        <input
+    <form onSubmit={handleSubmit}>
+      <FormItem>
+        <FormInput
           type="text"
           name="name"
-          className={styles.formInput}
-          defaultValue={initialValues?.name}
+          value={formData.name}
+          onChange={handleInputChange}
+          placeholder="请输入标签名称"
+          label="标签名称"
           required
         />
-      </div>
-      <div style={{ width: '100%' }}>
-        <label className={styles.formLabel}>标签别名</label>
-        <input
+      </FormItem>
+
+      <FormItem>
+        <FormInput
           type="text"
           name="slug"
-          className={styles.formInput}
-          defaultValue={initialValues?.slug}
+          value={formData.slug}
+          onChange={handleInputChange}
+          placeholder="请输入标签别名"
+          label="标签别名"
           required
         />
-      </div>
-      <div className={styles.colorRow} style={{ width: '100%' }}>
-        <label className={styles.formLabel} style={{ marginBottom: 0 }}>标签颜色</label>
-        <input
-          type="color"
-          name="color"
-          value={color}
-          onChange={e => setColor(e.target.value)}
-          className={styles.colorInput}
+      </FormItem>
+
+      <FormItem>
+        <ColorPicker
+          value={formData.color}
+          onChange={(color) => setFormData(prev => ({ ...prev, color }))}
+          label="标签颜色"
           required
         />
-        <span
-          className={styles.colorPreview}
-          style={{ background: color }}
-        />
-      </div>
-      <div className={styles.buttonRow}>
-        {onCancel && (
-          <Button
-            type="button"
-            className={`${styles.formButton} ${styles.cancel}`}
-            onClick={onCancel}
-          >
-            取消
-          </Button>
-        )}
-        <Button
-          type="submit"
-          variant="primary"
-          className={styles.formButton}
-        >
-          确定
-        </Button>
-      </div>
+      </FormItem>
+
+      <FormButtons
+        onCancel={onCancel}
+        onSubmit={handleSubmit}
+        submitText="确定"
+        cancelText="取消"
+      />
     </form>
   );
 };

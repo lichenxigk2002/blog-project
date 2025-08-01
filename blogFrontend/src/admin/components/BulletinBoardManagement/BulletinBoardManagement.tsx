@@ -5,6 +5,11 @@ import styles from './BulletinBoardManagement.module.scss';
 import Pagination from "@/admin/components/ui/Pagination/Pagination";
 import BulletinBoardForm from './BulletinBoardForm';
 import OperationTipModal from '../ui/OperationTipModal/OperationTipModal';
+import StatsCard from '../ui/StatsCard/StatsCard';
+import SearchBar from '../ui/SearchBar/SearchBar';
+import DataTable from '../ui/DataTable/DataTable';
+import FormModal from '../ui/FormModal/FormModal';
+import { PlusIcon, EditIcon, DeleteIcon } from '../ui/Icons/Icons';
 
 const statusMap: Record<string, { label: string; color: string }> = {
     pending: { label: '待审核', color: '#FFC107' },
@@ -40,6 +45,7 @@ const BulletinBoardManagement: React.FC = () => {
                 setMessages(response.records);
                 setFilteredMessages(response.records);
                 setTotal(response.total);
+                setCurrentPage(1); // 重置到第一页
             } else {
                 console.error('Invalid response format:', response);
                 setMessages([]);
@@ -116,8 +122,17 @@ const BulletinBoardManagement: React.FC = () => {
         }
     };
 
-    const handleSearch = () => {
-        fetchMessages();
+    const handleSearch = (searchText: string) => {
+        setSearchText(searchText);
+        // 在本地数据中进行搜索过滤
+        const filtered = messages.filter(message =>
+            message.name.toLowerCase().includes(searchText.toLowerCase()) ||
+            message.email.toLowerCase().includes(searchText.toLowerCase()) ||
+            message.content.toLowerCase().includes(searchText.toLowerCase())
+        );
+        setFilteredMessages(filtered);
+        setTotal(filtered.length);
+        setCurrentPage(1); // 重置到第一页
     };
 
     const handleSort = (field: string) => {
@@ -177,158 +192,102 @@ const BulletinBoardManagement: React.FC = () => {
         rejectedMessages: messages?.filter(m => m.status === 'rejected').length || 0,
     };
 
+    const columns = [
+        {
+            key: 'name',
+            title: '姓名',
+            sortable: true,
+            width: '15%',
+            render: (value: any, record: BulletinBoardProps) => record.name
+        },
+        {
+            key: 'email',
+            title: '邮箱',
+            sortable: true,
+            width: '20%',
+            render: (value: any, record: BulletinBoardProps) => record.email
+        },
+        {
+            key: 'gender',
+            title: '性别',
+            sortable: true,
+            width: '10%',
+            render: (value: any, record: BulletinBoardProps) => record.gender
+        },
+        {
+            key: 'status',
+            title: '状态',
+            sortable: true,
+            width: '15%',
+            render: (value: any, record: BulletinBoardProps) => (
+                <span
+                    className={`${styles.statusTag} ${styles[record.status || 'pending']}`}
+                >
+                    {statusMap[record.status || 'pending'].label}
+                </span>
+            )
+        },
+        {
+            key: 'content',
+            title: '内容',
+            sortable: false,
+            width: '30%',
+            render: (value: any, record: BulletinBoardProps) => record.content
+        }
+    ];
+
+    const actions = [
+        {
+            key: 'edit',
+            label: '编辑',
+            variant: 'primary' as const,
+            icon: <EditIcon />,
+            onClick: (record: BulletinBoardProps) => openModal(record)
+        },
+        {
+            key: 'delete',
+            label: '删除',
+            variant: 'danger' as const,
+            icon: <DeleteIcon />,
+            onClick: (record: BulletinBoardProps) => {
+                setDeletingMessage(record);
+                setDeleteModalVisible(true);
+            }
+        }
+    ];
+
     return (
         <div className={styles.container}>
             <div className={styles.header}>
                 <h1 className={styles.title}>留言板管理</h1>
                 <button className={styles.primaryButton} onClick={() => openModal()}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
+                    <PlusIcon />
                     新建留言
                 </button>
             </div>
 
-            <div className={styles.stats}>
-                <div className={styles.statCard}>
-                    <div className={styles.statTitle}>留言总数</div>
-                    <div className={styles.statValue}>{stats.totalMessages}</div>
-                </div>
-                <div className={styles.statCard}>
-                    <div className={styles.statTitle}>待审核</div>
-                    <div className={styles.statValue}>{stats.pendingMessages}</div>
-                </div>
-                <div className={styles.statCard}>
-                    <div className={styles.statTitle}>已通过</div>
-                    <div className={styles.statValue}>{stats.approvedMessages}</div>
-                </div>
-                <div className={styles.statCard}>
-                    <div className={styles.statTitle}>已拒绝</div>
-                    <div className={styles.statValue}>{stats.rejectedMessages}</div>
-                </div>
-            </div>
+            <StatsCard
+                stats={[
+                    { title: '留言总数', value: stats.totalMessages },
+                    { title: '待审核', value: stats.pendingMessages },
+                    { title: '已通过', value: stats.approvedMessages },
+                    { title: '已拒绝', value: stats.rejectedMessages }
+                ]}
+            />
 
-            <div className={styles.searchBar}>
-                <input
-                    type="text"
-                    className={styles.searchInput}
-                    placeholder="搜索留言内容..."
-                    value={searchText}
-                    onChange={(e) => setSearchText(e.target.value)}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                            handleSearch();
-                        }
-                    }}
-                />
-                <button
-                    className={styles.searchButton}
-                    onClick={handleSearch}
-                >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                    搜索
-                </button>
-            </div>
+            <SearchBar
+                placeholder="搜索留言内容..."
+                onSearch={handleSearch}
+                initialValue={searchText}
+            />
 
-            <div className={styles.table}>
-                <div className={styles.tableHeader}>
-                    <div
-                        className={`${styles.tableHeaderCell} ${styles.sortable}`}
-                        onClick={() => handleSort('name')}
-                    >
-                        姓名
-                        {sortField === 'name' && (
-                            <span className={styles.sortIcon}>
-                                {sortOrder === 'asc' ? '↑' : '↓'}
-                            </span>
-                        )}
-                    </div>
-                    <div
-                        className={`${styles.tableHeaderCell} ${styles.sortable}`}
-                        onClick={() => handleSort('email')}
-                    >
-                        邮箱
-                        {sortField === 'email' && (
-                            <span className={styles.sortIcon}>
-                                {sortOrder === 'asc' ? '↑' : '↓'}
-                            </span>
-                        )}
-                    </div>
-                    <div
-                        className={`${styles.tableHeaderCell} ${styles.sortable}`}
-                        onClick={() => handleSort('gender')}
-                    >
-                        性别
-                        {sortField === 'gender' && (
-                            <span className={styles.sortIcon}>
-                                {sortOrder === 'asc' ? '↑' : '↓'}
-                            </span>
-                        )}
-                    </div>
-                    <div
-                        className={`${styles.tableHeaderCell} ${styles.sortable}`}
-                        onClick={() => handleSort('status')}
-                    >
-                        状态
-                        {sortField === 'status' && (
-                            <span className={styles.sortIcon}>
-                                {sortOrder === 'asc' ? '↑' : '↓'}
-                            </span>
-                        )}
-                    </div>
-                    <div className={styles.tableHeaderCell}>内容</div>
-                    <div className={styles.tableHeaderCell}>操作</div>
-                </div>
-
-                <div className={styles.tableBody}>
-                    {filteredMessages.map((message) => (
-                        <div key={message.id} className={styles.tableRow}>
-                            <div className={styles.tableCell}>{message.name}</div>
-                            <div className={styles.tableCell}>{message.email}</div>
-                            <div className={styles.tableCell}>{message.gender}</div>
-                            <div className={styles.tableCell}>
-                                <span
-                                    className={`${styles.statusTag} ${styles[message.status || 'pending']}`}
-                                >
-                                    {statusMap[message.status || 'pending'].label}
-                                </span>
-                            </div>
-                            <div className={styles.tableCell}>{message.content}</div>
-                            <div className={styles.tableCell}>
-                                <div className={styles.actionButtons}>
-                                    <button
-                                        className={styles.primaryButton}
-                                        onClick={() => openModal(message)}
-                                    >
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                        </svg>
-                                        编辑
-                                    </button>
-                                    <button
-                                        className={styles.dangerButton}
-                                        onClick={() => {
-                                            setDeletingMessage(message);
-                                            setDeleteModalVisible(true);
-                                        }}
-                                    >
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <polyline points="3 6 5 6 21 6"></polyline>
-                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                        </svg>
-                                        删除
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
+            <DataTable
+                data={filteredMessages.slice((currentPage - 1) * pageSize, currentPage * pageSize)}
+                columns={columns}
+                actions={actions}
+                loading={loading}
+                emptyText="暂无留言数据"
+            />
 
             <Pagination
                 currentPage={currentPage}
@@ -338,53 +297,45 @@ const BulletinBoardManagement: React.FC = () => {
                 onPageSizeChange={setPageSize}
             />
 
-            {modalVisible && (
-                <div className={styles.modal}>
-                    <div className={styles.modalContent}>
-                        <div className={styles.modalHeader}>
-                            <h2 className={styles.modalTitle}>
-                                {editingMessage ? '编辑留言' : '新增留言'}
-                            </h2>
-                            <button
-                                className={styles.modalClose}
-                                onClick={() => setModalVisible(false)}
-                            >
-                                ×
-                            </button>
-                        </div>
-                        <BulletinBoardForm
-                            initialValues={editingMessage || undefined}
-                            onSubmit={handleSubmit}
-                        />
-                    </div>
-                </div>
-            )}
+            <FormModal
+                open={modalVisible}
+                onClose={() => setModalVisible(false)}
+                title={editingMessage ? '编辑留言' : '新增留言'}
+                size="large"
+            >
+                <BulletinBoardForm
+                    initialValues={editingMessage || undefined}
+                    onSubmit={handleSubmit}
+                />
+            </FormModal>
 
-            {deleteModalVisible && (
-                <div className={styles.modal}>
-                    <div className={styles.modalContent}>
-                        <h2>确认删除</h2>
-                        <p>确定要删除这条留言吗？此操作不可恢复。</p>
-                        <div className={styles.modalButtons}>
-                            <button
-                                className={styles.dangerButton}
-                                onClick={handleDelete}
-                            >
-                                确认删除
-                            </button>
-                            <button
-                                className={styles.button}
-                                onClick={() => {
-                                    setDeleteModalVisible(false);
-                                    setDeletingMessage(null);
-                                }}
-                            >
-                                取消
-                            </button>
-                        </div>
-                    </div>
+            <FormModal
+                open={deleteModalVisible}
+                onClose={() => setDeleteModalVisible(false)}
+                title="确认删除"
+                size="small"
+            >
+                <div className={styles.modalBody}>
+                    <p>确定要删除这条留言吗？此操作不可恢复。</p>
                 </div>
-            )}
+                <div className={styles.modalFooter}>
+                    <button
+                        className={styles.dangerButton}
+                        onClick={handleDelete}
+                    >
+                        确认删除
+                    </button>
+                    <button
+                        className={styles.button}
+                        onClick={() => {
+                            setDeleteModalVisible(false);
+                            setDeletingMessage(null);
+                        }}
+                    >
+                        取消
+                    </button>
+                </div>
+            </FormModal>
 
             <OperationTipModal
                 open={tipModal.open}

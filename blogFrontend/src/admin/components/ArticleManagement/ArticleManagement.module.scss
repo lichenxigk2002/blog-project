@@ -22,35 +22,7 @@
   text-shadow: 2px 2px 4px rgba($primary, 0.1);
 }
 
-.searchBar {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 16px;
-  position: relative;
-  z-index: 1;
-}
 
-.searchInput {
-  &:focus {
-    outline: none;
-    border-color: $primary;
-    box-shadow: 0 0 0 3px rgba($primary, 0.2);
-  }
-}
-
-.searchButton {
-  svg {
-    width: 16px;
-    height: 16px;
-  }
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: $shadow-hover;
-    background: linear-gradient(90deg, $primary-light 0%, $accent 100%);
-    color: $primary;
-  }
-}
 
 .table:hover {
   box-shadow: 0 6px 24px rgba(180, 120, 255, 0.15);
@@ -142,39 +114,6 @@
   min-width: 120px;
 }
 
-.modalHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-  position: relative;
-  z-index: 1;
-}
-
-.modalTitle {
-  font-size: 20px;
-  font-weight: 600;
-  color: #a259ff;
-  margin: 0;
-  font-family: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
-}
-
-.modalClose {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #a259ff;
-  padding: 8px;
-  border-radius: 12px;
-  transition: all 0.3s ease;
-}
-
-.modalClose:hover {
-  background: rgba(251, 234, 255, 0.5);
-  transform: rotate(90deg);
-}
-
 .modalFooter {
   display: flex;
   justify-content: flex-end;
@@ -186,42 +125,7 @@
   z-index: 1;
 }
 
-.stats {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 16px;
-  position: relative;
-  z-index: 1;
-}
 
-.statCard {
-  background: rgba(255, 255, 255, 0.95);
-  padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(180, 120, 255, 0.1);
-  border: 2px solid #fbeaff;
-  transition: all 0.3s ease;
-}
-
-.statCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(180, 120, 255, 0.15);
-}
-
-.statTitle {
-  color: #a259ff;
-  font-size: 14px;
-  margin-bottom: 8px;
-  font-family: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
-}
-
-.statValue {
-  font-size: 24px;
-  font-weight: 600;
-  color: #6c3ec1;
-  font-family: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
-}
 
 .loadingSpinner {
   width: 48px;
@@ -243,19 +147,16 @@
 }
 
 /* 滚动条样式 */
-.modalContent::-webkit-scrollbar,
 .table::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
-.modalContent::-webkit-scrollbar-thumb,
 .table::-webkit-scrollbar-thumb {
   background: #a7e9ff;
   border-radius: 3px;
 }
 
-.modalContent::-webkit-scrollbar-track,
 .table::-webkit-scrollbar-track {
   background: #fbeaff;
   border-radius: 3px;

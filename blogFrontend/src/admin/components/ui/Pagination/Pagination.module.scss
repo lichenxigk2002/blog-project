@@ -23,6 +23,10 @@ $font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
     transition: all 0.2s ease;
 }
 
+@mixin transition($property: all, $duration: 0.2s) {
+    transition: $property $duration ease;
+}
+
 .pagination {
     display: flex;
     justify-content: space-between;
@@ -81,6 +85,105 @@ $font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
     text-align: center;
 }
 
+// 自定义下拉菜单样式
+.select {
+    position: relative;
+    width: 100px;
+    box-sizing: border-box;
+}
+
+.selectSelector {
+    width: 100%;
+    padding: 8px 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    font-size: 14px;
+    @include transition();
+    cursor: pointer;
+    font-family: $font-main;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+
+    &:hover {
+        border-color: $primary;
+    }
+
+    &:focus {
+        outline: none;
+        border-color: $primary;
+        box-shadow: 0 0 0 3px rgba($primary, 0.2);
+    }
+
+    &::after {
+        content: '';
+        width: 0;
+        height: 0;
+        border-left: 4px solid transparent;
+        border-right: 4px solid transparent;
+        border-top: 4px solid #666;
+        margin-left: 8px;
+        transition: transform 0.2s ease;
+    }
+}
+
+.selectDropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    margin-top: 4px;
+    box-shadow: 0 4px 12px rgba(180, 120, 255, 0.15);
+    z-index: 9999;
+    max-height: 200px;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: $primary;
+        border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: #f0f0f0;
+        border-radius: 3px;
+    }
+}
+
+.selectOption {
+    padding: 8px 12px;
+    cursor: pointer;
+    @include transition(all, 0.2s);
+    color: #333;
+    font-size: 14px;
+    font-family: $font-main;
+
+    &:hover {
+        background: rgba($primary, 0.1);
+        color: $primary;
+    }
+
+    &.selected {
+        background: rgba($primary, 0.15);
+        color: $primary;
+        font-weight: 600;
+    }
+}
+
+// 保留原有的pageSizeSelect样式作为备用
 .pageSizeSelect {
     padding: 8px 12px;
     border: $input-border;
@@ -125,6 +228,10 @@ $font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
     .paginationButton {
         min-width: 70px;
         padding: 6px 12px;
+    }
+
+    .select {
+        width: 90px;
     }
 
     .pageSizeSelect {

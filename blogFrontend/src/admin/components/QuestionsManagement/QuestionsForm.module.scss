@@ -197,7 +197,7 @@ $font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
         border: $input-border;
         border-radius: $input-radius;
         box-shadow: 0 4px 12px rgba(180, 120, 255, 0.15);
-        z-index: 1001;
+        z-index: 2000;
         max-height: 200px;
         overflow-y: auto;
 

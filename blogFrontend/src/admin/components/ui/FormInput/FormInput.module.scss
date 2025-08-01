@@ -1,0 +1,105 @@
+@import '../../../styles/shared.module.scss';
+
+.formInput {
+  width: 100%;
+  box-sizing: border-box;
+
+  &.vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .label {
+      font-size: 14px;
+      font-weight: 600;
+      color: $primary;
+      font-family: $font-main;
+      margin-bottom: 2px;
+    }
+  }
+
+  &.horizontal {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .label {
+      font-size: 14px;
+      font-weight: 600;
+      color: $primary;
+      font-family: $font-main;
+      white-space: nowrap;
+    }
+  }
+}
+
+.input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 2px solid $primary-light;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  color: $primary-dark;
+  font-size: 14px;
+  @include transition();
+  font-family: $font-main;
+  box-sizing: border-box;
+
+  &:hover {
+    border-color: $primary;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba($primary, 0.2);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: rgba(255, 255, 255, 0.5);
+  }
+
+  &::placeholder {
+    color: #a259ff;
+    opacity: 0.7;
+  }
+}
+
+.textarea {
+  width: 100%;
+  min-height: 20px;
+  padding: 8px 12px;
+  border: 2px solid $primary-light;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  color: $primary-dark;
+  font-size: 14px;
+  line-height: 1.6;
+  resize: vertical;
+  @include transition();
+  font-family: $font-main;
+  box-sizing: border-box;
+
+  &:hover {
+    border-color: $primary;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba($primary, 0.2);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: rgba(255, 255, 255, 0.5);
+  }
+
+  &::placeholder {
+    color: #a259ff;
+    opacity: 0.7;
+  }
+}

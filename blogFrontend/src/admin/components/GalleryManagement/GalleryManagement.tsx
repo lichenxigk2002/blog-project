@@ -6,6 +6,11 @@ import styles from './GalleryManagement.module.scss';
 import Pagination from "@/admin/components/ui/Pagination/Pagination";
 import OperationTipModal from '../ui/OperationTipModal/OperationTipModal';
 import Button from '../ui/Button/Button';
+import StatsCard from '../ui/StatsCard/StatsCard';
+import SearchBar from '../ui/SearchBar/SearchBar';
+import DataTable from '../ui/DataTable/DataTable';
+import FormModal from '../ui/FormModal/FormModal';
+import { PlusIcon, EditIcon, DeleteIcon } from '../ui/Icons/Icons';
 
 const GalleryManagement: React.FC = () => {
   const [allGalleries, setAllGalleries] = useState<Gallery[]>([]);
@@ -26,7 +31,7 @@ const GalleryManagement: React.FC = () => {
     const start = (currentPage - 1) * pageSize;
     const end = start + pageSize;
     setPaginatedGalleries(filteredGalleries.slice(start, end));
-  }, [currentPage, pageSize, allGalleries]);
+  }, [currentPage, pageSize, filteredGalleries]);
 
   useEffect(() => {
     fetchGalleries();
@@ -90,8 +95,9 @@ const GalleryManagement: React.FC = () => {
     }
   };
 
-  const handleSearch = () => {
+  const handleSearch = (searchText: string) => {
     setCurrentPage(1);
+    setSearchText(searchText);
     fetchGalleries(searchText);
   };
 
@@ -101,145 +107,119 @@ const GalleryManagement: React.FC = () => {
     mostRecentGallery: allGalleries[0]?.title || '-'
   };
 
+  const columns = [
+    {
+      key: 'coverImage',
+      title: '封面',
+      sortable: false,
+      width: '15%',
+      render: (value: any, record: Gallery) => (
+        record.coverImage ? (
+          <img
+            key={record.id}
+            src={record.coverImage}
+            alt={record.title}
+            className={styles.coverImage}
+            onError={(e) => {
+              console.error('图片加载失败:', {
+                originalPath: record.coverImage,
+                error: e
+              });
+              const target = e.target as HTMLImageElement;
+              if (target.src !== '/default-image.jpg') {
+                target.src = '/default-image.jpg';
+              }
+            }}
+          />
+        ) : (
+          <img
+            src="/default-image.jpg"
+            alt="默认封面"
+            className={styles.coverImage}
+          />
+        )
+      )
+    },
+    {
+      key: 'title',
+      title: '标题',
+      sortable: true,
+      width: '20%',
+      render: (value: any, record: Gallery) => record.title
+    },
+    {
+      key: 'description',
+      title: '描述',
+      sortable: false,
+      width: '30%',
+      render: (value: any, record: Gallery) => record.description
+    },
+    {
+      key: 'category',
+      title: '分类',
+      sortable: true,
+      width: '15%',
+      render: (value: any, record: Gallery) => (
+        <span className={styles.categoryTag}>
+          {record.category}
+        </span>
+      )
+    },
+    {
+      key: 'date',
+      title: '创建时间',
+      sortable: true,
+      width: '20%',
+      render: (value: any, record: Gallery) => new Date(record.date).toLocaleDateString()
+    }
+  ];
+
+  const actions = [
+    {
+      key: 'edit',
+      label: '编辑',
+      variant: 'primary' as const,
+      icon: <EditIcon />,
+      onClick: (record: Gallery) => openModal(record)
+    },
+    {
+      key: 'delete',
+      label: '删除',
+      variant: 'danger' as const,
+      icon: <DeleteIcon />,
+      onClick: (record: Gallery) => {
+        setDeletingGallery(record);
+        setDeleteModalVisible(true);
+      }
+    }
+  ];
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <h1 className={styles.title}>相册管理</h1>
-        <Button variant="primary" onClick={() => openModal()} icon={
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
-        }>新建相册</Button>
+        <Button variant="primary" onClick={() => openModal()} icon={<PlusIcon />}>新建相册</Button>
       </div>
 
-      <div className={styles.stats}>
-        <div className={styles.statCard}>
-          <div className={styles.statTitle}>相册总数</div>
-          <div className={styles.statValue}>{stats.totalGalleries}</div>
-        </div>
-        <div className={styles.statCard}>
-          <div className={styles.statTitle}>分类总数</div>
-          <div className={styles.statValue}>{stats.totalCategories}</div>
-        </div>
-        <div className={styles.statCard}>
-          <div className={styles.statTitle}>最新相册</div>
-          <div className={styles.statValue}>{stats.mostRecentGallery}</div>
-        </div>
-      </div>
+      <StatsCard stats={[
+        { title: '相册总数', value: stats.totalGalleries.toString() },
+        { title: '分类总数', value: stats.totalCategories.toString() },
+        { title: '最新相册', value: stats.mostRecentGallery }
+      ]} />
 
-      <div className={styles.searchBar}>
-        <input
-          type="text"
-          className={styles.searchInput}
-          placeholder="搜索相册标题..."
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              handleSearch();
-            }
-          }}
-        />
-        <Button
-          variant="search"
-          onClick={handleSearch}
-          icon={
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-          }
-        >搜索</Button>
-      </div>
+      <SearchBar
+        placeholder="搜索相册标题..."
+        onSearch={handleSearch}
+        initialValue={searchText}
+      />
 
-      <div className={styles.table}>
-        <div className={styles.tableHeader}>
-          <div className={styles.tableHeaderCell}>封面</div>
-          <div className={styles.tableHeaderCell}>标题</div>
-          <div className={styles.tableHeaderCell}>描述</div>
-          <div className={styles.tableHeaderCell}>分类</div>
-          <div className={styles.tableHeaderCell}>创建时间</div>
-          <div className={styles.tableHeaderCell} style={{ textAlign: 'right' }}>操作</div>
-        </div>
-        <div className={styles.tableBody}>
-          {loading ? (
-            <div className={styles.loading}>加载中...</div>
-          ) : allGalleries.length === 0 ? (
-            <div className={styles.empty}>暂无数据</div>
-          ) : (
-            paginatedGalleries.map((gallery) => (
-              <div key={gallery.id} className={styles.tableRow}>
-                <div className={styles.tableCell}>
-                  {gallery.coverImage ? (
-                    <img
-                      key={gallery.id}
-                      src={gallery.coverImage}
-                      alt={gallery.title}
-                      className={styles.coverImage}
-                      onError={(e) => {
-                        console.error('图片加载失败:', {
-                          originalPath: gallery.coverImage,
-                          error: e
-                        });
-                        const target = e.target as HTMLImageElement;
-                        if (target.src !== '/default-image.jpg') {
-                          target.src = '/default-image.jpg';
-                        }
-                      }}
-                    />
-                  ) : (
-                    <img
-                      src="/default-image.jpg"
-                      alt="默认封面"
-                      className={styles.coverImage}
-                    />
-                  )}
-                </div>
-                <div className={styles.tableCell}>{gallery.title}</div>
-                <div className={styles.tableCell}>{gallery.description}</div>
-                <div className={styles.tableCell}>
-                  <span className={styles.categoryTag}>
-                    {gallery.category}
-                  </span>
-                </div>
-                <div className={styles.tableCell}>
-                  {new Date(gallery.date).toLocaleDateString()}
-                </div>
-                <div className={styles.tableCell} style={{ justifyContent: 'flex-end' }}>
-                  <div className={styles.actionButtons}>
-                    <Button
-                      variant="primary"
-                      style={{ padding: '4px 8px' }}
-                      onClick={() => openModal(gallery)}
-                      icon={
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                        </svg>
-                      }
-                    >编辑</Button>
-                    <Button
-                      variant="danger"
-                      style={{ padding: '4px 8px' }}
-                      onClick={() => {
-                        setDeletingGallery(gallery);
-                        setDeleteModalVisible(true);
-                      }}
-                      icon={
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <polyline points="3 6 5 6 21 6"></polyline>
-                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                        </svg>
-                      }
-                    >删除</Button>
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
+      <DataTable
+        data={paginatedGalleries}
+        columns={columns}
+        actions={actions}
+        loading={loading}
+        emptyText="暂无相册数据"
+      />
 
       <Pagination
         total={total}
@@ -252,52 +232,40 @@ const GalleryManagement: React.FC = () => {
         }}
       />
 
-      {/* 新建/编辑相册的模态框 */}
-      {modalVisible && (
-        <div className={styles.modal}>
-          <div className={styles.modalContent}>
-            <div className={styles.modalHeader}>
-              <h2 className={styles.modalTitle}>
-                {editingGallery ? '编辑相册' : '新增相册'}
-              </h2>
-              <button
-                className={styles.modalClose}
-                onClick={() => setModalVisible(false)}
-              >
-                ×
-              </button>
-            </div>
-            <GalleryForm
-              initialData={editingGallery || undefined}
-              onSubmit={handleSubmit}
-              onCancel={() => setModalVisible(false)}
-            />
-          </div>
-        </div>
-      )}
+      <FormModal
+        open={modalVisible}
+        onClose={() => setModalVisible(false)}
+        title={editingGallery ? '编辑相册' : '新增相册'}
+        size="large"
+      >
+        <GalleryForm
+          initialData={editingGallery || undefined}
+          onSubmit={handleSubmit}
+          onCancel={() => setModalVisible(false)}
+        />
+      </FormModal>
 
-      {/* 删除确认模态框 */}
-      {deleteModalVisible && (
-        <div className={styles.modal}>
-          <div className={styles.modalContent}>
-            <h2>确认删除</h2>
-            <p>确定要删除相册 "{deletingGallery?.title}" 吗？此操作不可恢复。</p>
-            <div className={styles.modalButtons}>
-              <Button
-                variant="danger"
-                onClick={handleDelete}
-              >确认删除</Button>
-              <Button
-                className={styles.button}
-                onClick={() => {
-                  setDeleteModalVisible(false);
-                  setDeletingGallery(null);
-                }}
-              >取消</Button>
-            </div>
-          </div>
+      <FormModal
+        open={deleteModalVisible}
+        onClose={() => setDeleteModalVisible(false)}
+        title="确认删除"
+        size="small"
+      >
+        <p>确定要删除相册 "{deletingGallery?.title}" 吗？此操作不可恢复。</p>
+        <div className={styles.modalFooter}>
+          <Button
+            className={styles.button}
+            onClick={() => {
+              setDeleteModalVisible(false);
+              setDeletingGallery(null);
+            }}
+          >取消</Button>
+          <Button
+            variant="danger"
+            onClick={handleDelete}
+          >确认删除</Button>
         </div>
-      )}
+      </FormModal>
 
       {/* 操作提示弹窗 */}
       <OperationTipModal
