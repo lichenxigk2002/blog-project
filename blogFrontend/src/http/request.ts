@@ -106,18 +106,25 @@ const request = async<T>(url: string, config: RequestConfig = {}): Promise<T> =>
 }
 
 export const http = {
+  //GET请求，用来获取数据
   get: <T>(url: string, params?: Record<string, any>, config?: RequestConfig) =>
     request<T>(url, { method: 'GET', params, ...config }),
+  //POST请求，用来创建数据
   post: <T>(url: string, data?: any, config?: RequestConfig) =>
     request<T>(url, { method: 'POST', ...config, body: data instanceof FormData ? data : JSON.stringify(data) }),
+  //PUT请求，用来更新数据
   put: <T>(url: string, data?: any, config?: RequestConfig) =>
     request<T>(url, { method: 'PUT', body: JSON.stringify(data), ...config }),
+  //DELETE请求，用来删除数据
   delete: <T>(url: string, config?: RequestConfig) =>
     request<T>(url, { method: 'DELETE', ...config }),
+  //PATCH请求，用来更新部分数据
   patch: <T>(url: string, data?: any, config?: RequestConfig) =>
     request<T>(url, { method: 'PATCH', body: JSON.stringify(data), ...config }),
+  //HEAD请求，用来获取响应头信息
   head: <T>(url: string, config?: RequestConfig) =>
     request<T>(url, { method: 'HEAD', ...config }),
+  //OPTIONS请求，用来获取资源支持的HTTP方法
   options: <T>(url: string, config?: RequestConfig) =>
     request<T>(url, { method: 'OPTIONS', ...config })
 }
