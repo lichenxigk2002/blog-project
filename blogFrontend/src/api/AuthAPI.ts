@@ -38,7 +38,7 @@ export const AuthAPI = {
     // 邮箱删除
     deleteEmail: (id: number) => http.delete(`/user/${id}/email`),
     // 邮箱绑定
-    bindEmail:(userId: number, email: string, code: string) => http.post(`/auth/email/bind`, { userId, email, code }),
+    bindEmail: (userId: number, email: string, code: string) => http.post(`/auth/email/bind`, { userId, email, code }),
     // 注册
     register: (userData: UserDTO) => http.post<ApiResponse<User>>('/user/register', userData),
     // 短信登录

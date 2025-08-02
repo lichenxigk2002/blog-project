@@ -8,10 +8,12 @@ import com.example.blogbackend.dto.UserDTO;
 import com.example.blogbackend.mapper.UserMapper;
 import com.example.blogbackend.service.IUserService;
 import com.example.blogbackend.service.ISmsService;
+import com.example.blogbackend.utils.JwtHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author .example.blogbackend.blogbackend
@@ -26,6 +28,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Autowired
     private ISmsService smsService;
+
+    @Autowired
+    private JwtHelper jwtHelper;
 
     @Override
     public Result login(User user) {
@@ -57,12 +62,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             return Result.build(null, 400, "密码错误");
         }
 
+        // 生成JWT token - 与邮箱登录保持一致
+        String token = jwtHelper.createToken(existingUser.getId().longValue());
+
         // 创建一个不包含密码的用户对象返回
         User responseUser = new User();
         responseUser.setId(existingUser.getId());
         responseUser.setUsername(existingUser.getUsername());
+        responseUser.setAvatar(existingUser.getAvatar());
+        responseUser.setPhone(existingUser.getPhone());
+        responseUser.setLoginType(existingUser.getLoginType());
 
-        return Result.ok(responseUser);
+        // 返回包含token和用户信息的响应 - 与邮箱登录保持一致
+        Map<String, Object> data = Map.of(
+                "token", token,
+                "user", responseUser);
+
+        return Result.ok(data);
     }
 
     @Override
@@ -88,7 +104,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
         // 保存用户
         userMapper.insert(newUser);
-        return Result.ok("注册成功");
+
+        // 生成JWT token - 与邮箱登录保持一致
+        String token = jwtHelper.createToken(newUser.getId().longValue());
+
+        // 返回用户信息（不包含密码）
+        User responseUser = new User();
+        responseUser.setId(newUser.getId());
+        responseUser.setUsername(newUser.getUsername());
+        responseUser.setLoginType(newUser.getLoginType());
+
+        // 返回包含token和用户信息的响应 - 与邮箱登录保持一致
+        Map<String, Object> data = Map.of(
+                "token", token,
+                "user", responseUser);
+
+        return Result.ok(data);
     }
 
     @Override
@@ -112,13 +143,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         user.setLoginType("sms");
         userMapper.updateById(user);
 
+        // 生成JWT token - 与邮箱登录保持一致
+        String token = jwtHelper.createToken(user.getId().longValue());
+
         // 返回用户信息（不包含密码）
         User responseUser = new User();
         responseUser.setId(user.getId());
         responseUser.setUsername(user.getUsername());
         responseUser.setPhone(user.getPhone());
+        responseUser.setAvatar(user.getAvatar());
+        responseUser.setLoginType(user.getLoginType());
 
-        return Result.ok(responseUser);
+        // 返回包含token和用户信息的响应 - 与邮箱登录保持一致
+        Map<String, Object> data = Map.of(
+                "token", token,
+                "user", responseUser);
+
+        return Result.ok(data);
     }
 
     @Override

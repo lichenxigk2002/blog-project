@@ -15,7 +15,7 @@ import Register from '../Register/Register';
 // 导入API
 import { AuthAPI } from '@/api/AuthAPI';
 import OperationTipModal from '@/components/OperationTipModal/OperationTipModal';
-import {useThrottle} from "@/hooks/useThrottle";
+import { useThrottle } from "@/hooks/useThrottle";
 
 // 定义登录组件
 const Login: React.FC = () => {
@@ -212,6 +212,7 @@ const Login: React.FC = () => {
 
   // 发送验证码
   const handleSendCode = async () => {
+    if (!showEmailLogin) return;
     if (!formData.email) {
       showTip('warning', '请输入邮箱');
       return;
@@ -221,7 +222,7 @@ const Login: React.FC = () => {
       const response = await AuthAPI.sendEmailCode(formData.email, 'login');
       if (response.message === '验证码已发送') {
         setCountdown(60);
-        showTip('success', '验证码已发送',1200);
+        showTip('success', '验证码已发送', 1200);
       }
     } catch (error) {
       showTip('error', '验证码发送失败');
