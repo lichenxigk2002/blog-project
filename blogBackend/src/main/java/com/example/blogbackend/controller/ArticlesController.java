@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/articles")
@@ -47,6 +48,49 @@ public class ArticlesController {
         response.put("pageSize", pageSize);
 
         logger.info("Response data: {}", response);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/list-simple")
+    public ResponseEntity<Map<String, Object>> getArticlesSimple(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int pageSize) {
+        logger.info("Getting articles simple list with page={}, pageSize={}", page, pageSize);
+
+        Page<Articles> articlesPage = iarticlesService.listWithTags(page, pageSize);
+
+        // 创建简化的文章列表，不包含content和htmlContent
+        List<Map<String, Object>> simpleArticles = articlesPage.getRecords().stream()
+                .map(article -> {
+                    Map<String, Object> simpleArticle = new HashMap<>();
+                    simpleArticle.put("id", article.getId());
+                    simpleArticle.put("title", article.getTitle());
+                    simpleArticle.put("slug", article.getSlug());
+                    simpleArticle.put("excerpt", article.getExcerpt());
+                    simpleArticle.put("coverImage", article.getCoverImage());
+                    simpleArticle.put("authorId", article.getAuthorId());
+                    simpleArticle.put("status", article.getStatus());
+                    simpleArticle.put("postType", article.getPostType());
+                    simpleArticle.put("createdAt", article.getCreatedAt());
+                    simpleArticle.put("updatedAt", article.getUpdatedAt());
+                    simpleArticle.put("publishedAt", article.getPublishedAt());
+                    simpleArticle.put("viewCount", article.getViewCount());
+                    simpleArticle.put("likeCount", article.getLikeCount());
+                    simpleArticle.put("readingTime", article.getReadingTime());
+                    simpleArticle.put("isTop", article.getIsTop());
+                    simpleArticle.put("sortOrder", article.getSortOrder());
+                    simpleArticle.put("tags", article.getTags());
+                    return simpleArticle;
+                })
+                .collect(Collectors.toList());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("data", simpleArticles);
+        response.put("total", articlesPage.getTotal());
+        response.put("page", page);
+        response.put("pageSize", pageSize);
+
+        logger.info("Response simple data: {}", response);
         return ResponseEntity.ok(response);
     }
 
@@ -159,6 +203,22 @@ public class ArticlesController {
         } catch (Exception e) {
             logger.error("Error incrementing view count for article {}: {}", id, e.getMessage());
             return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PutMapping("/batch-sort")
+    public ResponseEntity<?> batchUpdateSort(@RequestBody List<Map<String, Object>> sortData) {
+        try {
+            logger.info("Updating article sort order: {}", sortData);
+            boolean success = iarticlesService.batchUpdateSort(sortData);
+            if (success) {
+                return ResponseEntity.ok().body(Map.of("message", "排序更新成功"));
+            } else {
+                return ResponseEntity.badRequest().body(Map.of("message", "排序更新失败"));
+            }
+        } catch (Exception e) {
+            logger.error("Error updating article sort order: {}", e.getMessage());
+            return ResponseEntity.internalServerError().body(Map.of("message", "排序更新失败: " + e.getMessage()));
         }
     }
 }

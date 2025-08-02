@@ -30,6 +30,10 @@ public class ArticleDTO {
     private Boolean shouldNotify; // 是否推送邮件
     private List<Long> notifyUserIds; // 推送给哪些用户ID
 
+    // 新增：置顶和排序字段
+    private Boolean isTop; // 是否置顶
+    private Integer sortOrder; // 排序权重
+
     // getter/setter 省略，可用 Lombok @Data
     public Integer getId() {
         return id;

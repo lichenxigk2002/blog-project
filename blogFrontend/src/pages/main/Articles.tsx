@@ -3,11 +3,11 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import styles from './Articles/Articles.module.scss';
 import { motion } from 'framer-motion';
 import Head from "next/head";
-import { FiClock, FiEye, FiHeart, FiTag, FiSearch, FiArrowUp, FiArrowDown } from 'react-icons/fi';
+import { FiClock, FiEye, FiHeart, FiTag, FiSearch, FiArrowUp, FiArrowDown, FiStar } from 'react-icons/fi';
 import { useLoading } from '@/hooks/useLoading';
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
 import LoadingMore from '@/components/LoadingMore/LoadingMore';
-import { Article } from '@/types/Article';
+import { Article, ArticleListItem } from '@/types/Article';
 import { ArticlesAPI } from '@/api/ArticlesAPI';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import { useGlobalTip } from '@/hooks/useGlobalTip';
@@ -15,19 +15,19 @@ import { httpError } from '@/http/core/error';
 
 // 新增：定义props类型
 interface ArticlesProps {
-    initialArticles: Article[];
+    initialArticles: ArticleListItem[];
 }
 
 const ITEMS_PER_PAGE = 10; // 每次加载的文章数量
 
 const Articles: React.FC<ArticlesProps> = ({ initialArticles }) => {
-    const [articles, setArticles] = useState<Article[]>(initialArticles || []);
-    const [filteredArticles, setFilteredArticles] = useState<Article[]>(initialArticles || []);
+    const [articles, setArticles] = useState<ArticleListItem[]>(initialArticles || []);
+    const [filteredArticles, setFilteredArticles] = useState<ArticleListItem[]>(initialArticles || []);
     const { isLoading, withLoading } = useLoading();
     const [searchInput, setSearchInput] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-    const [visibleArticles, setVisibleArticles] = useState<Article[]>(initialArticles.slice(0, ITEMS_PER_PAGE) || []);
+    const [visibleArticles, setVisibleArticles] = useState<ArticleListItem[]>(initialArticles.slice(0, ITEMS_PER_PAGE) || []);
     const [hasMore, setHasMore] = useState(initialArticles.length > ITEMS_PER_PAGE);
     const observer = useRef<IntersectionObserver | null>(null);
     const loadingRef = useRef<HTMLDivElement>(null);
@@ -52,7 +52,7 @@ const Articles: React.FC<ArticlesProps> = ({ initialArticles }) => {
         if (initialArticles && initialArticles.length > 0) return;
         const fetchArticles = async () => {
             try {
-                const response = await withLoading(ArticlesAPI.getArticles());
+                const response = await withLoading(ArticlesAPI.getArticlesSimple());
                 if (!response) {
                     throw new Error('Empty response from server');
                 }
@@ -65,10 +65,8 @@ const Articles: React.FC<ArticlesProps> = ({ initialArticles }) => {
                     .map((item: any) => ({
                         ...item,
                         slug: item.slug || `article-${item.id}`,
-                        htmlContent: item.htmlContent || item.content,
-                        excerpt: item.excerpt || getExcerpt(item.content),
+                        excerpt: item.excerpt || '',
                         coverImage: item.coverImage || '',
-                        images: Array.isArray(item.images) ? item.images : [],
                         createdAt: item.createdAt || new Date().toISOString(),
                         updatedAt: item.updatedAt || new Date().toISOString(),
                         publishedAt: item.publishedAt || new Date().toISOString(),
@@ -77,7 +75,9 @@ const Articles: React.FC<ArticlesProps> = ({ initialArticles }) => {
                         readingTime: item.readingTime || 5,
                         authorId: item.authorId || 0,
                         status: item.status || 'published',
-                        postType: item.postType || 'article'
+                        postType: item.postType || 'article',
+                        isTop: item.isTop || false,
+                        sortOrder: item.sortOrder || 0
                     }));
 
                 setArticles(processedData);
@@ -106,8 +106,20 @@ const Articles: React.FC<ArticlesProps> = ({ initialArticles }) => {
                 article.title.toLowerCase().includes(query)
             );
         }
-        // 排序
+        // 排序：置顶文章优先，然后按排序值排序
         result.sort((a, b) => {
+            // 首先按置顶状态排序（置顶的排在前面）
+            if (a.isTop && !b.isTop) return -1;
+            if (!a.isTop && b.isTop) return 1;
+
+            // 如果置顶状态相同，按排序值排序（数值大的排在前面）
+            const aSortOrder = a.sortOrder ?? 0;
+            const bSortOrder = b.sortOrder ?? 0;
+            if (aSortOrder !== bSortOrder) {
+                return bSortOrder - aSortOrder;
+            }
+
+            // 如果排序值相同，按发布时间排序
             const dateA = new Date(a.createdAt).getTime();
             const dateB = new Date(b.createdAt).getTime();
             return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
@@ -300,7 +312,10 @@ const Articles: React.FC<ArticlesProps> = ({ initialArticles }) => {
                             onClick={() => handleArticleClick(article.id)}
                         >
                             <div>
-                                <h1 className={styles.articleTitle}>{article.title}</h1>
+                                <h1 className={styles.articleTitle}>
+                                    {article.title}
+                                    {article.isTop && <FiStar className={styles.topArticleIcon} />}
+                                </h1>
                                 <div className={styles.articleMeta}>
                                     <span>{new Date(article.publishedAt).toLocaleDateString()}</span>
                                 </div>
@@ -366,7 +381,7 @@ const Articles: React.FC<ArticlesProps> = ({ initialArticles }) => {
 import { GetStaticProps } from 'next';
 
 export const getStaticProps: GetStaticProps = async () => {
-    let initialArticles: Article[] = [];
+    let initialArticles: ArticleListItem[] = [];
     // 这里的getExcerpt逻辑与组件内一致
     const getExcerpt = (content: string) => {
         const plainText = content
@@ -380,17 +395,15 @@ export const getStaticProps: GetStaticProps = async () => {
         return plainText.slice(0, 200) + (plainText.length > 200 ? '...' : '');
     };
     try {
-        const response = await ArticlesAPI.getArticles();
+        const response = await ArticlesAPI.getArticlesSimple();
         if (response && Array.isArray(response.data)) {
             initialArticles = response.data
                 .filter((item: any) => item.status === 'published')
                 .map((item: any) => ({
                     ...item,
                     slug: item.slug || `article-${item.id}`,
-                    htmlContent: item.htmlContent || item.content,
-                    excerpt: item.excerpt || getExcerpt(item.content),
+                    excerpt: item.excerpt || '',
                     coverImage: item.coverImage || '',
-                    images: Array.isArray(item.images) ? item.images : [],
                     createdAt: item.createdAt || new Date().toISOString(),
                     updatedAt: item.updatedAt || new Date().toISOString(),
                     publishedAt: item.publishedAt || new Date().toISOString(),
@@ -399,7 +412,9 @@ export const getStaticProps: GetStaticProps = async () => {
                     readingTime: item.readingTime || 5,
                     authorId: item.authorId || 0,
                     status: item.status || 'published',
-                    postType: item.postType || 'article'
+                    postType: item.postType || 'article',
+                    isTop: item.isTop || false,
+                    sortOrder: item.sortOrder || 0
                 }));
         }
     } catch (e) {

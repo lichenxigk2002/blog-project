@@ -34,6 +34,7 @@ interface ArticleFormData {
   tags: number[];
   shouldNotify: boolean;
   notifyUserIds: number[];
+  isTop: boolean; // 新增置顶字段
 }
 
 interface ArticleFormProps {
@@ -55,6 +56,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
     tags: [],
     shouldNotify: false,
     notifyUserIds: [],
+    isTop: false,
     ...initialValues
   });
 
@@ -351,11 +353,18 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
 
       {/* 推送选项 */}
       {newArticleNotification ? <><FormItem>
-        <Checkbox
-          checked={formData.shouldNotify}
-          onChange={(checked) => handleCheckboxChange('shouldNotify', checked)}
-          label="推送邮件通知"
-        />
+        <div className={styles.formItemRow}>
+          <Checkbox
+            checked={formData.shouldNotify}
+            onChange={(checked) => handleCheckboxChange('shouldNotify', checked)}
+            label="推送邮件通知"
+          />
+          <Checkbox
+            checked={formData.isTop}
+            onChange={(checked) => handleCheckboxChange('isTop', checked)}
+            label="置顶文章"
+          />
+        </div>
       </FormItem>
 
         {/* 用户选择 */}
@@ -378,12 +387,19 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
           </FormItem>
         )}      </> : <>
         <FormItem>
-          <Checkbox
-            checked={false}
-            onChange={() => { }}
-            label="推送邮件通知已关闭"
-            disabled
-          />
+          <div className={styles.formItemRow}>
+            <Checkbox
+              checked={false}
+              onChange={() => { }}
+              label="推送邮件通知已关闭"
+              disabled
+            />
+            <Checkbox
+              checked={formData.isTop}
+              onChange={(checked) => handleCheckboxChange('isTop', checked)}
+              label="置顶文章"
+            />
+          </div>
         </FormItem>
       </>}
 

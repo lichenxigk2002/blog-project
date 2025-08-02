@@ -30,7 +30,8 @@ export function buildArticleData(values: any, editingArticle?: any) {
         readingTime: values.readingTime || Math.ceil((values.content?.length || 0) / 500),
         tagIds: values.tags || [],
         shouldNotify: values.shouldNotify || false,
-        notifyUserIds: values.notifyUserIds || []
+        notifyUserIds: values.notifyUserIds || [],
+        isTop: values.isTop || false
     };
 }
 function generateSlug(title: string) {

@@ -1,4 +1,5 @@
 package com.example.blogbackend.entity;
+
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -112,6 +113,15 @@ public class Articles implements Serializable {
      */
     private Integer readingTime;
 
+    /**
+     * 是否置顶：0-否，1-是
+     */
+    private Boolean isTop;
+
+    /**
+     * 排序权重，数值越大越靠前
+     */
+    private Integer sortOrder;
 
     @TableField(exist = false)
     private List<Tags> tags; // 新增

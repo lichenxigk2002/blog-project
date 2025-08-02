@@ -17,6 +17,35 @@ export interface Article {
     viewCount: number;
     likeCount: number;
     readingTime: number;
+    isTop?: boolean; // 是否置顶
+    sortOrder?: number; // 排序权重
+
+    tags: Array<{
+        id: number;
+        name: string;
+        slug: string;
+        color: string;
+    }>;
+}
+
+// 简化的文章列表类型，不包含内容字段
+export interface ArticleListItem {
+    id?: number;
+    title: string;
+    slug: string;
+    excerpt: string;
+    coverImage: string;
+    authorId: number;
+    status: 'draft' | 'published' | 'archived';
+    postType: 'post' | 'page' | 'thought' | 'diary';
+    createdAt: string;
+    updatedAt: string;
+    publishedAt: string;
+    viewCount: number;
+    likeCount: number;
+    readingTime: number;
+    isTop?: boolean;
+    sortOrder?: number;
 
     tags: Array<{
         id: number;

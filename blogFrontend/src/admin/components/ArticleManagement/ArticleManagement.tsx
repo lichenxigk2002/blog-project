@@ -58,9 +58,21 @@ const ArticleManagement: React.FC = () => {
         )
         : data;
 
-      setAllArticles(data);
-      setFilteredArticles(filteredData);
-      setTotal(filteredData.length);
+      // 对文章进行排序：置顶文章优先，然后按排序值排序
+      const sortedData = [...filteredData].sort((a, b) => {
+        // 首先按置顶状态排序（置顶的排在前面）
+        if (a.isTop && !b.isTop) return -1;
+        if (!a.isTop && b.isTop) return 1;
+
+        // 如果置顶状态相同，按排序值排序（数值大的排在前面）
+        const aSortOrder = a.sortOrder ?? 0;
+        const bSortOrder = b.sortOrder ?? 0;
+        return bSortOrder - aSortOrder;
+      });
+
+      setAllArticles(sortedData);
+      setFilteredArticles(sortedData);
+      setTotal(sortedData.length);
     } catch (error: any) {
       console.error('Failed to fetch articles:', error);
       setTipModal({ open: true, message: (error instanceof Error ? error.message : '获取文章列表失败'), type: 'failure' });

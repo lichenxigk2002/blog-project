@@ -50,8 +50,14 @@ public class ArticlesServiceImpl extends ServiceImpl<ArticlesMapper, Articles> i
         // 创建分页对象
         Page<Articles> pageParam = new Page<>(page, pageSize);
 
+        // 构建查询条件：按置顶状态、排序权重、发布时间排序
+        LambdaQueryWrapper<Articles> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.orderByDesc(Articles::getIsTop) // 置顶的排在前面
+                .orderByDesc(Articles::getSortOrder) // 排序权重高的排在前面
+                .orderByDesc(Articles::getPublishedAt); // 发布时间晚的排在前面
+
         // 执行分页查询
-        Page<Articles> articlesPage = this.page(pageParam);
+        Page<Articles> articlesPage = this.page(pageParam, queryWrapper);
 
         // 获取文章ID列表
         List<Integer> articleIds = articlesPage.getRecords().stream()
@@ -99,7 +105,6 @@ public class ArticlesServiceImpl extends ServiceImpl<ArticlesMapper, Articles> i
     @Override
     public Articles saveArticleWithTags(ArticleDTO dto) {
         Articles article = new Articles();
-        // 建议用 BeanUtils.copyProperties(dto, article); 也可以手动 set
         article.setTitle(dto.getTitle());
         article.setSlug(dto.getSlug());
         article.setContent(dto.getContent());
@@ -116,8 +121,18 @@ public class ArticlesServiceImpl extends ServiceImpl<ArticlesMapper, Articles> i
         article.setViewCount(dto.getViewCount());
         article.setLikeCount(dto.getLikeCount());
         article.setReadingTime(dto.getReadingTime());
+        article.setIsTop(false); // 新文章默认不置顶
+        article.setSortOrder(0); // 临时设置，后面会更新
 
         this.save(article);
+
+        // 获取当前最大的sort_order值，新文章设置为max + 10
+        LambdaQueryWrapper<Articles> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.select(Articles::getSortOrder).orderByDesc(Articles::getSortOrder).last("LIMIT 1");
+        Articles maxSortArticle = this.getOne(queryWrapper);
+        Integer maxSortOrder = maxSortArticle != null ? maxSortArticle.getSortOrder() : 0;
+        article.setSortOrder(maxSortOrder + 10);
+        this.updateById(article);
 
         if (dto.getTagIds() != null) {
             for (Integer tagId : dto.getTagIds()) {
@@ -160,6 +175,8 @@ public class ArticlesServiceImpl extends ServiceImpl<ArticlesMapper, Articles> i
         article.setViewCount(dto.getViewCount());
         article.setLikeCount(dto.getLikeCount());
         article.setReadingTime(dto.getReadingTime());
+        article.setIsTop(dto.getIsTop());
+        article.setSortOrder(dto.getSortOrder());
 
         boolean updated = this.updateById(article);
         if (!updated) {
@@ -207,5 +224,49 @@ public class ArticlesServiceImpl extends ServiceImpl<ArticlesMapper, Articles> i
         }
 
         return existingArticle.getLikeCount();
+    }
+
+    @Override
+    public boolean toggleTop(Integer id) {
+        // 先查询文章是否存在
+        Articles existingArticle = this.getById(id);
+        if (existingArticle == null) {
+            throw new IllegalArgumentException("文章不存在");
+        }
+
+        // 切换置顶状态
+        Boolean currentTop = existingArticle.getIsTop();
+        existingArticle.setIsTop(currentTop == null || !currentTop);
+
+        boolean updated = this.updateById(existingArticle);
+        if (!updated) {
+            throw new RuntimeException("更新置顶状态失败");
+        }
+
+        return existingArticle.getIsTop();
+    }
+
+    @Override
+    public boolean batchUpdateSort(List<Map<String, Object>> sortData) {
+        if (sortData == null || sortData.isEmpty()) {
+            return false;
+        }
+
+        try {
+            for (Map<String, Object> item : sortData) {
+                Integer id = (Integer) item.get("id");
+                Integer sortOrder = (Integer) item.get("sortOrder");
+
+                if (id != null && sortOrder != null) {
+                    Articles article = new Articles();
+                    article.setId(id);
+                    article.setSortOrder(sortOrder);
+                    this.updateById(article);
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException("批量更新排序失败: " + e.getMessage());
+        }
     }
 }
