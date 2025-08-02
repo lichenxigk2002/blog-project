@@ -27,6 +27,7 @@ const Articles: React.FC<ArticlesProps> = ({ initialArticles }) => {
     const [searchInput, setSearchInput] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+    const [useTimeSort, setUseTimeSort] = useState(false); // 是否使用时间排序
     const [visibleArticles, setVisibleArticles] = useState<ArticleListItem[]>(initialArticles.slice(0, ITEMS_PER_PAGE) || []);
     const [hasMore, setHasMore] = useState(initialArticles.length > ITEMS_PER_PAGE);
     const observer = useRef<IntersectionObserver | null>(null);
@@ -98,6 +99,7 @@ const Articles: React.FC<ArticlesProps> = ({ initialArticles }) => {
 
     // 处理搜索和排序
     useEffect(() => {
+        console.log('排序逻辑触发，当前排序状态:', sortOrder, '使用时间排序:', useTimeSort);
         let result = [...articles];
         // 搜索过滤
         if (searchQuery) {
@@ -106,28 +108,38 @@ const Articles: React.FC<ArticlesProps> = ({ initialArticles }) => {
                 article.title.toLowerCase().includes(query)
             );
         }
-        // 排序：置顶文章优先，然后按排序值排序
+
+        // 排序逻辑：置顶文章始终在最前面
         result.sort((a, b) => {
-            // 首先按置顶状态排序（置顶的排在前面）
+            // 首先按置顶状态排序（置顶的始终排在前面）
             if (a.isTop && !b.isTop) return -1;
             if (!a.isTop && b.isTop) return 1;
 
-            // 如果置顶状态相同，按排序值排序（数值大的排在前面）
-            const aSortOrder = a.sortOrder ?? 0;
-            const bSortOrder = b.sortOrder ?? 0;
-            if (aSortOrder !== bSortOrder) {
-                return bSortOrder - aSortOrder;
+            // 如果都是置顶或都不是置顶，根据排序模式选择排序方式
+            if (useTimeSort) {
+                // 使用时间排序
+                const dateA = new Date(a.createdAt).getTime();
+                const dateB = new Date(b.createdAt).getTime();
+                return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+            } else {
+                // 使用sortOrder排序（默认）
+                const aSortOrder = a.sortOrder ?? 0;
+                const bSortOrder = b.sortOrder ?? 0;
+                if (aSortOrder !== bSortOrder) {
+                    return bSortOrder - aSortOrder; // 数值大的排在前面
+                }
+                // 如果sortOrder相同，按发布时间排序
+                const dateA = new Date(a.createdAt).getTime();
+                const dateB = new Date(b.createdAt).getTime();
+                return dateB - dateA; // 默认新文章在前
             }
-
-            // 如果排序值相同，按发布时间排序
-            const dateA = new Date(a.createdAt).getTime();
-            const dateB = new Date(b.createdAt).getTime();
-            return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
         });
+
+        console.log('排序后的文章数量:', result.length);
         setFilteredArticles(result);
         setVisibleArticles(result.slice(0, ITEMS_PER_PAGE));
         setHasMore(result.length > ITEMS_PER_PAGE);
-    }, [searchQuery, sortOrder, articles]);
+    }, [searchQuery, sortOrder, useTimeSort, articles]);
 
     // 加载更多文章
     const loadMore = useCallback(() => {
@@ -177,7 +189,20 @@ const Articles: React.FC<ArticlesProps> = ({ initialArticles }) => {
 
     // 处理排序
     const handleSort = () => {
-        setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
+        console.log('排序按钮被点击，当前排序:', sortOrder, '使用时间排序:', useTimeSort);
+        if (useTimeSort) {
+            // 如果已经在时间排序模式，切换升序/降序
+            setSortOrder(prev => {
+                const newOrder = prev === 'asc' ? 'desc' : 'asc';
+                console.log('时间排序状态从', prev, '变为', newOrder);
+                return newOrder;
+            });
+        } else {
+            // 如果不在时间排序模式，切换到时间排序模式
+            setUseTimeSort(true);
+            setSortOrder('desc'); // 默认降序（新文章在前）
+            console.log('切换到时间排序模式');
+        }
     };
 
     // 添加点赞处理函数
@@ -283,8 +308,17 @@ const Articles: React.FC<ArticlesProps> = ({ initialArticles }) => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                 >
-                    {sortOrder === 'asc' ? <FiArrowUp /> : <FiArrowDown />}
-                    <span>按发布时间{sortOrder === 'asc' ? '升序' : '降序'}</span>
+                    {useTimeSort ? (
+                        <>
+                            {sortOrder === 'asc' ? <FiArrowUp /> : <FiArrowDown />}
+                            <span>发布时间{sortOrder === 'asc' ? '升序' : '降序'}</span>
+                        </>
+                    ) : (
+                        <>
+                            <FiStar />
+                            <span>默认排序</span>
+                        </>
+                    )}
                 </motion.button>
             </motion.div>
 

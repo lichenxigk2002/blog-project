@@ -89,7 +89,7 @@ const ArticleManagement: React.FC = () => {
         )
         : data;
 
-      // 对文章进行排序：置顶文章优先，然后按排序值排序
+      // 对文章进行排序：置顶文章优先，然后按排序值排序，最后按发布时间排序
       const sortedData = [...filteredData].sort((a, b) => {
         // 首先按置顶状态排序（置顶的排在前面）
         if (a.isTop && !b.isTop) return -1;
@@ -99,14 +99,26 @@ const ArticleManagement: React.FC = () => {
         if (a.isTop && b.isTop) {
           const aSortOrder = a.sortOrder ?? 0;
           const bSortOrder = b.sortOrder ?? 0;
-          return bSortOrder - aSortOrder;
+          if (aSortOrder !== bSortOrder) {
+            return bSortOrder - aSortOrder; // 数值大的排在前面
+          }
+          // 如果排序值相同，按发布时间排序（新文章在前）
+          const dateA = new Date(a.createdAt).getTime();
+          const dateB = new Date(b.createdAt).getTime();
+          return dateB - dateA;
         }
 
         // 如果都是非置顶文章，按排序值排序
         if (!a.isTop && !b.isTop) {
           const aSortOrder = a.sortOrder ?? 0;
           const bSortOrder = b.sortOrder ?? 0;
-          return bSortOrder - aSortOrder;
+          if (aSortOrder !== bSortOrder) {
+            return bSortOrder - aSortOrder; // 数值大的排在前面
+          }
+          // 如果排序值相同，按发布时间排序（新文章在前）
+          const dateA = new Date(a.createdAt).getTime();
+          const dateB = new Date(b.createdAt).getTime();
+          return dateB - dateA;
         }
 
         return 0;
@@ -266,7 +278,7 @@ const ArticleManagement: React.FC = () => {
         isTop: article.id === Number(active.id) ? false : article.isTop
       }));
 
-      // 重新排序（置顶优先）
+      // 重新排序（置顶优先，然后按排序值，最后按发布时间）
       const finalSortedItems = [...updatedItems].sort((a, b) => {
         if (a.isTop && !b.isTop) return -1;
         if (!a.isTop && b.isTop) return 1;
@@ -274,13 +286,25 @@ const ArticleManagement: React.FC = () => {
         if (a.isTop && b.isTop) {
           const aSortOrder = a.sortOrder ?? 0;
           const bSortOrder = b.sortOrder ?? 0;
-          return bSortOrder - aSortOrder;
+          if (aSortOrder !== bSortOrder) {
+            return bSortOrder - aSortOrder; // 数值大的排在前面
+          }
+          // 如果排序值相同，按发布时间排序（新文章在前）
+          const dateA = new Date(a.createdAt).getTime();
+          const dateB = new Date(b.createdAt).getTime();
+          return dateB - dateA;
         }
 
         if (!a.isTop && !b.isTop) {
           const aSortOrder = a.sortOrder ?? 0;
           const bSortOrder = b.sortOrder ?? 0;
-          return bSortOrder - aSortOrder;
+          if (aSortOrder !== bSortOrder) {
+            return bSortOrder - aSortOrder; // 数值大的排在前面
+          }
+          // 如果排序值相同，按发布时间排序（新文章在前）
+          const dateA = new Date(a.createdAt).getTime();
+          const dateB = new Date(b.createdAt).getTime();
+          return dateB - dateA;
         }
 
         return 0;
