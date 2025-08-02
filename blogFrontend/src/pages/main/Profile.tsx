@@ -66,8 +66,8 @@ const Profile: React.FC = () => {
       showTip('loading', '正在发送验证码...');
       const response = await AuthAPI.sendEmailCode(form.email, 'bind');
       // @ts-ignore
-      if (response === '验证码已发送') {
-        showTip('success' ,response);
+      if (response.message === '验证码已发送') {
+        showTip('success', response.message);
         setCountdown(60);
       } else {
         showTip('error', response.message || '验证码发送失败');
