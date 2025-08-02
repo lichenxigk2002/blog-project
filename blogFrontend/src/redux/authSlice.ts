@@ -41,7 +41,7 @@ export const login = createAsyncThunk<User,LoginCredentials, { rejectValue: stri
                     // 用户名密码登录
                     if (data.data.token) localStorage.setItem('token', data.data.token);
                     // 返回用户信息
-                    return data.data
+                    return data.data.user;
                 }
             } else {
                 return rejectWithValue(data.message || '登录失败');

@@ -196,11 +196,114 @@
 
 .buttonRow {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   margin-top: 12px;
-  justify-content: flex-end;
+  justify-content: center;
+  flex-wrap: wrap;
 }
-.bottomButton{
+
+.bottomButton {
   width: 100%;
   display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+.modalContent {
+  position: relative;
+  width: 320px;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  z-index: 10000;
+  animation: slideUp 0.3s ease;
+
+  h3 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--text);
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+}
+
+.modalButtons {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  justify-content: center;
+
+  .button {
+    flex: 0 1 auto;
+    min-width: 100px;
+  }
+}
+
+.changePasswordButton {
+  @include common-btn;
+  background: #ff6f91;
+  color: white;
+}
+
+.changePasswordButton:hover:not(:disabled) {
+  background: #ff4f7a;
+}
+
+.changePasswordButton:disabled {
+  background: #ffd6e0;
+  cursor: not-allowed;
+}
+
+.cancelButton {
+  @include common-btn;
+  background: #95a5a6;
+  color: white;
+}
+
+.cancelButton:hover:not(:disabled) {
+  background: #7f8c8d;
+}
+
+.cancelButton:disabled {
+  background: #d5dbdb;
+  cursor: not-allowed;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

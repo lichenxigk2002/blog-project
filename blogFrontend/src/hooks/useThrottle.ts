@@ -1,28 +1,29 @@
-import { useState, useEffect, useRef } from 'react';
+import { useRef, useCallback } from 'react';
 
-export function useThrottle<T>(value: T, delay: number): T {
-    const [throttledValue, setThrottledValue] = useState<T>(value);
-    const lastExecuted = useRef<number>(0);
+/**
+ * 节流 Hook：返回一个节流后的函数
+ * @param fn 需要节流的函数
+ * @param delay 节流间隔（毫秒）
+ */
+export function useThrottle<T extends (...args: any[]) => any>(fn: T, delay: number): T {
+    const lastCall = useRef(0);
 
-    useEffect(() => {
+    return useCallback((...args: any[]) => {
         const now = Date.now();
-
-        if (now - lastExecuted.current >= delay) {
-            // 如果距离上次执行已经超过延迟时间，立即执行
-            setThrottledValue(value);
-            lastExecuted.current = now;
-        } else {
-            // 否则设置定时器，在剩余时间后执行
-            const timer = setTimeout(() => {
-                setThrottledValue(value);
-                lastExecuted.current = Date.now();
-            }, delay - (now - lastExecuted.current));
-
-            return () => {
-                clearTimeout(timer);
-            };
+        if (now - lastCall.current >= delay) {
+            lastCall.current = now;
+            fn(...args);
         }
-    }, [value, delay]);
-
-    return throttledValue;
+    }, [fn, delay]) as T;
 }
+
+// function throttle(fn, delay) {
+//     let lastCall = 0;
+//     return function (...args) {
+//         const now = Date.now();
+//         if (now - lastCall >= delay) {
+//             lastCall = now;
+//             fn.apply(this, args);
+//         }
+//     };
+// }

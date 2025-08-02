@@ -40,9 +40,6 @@ const FriendLinks = dynamic(() => import('@/pages/main/FriendLinks'), {
 const Questions = dynamic(() => import('@/pages/main/Questions'), {
     loading: () => <LoadingSpinner />
 })
-const TechnologyStack = dynamic(() => import('@/pages/main/TechnologyStack'), {
-    loading: () => <LoadingSpinner />
-})
 // const About = dynamic(() => import('@/pages/main/About'), {
 //     loading: () => <LoadingSpinner />
 // })

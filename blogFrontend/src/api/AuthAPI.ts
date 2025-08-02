@@ -50,6 +50,9 @@ export const AuthAPI = {
 
     updateUser: (id: number, userData: UserDTO) => http.put<ApiResponse<User>>(`/user/${id}`, userData),
 
+    changePassword: (id: number, oldPassword: string, newPassword: string) =>
+        http.put<ApiResponse<User>>(`/user/${id}/password`, { oldPassword, newPassword }),
+
     deleteUser: (id: number) => http.delete<ApiResponse<void>>(`/user/${id}`),
     // 手机号相关
     sendSmsCode: (phone: string, type: string) => http.post<ApiResponse<void>>('/sms/send', { phone, type }),

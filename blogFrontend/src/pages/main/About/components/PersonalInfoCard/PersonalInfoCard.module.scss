@@ -1,0 +1,96 @@
+@mixin card {
+  border-radius: 0.75rem;
+  box-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, rgb(255, 112, 189), rgb(183, 106, 255));
+  backdrop-filter: blur(1.25rem);
+}
+
+.personalInfoCard {
+  @include card;
+  color: white;
+  padding: 1rem;
+  grid-column: 1/6;
+  grid-row: 3/4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'ZiHun', 'Microsoft YaHei', sans-serif;
+  position: relative;
+  overflow: hidden;
+
+  // 旋转背景装饰
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle,
+        rgba(255, 255, 255, 0.1) 0%,
+        transparent 70%);
+    animation: rotate 20s linear infinite;
+    pointer-events: none;
+  }
+
+  .introContent {
+    text-align: center;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+
+    .introText {
+      margin: 0.6rem 0;
+      font-size: 1.15rem;
+      line-height: 1.6;
+      font-weight: 400;
+
+      &:first-child {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        letter-spacing: 0.3px;
+      }
+
+      &:nth-child(2) {
+        font-size: 1.25rem;
+        margin-bottom: 0.8rem;
+        font-weight: 500;
+      }
+
+      &:last-child {
+        font-size: 1rem;
+        opacity: 0.85;
+        font-style: italic;
+      }
+
+      .highlight {
+        font-weight: 700;
+        font-size: 2.5rem;
+        font-family: 'ZiHun', sans-serif;
+        background: #ffffff;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 0 0 25px rgba(139, 111, 156, 0.4);
+        padding: 0 0.1rem;
+        border-radius: 0.2rem;
+        position: relative;
+        display: inline-block; // 确保每个字符独立显示
+        margin: 0 0.05rem; // 字符间微调间距
+        transform-origin: center center; // 设置变换原点在中心
+      }
+    }
+  }
+}
+
+// 背景旋转动画
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}

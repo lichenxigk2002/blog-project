@@ -6,7 +6,6 @@ const cache = new Map<string, { data: any; timestamp: number; ttl: number }>();
 
 // 缓存拦截器 - 修复版本
 export const createCacheInterceptor = (defaultTTL: number = 5 * 60 * 1000): RequestInterceptor => ({
-    // 请求发送前的处理
     beforeRequest: (config: RequestConfig) => {
         // 只对GET请求进行缓存标记
         if (config.method === 'GET' || !config.method) {
@@ -28,7 +27,6 @@ export const createCacheInterceptor = (defaultTTL: number = 5 * 60 * 1000): Requ
 
         return config;
     },
-    // 缓存处理
     afterRequest: async (response: Response) => {
         const config = (response as any)._config;
 
@@ -178,7 +176,7 @@ export const createTimeoutInterceptor = (defaultTimeout: number = 10000): Reques
     }
 });
 
-// 重试拦截器
+// 重试拦截器 - 改进版本
 export const createRetryInterceptor = (defaultMaxRetries: number = 3, defaultRetryDelay: number = 1000): RequestInterceptor => {
     let originalFetch: typeof fetch;
 

@@ -74,4 +74,31 @@ public class UserController {
         userService.updateById(user);
         return Result.ok(user);
     }
+
+    @PutMapping("/{id}/password")
+    public Result<User> changePassword(@PathVariable Integer id, @RequestBody Map<String, String> passwordData) {
+        String oldPassword = passwordData.get("oldPassword");
+        String newPassword = passwordData.get("newPassword");
+
+        if (oldPassword == null || newPassword == null || oldPassword.trim().isEmpty()
+                || newPassword.trim().isEmpty()) {
+            return Result.build(null, ResultCodeEnum.ARGUMENT_VALID_ERROR);
+        }
+
+        User user = userService.getById(id);
+        if (user == null) {
+            return Result.build(null, ResultCodeEnum.NOTLOGIN);
+        }
+
+        // 验证旧密码
+        if (!user.getPassword().equals(oldPassword)) {
+            return Result.build(null, ResultCodeEnum.PASSWORD_ERROR);
+        }
+
+        // 更新密码
+        user.setPassword(newPassword);
+        userService.updateById(user);
+
+        return Result.ok(user);
+    }
 }
