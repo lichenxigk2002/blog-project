@@ -30,7 +30,7 @@
 
 .tableHeader,
 .tableRow {
-  grid-template-columns: minmax(200px, 1.7fr) minmax(100px, 1fr) minmax(80px, 0.5fr) minmax(80px, 0.8fr) minmax(80px, 0.5fr) minmax(80px, 0.5fr) minmax(120px, 1.2fr);
+  grid-template-columns: minmax(200px, 1.7fr) minmax(100px, 1fr) minmax(80px, 0.5fr) minmax(80px, 0.8fr) minmax(80px, 0.5fr) minmax(80px, 0.5fr) minmax(120px, 1.2fr) minmax(50px, 0.3fr);
 }
 
 .tableHeader {
@@ -282,15 +282,37 @@
   }
 }
 
-@media (max-width: 768px) {
+// 拖拽相关样式
+.tableRow {
+  cursor: grab;
+  transition: all 0.2s ease;
 
-  .tableHeader,
-  .tableRow {
-    grid-template-columns: 2fr 1fr 80px;
+  &:active {
+    cursor: grabbing;
   }
+}
 
-  .tableHeaderCell:nth-child(3),
-  .tableCell:nth-child(3) {
-    display: none;
-  }
+// 拖拽时的占位符样式
+.tableBody {
+  min-height: 200px;
+  overflow: hidden; // 防止横向滚动
+}
+
+// 表格容器也需要限制
+.table {
+  overflow: hidden; // 防止横向滚动
+  max-width: 100%;
+  position: relative; // 为拖拽元素提供定位上下文
+}
+
+// 拖拽覆盖层样式
+.dragOverlay {
+  display: grid;
+  grid-template-columns: minmax(200px, 1.7fr) minmax(100px, 1fr) minmax(80px, 0.5fr) minmax(80px, 0.8fr) minmax(80px, 0.5fr) minmax(80px, 0.5fr) minmax(120px, 1.2fr) minmax(50px, 0.3fr);
+  background: var(--primary-color);
+  opacity: 0.9;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  pointer-events: none;
+  z-index: 1000;
 }

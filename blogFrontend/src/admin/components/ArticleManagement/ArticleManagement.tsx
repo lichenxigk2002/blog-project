@@ -11,7 +11,26 @@ import Button from '../ui/Button/Button';
 import StatsCard from '../ui/StatsCard/StatsCard';
 import SearchBar from '../ui/SearchBar/SearchBar';
 import FormModal from '../ui/FormModal/FormModal';
-import { PlusIcon, EditIcon, DeleteIcon } from '../ui/Icons/Icons';
+import { PlusIcon, EditIcon, DeleteIcon, DragIcon } from '../ui/Icons/Icons';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragOverlay,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import {
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 
 const ArticleManagement: React.FC = () => {
@@ -29,7 +48,19 @@ const ArticleManagement: React.FC = () => {
   const [total, setTotal] = useState(0);
   const [sortField, setSortField] = useState<string>('');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const [tipModal, setTipModal] = useState<{ open: boolean, message: string, type: 'success' | 'failure' }>({ open: false, message: '', type: 'success' });
+  const [tipModal, setTipModal] = useState<{ open: boolean, message: string, type: 'success' | 'error' | 'info' | 'warning' | 'loading' }>({ open: false, message: '', type: 'success' });
+  const [activeId, setActiveId] = useState<string | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // 需要移动8px才开始拖拽
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   useEffect(() => {
     const start = (currentPage - 1) * pageSize;
@@ -64,10 +95,21 @@ const ArticleManagement: React.FC = () => {
         if (a.isTop && !b.isTop) return -1;
         if (!a.isTop && b.isTop) return 1;
 
-        // 如果置顶状态相同，按排序值排序（数值大的排在前面）
-        const aSortOrder = a.sortOrder ?? 0;
-        const bSortOrder = b.sortOrder ?? 0;
-        return bSortOrder - aSortOrder;
+        // 如果都是置顶文章，按排序值排序
+        if (a.isTop && b.isTop) {
+          const aSortOrder = a.sortOrder ?? 0;
+          const bSortOrder = b.sortOrder ?? 0;
+          return bSortOrder - aSortOrder;
+        }
+
+        // 如果都是非置顶文章，按排序值排序
+        if (!a.isTop && !b.isTop) {
+          const aSortOrder = a.sortOrder ?? 0;
+          const bSortOrder = b.sortOrder ?? 0;
+          return bSortOrder - aSortOrder;
+        }
+
+        return 0;
       });
 
       setAllArticles(sortedData);
@@ -75,7 +117,7 @@ const ArticleManagement: React.FC = () => {
       setTotal(sortedData.length);
     } catch (error: any) {
       console.error('Failed to fetch articles:', error);
-      setTipModal({ open: true, message: (error instanceof Error ? error.message : '获取文章列表失败'), type: 'failure' });
+      setTipModal({ open: true, message: (error instanceof Error ? error.message : '获取文章列表失败'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -100,7 +142,7 @@ const ArticleManagement: React.FC = () => {
     try {
       const data = buildArticleData(values, editingArticle);
 
-      if (editingArticle) {
+      if (editingArticle && editingArticle.id) {
         data.id = editingArticle.id;
         await ArticlesAPI.updateArticle(editingArticle.id, data);
         setTipModal({ open: true, message: '更新成功', type: 'success' });
@@ -112,7 +154,7 @@ const ArticleManagement: React.FC = () => {
       fetchArticles();
     } catch (e: any) {
       console.error('操作失败:', e);
-      setTipModal({ open: true, message: e.message || '操作失败', type: 'failure' });
+      setTipModal({ open: true, message: e.message || '操作失败', type: 'error' });
     }
   };
 
@@ -121,13 +163,15 @@ const ArticleManagement: React.FC = () => {
 
     try {
       setLoading(true);
-      await ArticlesAPI.deleteArticle(deletingArticle.id);
+      if (deletingArticle.id) {
+        await ArticlesAPI.deleteArticle(deletingArticle.id);
+      }
       setTipModal({ open: true, message: '删除成功', type: 'success' });
       setDeleteModalVisible(false);
       setDeletingArticle(null);
       await fetchArticles();
     } catch (error: any) {
-      setTipModal({ open: true, message: error.message || '删除失败', type: 'failure' });
+      setTipModal({ open: true, message: error.message || '删除失败', type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -171,6 +215,161 @@ const ArticleManagement: React.FC = () => {
 
     setFilteredArticles(sortedArticles);
     setAllArticles(sortedArticles);
+  };
+
+  const handleDragStart = (event: any) => {
+    setActiveId(event.active.id);
+  };
+
+  const handleDragEnd = async (event: any) => {
+    const { active, over } = event;
+    setActiveId(null);
+
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = paginatedArticles.findIndex(item => item.id === Number(active.id));
+    const newIndex = paginatedArticles.findIndex(item => item.id === Number(over.id));
+
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    const draggedArticle = paginatedArticles[oldIndex];
+
+    // 如果拖拽的是置顶文章，自动取消置顶
+    if (draggedArticle.isTop) {
+      try {
+        await ArticlesAPI.updateArticle(Number(active.id), { isTop: false });
+      } catch (error) {
+        console.error('取消置顶失败:', error);
+        return;
+      }
+    }
+
+    // 重新排列文章
+    const newItems = arrayMove(paginatedArticles, oldIndex, newIndex);
+
+    // 计算新的排序值
+    const sortData = newItems
+      .filter(article => article.id !== undefined)
+      .map((article, index) => ({
+        id: article.id!,
+        sortOrder: (newItems.length - index) * 10
+      }));
+
+    try {
+      await ArticlesAPI.batchUpdateSort(sortData);
+
+      // 直接更新本地状态，不重新获取数据
+      const updatedItems = newItems.map((article, index) => ({
+        ...article,
+        sortOrder: (newItems.length - index) * 10,
+        // 如果拖拽的是置顶文章，更新其置顶状态
+        isTop: article.id === Number(active.id) ? false : article.isTop
+      }));
+
+      // 重新排序（置顶优先）
+      const finalSortedItems = [...updatedItems].sort((a, b) => {
+        if (a.isTop && !b.isTop) return -1;
+        if (!a.isTop && b.isTop) return 1;
+
+        if (a.isTop && b.isTop) {
+          const aSortOrder = a.sortOrder ?? 0;
+          const bSortOrder = b.sortOrder ?? 0;
+          return bSortOrder - aSortOrder;
+        }
+
+        if (!a.isTop && !b.isTop) {
+          const aSortOrder = a.sortOrder ?? 0;
+          const bSortOrder = b.sortOrder ?? 0;
+          return bSortOrder - aSortOrder;
+        }
+
+        return 0;
+      });
+
+      setPaginatedArticles(finalSortedItems);
+      setFilteredArticles(finalSortedItems);
+      setAllArticles(finalSortedItems);
+
+    } catch (error) {
+      console.error('更新排序失败:', error);
+      // 如果失败，重新获取数据
+      await fetchArticles();
+    }
+  };
+
+  // 可拖拽的表格行组件
+  const SortableTableRow = ({ article, index }: { article: Article; index: number }) => {
+    const {
+      attributes,
+      listeners,
+      setNodeRef,
+      transform,
+      transition,
+      isDragging,
+    } = useSortable({ id: article.id!.toString() });
+
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+    };
+
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        className={styles.tableRow}
+      >
+        <div className={styles.tableCell} style={{ fontWeight: 500 }}>
+          {article.title}
+          {article.isTop && <span style={{ color: '#ffd700', marginLeft: '8px' }}>⭐</span>}
+        </div>
+        <div className={styles.tableCell}>
+          {article.publishedAt ? new Date(article.publishedAt).toLocaleString() : '-'}
+        </div>
+        <div className={styles.tableCell}>
+          <span className={`${styles.statusTag} ${article.status === 'published'
+            ? styles.published
+            : article.status === 'archived'
+              ? styles.archived
+              : styles.draft
+            }`}>
+            {article.status === 'published'
+              ? '已发布'
+              : article.status === 'archived'
+                ? '已归档'
+                : '草稿'}
+          </span>
+        </div>
+        <div className={styles.tableCell}>{article.readingTime} 分钟</div>
+        <div className={styles.tableCell}>{article.viewCount}</div>
+        <div className={styles.tableCell}>{article.likeCount}</div>
+        <div className={styles.tableCell}>
+          <div className={styles.actionButtons}>
+            <Button
+              variant="primary"
+              onClick={() => openModal(article)}
+              icon={<EditIcon />}
+            >编辑</Button>
+            <Button
+              variant="danger"
+              onClick={() => {
+                setDeletingArticle(article);
+                setDeleteModalVisible(true);
+              }}
+              icon={<DeleteIcon />}
+            >删除</Button>
+          </div>
+        </div>
+        <div
+          className={styles.tableCell}
+          style={{ width: '50px', cursor: 'grab', textAlign: 'center' }}
+          {...attributes}
+          {...listeners}
+        >
+          <DragIcon size={16} color="#666" />
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -259,51 +458,72 @@ const ArticleManagement: React.FC = () => {
             )}
           </div>
           <div className={styles.tableHeaderCell}>操作</div>
+          <div className={styles.tableHeaderCell}>拖拽</div>
         </div>
-        <div className={styles.tableBody}>
-          {paginatedArticles.map((article) => (
-            <div key={article.id} className={styles.tableRow}>
-              <div className={styles.tableCell} style={{ fontWeight: 500 }}>{article.title}</div>
-              <div className={styles.tableCell}>
-                {article.publishedAt ? new Date(article.publishedAt).toLocaleString() : '-'}
-              </div>
-              <div className={styles.tableCell}>
-                <span className={`${styles.statusTag} ${article.status === 'published'
-                  ? styles.published
-                  : article.status === 'archived'
-                    ? styles.archived
-                    : styles.draft
-                  }`}>
-                  {article.status === 'published'
-                    ? '已发布'
-                    : article.status === 'archived'
-                      ? '已归档'
-                      : '草稿'}
-                </span>
-              </div>
-              <div className={styles.tableCell}>{article.readingTime} 分钟</div>
-              <div className={styles.tableCell}>{article.viewCount}</div>
-              <div className={styles.tableCell}>{article.likeCount}</div>
-              <div className={styles.tableCell}>
-                <div className={styles.actionButtons}>
-                  <Button
-                    variant="primary"
-                    onClick={() => openModal(article)}
-                    icon={<EditIcon />}
-                  >编辑</Button>
-                  <Button
-                    variant="danger"
-                    onClick={() => {
-                      setDeletingArticle(article);
-                      setDeleteModalVisible(true);
-                    }}
-                    icon={<DeleteIcon />}
-                  >删除</Button>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={paginatedArticles.map(item => item.id!.toString())}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className={styles.tableBody}>
+              {paginatedArticles.map((article, index) => (
+                <SortableTableRow key={article.id} article={article} index={index} />
+              ))}
+            </div>
+          </SortableContext>
+          <DragOverlay>
+            {activeId ? (
+              <div className={styles.dragOverlay}>
+                <div className={styles.tableCell} style={{ fontWeight: 500 }}>
+                  {paginatedArticles.find(item => item.id?.toString() === activeId)?.title}
+                </div>
+                <div className={styles.tableCell}>
+                  {paginatedArticles.find(item => item.id?.toString() === activeId)?.publishedAt ?
+                    new Date(paginatedArticles.find(item => item.id?.toString() === activeId)!.publishedAt!).toLocaleString() : '-'}
+                </div>
+                <div className={styles.tableCell}>
+                  <span className={`${styles.statusTag} ${paginatedArticles.find(item => item.id?.toString() === activeId)?.status === 'published'
+                    ? styles.published
+                    : paginatedArticles.find(item => item.id?.toString() === activeId)?.status === 'archived'
+                      ? styles.archived
+                      : styles.draft
+                    }`}>
+                    {paginatedArticles.find(item => item.id?.toString() === activeId)?.status === 'published'
+                      ? '已发布'
+                      : paginatedArticles.find(item => item.id?.toString() === activeId)?.status === 'archived'
+                        ? '已归档'
+                        : '草稿'}
+                  </span>
+                </div>
+                <div className={styles.tableCell}>{paginatedArticles.find(item => item.id?.toString() === activeId)?.readingTime} 分钟</div>
+                <div className={styles.tableCell}>{paginatedArticles.find(item => item.id?.toString() === activeId)?.viewCount}</div>
+                <div className={styles.tableCell}>{paginatedArticles.find(item => item.id?.toString() === activeId)?.likeCount}</div>
+                <div className={styles.tableCell}>
+                  <div className={styles.actionButtons}>
+                    <Button
+                      variant="primary"
+                      onClick={() => { }}
+                      icon={<EditIcon />}
+                    >编辑</Button>
+                    <Button
+                      variant="danger"
+                      onClick={() => { }}
+                      icon={<DeleteIcon />}
+                    >删除</Button>
+                  </div>
+                </div>
+                <div className={styles.tableCell} style={{ width: '50px', textAlign: 'center' }}>
+                  <DragIcon size={16} color="#666" />
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ) : null}
+          </DragOverlay>
+        </DndContext>
       </div>
 
       <Pagination
