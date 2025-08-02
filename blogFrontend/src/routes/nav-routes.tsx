@@ -40,9 +40,9 @@ const FriendLinks = dynamic(() => import('@/pages/main/FriendLinks'), {
 const Questions = dynamic(() => import('@/pages/main/Questions'), {
     loading: () => <LoadingSpinner />
 })
-// const About = dynamic(() => import('@/pages/main/About'), {
-//     loading: () => <LoadingSpinner />
-// })
+const About = dynamic(() => import('@/pages/main/About'), {
+    loading: () => <LoadingSpinner />
+})
 
 interface Route {
     id: number;
