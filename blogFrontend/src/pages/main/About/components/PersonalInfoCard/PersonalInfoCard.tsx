@@ -43,16 +43,15 @@ const PersonalInfoCard: React.FC = () => {
       }, index * 0.1);
     });
 
-    // 高亮字符逐字飘浮动画 - 波浪效果
+    // 高亮字符整体显示动画
     if (highlightChars.length > 0) {
-      highlightChars.forEach((char, index) => {
-        tl.to(char, {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power2.out" // 轻微弹性效果
-        }, `+=${index === 0 ? 0.1 : 0.1}`); // 字符之间间隔0.1秒
-      });
+      tl.to(highlightChars, {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        ease: "back.out(1.7)",
+        stagger: 0.1 // 极小的错开效果，几乎同时显示
+      }, "+=0.2");
     }
 
     // 添加高亮字符的呼吸效果 - 在所有动画完成后开始
