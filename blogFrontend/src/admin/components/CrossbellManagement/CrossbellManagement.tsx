@@ -8,7 +8,7 @@ import Button from '../ui/Button/Button';
 import StatsCard from '../ui/StatsCard/StatsCard';
 import SearchBar from '../ui/SearchBar/SearchBar';
 import FormModal from '../ui/FormModal/FormModal';
-import { useConnectModal, usePostNote } from '@crossbell/connect-kit';
+import { useConnectModal } from '@crossbell/connect-kit';
 import { useAccount, useDisconnect } from 'wagmi';
 
 interface ArticleCopyrightWithInfo {
@@ -41,7 +41,6 @@ export const CrossbellManagement: React.FC = () => {
   const { show: showConnectModal } = useConnectModal();
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
-  const { mutateAsync: postNote } = usePostNote();
 
   useEffect(() => {
     const start = (currentPage - 1) * pageSize;
@@ -137,6 +136,10 @@ export const CrossbellManagement: React.FC = () => {
           }
         ]
       };
+
+      // 动态导入 Crossbell Connect Kit
+      const { usePostNote } = await import('@crossbell/connect-kit');
+      const { mutateAsync: postNote } = usePostNote();
 
       // 发布到 Crossbell
       const result = await postNote({

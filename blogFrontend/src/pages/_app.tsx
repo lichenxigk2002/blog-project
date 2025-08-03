@@ -17,7 +17,12 @@ import { useAppDispatch } from '@/redux/store';
 import { flatToGroupedSettings } from "@/utils/settingTransform";
 import { adminLoginFromStorage } from '@/redux/adminAuthSlice';
 import { GlobalTipProvider } from "@/context/GlobalTipContext";
-import { CrossbellProvider } from '@/components/CrossbellProvider/CrossbellProvider';
+import dynamic from 'next/dynamic';
+
+const CrossbellProvider = dynamic(() => import('@/components/CrossbellProvider/CrossbellProvider').then(mod => ({ default: mod.CrossbellProvider })), {
+    ssr: false,
+    loading: () => <div>Loading...</div>
+});
 
 // 创建主题包装组件
 function ThemeWrapper({ children }: { children: React.ReactNode }) {
