@@ -53,125 +53,6 @@ $font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
   }
 }
 
-/* 侧边栏样式 */
-.sider {
-  width: 260px;
-  min-width: 260px;
-  height: 100vh;
-  background: linear-gradient(135deg, #fbeaff 0%, #a7e9ff 100%);
-  color: #6c3ec1;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
-  box-shadow: 2px 0 16px rgba(180, 120, 255, 0.10);
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 10;
-  border-top-right-radius: 32px;
-  border-bottom-right-radius: 32px;
-}
-
-.sider.collapsed {
-  width: 80px;
-  min-width: 80px;
-}
-
-.logo {
-  height: 80px;
-  padding: 0 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.10);
-  position: relative;
-}
-
-.logo h1 {
-  color: #a259ff;
-  font-size: 22px;
-  margin: 0;
-  white-space: nowrap;
-  font-weight: 700;
-  letter-spacing: 1px;
-  font-family: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
-}
-
-/* 二次元头像位 */
-.logo::after {
-  content: '';
-  display: block;
-  position: absolute;
-  right: 18px;
-  top: 16px;
-  width: 44px;
-  height: 44px;
-  background: url('/avatar-anime.png') no-repeat center/cover;
-  border-radius: 50%;
-  box-shadow: 0 2px 8px #fbeaff88;
-  border: 2px solid #fff;
-}
-
-.menu {
-  padding: 24px 0 16px 0;
-}
-
-.menu ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.menu li {
-  padding: 0;
-  margin: 8px 0;
-  border-radius: 16px;
-  transition: background 0.2s;
-}
-
-.menuLink {
-  display: flex;
-  align-items: center;
-  padding: 14px 28px;
-  color: #a259ff;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  font-size: 15px;
-  border-left: 4px solid transparent;
-  border-radius: 16px;
-  background: transparent;
-  font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.menuLink svg {
-  margin-right: 14px;
-  flex-shrink: 0;
-}
-
-.menuLink:hover {
-  color: #fff;
-  background: linear-gradient(90deg, #a7e9ff 0%, #fbeaff 100%);
-  border-left-color: #a259ff;
-  box-shadow: 0 2px 8px #fbeaff44;
-}
-
-.menu li.active .menuLink {
-  color: #fff;
-  background: linear-gradient(90deg, #a7e9ff 0%, #fbeaff 100%);
-  border-left-color: #a259ff;
-  box-shadow: 0 4px 16px #fbeaff88;
-}
-
-.menuLink span {
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* 主内容区样式 */
 .main {
   flex: 1;
   margin-left: 260px;
@@ -180,233 +61,25 @@ $font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
   flex-direction: column;
   background: transparent;
   transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  width: calc(100% - 260px);
+  width: calc(100vw - 260px);
+  overflow: hidden;
 }
 
-.sider.collapsed+.main {
+.main.collapsed {
   margin-left: 80px;
-  width: calc(100% - 80px);
+  width: calc(100vw - 80px);
 }
 
-/* 顶部导航样式 */
-.header {
-  height: 72px;
-  min-height: 72px;
-  background: rgba(255, 255, 255, 0.95);
-  padding: 0 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: 0 2px 12px rgba(180, 120, 255, 0.08);
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  border-bottom-left-radius: 24px;
-  border-bottom-right-radius: 24px;
-  width: 96%;
-}
-
-.headerLeft {
-  display: flex;
-  align-items: center;
-}
-
-.collapseBtn {
-  background: none;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-  padding: 10px;
-  color: #a259ff;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.collapseBtn:hover {
-  background: #fbeaff;
-  color: #6c3ec1;
-}
-
-.headerRight {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.headerRight span {
-  color: #a259ff;
-  font-size: 15px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 600;
-}
-
-.logoutBtn {
-  padding: 8px 22px;
-  background: linear-gradient(90deg, #ffb6b9 0%, #fbeaff 100%);
-  color: #fff;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 15px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  box-shadow: 0 2px 8px #fbeaff44;
-}
-
-.logoutBtn:hover {
-  background: linear-gradient(90deg, #fbeaff 0%, #ffb6b9 100%);
-  transform: translateY(-2px) scale(1.05);
-  color: #a259ff;
-}
-
-/* 内容区样式 */
 .content {
   flex: 1;
-  padding: 10px 10px;
-  overflow: auto;
+  padding: 20px;
+  overflow: hidden;
   background: transparent;
-  border-radius: 24px;
   min-height: calc(100vh - 72px - 60px);
   position: relative;
-}
-
-/* 底部样式 */
-.footer {
-  height: 60px;
-  min-height: 60px;
-  padding: 0 32px;
-  background: rgba(255, 255, 255, 0.95);
-  color: #a259ff;
-  border-top: 1px solid #fbeaff;
-  font-size: 15px;
-  border-radius: 18px 18px 0 0;
-  margin-top: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.footerContent {
   width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-}
-
-.footerLeft {
-  flex: 1;
-  text-align: left;
-}
-
-.footerLeft p {
-  margin: 0;
-  font-size: 14px;
-  color: #a259ff;
-}
-
-.footerRight {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  flex-shrink: 0;
-}
-
-.footerItem {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: #a259ff;
-  opacity: 0.8;
-  transition: opacity 0.3s ease;
-}
-
-.footerItem:hover {
-  opacity: 1;
-}
-
-.footerItem svg {
-  color: #a259ff;
-}
-
-/* 响应式设计 */
-@media (max-width: 900px) {
-  .sider {
-    transform: translateX(0);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .sider.collapsed {
-    transform: translateX(-100%);
-  }
-
-  .main {
-    margin-left: 0;
-  }
-
-  .main.collapsed {
-    margin-left: 0;
-  }
-
-  .header {
-    padding: 0 16px;
-  }
-
-  .content {
-    padding: 16px;
-  }
-
-  .footer {
-    padding: 0 16px;
-    height: auto;
-    min-height: 80px;
-  }
-
-  .footerContent {
-    flex-direction: column;
-    gap: 10px;
-    text-align: center;
-  }
-
-  .footerLeft {
-    text-align: center;
-  }
-
-  .footerRight {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 15px;
-  }
-
-  .footerItem {
-    font-size: 11px;
-  }
-}
-
-/* 动画效果 */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.menuLink {
-  animation: fadeIn 0.3s ease;
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
 /* 滚动条样式 */
@@ -425,43 +98,19 @@ $font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
   border-radius: 3px;
 }
 
-.sider.collapsed .menuLink span {
-  display: none;
-}
+/* 响应式设计 */
+@media (max-width: 900px) {
+  .main {
+    margin-left: 0;
+    width: 100vw;
+  }
 
-.sider.collapsed .logo h1 {
-  font-size: 28px;
-  letter-spacing: 2px;
-}
+  .main.collapsed {
+    margin-left: 0;
+    width: 100vw;
+  }
 
-.avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  margin-right: 8px;
-  object-fit: cover;
-}
-
-.sidebarAvatar {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  position: absolute;
-  right: 18px;
-  top: 16px;
-  border: 2px solid #fff;
-  box-shadow: 0 2px 8px #fbeaff88;
-  object-fit: cover;
-}
-
-.sider.collapsed .sidebarAvatar {
-  right: 18px;
-  top: 16px;
-}
-
-/* 确保内容区域在路由切换时保持稳定 */
-.content>div {
-  position: relative;
-  width: 100%;
-  height: 100%;
+  .content {
+    padding: 16px;
+  }
 }

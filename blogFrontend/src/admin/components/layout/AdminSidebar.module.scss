@@ -1,0 +1,155 @@
+.sidebar {
+  width: 260px;
+  min-width: 260px;
+  height: 100vh;
+  background: linear-gradient(135deg, #fbeaff 0%, #a7e9ff 100%);
+  color: #6c3ec1;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  box-shadow: 2px 0 16px rgba(180, 120, 255, 0.10);
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 10;
+  border-top-right-radius: 32px;
+  border-bottom-right-radius: 32px;
+  box-sizing: border-box;
+}
+
+.sidebar.collapsed {
+  width: 80px;
+  min-width: 80px;
+}
+
+.logo {
+  height: 80px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.10);
+  position: relative;
+}
+
+.logo h1 {
+  color: #a259ff;
+  font-size: 22px;
+  margin: 0;
+  white-space: nowrap;
+  font-weight: 700;
+  letter-spacing: 1px;
+  font-family: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
+}
+
+/* 二次元头像位 */
+.logo::after {
+  content: '';
+  display: block;
+  position: absolute;
+  right: 18px;
+  top: 16px;
+  width: 44px;
+  height: 44px;
+  background: url('/avatar-anime.png') no-repeat center/cover;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px #fbeaff88;
+  border: 2px solid #fff;
+}
+
+.nav {
+  padding: 24px 0 16px 0;
+}
+
+.nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.navItem {
+  padding: 0;
+  margin: 8px 0;
+  border-radius: 16px;
+  transition: background 0.2s;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  padding: 14px 28px;
+  color: #a259ff;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 15px;
+  border-left: 4px solid transparent;
+  border-radius: 16px;
+  background: transparent;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.navLink svg {
+  margin-right: 14px;
+  flex-shrink: 0;
+}
+
+.navLink:hover {
+  color: #fff;
+  background: linear-gradient(90deg, #a7e9ff 0%, #fbeaff 100%);
+  border-left-color: #a259ff;
+  box-shadow: 0 2px 8px #fbeaff44;
+}
+
+.navItem.active .navLink {
+  color: #fff;
+  background: linear-gradient(90deg, #a7e9ff 0%, #fbeaff 100%);
+  border-left-color: #a259ff;
+  box-shadow: 0 4px 16px #fbeaff88;
+}
+
+.navLink span {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar.collapsed .navLink span {
+  display: none;
+}
+
+.sidebar.collapsed .logo h1 {
+  font-size: 28px;
+  letter-spacing: 2px;
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  position: absolute;
+  right: 18px;
+  top: 16px;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 8px #fbeaff88;
+  object-fit: cover;
+}
+
+.sidebar.collapsed .avatar {
+  right: 18px;
+  top: 16px;
+}
+
+/* 响应式设计 */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(0);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .sidebar.collapsed {
+    transform: translateX(-100%);
+  }
+}
