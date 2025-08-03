@@ -37,6 +37,8 @@ $font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
     border-radius: $card-radius;
     box-shadow: $card-shadow;
     transition: all 0.3s ease;
+    position: relative;
+    z-index: 1001;
 
     &:hover {
         box-shadow: $card-hover-shadow;
@@ -44,7 +46,7 @@ $font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
 }
 
 .paginationInfo {
-    color: #666;
+    color: $primary;
     font-size: 14px;
     font-weight: 500;
 }
@@ -59,11 +61,11 @@ $font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
     @include button-base;
     min-width: 80px;
     background: #f5f5f5;
-    color: #333;
+    color: $primary;
 
     &:hover:not(.disabled) {
         background: #e8e8e8;
-        color: #000;
+        color: $secondary;
         transform: translateY(-1px);
     }
 
@@ -71,11 +73,12 @@ $font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
         opacity: 0.5;
         cursor: not-allowed;
         background: #f0f0f0;
+        color: #999;
     }
 }
 
 .paginationCurrent {
-    color: #333;
+    color: $primary;
     font-size: 14px;
     font-weight: 500;
     padding: 0 12px;
@@ -98,7 +101,7 @@ $font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
     border: 2px solid #e0e0e0;
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.9);
-    color: #333;
+    color: $primary;
     font-size: 14px;
     @include transition();
     cursor: pointer;
@@ -136,13 +139,13 @@ $font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
 
 .selectDropdown {
     position: absolute;
-    top: 100%;
+    bottom: 100%;
     left: 0;
     right: 0;
     background: rgba(255, 255, 255, 0.95);
     border: 2px solid #e0e0e0;
     border-radius: 8px;
-    margin-top: 4px;
+    margin-bottom: 4px;
     box-shadow: 0 4px 12px rgba(180, 120, 255, 0.15);
     z-index: 9999;
     max-height: 200px;
@@ -167,7 +170,7 @@ $font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
     padding: 8px 12px;
     cursor: pointer;
     @include transition(all, 0.2s);
-    color: #333;
+    color: $primary;
     font-size: 14px;
     font-family: $font-main;
 
@@ -189,14 +192,14 @@ $font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
     border: $input-border;
     border-radius: $input-radius;
     background: $card-bg;
-    color: #333;
+    color: $primary;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
     min-width: 100px;
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 8.825L1.175 4 2.05 3.125 6 7.075 9.95 3.125 10.825 4z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23a259ff' d='M6 8.825L1.175 4 2.05 3.125 6 7.075 9.95 3.125 10.825 4z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 12px center;
     padding-right: 32px;
