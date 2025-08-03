@@ -38,7 +38,7 @@ $font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
     box-shadow: $card-shadow;
     transition: all 0.3s ease;
     position: relative;
-    z-index: 1001;
+    z-index: 1000;
 
     &:hover {
         box-shadow: $card-hover-shadow;
