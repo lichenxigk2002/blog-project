@@ -125,4 +125,10 @@ public class Articles implements Serializable {
 
     @TableField(exist = false)
     private List<Tags> tags; // 新增
+
+    /**
+     * 关联的版权信息
+     */
+    @TableField(exist = false)
+    private ArticleCopyright copyright;
 }

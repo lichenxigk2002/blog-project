@@ -78,3 +78,10 @@ cos:
 
 app:
   frontend-home: https://www.gfbzsblog.site
+
+# IPFS配置
+ipfs:
+  api:
+    url: http://localhost:5001
+  gateway:
+    url: https://ipfs.io/ipfs/

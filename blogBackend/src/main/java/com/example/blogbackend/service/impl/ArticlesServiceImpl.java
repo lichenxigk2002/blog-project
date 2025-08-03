@@ -6,9 +6,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.blogbackend.entity.Articles;
 import com.example.blogbackend.entity.ArticleTags;
 import com.example.blogbackend.entity.Tags;
+import com.example.blogbackend.entity.ArticleCopyright;
 import com.example.blogbackend.mapper.ArticleTagsMapper;
 import com.example.blogbackend.mapper.ArticlesMapper;
 import com.example.blogbackend.mapper.TagsMapper;
+import com.example.blogbackend.mapper.ArticleCopyrightMapper;
 import com.example.blogbackend.service.IArticlesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,9 @@ public class ArticlesServiceImpl extends ServiceImpl<ArticlesMapper, Articles> i
 
     @Autowired
     private TagsMapper tagsMapper;
+
+    @Autowired
+    private ArticleCopyrightMapper articleCopyrightMapper;
 
     private LocalDateTime parseDateTime(String dateTimeStr) {
         if (dateTimeStr == null || dateTimeStr.isEmpty())
@@ -268,5 +273,37 @@ public class ArticlesServiceImpl extends ServiceImpl<ArticlesMapper, Articles> i
         } catch (Exception e) {
             throw new RuntimeException("批量更新排序失败: " + e.getMessage());
         }
+    }
+
+    @Override
+    public Articles getArticleWithCopyright(Integer id) {
+        // 获取文章基本信息
+        Articles article = this.getById(id);
+        if (article == null) {
+            return null;
+        }
+
+        // 获取文章标签
+        List<ArticleTags> articleTags = articleTagsMapper.selectList(
+                new com.baomidou.mybatisplus.core.conditions.query.QueryWrapper<ArticleTags>()
+                        .eq("article_id", id));
+
+        if (!articleTags.isEmpty()) {
+            List<Integer> tagIds = articleTags.stream()
+                    .map(ArticleTags::getTagId)
+                    .collect(Collectors.toList());
+
+            List<Tags> tags = tagsMapper.selectList(
+                    new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<Tags>()
+                            .in(Tags::getId, tagIds));
+
+            article.setTags(tags);
+        }
+
+        // 获取版权信息
+        ArticleCopyright copyright = articleCopyrightMapper.selectByArticleId(id);
+        article.setCopyright(copyright);
+
+        return article;
     }
 }

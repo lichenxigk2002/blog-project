@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArticlesAPI } from '@/api/ArticlesAPI';
 import { TagsAPI } from '@/api/TagsAPI';
+import { CopyrightAPI } from '@/api/CopyrightAPI';
 import ArticleForm from './ArticleForm';
 import type { Article } from '@/types/Article';
 import styles from './ArticleManagement.module.scss';
@@ -159,8 +160,24 @@ const ArticleManagement: React.FC = () => {
         await ArticlesAPI.updateArticle(editingArticle.id, data);
         setTipModal({ open: true, message: '更新成功', type: 'success' });
       } else {
-        await ArticlesAPI.createArticle(data);
+        // 创建新文章
+        const response = await ArticlesAPI.createArticle(data);
         setTipModal({ open: true, message: '创建成功', type: 'success' });
+
+        // 为新文章自动创建"无版权"的版权信息
+        if (response && response.data && response.data.id) {
+          try {
+            await CopyrightAPI.createOrUpdateCopyright(
+              response.data.id,
+              '无版权',
+              '无版权'
+            );
+            console.log('版权信息创建成功');
+          } catch (copyrightError) {
+            console.error('版权信息创建失败:', copyrightError);
+            // 版权创建失败不影响文章创建，只记录日志
+          }
+        }
       }
       setModalVisible(false);
       fetchArticles();

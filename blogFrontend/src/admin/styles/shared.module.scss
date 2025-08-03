@@ -1,7 +1,8 @@
 // 变量定义
 $primary: #a259ff;
-$primary-light: #fbeaff;
+$primary-light: #d070ed;
 $primary-dark: #6c3ec1;
+$secondary: #6c3ec1;
 $accent: #a7e9ff;
 $danger: #ffb6b9;
 $white: #fff;
@@ -11,6 +12,15 @@ $font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
 
 @mixin transition($prop: all, $time: 0.3s, $ease: ease) {
   transition: #{$prop} #{$time} #{$ease};
+}
+
+@mixin card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(180, 120, 255, 0.1);
+  border: 2px solid #fbeaff;
+  padding: 16px;
+  transition: all 0.3s ease;
 }
 
 @mixin button-base {

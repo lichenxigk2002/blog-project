@@ -1,0 +1,308 @@
+@import '../../styles/shared.module.scss';
+
+$primary: #a259ff;
+$secondary: #6c3ec1;
+$card-bg: rgba(255, 255, 255, 0.95);
+$card-radius: 16px;
+$card-shadow: 0 4px 20px rgba(180, 120, 255, 0.1);
+$card-hover-shadow: 0 8px 24px rgba(180, 120, 255, 0.15);
+$input-border: 2px solid #fbeaff;
+$input-radius: 8px;
+$input-bg: rgba(255, 255, 255, 0.9);
+$input-focus-shadow: 0 0 0 3px rgba(162, 89, 255, 0.2);
+$font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
+
+@mixin card {
+  background: $card-bg;
+  border-radius: $card-radius;
+  box-shadow: $card-shadow;
+  border: $input-border;
+  transition: all 0.3s ease;
+}
+
+/* Component specific styles */
+.tableHeader,
+.tableRow {
+  grid-template-columns: minmax(200px, 2fr) minmax(100px, 1fr) minmax(80px, 0.8fr) minmax(80px, 0.8fr) minmax(120px, 1fr);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  border-radius: 8px;
+  align-items: center;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: bold;
+  color: #a259ff;
+  margin: 0;
+  font-family: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
+  text-shadow: 2px 2px 4px rgba(162, 89, 255, 0.1);
+}
+
+.searchBar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #a259ff;
+  box-shadow: 0 0 0 3px rgba(162, 89, 255, 0.2);
+}
+
+.searchButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(162, 89, 255, 0.3);
+  background: linear-gradient(90deg, #fbeaff 0%, #a7e9ff 100%);
+  color: #a259ff;
+}
+
+.primaryButton {
+  composes: button;
+  background: linear-gradient(90deg, #a7e9ff 0%, #fbeaff 100%);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(162, 89, 255, 0.2);
+}
+
+.primaryButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(162, 89, 255, 0.3);
+  background: linear-gradient(90deg, #fbeaff 0%, #a7e9ff 100%);
+  color: #a259ff;
+}
+
+.dangerButton {
+  composes: button;
+  background: linear-gradient(90deg, #ffb6b9 0%, #fbeaff 100%);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(162, 89, 255, 0.2);
+}
+
+.dangerButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(162, 89, 255, 0.3);
+  background: linear-gradient(90deg, #fbeaff 0%, #ffb6b9 100%);
+  color: #a259ff;
+}
+
+.table:hover {
+  box-shadow: 0 6px 24px rgba(180, 120, 255, 0.15);
+}
+
+.tableHeader {
+  background: rgba(251, 234, 255, 0.1);
+  border-bottom: 2px solid #fbeaff;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  backdrop-filter: blur(8px);
+}
+
+.tableBody {
+  display: flex;
+  flex-direction: column;
+}
+
+.tableRow {
+  border-bottom: 1px solid #fbeaff;
+  transition: all 0.3s ease;
+  animation: fadeIn 0.3s ease;
+}
+
+.tableRow:last-child {
+  border-bottom: none;
+}
+
+.tableRow:hover {
+  background-color: rgba(251, 234, 255, 0.2);
+}
+
+.tableCell {
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #6c3ec1;
+  display: flex;
+  align-items: center;
+  font-family: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.statusTag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  min-width: 120px;
+  margin-left: -8px;
+}
+
+.loadingSpinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #fbeaff;
+  border-top: 4px solid #a259ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scrollbar styles */
+.table::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.table::-webkit-scrollbar-thumb {
+  background: #a7e9ff;
+  border-radius: 3px;
+}
+
+.table::-webkit-scrollbar-track {
+  background: #fbeaff;
+  border-radius: 3px;
+}
+
+// 版权管理特定样式
+.articleTitle {
+  font-weight: 500;
+  color: #6c3ec1;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+}
+
+.copyrightHolder {
+  font-weight: 500;
+  color: #6c3ec1;
+}
+
+.licenseTag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
+}
+
+.blockchainStatus {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6c3ec1;
+}
+
+.date {
+  font-size: 12px;
+  color: #6c3ec1;
+}
+
+// 表单样式
+.form {
+  .formGroup {
+    margin-bottom: 20px;
+
+    .label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #6c3ec1;
+      font-size: 14px;
+      font-family: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
+    }
+
+    .input,
+    .select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #fbeaff;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
+      color: #6c3ec1;
+      background: rgba(255, 255, 255, 0.9);
+      transition: all 0.3s ease;
+
+      &:focus {
+        outline: none;
+        border-color: #a259ff;
+        box-shadow: 0 0 0 3px rgba(162, 89, 255, 0.2);
+      }
+
+      &::placeholder {
+        color: #6c3ec1;
+      }
+    }
+
+    .select {
+      background: rgba(255, 255, 255, 0.9);
+      cursor: pointer;
+    }
+  }
+
+  .formFooter {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #fbeaff;
+
+    .button {
+      min-width: 80px;
+    }
+  }
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+
+  .button {
+    min-width: 80px;
+  }
+}

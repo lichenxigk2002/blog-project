@@ -1,0 +1,384 @@
+.copyrightContainer {
+  padding: 20px 0;
+  font-size: 12px;
+  color: #666;
+  line-height: 1.6;
+}
+
+.copyrightHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #666;
+
+  .copyrightIcon {
+    font-size: 18px;
+    font-weight: bold;
+    color: #666;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+
+  .copyrightTitle {
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+  }
+}
+
+.articleInfo {
+  margin-bottom: 16px;
+
+  .infoItem {
+    margin-bottom: 6px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+
+    .label {
+      color: #888;
+      min-width: 80px;
+      flex-shrink: 0;
+    }
+
+    .value {
+      color: #666;
+      word-break: break-all;
+    }
+
+    .link {
+      color: #666;
+      text-decoration: none;
+      word-break: break-all;
+
+      &:hover {
+        color: #333;
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.copyrightNotice {
+  .noticeText {
+    margin: 0 0 8px 0;
+    color: #666;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .copyrightText {
+    margin: 0;
+    color: #888;
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  .licenseLink {
+    color: #666;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: #333;
+      text-decoration: underline;
+    }
+  }
+}
+
+.blockchainStatus {
+  margin-top: 12px;
+  padding: 8px 0;
+  border-top: 1px solid #eee;
+  padding-top: 12px;
+
+  .blockchainHeader {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    padding: 4px 0;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.02);
+      border-radius: 4px;
+    }
+
+    .blockchainIcon {
+      font-size: 12px;
+      color: #28a745;
+      flex-shrink: 0;
+    }
+
+    .blockchainTitle {
+      color: #666;
+      font-size: 11px;
+      line-height: 1.4;
+      flex: 1;
+    }
+
+    .blockchainBadge {
+      background: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 10px;
+      color: #666;
+      border: 1px solid #ddd;
+      flex-shrink: 0;
+    }
+
+    .expandIcon {
+      font-size: 10px;
+      color: #888;
+      transition: transform 0.2s ease;
+      flex-shrink: 0;
+
+      &.expanded {
+        transform: rotate(90deg);
+      }
+    }
+  }
+
+  .blockchainDetails {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #f0f0f0;
+    animation: slideDown 0.3s ease;
+
+    .blockchainInfo {
+      margin-bottom: 8px;
+
+      .blockchainItem {
+        display: flex;
+        align-items: center;
+        margin-bottom: 4px;
+        font-size: 11px;
+
+        .blockchainLabel {
+          color: #888;
+          min-width: 70px;
+          flex-shrink: 0;
+        }
+
+        .blockchainLink {
+          color: #666;
+          text-decoration: none;
+          font-family: 'Courier New', monospace;
+          font-size: 10px;
+
+          &:hover {
+            color: #333;
+            text-decoration: underline;
+          }
+        }
+
+        .blockchainValue {
+          color: #666;
+          font-size: 11px;
+        }
+      }
+    }
+
+    .blockchainDescription {
+      margin-top: 6px;
+      font-size: 10px;
+      color: #888;
+      line-height: 1.4;
+      font-style: italic;
+    }
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    max-height: 200px;
+    transform: translateY(0);
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .copyrightContainer {
+    margin-top: 30px;
+    padding: 16px 0;
+    font-size: 11px;
+  }
+
+  .copyrightHeader {
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+
+    .copyrightIcon {
+      font-size: 16px;
+    }
+
+    .copyrightTitle {
+      font-size: 13px;
+    }
+  }
+
+  .articleInfo {
+    .infoItem {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+
+      .label {
+        min-width: auto;
+      }
+    }
+  }
+
+  .copyrightNotice {
+    .noticeText {
+      font-size: 11px;
+    }
+  }
+
+  .blockchainStatus {
+    .blockchainHeader {
+      .blockchainTitle {
+        font-size: 10px;
+      }
+    }
+
+    .blockchainDetails {
+      .blockchainInfo {
+        .blockchainItem {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 2px;
+
+          .blockchainLabel {
+            min-width: auto;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* 深色主题适配 */
+@media (prefers-color-scheme: dark) {
+  .copyrightContainer {
+    border-top-color: #444;
+    color: #aaa;
+  }
+
+  .copyrightHeader {
+    border-bottom-color: #444;
+
+    .copyrightIcon {
+      color: #aaa;
+    }
+
+    .copyrightTitle {
+      color: #ccc;
+    }
+  }
+
+  .articleInfo {
+    .infoItem {
+      .label {
+        color: #888;
+      }
+
+      .value {
+        color: #aaa;
+      }
+
+      .link {
+        color: #aaa;
+
+        &:hover {
+          color: #ccc;
+        }
+      }
+    }
+  }
+
+  .copyrightNotice {
+    .noticeText {
+      color: #aaa;
+    }
+
+    .copyrightText {
+      color: #888;
+    }
+
+    .licenseLink {
+      color: #aaa;
+
+      &:hover {
+        color: #ccc;
+      }
+    }
+  }
+
+  .blockchainStatus {
+    border-top-color: #444;
+
+    .blockchainHeader {
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+
+      .blockchainIcon {
+        color: #28a745;
+      }
+
+      .blockchainTitle {
+        color: #aaa;
+      }
+
+      .blockchainBadge {
+        background-color: #2d3748;
+        color: #e2e8f0;
+        border-color: #4a5568;
+      }
+
+      .expandIcon {
+        color: #888;
+      }
+    }
+
+    .blockchainDetails {
+      border-top-color: #444;
+
+      .blockchainInfo {
+        .blockchainItem {
+          .blockchainLabel {
+            color: #888;
+          }
+
+          .blockchainLink {
+            color: #aaa;
+
+            &:hover {
+              color: #ccc;
+            }
+          }
+
+          .blockchainValue {
+            color: #aaa;
+          }
+        }
+      }
+
+      .blockchainDescription {
+        color: #888;
+      }
+    }
+  }
+}

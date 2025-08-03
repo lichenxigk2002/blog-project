@@ -1,4 +1,6 @@
 // types/article.ts
+import type { ArticleCopyright } from './Copyright';
+
 export interface Article {
     id?: number;
     title: string;
@@ -26,6 +28,8 @@ export interface Article {
         slug: string;
         color: string;
     }>;
+
+    copyright?: ArticleCopyright; // 关联的版权信息
 }
 
 // 简化的文章列表类型，不包含内容字段

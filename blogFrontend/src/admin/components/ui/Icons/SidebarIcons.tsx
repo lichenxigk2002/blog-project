@@ -97,6 +97,26 @@ export const SettingsIcon: React.FC<IconProps> = ({ size = 20, color = 'currentC
   </svg>
 );
 
+export const CopyrightIcon: React.FC<IconProps> = ({ size = 20, color = 'currentColor', className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" className={className}>
+    <circle cx="12" cy="12" r="10"></circle>
+    <text x="12" y="16" textAnchor="middle" fontSize="12" fontWeight="bold" fill={color}>C</text>
+  </svg>
+);
+
+export const BlockchainIcon: React.FC<IconProps> = ({ size = 20, color = 'currentColor', className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" className={className}>
+    <rect x="2" y="2" width="20" height="20" rx="2" ry="2"></rect>
+    <path d="M7 7h10v10H7z"></path>
+    <path d="M7 7l10 10"></path>
+    <path d="M17 7l-10 10"></path>
+    <circle cx="7" cy="7" r="1"></circle>
+    <circle cx="17" cy="17" r="1"></circle>
+    <circle cx="17" cy="7" r="1"></circle>
+    <circle cx="7" cy="17" r="1"></circle>
+  </svg>
+);
+
 export const MenuIcon: React.FC<IconProps> = ({ size = 20, color = 'currentColor', className = '' }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" className={className}>
     <path d="M4 6h16M4 12h16M4 18h16"></path>
@@ -142,6 +162,10 @@ export const getSidebarIcon = (path: string, props: IconProps = {}) => {
       return <FriendLinksIcon {...props} />;
     case '/admin/settings':
       return <SettingsIcon {...props} />;
+    case '/admin/copyright':
+      return <CopyrightIcon {...props} />;
+    case '/admin/crossbell':
+      return <BlockchainIcon {...props} />;
     default:
       return null;
   }

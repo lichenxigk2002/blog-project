@@ -29,6 +29,9 @@ public class ArticlesController {
     @Autowired
     private com.example.blogbackend.utils.EmailUtil emailUtil;
 
+    @Autowired
+    private com.example.blogbackend.service.ArticleCopyrightService articleCopyrightService;
+
     public ArticlesController(IArticlesService iarticlesService) {
         this.iarticlesService = iarticlesService;
     }
@@ -99,7 +102,20 @@ public class ArticlesController {
         // 1. 保存文章和标签关联
         Articles article = iarticlesService.saveArticleWithTags(articleDTO);
 
-        // 2. 选择性推送邮件通知
+        // 2. 自动创建默认版权信息（公共领域）
+        try {
+            articleCopyrightService.createOrUpdateCopyright(
+                    article.getId(),
+                    "PUBLIC DOMAIN",
+                    "作者");
+        } catch (Exception e) {
+            logger.warn("创建文章版权信息失败: {}", e.getMessage());
+        }
+
+        // 3. 区块链功能将在前端实现
+        logger.info("文章 {} 创建成功，区块链功能将在前端实现", article.getTitle());
+
+        // 3. 选择性推送邮件通知
         if (Boolean.TRUE.equals(articleDTO.getShouldNotify())) {
             String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
 
@@ -140,7 +156,7 @@ public class ArticlesController {
     public ResponseEntity<Articles> getArticleById(
             @PathVariable Integer id,
             @RequestParam(required = false, defaultValue = "false") boolean like) {
-        Articles article = iarticlesService.getById(id);
+        Articles article = iarticlesService.getArticleWithCopyright(id);
         if (article == null) {
             return ResponseEntity.notFound().build();
         }

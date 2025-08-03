@@ -52,5 +52,15 @@ export const adminRoutes: AdminRoute[] = [
     id: 11,
     path: '/admin/settings',
     name: '系统设置'
+  },
+  {
+    id: 12,
+    path: '/admin/copyright',
+    name: '版权管理'
+  },
+  {
+    id: 13,
+    path: '/admin/crossbell',
+    name: 'Crossbell管理'
   }
 ]; 

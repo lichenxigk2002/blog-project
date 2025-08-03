@@ -37,4 +37,9 @@ public interface IArticlesService extends IService<Articles> {
      * 批量更新文章排序
      */
     boolean batchUpdateSort(List<Map<String, Object>> sortData);
+
+    /**
+     * 根据ID获取文章（包含版权信息）
+     */
+    Articles getArticleWithCopyright(Integer id);
 }

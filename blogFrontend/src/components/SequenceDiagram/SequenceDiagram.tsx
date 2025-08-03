@@ -90,7 +90,7 @@ const SequenceDiagram: React.FC<SequenceDiagramProps> = ({ diagram }) => {
             className={styles.actionButton}
             title={showSource ? "显示图表" : "显示源代码"}
           >
-            {showSource ? '图片' : '源码' }
+            {showSource ? '图片' : '源码'}
           </button>
           {!showSource && (
             <button

@@ -1,9 +1,9 @@
 import type { AppProps } from 'next/app';
 import AppLayout from '@/client/components/layout/AppLayout';
-import {Provider, useDispatch} from 'react-redux';
+import { Provider, useDispatch } from 'react-redux';
 import store from '@/redux/store';
 import '@/styles/globals.scss';
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import { useTheme } from '@/hooks/useTheme';
 import Login from '@/components/Login/Login';
 import { useRouter } from "next/router";
@@ -11,12 +11,13 @@ import { LoginModalProvider, LoginModalContext } from '@/context/LoginModalConte
 import AdminLogin from '@/components/AdminLogin/AdminLogin';
 import AdminRouteGuard from '@/admin/components/AdminRouteGuard/AdminRouteGuard';
 import OperationTipModal from '@/components/OperationTipModal/OperationTipModal';
-import {SystemSettingsAPI} from "@/api/SystemSettingsAPI";
-import {modifyAllSettings} from "@/redux/systemSettingsSlice";
+import { SystemSettingsAPI } from "@/api/SystemSettingsAPI";
+import { modifyAllSettings } from "@/redux/systemSettingsSlice";
 import { useAppDispatch } from '@/redux/store';
-import {flatToGroupedSettings} from "@/utils/settingTransform";
-import {adminLoginFromStorage}  from '@/redux/adminAuthSlice';
-import {GlobalTipProvider} from "@/context/GlobalTipContext";
+import { flatToGroupedSettings } from "@/utils/settingTransform";
+import { adminLoginFromStorage } from '@/redux/adminAuthSlice';
+import { GlobalTipProvider } from "@/context/GlobalTipContext";
+import { CrossbellProvider } from '@/components/CrossbellProvider/CrossbellProvider';
 
 // 创建主题包装组件
 function ThemeWrapper({ children }: { children: React.ReactNode }) {
@@ -50,7 +51,7 @@ function AppContent({ Component, pageProps }: AppProps) {
         // 只在客户端执行
         const token = localStorage.getItem('adminToken');
 
-        if(token) {
+        if (token) {
             dispatch(adminLoginFromStorage({ token }));
         }
     }, [dispatch]);
@@ -115,12 +116,14 @@ const MyApp: React.FC<AppProps> = (props) => {
 
     return (
         <Provider store={store}>
-            <div className={[
-                // 字体配置
-                // 已移除 localFont 加载，统一用全局 SCSS 变量管理字体
-            ].join(' ')}>
-                <AppContent {...props} />
-            </div>
+            <CrossbellProvider>
+                <div className={[
+                    // 字体配置
+                    // 已移除 localFont 加载，统一用全局 SCSS 变量管理字体
+                ].join(' ')}>
+                    <AppContent {...props} />
+                </div>
+            </CrossbellProvider>
         </Provider>
     );
 };
