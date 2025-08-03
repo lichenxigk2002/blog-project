@@ -162,53 +162,7 @@
   border-radius: 3px;
 }
 
-.pagination {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 20px;
-  padding: 16px;
-  background: $white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
 
-.paginationInfo {
-  color: #666;
-  font-size: 14px;
-}
-
-.paginationControls {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.paginationButton {
-  padding: 6px 12px;
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
-  background: $white;
-  color: $primary-dark;
-  cursor: pointer;
-  @include transition();
-  font-size: 14px;
-
-  &:hover:not(.disabled) {
-    border-color: $primary-dark;
-    color: $primary-dark;
-  }
-
-  &.disabled {
-    color: #d9d9d9;
-    cursor: not-allowed;
-  }
-}
-
-.paginationCurrent {
-  color: #666;
-  font-size: 14px;
-}
 
 .pageSizeSelect {
   &:hover {

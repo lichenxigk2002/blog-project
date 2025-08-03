@@ -31,34 +31,38 @@ const BulletinBoardManagement: React.FC = () => {
     const [total, setTotal] = useState(0);
     const [sortField, setSortField] = useState<string>('');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-    const [tipModal, setTipModal] = useState<{ open: boolean, message: string, type: 'success' | 'failure' }>({ open: false, message: '', type: 'success' });
+    const [tipModal, setTipModal] = useState<{ open: boolean, message: string, type: 'success' | 'error' }>({ open: false, message: '', type: 'success' });
+
+    // 分页数据计算
+    useEffect(() => {
+        const start = (currentPage - 1) * pageSize;
+        const end = start + pageSize;
+        setFilteredMessages(messages.slice(start, end));
+    }, [currentPage, pageSize, messages]);
 
     useEffect(() => {
         fetchMessages();
-    }, [currentPage, pageSize]);
+    }, []);
 
     const fetchMessages = async () => {
         setLoading(true);
         try {
-            const response = await BulletinBoardAPI.getMessages(currentPage, pageSize);
+            // 获取所有数据，不分页
+            const response = await BulletinBoardAPI.getMessages(1, 1000); // 获取足够多的数据
             if (response && response.records) {
                 setMessages(response.records);
-                setFilteredMessages(response.records);
-                setTotal(response.total);
-                setCurrentPage(1); // 重置到第一页
+                setTotal(response.records.length); // 使用实际获取的数据长度
             } else {
                 console.error('Invalid response format:', response);
                 setMessages([]);
-                setFilteredMessages([]);
                 setTotal(0);
-                setTipModal({ open: true, message: '获取留言列表失败', type: 'failure' });
+                setTipModal({ open: true, message: '获取留言列表失败', type: 'error' });
             }
         } catch (error: any) {
             console.error('Failed to fetch messages:', error);
             setMessages([]);
-            setFilteredMessages([]);
             setTotal(0);
-            setTipModal({ open: true, message: error.message || '获取留言列表失败', type: 'failure' });
+            setTipModal({ open: true, message: error.message || '获取留言列表失败', type: 'error' });
         } finally {
             setLoading(false);
         }
@@ -86,7 +90,7 @@ const BulletinBoardManagement: React.FC = () => {
             } else if (action === 'reply') {
                 // 回复留言
                 if (!values.reply?.trim()) {
-                    setTipModal({ open: true, message: '回复内容不能为空', type: 'failure' });
+                    setTipModal({ open: true, message: '回复内容不能为空', type: 'error' });
                     return;
                 }
                 console.log('回复留言，sendEmail:', values.sendEmail); // 调试日志
@@ -101,7 +105,7 @@ const BulletinBoardManagement: React.FC = () => {
             fetchMessages();
         } catch (e: any) {
             console.error('操作失败:', e);
-            setTipModal({ open: true, message: e.message || '操作失败', type: 'failure' });
+            setTipModal({ open: true, message: e.message || '操作失败', type: 'error' });
         }
     };
 
@@ -116,7 +120,7 @@ const BulletinBoardManagement: React.FC = () => {
             setDeletingMessage(null);
             await fetchMessages();
         } catch (error: any) {
-            setTipModal({ open: true, message: error.message || '删除失败', type: 'failure' });
+            setTipModal({ open: true, message: error.message || '删除失败', type: 'error' });
         } finally {
             setLoading(false);
         }
@@ -124,15 +128,23 @@ const BulletinBoardManagement: React.FC = () => {
 
     const handleSearch = (searchText: string) => {
         setSearchText(searchText);
-        // 在本地数据中进行搜索过滤
+        setCurrentPage(1); // 重置到第一页
+
+        if (!searchText.trim()) {
+            // 如果搜索文本为空，重新获取所有数据
+            fetchMessages();
+            return;
+        }
+
+        // 在本地数据中进行搜索过滤，但不修改原始messages
         const filtered = messages.filter(message =>
             message.name.toLowerCase().includes(searchText.toLowerCase()) ||
             message.email.toLowerCase().includes(searchText.toLowerCase()) ||
             message.content.toLowerCase().includes(searchText.toLowerCase())
         );
-        setFilteredMessages(filtered);
+        // 直接设置过滤后的数据到messages，这样分页计算会基于过滤后的数据
+        setMessages(filtered);
         setTotal(filtered.length);
-        setCurrentPage(1); // 重置到第一页
     };
 
     const handleSort = (field: string) => {
@@ -167,7 +179,7 @@ const BulletinBoardManagement: React.FC = () => {
             setTipModal({ open: true, message: '状态更新成功', type: 'success' });
             fetchMessages();
         } catch (error: any) {
-            setTipModal({ open: true, message: error.message || '状态更新失败', type: 'failure' });
+            setTipModal({ open: true, message: error.message || '状态更新失败', type: 'error' });
         }
     };
 
@@ -282,7 +294,7 @@ const BulletinBoardManagement: React.FC = () => {
             />
 
             <DataTable
-                data={filteredMessages.slice((currentPage - 1) * pageSize, currentPage * pageSize)}
+                data={filteredMessages}
                 columns={columns}
                 actions={actions}
                 loading={loading}
