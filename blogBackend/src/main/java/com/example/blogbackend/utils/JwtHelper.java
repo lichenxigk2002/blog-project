@@ -29,7 +29,10 @@ public class JwtHelper {
     try {
       if (token == null)
         return null;
-      Jws<Claims> claimsJws = Jwts.parser().setSigningKey(key).parseClaimsJws(token);
+      Jws<Claims> claimsJws = Jwts.parserBuilder()
+          .setSigningKey(key)
+          .build()
+          .parseClaimsJws(token);
       Claims claims = claimsJws.getBody();
       String subject = claims.getSubject();
       return Long.parseLong(subject.split("-")[1]);
@@ -40,8 +43,9 @@ public class JwtHelper {
 
   public boolean isExpiration(String token) {
     try {
-      boolean isExpire = Jwts.parser()
+      boolean isExpire = Jwts.parserBuilder()
           .setSigningKey(key)
+          .build()
           .parseClaimsJws(token)
           .getBody()
           .getExpiration()

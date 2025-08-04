@@ -2,6 +2,8 @@ package com.example.blogbackend.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.blogbackend.entity.ArticleCopyright;
+import com.example.blogbackend.dto.CrossbellPublishRequest;
+import com.example.blogbackend.dto.CrossbellPublishResult;
 
 import java.util.List;
 
@@ -58,4 +60,28 @@ public interface ArticleCopyrightService extends IService<ArticleCopyright> {
    * @return 所有版权信息列表
    */
   List<ArticleCopyright> getAllCopyrights();
+
+  /**
+   * 发布文章到 Crossbell 区块链
+   *
+   * @param request 发布请求
+   * @return 发布结果
+   */
+  CrossbellPublishResult publishToCrossbell(CrossbellPublishRequest request);
+
+  /**
+   * 验证文章在 Crossbell 上的状态
+   *
+   * @param articleId 文章ID
+   * @return 是否已上链
+   */
+  boolean verifyArticleOnCrossbell(Integer articleId);
+
+  /**
+   * 获取文章的 Crossbell 链接
+   *
+   * @param articleId 文章ID
+   * @return Crossbell 链接
+   */
+  String getCrossbellUrl(Integer articleId);
 }

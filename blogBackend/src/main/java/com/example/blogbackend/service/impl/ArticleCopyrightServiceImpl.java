@@ -5,6 +5,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.blogbackend.entity.ArticleCopyright;
 import com.example.blogbackend.mapper.ArticleCopyrightMapper;
 import com.example.blogbackend.service.ArticleCopyrightService;
+import com.example.blogbackend.dto.CrossbellPublishRequest;
+import com.example.blogbackend.dto.CrossbellPublishResult;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,6 +24,10 @@ import java.util.List;
 @Service
 public class ArticleCopyrightServiceImpl extends ServiceImpl<ArticleCopyrightMapper, ArticleCopyright>
     implements ArticleCopyrightService {
+
+  // 移除循环依赖
+  // @Autowired
+  // private CrossbellService crossbellService;
 
   @Override
   public ArticleCopyright getByArticleId(Integer articleId) {
@@ -84,5 +91,35 @@ public class ArticleCopyrightServiceImpl extends ServiceImpl<ArticleCopyrightMap
   @Override
   public List<ArticleCopyright> getAllCopyrights() {
     return baseMapper.selectAllWithArticleInfo();
+  }
+
+  @Override
+  public CrossbellPublishResult publishToCrossbell(CrossbellPublishRequest request) {
+    // 这个方法现在由 CrossbellService 直接处理
+    throw new UnsupportedOperationException("请直接使用 CrossbellService.publishArticle() 方法");
+  }
+
+  @Override
+  public boolean verifyArticleOnCrossbell(Integer articleId) {
+    // 获取文章的 noteId
+    ArticleCopyright copyright = getByArticleId(articleId);
+    if (copyright != null && copyright.getNoteId() != null) {
+      // 这里应该调用 CrossbellService，但为了避免循环依赖，暂时返回 false
+      // 建议直接使用 CrossbellService.verifyArticleOnChain()
+      return false;
+    }
+    return false;
+  }
+
+  @Override
+  public String getCrossbellUrl(Integer articleId) {
+    // 获取文章的 noteId
+    ArticleCopyright copyright = getByArticleId(articleId);
+    if (copyright != null && copyright.getNoteId() != null) {
+      // 这里应该调用 CrossbellService，但为了避免循环依赖，暂时返回 null
+      // 建议直接使用 CrossbellService.getCrossbellUrl()
+      return null;
+    }
+    return null;
   }
 }

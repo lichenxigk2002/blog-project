@@ -85,3 +85,20 @@ ipfs:
     url: http://localhost:5001
   gateway:
     url: https://ipfs.io/ipfs/
+
+# Crossbell 配置
+crossbell:
+  rpc-url: ${CROSSBELL_RPC_URL}
+  private-key: ${CROSSBELL_PRIVATE_KEY}
+  contract-address: ${CROSSBELL_CONTRACT_ADDRESS:0xa6f969045641Cf486d747E9Ef0C56C3C14aC5e99}
+  chain-id: ${CROSSBELL_CHAIN_ID:3737}
+  gas-limit: ${CROSSBELL_GAS_LIMIT:3000000}
+  gas-price: ${CROSSBELL_GAS_PRICE:20000000000}
+  # Character ID（Crossbell 用户标识）
+  character-id: ${CROSSBELL_CHARACTER_ID}
+  # 是否启用 Crossbell 功能
+  enabled: ${CROSSBELL_ENABLED:true}
+  # 重试次数
+  retry-count: ${CROSSBELL_RETRY_COUNT:3}
+  # 交易确认等待时间（秒）
+  confirmation-timeout: ${CROSSBELL_CONFIRMATION_TIMEOUT:30}

@@ -13,7 +13,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().permitAll())
-                .csrf().disable(); // 前后端分离建议关闭 CSRF
+                .csrf(csrf -> csrf.disable()); // 修复过时方法
 
         return http.build();
     }

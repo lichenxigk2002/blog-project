@@ -41,7 +41,7 @@ public class User {
     private String githubAvatar;
 
     // 邮箱账号相关字段
-    @TableField(value = "email_account", updateStrategy = FieldStrategy.IGNORED)
+    @TableField(value = "email_account", updateStrategy = FieldStrategy.NOT_NULL)
     private String emailAccount;
     private Boolean emailVerified;
     private LocalDateTime emailBindTime;
