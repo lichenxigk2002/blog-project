@@ -35,4 +35,40 @@ export interface BlockchainTransaction {
   errorMessage?: string;
   createdAt: string;
   confirmedAt?: string;
+}
+
+// ========== Crossbell 区块链相关类型 ==========
+
+// Crossbell 发布请求类型
+export interface CrossbellPublishRequest {
+  articleId: number;
+  licenseType: string;
+  copyrightHolder: string;
+  author: string;
+  publishTime?: string;
+}
+
+// Crossbell 发布结果类型
+export interface CrossbellPublishResult {
+  success: boolean;
+  transactionHash?: string;
+  noteId?: string;
+  errorMessage?: string;
+  publishTime?: string;
+  crossbellUrl?: string;
+}
+
+// Crossbell 交易状态类型
+export type CrossbellTransactionStatus = 'PENDING' | 'SUCCESS' | 'FAILED' | 'ERROR';
+
+// Crossbell Note 元数据类型
+export interface CrossbellNoteMetadata {
+  title: string;
+  content: string;
+  tags: string[];
+  sources: string[];
+  attributes: Array<{
+    trait_type: string;
+    value: string;
+  }>;
 } 

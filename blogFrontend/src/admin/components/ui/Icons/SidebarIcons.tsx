@@ -164,8 +164,6 @@ export const getSidebarIcon = (path: string, props: IconProps = {}) => {
       return <SettingsIcon {...props} />;
     case '/admin/copyright':
       return <CopyrightIcon {...props} />;
-    case '/admin/crossbell':
-      return <BlockchainIcon {...props} />;
     default:
       return null;
   }

@@ -1,5 +1,6 @@
 import { RequestInterceptor } from './type';
 import RequestConfig from '../core/types';
+import { isTokenExpired } from '@/utils/jwtUtils';
 
 // 简单的内存缓存
 const cache = new Map<string, { data: any; timestamp: number; ttl: number }>();
@@ -101,14 +102,19 @@ export const createAuthInterceptor = (): RequestInterceptor => ({
         // 只处理需要认证的请求
         if (config.url?.includes('/api/admin/')) {
             const token = localStorage.getItem('admin_token');
-            if (token) {
+            if (token && !isTokenExpired(token)) {
                 config.headers = {
                     ...config.headers,
                     'Authorization': `Bearer ${token}`
                 };
             } else {
-                // 如果没有token，可以选择抛出错误或继续请求
-                console.warn('No admin token found for admin API request');
+                // 如果token不存在或已过期，清除它
+                if (token) {
+                    localStorage.removeItem('admin_token');
+                    console.warn('Token已过期，已自动清除');
+                }
+                // 可以在这里添加重定向到登录页面的逻辑
+                console.warn('No valid admin token found for admin API request');
             }
         }
         return config;

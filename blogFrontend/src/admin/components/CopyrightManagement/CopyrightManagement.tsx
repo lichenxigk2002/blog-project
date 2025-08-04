@@ -11,8 +11,9 @@ import StatsCard from '../ui/StatsCard/StatsCard';
 import SearchBar from '../ui/SearchBar/SearchBar';
 import DataTable from '../ui/DataTable/DataTable';
 import FormModal from '../ui/FormModal/FormModal';
-import { EditIcon } from '../ui/Icons/Icons';
+import { EditIcon, HashIcon } from '../ui/Icons/Icons';
 import CopyrightForm from './CopyrightForm';
+import HashEvidenceForm from './HashEvidenceForm';
 
 interface CopyrightWithArticle extends ArticleCopyright {
   article?: Article;
@@ -26,6 +27,8 @@ const CopyrightManagement: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [editingCopyright, setEditingCopyright] = useState<CopyrightWithArticle | null>(null);
+  const [hashEvidenceModalVisible, setHashEvidenceModalVisible] = useState(false);
+  const [selectedCopyright, setSelectedCopyright] = useState<CopyrightWithArticle | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
@@ -172,6 +175,11 @@ const CopyrightManagement: React.FC = () => {
     setModalVisible(true);
   };
 
+  const openHashEvidenceModal = (copyright: CopyrightWithArticle) => {
+    setSelectedCopyright(copyright);
+    setHashEvidenceModalVisible(true);
+  };
+
 
 
   const handleSubmit = async (values: any) => {
@@ -279,8 +287,82 @@ const CopyrightManagement: React.FC = () => {
       variant: 'primary' as const,
       icon: <EditIcon />,
       onClick: (copyright: CopyrightWithArticle) => openModal(copyright)
+    },
+    {
+      key: 'hashEvidence',
+      label: '存证',
+      variant: 'default' as const,
+      onClick: (copyright: CopyrightWithArticle) => openHashEvidenceModal(copyright)
+    },
+    {
+      key: 'publish',
+      label: '发布',
+      variant: 'success' as const,
+      onClick: (copyright: CopyrightWithArticle) => handlePublishToCrossbell(copyright),
+      disabled: (copyright: CopyrightWithArticle) => !copyright.article?.id || !!copyright.noteId
     }
   ];
+
+  // 发布到 Crossbell
+  const handlePublishToCrossbell = async (copyright: CopyrightWithArticle) => {
+    if (!copyright.article?.id) {
+      setTipModal({
+        open: true,
+        message: '无法获取文章信息',
+        type: 'error'
+      });
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const response = await CopyrightAPI.publishToCrossbell({
+        articleId: copyright.article.id,
+        licenseType: copyright.licenseType,
+        copyrightHolder: copyright.copyrightHolder,
+        author: copyright.copyrightHolder
+      });
+
+      if (response.success) {
+        const shortHash = response.transactionHash ?
+          `${response.transactionHash.slice(0, 10)}...${response.transactionHash.slice(-8)}` : '';
+        setTipModal({
+          open: true,
+          message: `存证成功！交易哈希: ${shortHash}`,
+          type: 'success'
+        });
+
+        // 刷新数据
+        await fetchCopyrights();
+      } else {
+        setTipModal({
+          open: true,
+          message: `存证失败：${response.errorMessage}`,
+          type: 'error'
+        });
+      }
+    } catch (error: any) {
+      console.error('存证到 Crossbell 失败:', error);
+
+      let errorMessage = '存证失败，请稍后重试';
+
+      // 检查是否是超时错误
+      if (error.name === 'AbortError' || error.message?.includes('timeout') || error.message?.includes('超时')) {
+        errorMessage = '发布超时，区块链交易可能需要更长时间，请稍后检查发布状态';
+      } else if (error.message) {
+        errorMessage = `发布失败：${error.message}`;
+      }
+
+      setTipModal({
+        open: true,
+        message: errorMessage,
+        type: 'error'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className={styles.container}>
@@ -357,7 +439,24 @@ const CopyrightManagement: React.FC = () => {
         )}
       </FormModal>
 
-
+      <FormModal
+        open={hashEvidenceModalVisible}
+        onClose={() => setHashEvidenceModalVisible(false)}
+        title="哈希存证管理"
+        size="medium"
+      >
+        {selectedCopyright && (
+          <HashEvidenceForm
+            articleId={selectedCopyright.articleId}
+            articleTitle={selectedCopyright.article?.title}
+            onClose={() => setHashEvidenceModalVisible(false)}
+            onSuccess={() => {
+              setHashEvidenceModalVisible(false);
+              fetchCopyrights(); // 刷新数据
+            }}
+          />
+        )}
+      </FormModal>
 
       {/* 操作提示弹窗 */}
       <OperationTipModal

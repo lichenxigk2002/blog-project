@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { IoChevronDown, IoChevronUp, IoLink } from 'react-icons/io5';
 import styles from './ArticleCopyright.module.scss';
 import type { Article } from '@/types/Article';
 import { CopyrightAPI } from '@/api/CopyrightAPI';
@@ -70,12 +71,13 @@ const ArticleCopyright: React.FC<ArticleCopyrightProps> = ({ article }) => {
     return `${hash.slice(0, 10)}...${hash.slice(-8)}`;
   };
 
-  const getCrossbellUrl = (noteId: string) => {
-    return `https://crossbell.io/notes/${noteId}`;
-  };
+  // 移除 Crossbell 相关功能
+  // const getCrossbellUrl = (noteId: string) => {
+  //   return `https://crossbell.io/notes/${noteId}`;
+  // };
 
-  const getEtherscanUrl = (txHash: string) => {
-    return `https://etherscan.io/tx/${txHash}`;
+  const getCrossbellExplorerUrl = (txHash: string) => {
+    return `https://scan.crossbell.io/tx/${txHash}`;
   };
 
   const toggleBlockchainInfo = () => {
@@ -167,13 +169,14 @@ const ArticleCopyright: React.FC<ArticleCopyrightProps> = ({ article }) => {
                   className={styles.blockchainHeader}
                   onClick={toggleBlockchainInfo}
                 >
-                  <span className={styles.blockchainIcon}>🔗</span>
+                  <span className={styles.blockchainIcon}><IoLink /></span>
                   <span className={styles.blockchainTitle}>
-                    本文已通过 Crossbell 区块链保护
+                    本文已通过 Crossbell 区块链进行去中心化版权保护
                   </span>
-                  <span className={styles.blockchainBadge}>Crossbell</span>
+                  {/* 移除 Crossbell 相关的显示内容 */}
+                  {/* <span className={styles.blockchainBadge}>Crossbell</span> */}
                   <span className={`${styles.expandIcon} ${blockchainExpanded ? styles.expanded : ''}`}>
-                    {blockchainExpanded ? '▼' : '▶'}
+                    {blockchainExpanded ? <IoChevronUp /> : <IoChevronDown />}
                   </span>
                 </div>
 
@@ -181,18 +184,19 @@ const ArticleCopyright: React.FC<ArticleCopyrightProps> = ({ article }) => {
                   <div className={styles.blockchainDetails}>
                     <div className={styles.blockchainInfo}>
                       <div className={styles.blockchainItem}>
-                        <span className={styles.blockchainLabel}>交易哈希：</span>
+                        <span className={styles.blockchainLabel}>区块链交易哈希：</span>
                         <a
-                          href={getEtherscanUrl(copyrightInfo.blockchainTxHash)}
+                          href={getCrossbellExplorerUrl(copyrightInfo.blockchainTxHash)}
                           className={styles.blockchainLink}
                           target="_blank"
                           rel="noopener noreferrer"
-                          title="在 Etherscan 上查看交易详情"
+                          title="在 Crossbell 区块浏览器上查看交易详情"
                         >
                           {formatHash(copyrightInfo.blockchainTxHash)}
                         </a>
                       </div>
-                      {copyrightInfo.noteId && (
+                      {/* 移除 Crossbell 相关的显示内容 */}
+                      {/* {copyrightInfo.noteId && (
                         <div className={styles.blockchainItem}>
                           <span className={styles.blockchainLabel}>Note ID：</span>
                           <a
@@ -205,16 +209,16 @@ const ArticleCopyright: React.FC<ArticleCopyrightProps> = ({ article }) => {
                             {copyrightInfo.noteId}
                           </a>
                         </div>
-                      )}
+                      )} */}
                       <div className={styles.blockchainItem}>
-                        <span className={styles.blockchainLabel}>保护时间：</span>
+                        <span className={styles.blockchainLabel}>上链时间：</span>
                         <span className={styles.blockchainValue}>
                           {formatDate(copyrightInfo.updatedAt)}
                         </span>
                       </div>
                     </div>
                     <div className={styles.blockchainDescription}>
-                      本文已通过 Crossbell 区块链进行版权保护，确保内容的不可篡改性和时间戳证明。
+                      本文已通过 Crossbell 区块链进行去中心化版权保护。区块链技术确保内容的时间戳不可篡改，提供永久性的数字证明。交易哈希作为唯一标识符，可在 Crossbell 区块浏览器中验证其真实性。该技术基于 Polygon 网络，具有高安全性和低交易成本的优势。
                     </div>
                   </div>
                 )}

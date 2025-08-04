@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import styles from './CopyrightForm.module.scss';
 import Select from '../ui/Select/Select';
 import type { SelectOption } from '../ui/Select/Select';
+import FormItem from '../ui/FormItem/FormItem';
+import FormInput from '../ui/FormInput/FormInput';
+import Button from '../ui/Button/Button';
 
 interface CopyrightFormProps {
   initialValues: {
@@ -29,6 +32,15 @@ const CopyrightForm: React.FC<CopyrightFormProps> = ({
     onSubmit(formData);
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
   const licenseOptions: SelectOption[] = [
     { value: 'CC BY-NC-SA 4.0', label: 'CC BY-NC-SA 4.0 (署名-非商业性-相同方式共享)' },
     { value: 'CC BY-NC-ND 4.0', label: 'CC BY-NC-ND 4.0 (署名-非商业性-禁止演绎)' },
@@ -38,49 +50,57 @@ const CopyrightForm: React.FC<CopyrightFormProps> = ({
   ];
 
   return (
-    <div className={styles.copyrightFormCard}>
-      <form onSubmit={handleSubmit}>
-        {articleTitle && (
-          <div className={styles.formGroup}>
-            <label className={styles.formLabel}>文章标题</label>
-            <div className={styles.articleTitleDisplay}>{articleTitle}</div>
-          </div>
-        )}
-
-        <div className={styles.formGroup}>
-          <label className={styles.formLabel}>版权所有者</label>
-          <input
+    <form onSubmit={handleSubmit} className={styles.form}>
+      {articleTitle && (
+        <FormItem>
+          <FormInput
             type="text"
-            value={formData.copyrightHolder}
-            onChange={(e) => setFormData({ ...formData, copyrightHolder: e.target.value })}
-            className={styles.formInput}
-            placeholder="请输入版权所有者"
-            required
+            name="articleTitle"
+            value={articleTitle}
+            onChange={() => { }}
+            placeholder=""
+            label="文章标题"
+            disabled
           />
-        </div>
+        </FormItem>
+      )}
 
-        <div className={styles.formGroup}>
-          <label className={styles.formLabel}>许可协议</label>
-          <Select
-            value={formData.licenseType}
-            options={licenseOptions}
-            placeholder="请选择许可协议"
-            onChange={(value) => setFormData({ ...formData, licenseType: value as string })}
-            width="100%"
-            searchable
-          />
-        </div>
+      <FormItem>
+        <FormInput
+          type="text"
+          name="copyrightHolder"
+          value={formData.copyrightHolder}
+          onChange={handleInputChange}
+          placeholder="请输入版权所有者"
+          label="版权所有者"
+          required
+        />
+      </FormItem>
 
+      <FormItem>
+        <Select
+          value={formData.licenseType}
+          options={licenseOptions}
+          placeholder="请选择许可协议"
+          onChange={(value) => handleSelectChange('licenseType', value as string)}
+          layout="vertical"
+          label="许可协议"
+          width="100%"
+          searchable
+        />
+      </FormItem>
+
+      <FormItem>
         <div className={styles.buttonRow}>
-          <button type="button" onClick={onCancel} className={`${styles.formButton} ${styles.cancel}`}>
+          <Button type="button" variant="default" onClick={onCancel} className={styles.cancelButton}>
             取消
-          </button>
-          <button type="submit" className={styles.formButton}>
+          </Button>
+          <Button type="submit" variant="primary" className={styles.submitButton}>
             更新
-          </button>
+          </Button>
         </div>
-      </form>
-    </div>
+      </FormItem>
+    </form>
   );
 };
 

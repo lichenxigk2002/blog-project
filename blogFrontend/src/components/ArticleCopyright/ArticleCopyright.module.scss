@@ -109,9 +109,14 @@
     }
 
     .blockchainIcon {
-      font-size: 12px;
+      font-size: 14px;
       color: #28a745;
       flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
     }
 
     .blockchainTitle {

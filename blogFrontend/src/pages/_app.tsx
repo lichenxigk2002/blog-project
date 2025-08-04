@@ -15,14 +15,8 @@ import { SystemSettingsAPI } from "@/api/SystemSettingsAPI";
 import { modifyAllSettings } from "@/redux/systemSettingsSlice";
 import { useAppDispatch } from '@/redux/store';
 import { flatToGroupedSettings } from "@/utils/settingTransform";
-import { adminLoginFromStorage } from '@/redux/adminAuthSlice';
+import { adminLoginFromStorage, checkTokenExpiry } from '@/redux/adminAuthSlice';
 import { GlobalTipProvider } from "@/context/GlobalTipContext";
-import dynamic from 'next/dynamic';
-
-const CrossbellProvider = dynamic(() => import('@/components/CrossbellProvider/CrossbellProvider').then(mod => ({ default: mod.CrossbellProvider })), {
-    ssr: false,
-    loading: () => <div>Loading...</div>
-});
 
 // 创建主题包装组件
 function ThemeWrapper({ children }: { children: React.ReactNode }) {
@@ -54,11 +48,20 @@ function AppContent({ Component, pageProps }: AppProps) {
 
     useEffect(() => {
         // 只在客户端执行
-        const token = localStorage.getItem('adminToken');
+        const token = localStorage.getItem('admin_token');
 
         if (token) {
             dispatch(adminLoginFromStorage({ token }));
         }
+    }, [dispatch]);
+
+    // 定期检查token是否过期（每分钟检查一次）
+    useEffect(() => {
+        const interval = setInterval(() => {
+            dispatch(checkTokenExpiry());
+        }, 60000); // 60秒检查一次
+
+        return () => clearInterval(interval);
     }, [dispatch]);
 
     useEffect(() => {
@@ -118,17 +121,14 @@ function AppContent({ Component, pageProps }: AppProps) {
 
 // 主应用组件
 const MyApp: React.FC<AppProps> = (props) => {
-
     return (
         <Provider store={store}>
-            <CrossbellProvider>
-                <div className={[
-                    // 字体配置
-                    // 已移除 localFont 加载，统一用全局 SCSS 变量管理字体
-                ].join(' ')}>
-                    <AppContent {...props} />
-                </div>
-            </CrossbellProvider>
+            <div className={[
+                // 字体配置
+                // 已移除 localFont 加载，统一用全局 SCSS 变量管理字体
+            ].join(' ')}>
+                <AppContent {...props} />
+            </div>
         </Provider>
     );
 };

@@ -1,7 +1,8 @@
 // src/redux/adminAuth/slice.ts
-import { createSlice ,createAsyncThunk , PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { Admin } from '@/types/Admin';
 import { AdminAPI } from '@/api/AdminAPI';
+import { isTokenExpired } from '@/utils/jwtUtils';
 
 interface AdminAuthState {
     isAuthenticated: boolean;  // 是否已登录
@@ -11,28 +12,51 @@ interface AdminAuthState {
     token: string | null;  // JWT令牌
 }
 
+// 统一的token存储键名
+const ADMIN_TOKEN_KEY = 'admin_token';
 
-const initialState:AdminAuthState = {
+// 清除token
+const clearToken = () => {
+    localStorage.removeItem(ADMIN_TOKEN_KEY);
+};
+
+// 设置token
+const setToken = (token: string) => {
+    localStorage.setItem(ADMIN_TOKEN_KEY, token);
+};
+
+// 获取token
+const getToken = (): string | null => {
+    return localStorage.getItem(ADMIN_TOKEN_KEY);
+};
+
+const initialState: AdminAuthState = {
     isAuthenticated: false,
     admin: null,
     loading: false,
     error: null,
-    token:  null,
+    token: null,
 }
 
 export const adminLogin = createAsyncThunk(
     'adminAuth/login',
     async (
-        credentials: {username:string;password:string },
+        credentials: { username: string; password: string },
         { rejectWithValue }
     ) => {
         try {
             const response = await AdminAPI.login(credentials);
             if (response?.error) return rejectWithValue(response.error);
             if (!response?.token) return rejectWithValue('登录失败：服务器返回数据格式错误');
-            localStorage.setItem('adminToken', response.token)
+
+            // 检查token是否过期
+            if (isTokenExpired(response.token)) {
+                return rejectWithValue('Token已过期，请重新登录');
+            }
+
+            setToken(response.token);
             return response;
-        }catch (error:any){
+        } catch (error: any) {
             return rejectWithValue(error.message || '登录失败，请稍后重试');
         }
     }
@@ -41,10 +65,10 @@ export const adminLogin = createAsyncThunk(
 const adminAuthSlice = createSlice({
     name: 'adminAuth',
     initialState,
-    reducers:{
+    reducers: {
 
-        adminLogout(state){
-            localStorage.removeItem('adminToken');
+        adminLogout(state) {
+            clearToken();
             state.isAuthenticated = false;
             state.admin = null;
             state.token = null;
@@ -52,11 +76,35 @@ const adminAuthSlice = createSlice({
             state.error = null;
         },
         adminLoginFromStorage(state, action) {
-            state.isAuthenticated = true;
-            state.token = action.payload.token;
-            state.admin = action.payload.admin;
-            state.loading = false;
-            state.error = null;
+            const token = getToken();
+            if (token && !isTokenExpired(token)) {
+                state.isAuthenticated = true;
+                state.token = token;
+                state.admin = action.payload.admin;
+                state.loading = false;
+                state.error = null;
+            } else {
+                // token不存在或已过期，清除状态
+                if (token) {
+                    clearToken();
+                }
+                state.isAuthenticated = false;
+                state.admin = null;
+                state.token = null;
+                state.loading = false;
+                state.error = null;
+            }
+        },
+        // 检查并清除过期token
+        checkTokenExpiry(state) {
+            if (state.token && isTokenExpired(state.token)) {
+                clearToken();
+                state.isAuthenticated = false;
+                state.admin = null;
+                state.token = null;
+                state.loading = false;
+                state.error = null;
+            }
         },
     },
     extraReducers: (builder) => {
@@ -82,5 +130,5 @@ const adminAuthSlice = createSlice({
     },
 })
 
-export const { adminLogout,adminLoginFromStorage } = adminAuthSlice.actions;
+export const { adminLogout, adminLoginFromStorage, checkTokenExpiry } = adminAuthSlice.actions;
 export default adminAuthSlice.reducer;

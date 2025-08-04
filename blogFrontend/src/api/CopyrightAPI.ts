@@ -1,5 +1,11 @@
 import { http } from '@/http/request';
-import { ArticleCopyright, LicenseType, BlockchainTransaction } from '@/types/Copyright';
+import {
+  ArticleCopyright,
+  LicenseType,
+  BlockchainTransaction,
+  CrossbellPublishRequest,
+  CrossbellPublishResult
+} from '@/types/Copyright';
 
 export const CopyrightAPI = {
   // 获取文章版权信息
@@ -36,4 +42,56 @@ export const CopyrightAPI = {
   // 根据代码获取许可协议
   getLicenseByCode: (code: string) =>
     http.get<LicenseType>(`/api/license/code/${code}`),
+
+  // ========== Crossbell 区块链功能 ==========
+
+  /**
+   * 发布文章到 Crossbell 区块链
+   */
+  publishToCrossbell: async (request: CrossbellPublishRequest): Promise<CrossbellPublishResult> => {
+    const response = await http.post<CrossbellPublishResult>('/api/crossbell/publish', request, {
+      timeout: 120000 // 2分钟超时，适合区块链交易
+    });
+    return response;
+  },
+
+  /**
+   * 验证文章是否已上链
+   */
+  verifyOnCrossbell: async (noteId: string): Promise<boolean> => {
+    const response = await http.get<boolean>(`/api/crossbell/verify/${noteId}`, undefined, {
+      timeout: 30000 // 30秒超时
+    });
+    return response;
+  },
+
+  /**
+   * 获取 Crossbell 链接
+   */
+  getCrossbellUrl: async (noteId: string): Promise<string> => {
+    const response = await http.get<string>(`/api/crossbell/url/${noteId}`, undefined, {
+      timeout: 30000 // 30秒超时
+    });
+    return response;
+  },
+
+  /**
+   * 获取交易状态
+   */
+  getTransactionStatus: async (txHash: string): Promise<string> => {
+    const response = await http.get<string>(`/api/crossbell/transaction/${txHash}`, undefined, {
+      timeout: 30000 // 30秒超时
+    });
+    return response;
+  },
+
+  /**
+   * Crossbell 服务健康检查
+   */
+  checkCrossbellHealth: async (): Promise<string> => {
+    const response = await http.get<string>('/api/crossbell/health', undefined, {
+      timeout: 10000 // 10秒超时
+    });
+    return response;
+  }
 }; 
