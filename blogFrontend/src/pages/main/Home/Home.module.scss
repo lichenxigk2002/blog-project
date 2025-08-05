@@ -185,7 +185,7 @@ $shadow: var(--shadow);
     text-overflow: ellipsis;
     font-family: 幼圆, sans-serif;
     margin: 0.5rem 0;
-    text-decoration: none;
+    text-decoration: none !important;
 }
 
 .articleMeta {
@@ -194,6 +194,12 @@ $shadow: var(--shadow);
     color: $text-color;
     font-size: 0.85rem;
     margin-top: 0.5rem;
+
+    .articleCreatedAt,
+    .articleViewCount{
+        text-decoration: none !important;
+    }
+
 }
 
 // 统计区域
