@@ -10,6 +10,7 @@ import Link from "next/link";
 import { navRoutesItem } from "@/routes/nav-routes";
 import SubscribeModal from '@/components/SubscribeModal/SubscribeModal';
 import RssSubscribe from '@/components/RssSubscribe/RssSubscribe';
+import OnlineUsers from '@/components/OnlineUsers/OnlineUsers';
 import { useSelector } from "react-redux";
 
 
@@ -107,6 +108,9 @@ const Footer: React.FC = () => {
             <div className={styles.stat}>
               <span className={styles.statNumber}>{stats.galleries}</span>
               <span className={styles.statLabel}>相册</span>
+            </div>
+            <div className={styles.stat}>
+              <OnlineUsers />
             </div>
           </div>
         </div>

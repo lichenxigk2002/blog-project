@@ -1,5 +1,6 @@
 package com.example.blogbackend;
 
+import com.example.blogbackend.websocket.OnlineUsersWebSocketHandler;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -7,10 +8,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
 @MapperScan("com.example.blogbackend.mapper")
 @SpringBootApplication
-public class BlogBackendApplication {
+@EnableWebSocket
+public class BlogBackendApplication implements WebSocketConfigurer {
 
     public static void main(String[] args) {
         try {
@@ -41,6 +46,15 @@ public class BlogBackendApplication {
         restTemplate.setRequestFactory(factory);
 
         return restTemplate;
+    }
+
+    @Override
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        // 创建处理器实例
+        OnlineUsersWebSocketHandler onlineUsersHandler = new OnlineUsersWebSocketHandler();
+
+        registry.addHandler(onlineUsersHandler, "/ws/online-users")
+                .setAllowedOrigins("*");
     }
 
 }
