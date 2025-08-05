@@ -3,7 +3,7 @@ import AppLayout from '@/client/components/layout/AppLayout';
 import { Provider, useDispatch } from 'react-redux';
 import store from '@/redux/store';
 import '@/styles/globals.scss';
-import React, { useEffect } from 'react';
+import React, { useEffect, Component, ErrorInfo, ReactNode } from 'react';
 import { useTheme } from '@/hooks/useTheme';
 import Login from '@/components/Login/Login';
 import { useRouter } from "next/router";
@@ -17,6 +17,38 @@ import { useAppDispatch } from '@/redux/store';
 import { flatToGroupedSettings } from "@/utils/settingTransform";
 import { adminLoginFromStorage, checkTokenExpiry } from '@/redux/adminAuthSlice';
 import { GlobalTipProvider } from "@/context/GlobalTipContext";
+
+// 错误边界组件
+class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean; error?: Error }> {
+    constructor(props: { children: ReactNode }) {
+        super(props);
+        this.state = { hasError: false };
+    }
+
+    static getDerivedStateFromError(error: Error) {
+        return { hasError: true, error };
+    }
+
+    componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+        console.error('Error caught by boundary:', error, errorInfo);
+    }
+
+    render() {
+        if (this.state.hasError) {
+            return (
+                <div style={{ padding: '20px', textAlign: 'center' }}>
+                    <h1>应用出现错误</h1>
+                    <p>错误信息: {this.state.error?.message}</p>
+                    <button onClick={() => window.location.reload()}>
+                        刷新页面
+                    </button>
+                </div>
+            );
+        }
+
+        return this.props.children;
+    }
+}
 
 // 创建主题包装组件
 function ThemeWrapper({ children }: { children: React.ReactNode }) {
@@ -99,7 +131,7 @@ function AppContent({ Component, pageProps }: AppProps) {
                     {isAdminPage ? (
                         <AdminRouteGuard>
                             <Component {...pageProps} />
-                            // </AdminRouteGuard>
+                        </AdminRouteGuard>
                     ) : (
                         <AppLayout>
                             <Component {...pageProps} />
@@ -122,14 +154,16 @@ function AppContent({ Component, pageProps }: AppProps) {
 // 主应用组件
 const MyApp: React.FC<AppProps> = (props) => {
     return (
-        <Provider store={store}>
-            <div className={[
-                // 字体配置
-                // 已移除 localFont 加载，统一用全局 SCSS 变量管理字体
-            ].join(' ')}>
-                <AppContent {...props} />
-            </div>
-        </Provider>
+        <ErrorBoundary>
+            <Provider store={store}>
+                <div className={[
+                    // 字体配置
+                    // 已移除 localFont 加载，统一用全局 SCSS 变量管理字体
+                ].join(' ')}>
+                    <AppContent {...props} />
+                </div>
+            </Provider>
+        </ErrorBoundary>
     );
 };
 
