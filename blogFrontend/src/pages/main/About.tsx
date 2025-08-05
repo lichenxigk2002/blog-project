@@ -1,81 +1,82 @@
 import React, { useEffect, useRef } from 'react';
 import styles from './About/About.module.scss'
 import Image from 'next/image';
-import { gsap } from 'gsap';
+import { motion, useAnimation } from 'framer-motion';
 import MBTICard from '@/pages/main/About/components/MBTICard/MBTICard';
 import PersonalInfoCard from '@/pages/main/About/components/PersonalInfoCard/PersonalInfoCard';
 
 const About: React.FC = () => {
     const avatarRef = useRef<HTMLImageElement>(null);
+    const avatarControls = useAnimation();
 
     useEffect(() => {
-        const avatar = avatarRef.current;
-        if (avatar) {
-            //设置初始状态
-            gsap.set(avatar, {
-                scale: 0,
-                opacity: 0
-            })
-            //动画
-            gsap.to(avatar, {
-                rotation: 2,
-                duration: 3,
-                ease: "power2.inOut",
-                yoyo: true,
-                repeat: -1
-            });
-            gsap.to(avatar, {
-                scale: 1,
-                opacity: 1,
+        // 初始动画
+        avatarControls.start({
+            scale: 1,
+            opacity: 1,
+            transition: {
                 duration: 1,
-                ease: "power2.out",
-                onComplete: () => {
-                    // 载入完成后，开始浮动动画
-                    gsap.to(avatar, {
-                        y: -10,
-                        duration: 2,
-                        ease: "power2.inOut",
-                        yoyo: true,
-                        repeat: -1
-                    });
-                }
-            });
-        }
-    }, []);
+                ease: "easeOut"
+            }
+        });
 
+        // 持续旋转动画
+        avatarControls.start({
+            rotate: [0, 2, 0, -2, 0],
+            transition: {
+                duration: 3,
+                ease: "easeInOut",
+                repeat: Infinity,
+                repeatType: "reverse"
+            }
+        });
 
+        // 浮动动画
+        avatarControls.start({
+            y: [0, -10, 0],
+            transition: {
+                duration: 2,
+                ease: "easeInOut",
+                repeat: Infinity,
+                repeatType: "reverse"
+            }
+        });
+    }, [avatarControls]);
 
     const handleMouseEnter = () => {
-        const avatar = avatarRef.current;
-        if (avatar) {
-            gsap.to(avatar, {
-                scale: 1.05,
+        avatarControls.start({
+            scale: 1.05,
+            transition: {
                 duration: 0.3,
-                ease: "power2.out"
-            });
-        }
+                ease: "easeOut"
+            }
+        });
     };
 
     const handleMouseLeave = () => {
-        const avatar = avatarRef.current;
-        if (avatar) {
-            gsap.to(avatar, {
-                scale: 1,
+        avatarControls.start({
+            scale: 1,
+            transition: {
                 duration: 0.3,
-                ease: "power2.out"
-            });
-        }
+                ease: "easeOut"
+            }
+        });
     };
-
-
 
     return (
         <div>
             <div className={styles.container}>
                 <div className={`${styles.itemCard} ${styles.itemCard1}`}>
-                    <div ref={avatarRef} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} className={styles.avatarContainer}>
+                    <motion.div
+                        ref={avatarRef}
+                        onMouseEnter={handleMouseEnter}
+                        onMouseLeave={handleMouseLeave}
+                        className={styles.avatarContainer}
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={avatarControls}
+                    >
                         <Image src={'/images/avatar_20250520_215057.png'} alt={'avatar'} width={100} height={100} className={styles.avatar} />
-                    </div>
+                    </motion.div>
                 </div>
                 <PersonalInfoCard />
                 <div className={`${styles.itemCard} ${styles.itemCard3}`}>
@@ -121,8 +122,6 @@ const About: React.FC = () => {
                 <div className={`${styles.itemCard} ${styles.itemCard17}`}>
                     常用工具
                 </div>
-
-
             </div>
         </div>
     );

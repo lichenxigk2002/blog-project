@@ -1,12 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import styles from './MBTICard.module.scss';
 import Image from 'next/image';
-import { gsap } from 'gsap';
+import { motion } from 'framer-motion';
 
 const MBTICard: React.FC = () => {
-  const mbtiCardRef = useRef<HTMLDivElement>(null);
-  const mbtiImageRef = useRef<HTMLDivElement>(null);
-
   const mbtiFeatures = [
     { name: '外向', opposite: '内向', percentage: 82, color: '#477eaa' },
     { name: '天马行空', opposite: '求真务实', percentage: 88, color: '#e6a23c' },
@@ -15,73 +12,19 @@ const MBTICard: React.FC = () => {
     { name: '自信果断', opposite: '情绪易波动', percentage: 53, color: '#f16161' }
   ];
 
-  // MBTI卡片内容动画
-  useEffect(() => {
-    const mbtiCard = mbtiCardRef.current;
-    if (mbtiCard) {
-      // 获取卡片内的各个元素
-      const mbtiType = mbtiCard.querySelector(`.${styles.mbtiType}`);
-      const mbtiFeatures = mbtiCard.querySelector(`.${styles.mbtiFeatures}`);
-      const mbtiImage = mbtiCard.querySelector(`.${styles.mbtiImage}`);
-
-      // 设置所有元素的初始状态
-      gsap.set([mbtiType, mbtiFeatures, mbtiImage], {
-        opacity: 0,
-        y: 20
-      });
-
-      // 创建时间轴，依次显示各个元素
-      const tl = gsap.timeline({ delay: 0.5 });
-
-      tl.to(mbtiType, {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        ease: "power2.out"
-      })
-        .to(mbtiFeatures, {
-          opacity: 1,
-          y: 0,
-          duration: 0.6,
-          ease: "power2.out"
-        }, "-=0.3")
-        .to(mbtiImage, {
-          opacity: 1,
-          y: 0,
-          duration: 0.6,
-          ease: "power2.out"
-        }, "-=0.3");
-    }
-  }, []);
-
-  // MBTI图片悬浮效果
-  const handleMbtiImageEnter = () => {
-    const mbtiImage = mbtiImageRef.current;
-    if (mbtiImage) {
-      gsap.to(mbtiImage, {
-        rotation: 5,
-        scale: 1.02,
-        duration: 0.3,
-        ease: "power2.out"
-      });
-    }
-  };
-
-  const handleMbtiImageLeave = () => {
-    const mbtiImage = mbtiImageRef.current;
-    if (mbtiImage) {
-      gsap.to(mbtiImage, {
-        rotation: 0,
-        scale: 1,
-        duration: 0.3,
-        ease: "power2.out"
-      });
-    }
-  };
-
   return (
-    <div ref={mbtiCardRef} className={styles.mbtiCard}>
-      <div className={styles.mbtiType}>
+    <motion.div
+      className={styles.mbtiCard}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5, delay: 0.5 }}
+    >
+      <motion.div
+        className={styles.mbtiType}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.5 }}
+      >
         <h1 style={{ color: '#757575' }}>Commander</h1>
         <h1>ENTJ-A</h1>
         <div className={styles.mbtiLink}>
@@ -94,8 +37,13 @@ const MBTICard: React.FC = () => {
             Commander
           </a>
         </div>
-      </div>
-      <div className={styles.mbtiFeatures}>
+      </motion.div>
+      <motion.div
+        className={styles.mbtiFeatures}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.8 }}
+      >
         {mbtiFeatures.map((feature, index) => (
           <div key={index} className={styles.featureBar}>
             <div className={styles.featureLabel}>{feature.name}</div>
@@ -116,16 +64,21 @@ const MBTICard: React.FC = () => {
             <div className={styles.featureOpposite}>{feature.opposite}</div>
           </div>
         ))}
-      </div>
-      <div
-        ref={mbtiImageRef}
+      </motion.div>
+      <motion.div
         className={styles.mbtiImage}
-        onMouseEnter={handleMbtiImageEnter}
-        onMouseLeave={handleMbtiImageLeave}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 1.1 }}
+        whileHover={{
+          rotate: 5,
+          scale: 1.02,
+          transition: { duration: 0.3 }
+        }}
       >
         <Image src={'https://images-1359353257.cos.ap-beijing.myqcloud.com/aboutMe/4ea4baac8eea30a3901b2e1b2f774a4d04640ac119af-cK9L1H_fw658webp.webp'} alt={'mbti'} width={250} height={250} />
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 
