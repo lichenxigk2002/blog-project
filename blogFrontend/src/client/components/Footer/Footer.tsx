@@ -77,7 +77,7 @@ const Footer: React.FC = () => {
     const fetchStats = async () => {
       try {
         // 获取文章数量
-        const articlesResponse = await ArticlesAPI.getArticles();
+        const articlesResponse = await ArticlesAPI.getArticlesSimple();
         const articles = articlesResponse.data as Article[];
         // 获取相册数量
         const galleries = await GalleryAPI.getGalleries();

@@ -10,21 +10,21 @@ import { TagsAPI } from '@/api/TagsAPI';
 import { GalleryAPI } from '@/api/GalleryAPI';
 import Link from 'next/link';
 import type { Tag } from '@/types/Tags';
-import { Article } from '@/types/Article';
+import { ArticleListItem } from '@/types/Article';
 import { Gallery } from '@/types/Gallery';
 import dynamic from 'next/dynamic';
 const FlipClock = dynamic(() => import('@/components/FlipCard/FlipClock'), { ssr: false });
 
 // 新增：定义props类型
 interface HomeProps {
-    latestArticles: Article[];
+    latestArticles: ArticleListItem[];
     tags: Tag[];
     stats: { articles: number; tags: number; views: number };
     recentPhotos: Gallery[];
 }
 
 const Home: React.FC<HomeProps> = ({ latestArticles: initialArticles, tags: initialTags, stats: initialStats, recentPhotos: initialPhotos }) => {
-    const [latestArticles, setLatestArticles] = useState<Article[]>(initialArticles || []);
+    const [latestArticles, setLatestArticles] = useState<ArticleListItem[]>(initialArticles || []);
     const [tags, setTags] = useState<Tag[]>(initialTags || []);
     const [stats, setStats] = useState(initialStats || { articles: 0, tags: 0, views: 0 });
     const [recentPhotos, setRecentPhotos] = useState<Gallery[]>(initialPhotos || []);
@@ -48,7 +48,7 @@ const Home: React.FC<HomeProps> = ({ latestArticles: initialArticles, tags: init
         // 获取最新文章
         const fetchLatestArticles = async () => {
             try {
-                const response = await ArticlesAPI.getArticles();
+                const response = await ArticlesAPI.getArticlesSimple();
                 if (response && Array.isArray(response.data)) {
                     const publishedArticles = response.data
                         .filter(article => article.status === 'published')
@@ -56,13 +56,10 @@ const Home: React.FC<HomeProps> = ({ latestArticles: initialArticles, tags: init
                         .slice(0, 5);
                     setLatestArticles(publishedArticles);
 
-                    const articlesResponse = await ArticlesAPI.getArticles();
-                    const articles = articlesResponse.data as Article[];
-
                     setStats(prevStats => ({
                         ...prevStats,
-                        articles: articles.filter(article => article.status === 'published').length,
-                        views: articles.reduce((acc, article) => acc + (article.viewCount || 0), 0)
+                        articles: response.data.filter(article => article.status === 'published').length,
+                        views: response.data.reduce((acc, article) => acc + (article.viewCount || 0), 0)
                     }));
                 }
             } catch (error) {
@@ -210,18 +207,18 @@ const Home: React.FC<HomeProps> = ({ latestArticles: initialArticles, tags: init
                             <div className={styles.mainContentLeft} ref={articlesRef}>
                                 <h2 className={styles.latestArticlesTitle}>最新文章</h2>
                                 <div className={styles.articlesGrid}>
-                                    {latestArticles.map((article: Article, idx) => (
+                                    {latestArticles.map((article: ArticleListItem, idx) => (
                                         <Link href={`/main/Articles/${article.id}`} key={article.id}>
                                             <div className={`${styles.articleCard} ${visibleArticleIndexes.includes(idx) ? styles.fadeIn : styles.hidden}`}>
                                                 <div>
                                                     <h3 className={styles.articleTitle}>{article.title}</h3>
                                                     <p className={styles.articleDescription}>
-                                                        {article.excerpt || article.content.slice(0, 100)}
+                                                        {article.excerpt}
                                                     </p>
                                                 </div>
                                                 <div className={styles.articleMeta}>
-                                                    <span>{formatDate(article.createdAt)}</span>
-                                                    <span>{article.viewCount || 0} 阅读</span>
+                                                    <span className={styles.articleCreatedAt}>{formatDate(article.createdAt)}</span>
+                                                    <span className={styles.articleViewCount}>{article.viewCount || 0} 阅读</span>
                                                 </div>
                                             </div>
                                         </Link>
@@ -289,18 +286,17 @@ import { GetStaticProps } from 'next';
 
 export const getStaticProps: GetStaticProps = async () => {
     // 获取最新文章
-    let latestArticles: Article[] = [];
+    let latestArticles: ArticleListItem[] = [];
     let stats = { articles: 0, tags: 0, views: 0 };
     try {
-        const response = await ArticlesAPI.getArticles();
+        const response = await ArticlesAPI.getArticlesSimple();
         if (response && Array.isArray(response.data)) {
             latestArticles = response.data
                 .filter(article => article.status === 'published')
                 .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
                 .slice(0, 5);
-            const articles = response.data as Article[];
-            stats.articles = articles.filter(article => article.status === 'published').length;
-            stats.views = articles.reduce((acc, article) => acc + (article.viewCount || 0), 0);
+            stats.articles = response.data.filter(article => article.status === 'published').length;
+            stats.views = response.data.reduce((acc, article) => acc + (article.viewCount || 0), 0);
         }
     } catch (e) {
         // 忽略错误，兜底用useEffect
