@@ -87,7 +87,7 @@ const nextConfig: NextConfig = {
         ignoreBuildErrors: true,
     },
     // 优化输出
-    output: 'standalone',
+    output: 'standalone', // 启用standalone模式
     // 压缩配置
     compress: true,
     async rewrites() {
