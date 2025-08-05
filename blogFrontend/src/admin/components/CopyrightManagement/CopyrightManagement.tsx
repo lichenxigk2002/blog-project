@@ -106,45 +106,39 @@ const CopyrightManagement: React.FC = () => {
         setAllArticles(articles);
       }
 
-      // 获取每篇文章的版权信息
+      // 一次性获取所有版权信息
+      const allCopyrightsResponse = await CopyrightAPI.getAllCopyrights();
+      if (!allCopyrightsResponse || 'error' in allCopyrightsResponse) {
+        throw new Error('获取版权信息失败');
+      }
+
+      const allCopyrightsData = allCopyrightsResponse as ArticleCopyright[];
+
+      // 将版权信息与文章信息合并
       const copyrightsWithArticles: CopyrightWithArticle[] = [];
+
+      // 为每篇文章创建版权信息
       for (const article of articles) {
-        try {
-          const copyrightResponse = await CopyrightAPI.getArticleCopyright(article.id!);
-          if (copyrightResponse && !('error' in copyrightResponse)) {
-            copyrightsWithArticles.push({
-              ...copyrightResponse,
-              article: article
-            });
-          } else {
-            // 如果没有版权信息，创建一个默认的（表示无版权）
-            copyrightsWithArticles.push({
-              id: 0,
-              articleId: article.id!,
-              licenseType: '无版权',
-              copyrightHolder: '无版权',
-              createdAt: article.createdAt,
-              updatedAt: article.updatedAt,
-              article: article
-            });
-          }
-        } catch (error: any) {
-          // 静默处理404错误，因为新文章没有版权信息是正常的
-          if (error.message && error.message.includes('资源未找到')) {
-            // 没有版权信息，创建一个默认的（表示无版权）
-            copyrightsWithArticles.push({
-              id: 0,
-              articleId: article.id!,
-              licenseType: '无版权',
-              copyrightHolder: '无版权',
-              createdAt: article.createdAt,
-              updatedAt: article.updatedAt,
-              article: article
-            });
-          } else {
-            // 其他错误才打印日志
-            console.error(`获取文章 ${article.id} 版权信息失败:`, error);
-          }
+        // 查找对应的版权信息
+        const copyright = allCopyrightsData.find(c => c.articleId === article.id);
+
+        if (copyright) {
+          // 有版权信息
+          copyrightsWithArticles.push({
+            ...copyright,
+            article: article
+          });
+        } else {
+          // 没有版权信息，创建默认的
+          copyrightsWithArticles.push({
+            id: 0,
+            articleId: article.id!,
+            licenseType: '无版权',
+            copyrightHolder: '无版权',
+            createdAt: article.createdAt,
+            updatedAt: article.updatedAt,
+            article: article
+          });
         }
       }
 
@@ -466,11 +460,7 @@ const CopyrightManagement: React.FC = () => {
         type={tipModal.type}
       />
 
-      {loading && (
-        <div className={styles.loading}>
-          <div className={styles.loadingSpinner} />
-        </div>
-      )}
+
     </div>
   );
 };
