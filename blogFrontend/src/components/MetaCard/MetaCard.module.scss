@@ -1,0 +1,105 @@
+.metaCard {
+  display: flex;
+  align-items: center;
+  background: var(--metacard-background);
+  margin: 1rem auto; // 居中显示
+  border-radius: 8px;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.15);
+  padding: 0.2rem 0.6rem;
+  max-width: 240px; // 控制最大宽度
+  height: 64px; // 控制高度
+  transition: background 0.2s, color 0.2s, transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s;
+  color: var(--text-color);
+  border: var(--metacard-border);
+  will-change: transform, box-shadow;
+  transform-origin: center center;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    transform: scale(1.01);
+    // box-shadow 不变，去除增强
+  }
+}
+
+.platformIcon {
+  position: absolute;
+  right: -18px;
+  top: 50%;
+  transform: translateY(-50%) rotate(-18deg);
+  font-size: 72px;
+  width: 72px;
+  height: 72px;
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 1;
+  object-fit: contain;
+  display: block;
+}
+
+.imageWrapper {
+  width: 48px;
+  height: 48px;
+  margin-right: 0.7rem;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.title {
+  font-size: 0.9rem;
+  font-weight: 500;
+  font-family: 'YouYuan', YouYuan, sans-serif;
+  color: var(--text-color) !important;
+  text-decoration: none;
+  margin-bottom: 0.5rem;
+  word-break: break-all;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+
+  &:hover {
+    color: #3178c6;
+    text-decoration: underline;
+  }
+}
+
+.externalIcon {
+  font-size: 1em;
+  vertical-align: middle;
+  color: inherit;
+  transition: color 0.2s;
+}
+
+.desc {
+  color: var(--text-color);
+  font-family: 'YouYuan', YouYuan, sans-serif;
+  font-size: 0.75rem;
+  line-height: 1.2;
+  word-break: break-all;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
