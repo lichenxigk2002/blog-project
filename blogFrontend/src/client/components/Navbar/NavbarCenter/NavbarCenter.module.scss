@@ -162,13 +162,18 @@
         font-size: 0.9rem;
     }
 
+    .articleInfo {
+        max-width: 250px;
+    }
+
     .articleTitle {
         font-size: 1rem;
-        max-width: 300px;
+        max-width: 250px;
     }
 
     .articleExcerpt {
-        width: 280px;
+        width: 250px;
+        padding: 0;
     }
 
     .dropdown {
