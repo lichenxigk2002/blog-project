@@ -78,6 +78,8 @@
   --tag-background-color: #f3f4f6;
   --tag-color: #9ca3af;
   --like: #ff4d4f;
+  --metacard-background: linear-gradient(135deg, #f8f6f3 60%, #eaeaea 100%);
+  --metacard-border: 1px solid rgba(212, 175, 55, 0.10); // 白金色边框，淡淡的
 }
 
 [data-theme="dark"] {
@@ -114,6 +116,8 @@
   --tag-background-color: #1f2937;
   --tag-color: #9ca3af;
   --like: #de1b22;
+  --metacard-background: linear-gradient(135deg, #232526 60%, #1a1a1a 100%);
+  --metacard-border: 1px solid rgba(60, 60, 60, 0.7);
 }
 
 // 媒体查询嵌套
