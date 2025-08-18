@@ -11,4 +11,3 @@ export interface Gallery {
 }
 
 export type GalleryCreate = Omit<Gallery, 'id' | 'date'>;
-export type GalleryUpdate = Partial<GalleryCreate>;
