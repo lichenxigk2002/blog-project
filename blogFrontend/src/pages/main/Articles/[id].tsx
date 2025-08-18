@@ -18,9 +18,11 @@ import Head from "next/head";               // Next.js头部组件
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner'; // 加载动画组件
 import RecentArticles from "@/components/RecentArticles/RecentArticles"; // 最近文章组件
 import ArticleSidebar from '@/components/ArticleSidebar/ArticleSidebar';   // 文章侧边栏组件
+import ArticleCopyright from '@/components/ArticleCopyright/ArticleCopyright';// 版权声明组件
 import { useLoading } from "@/hooks/useLoading"; // 自定义加载状态钩子
 import dynamic from 'next/dynamic';
-import ArticleCopyright from '@/components/ArticleCopyright/ArticleCopyright'; // 版权声明组件
+import MetaCard from '@/components/MetaCard/MetaCard';
+
 
 
 // 定义标题对象的类型
@@ -34,6 +36,7 @@ interface Heading {
 const ArticleDetail: React.FC = () => {
     // 使用路由钩子获取路由参数
     const SequenceDiagram = dynamic(() => import('@/components/SequenceDiagram/SequenceDiagram'), { ssr: false });
+    const MermaidDiagram = dynamic(() => import('@/components/MermaidDiagram/MermaidDiagram'), { ssr: false });
     const router = useRouter(); // Next.js路由对象
     const { id } = router.query; // 从URL中获取文章ID
 
@@ -472,6 +475,30 @@ const ArticleDetail: React.FC = () => {
                                             return (
                                                 <SequenceDiagram diagram={String(children).replace(/\n$/, '')} />
                                             );
+                                        }
+
+                                        if (language === 'mermaid') {
+                                            return <MermaidDiagram diagram={String(children).replace(/\n$/, '')} />;
+                                        }
+
+                                        if (language === 'meta') {
+                                            // 解析 key:value 格式
+                                            const lines = String(children).split('\n');
+                                            const meta: any = {};
+                                            lines.forEach(line => {
+                                                const [key, ...rest] = line.split(':');
+                                                if (key && rest.length) {
+                                                    meta[key.trim()] = rest.join(':').trim();
+                                                }
+                                            });
+                                            // tags 特殊处理
+                                            if (meta.tags) {
+                                                meta.tags = meta.tags.split(',').map((t: string) => t.trim());
+                                            }
+                                            if (meta.views) {
+                                                meta.views = Number(meta.views);
+                                            }
+                                            return <MetaCard {...meta} />;
                                         }
 
                                         // 行内代码
