@@ -83,7 +83,7 @@ const nextConfig: NextConfig = {
     // },
     typescript: {
         // !! 警告 !!
-        // 危险，仅在生产环境使用
+        // 仅在生产环境使用
         ignoreBuildErrors: true,
     },
     // 优化输出
