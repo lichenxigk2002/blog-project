@@ -33,6 +33,7 @@ const CopyrightManagement: React.FC = () => {
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
   const [tipModal, setTipModal] = useState<{ open: boolean, message: string, type: 'success' | 'error' }>({ open: false, message: '', type: 'success' });
+  const [confirmModal, setConfirmModal] = useState<{ open: boolean, copyright: CopyrightWithArticle | null }>({ open: false, copyright: null });
 
   // 根据许可协议类型获取颜色配置
   const getLicenseColor = (licenseType: string) => {
@@ -292,10 +293,34 @@ const CopyrightManagement: React.FC = () => {
       key: 'publish',
       label: '发布',
       variant: 'success' as const,
-      onClick: (copyright: CopyrightWithArticle) => handlePublishToCrossbell(copyright),
-      disabled: (copyright: CopyrightWithArticle) => !copyright.article?.id || !!copyright.noteId
+      onClick: (copyright: CopyrightWithArticle) => handlePublishClick(copyright),
+      disabled: (copyright: CopyrightWithArticle) => !copyright.article?.id
     }
   ];
+
+  // 处理发布按钮点击
+  const handlePublishClick = (copyright: CopyrightWithArticle) => {
+    // 如果已上链，显示确认弹窗
+    if (copyright.noteId) {
+      setConfirmModal({ open: true, copyright });
+    } else {
+      // 未上链，直接发布
+      handlePublishToCrossbell(copyright);
+    }
+  };
+
+  // 确认重新发布
+  const handleConfirmRepublish = () => {
+    if (confirmModal.copyright) {
+      handlePublishToCrossbell(confirmModal.copyright);
+      setConfirmModal({ open: false, copyright: null });
+    }
+  };
+
+  // 取消重新发布
+  const handleCancelRepublish = () => {
+    setConfirmModal({ open: false, copyright: null });
+  };
 
   // 发布到 Crossbell
   const handlePublishToCrossbell = async (copyright: CopyrightWithArticle) => {
@@ -460,6 +485,31 @@ const CopyrightManagement: React.FC = () => {
         type={tipModal.type}
       />
 
+      {/* 确认重新发布弹窗 */}
+      <FormModal
+        open={confirmModal.open}
+        onClose={handleCancelRepublish}
+        title="确认重新发布"
+        size="small"
+        closeOnOverlayClick={true}
+      >
+        <div style={{ padding: '20px 0' }}>
+          <p style={{ marginBottom: '16px', color: '#a259ff', fontSize: '14px', lineHeight: '1.5' }}>
+            该文章已经发布到区块链，重新发布将覆盖之前的记录。
+          </p>
+          <p style={{ marginBottom: '24px', color: '#a259ff', fontSize: '14px', lineHeight: '1.5' }}>
+            确定要继续吗？
+          </p>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+            <Button variant="default" onClick={handleCancelRepublish}>
+              取消
+            </Button>
+            <Button variant="danger" onClick={handleConfirmRepublish}>
+              确定
+            </Button>
+          </div>
+        </div>
+      </FormModal>
 
     </div>
   );
