@@ -11,7 +11,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Message } from '@/types/AIChat';
 import { AIChatAPI } from '@/api/AIChatAPI';
 import OperationTipModal from '@/components/OperationTipModal/OperationTipModal';
-import AIChatCodeBlock from '@/components/Code/AIChatCodeBlock';
+import AIChatCodeBlock from '@/components/ArticleUI/Code/AIChatCodeBlock';
 import { AI_MODELS, AIMessage } from '@/config/aiModels';
 
 
