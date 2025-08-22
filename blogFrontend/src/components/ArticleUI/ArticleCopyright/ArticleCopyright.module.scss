@@ -1,5 +1,5 @@
 .copyrightContainer {
-  padding: 20px 0;
+  padding: 10px 0;
   font-size: 12px;
   color: #666;
   line-height: 1.6;
@@ -11,7 +11,7 @@
   gap: 8px;
   margin-bottom: 16px;
   padding-bottom: 12px;
-  border-bottom: 1px solid #666;
+  border-bottom: 1px solid var(--code-border);
 
   .copyrightIcon {
     font-size: 18px;
@@ -92,7 +92,7 @@
 .blockchainStatus {
   margin-top: 12px;
   padding: 8px 0;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--code-border);
   padding-top: 12px;
 
   .blockchainHeader {
@@ -151,7 +151,7 @@
   .blockchainDetails {
     margin-top: 8px;
     padding-top: 8px;
-    border-top: 1px solid #f0f0f0;
+    border-top: 1px solid var(--code-border);
     animation: slideDown 0.3s ease;
 
     .blockchainInfo {
@@ -277,12 +277,12 @@
 /* 深色主题适配 */
 @media (prefers-color-scheme: dark) {
   .copyrightContainer {
-    border-top-color: #444;
+    border-top-color: var(--code-border);
     color: #aaa;
   }
 
   .copyrightHeader {
-    border-bottom-color: #444;
+    border-bottom-color: var(--code-border);
 
     .copyrightIcon {
       color: #aaa;
@@ -332,7 +332,7 @@
   }
 
   .blockchainStatus {
-    border-top-color: #444;
+    border-top-color: var(--code-border);
 
     .blockchainHeader {
       &:hover {
@@ -359,7 +359,7 @@
     }
 
     .blockchainDetails {
-      border-top-color: #444;
+      border-top-color: var(--code-border);
 
       .blockchainInfo {
         .blockchainItem {

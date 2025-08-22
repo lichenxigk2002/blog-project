@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styles from './MermaidDiagram.module.scss';
+import { FiCode, FiImage, FiDownload, FiChevronDown, FiChevronUp } from 'react-icons/fi';
 
 interface MermaidDiagramProps {
     diagram: string;
@@ -17,6 +18,13 @@ const MermaidDiagram: React.FC<MermaidDiagramProps> = ({ diagram }) => {
     // 2. 最大高度
     const MAX_HEIGHT = '300px';
 
+    const getMermaidTheme = () => {
+        if (typeof window !== 'undefined') {
+            if (document.documentElement.dataset.theme === 'dark') return 'dark';
+        }
+        return 'default';
+    };
+
     // 3. 渲染 mermaid 图表
     useEffect(() => {
         if (showSource) return;
@@ -25,7 +33,7 @@ const MermaidDiagram: React.FC<MermaidDiagramProps> = ({ diagram }) => {
             if (!container) return;
             try {
                 const mermaid = (await import('mermaid')).default;
-                mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+                mermaid.initialize({ startOnLoad: false, theme: getMermaidTheme(), securityLevel: 'loose' });
                 const id = `mermaid-diagram-${Math.random().toString(36).substr(2, 9)}`;
                 const { svg } = await mermaid.render(id, diagram);
                 container.innerHTML = svg;
@@ -75,16 +83,37 @@ const MermaidDiagram: React.FC<MermaidDiagramProps> = ({ diagram }) => {
                 <span className={styles.language}>mermaid</span>
                 <div className={styles.buttonGroup}>
                     <button className={styles.copyButton} onClick={() => setShowSource(!showSource)}>
-                        {showSource ? '图片' : '源码'}
+                        {showSource ? (
+                            <>
+                                <FiImage style={{ fontSize: '0.9em', marginRight: 4 }} />
+                                <span style={{ fontSize: '0.85em' }}>图片</span>
+                            </>
+                        ) : (
+                            <>
+                                <FiCode style={{ fontSize: '0.9em', marginRight: 4 }} />
+                                <span style={{ fontSize: '0.85em' }}>源码</span>
+                            </>
+                        )}
                     </button>
                     {!showSource && (
                         <button className={styles.copyButton} onClick={handleDownload}>
-                            下载
+                            <FiDownload style={{ fontSize: '0.9em', marginRight: 4 }} />
+                            <span style={{ fontSize: '0.85em' }}>下载</span>
                         </button>
                     )}
                     {shouldShowExpand && (
                         <button className={styles.expandButton} onClick={toggleExpand}>
-                            {isExpanded ? '收起' : '展开'}
+                            {isExpanded ? (
+                                <>
+                                    <FiChevronUp style={{ fontSize: '1em', marginRight: 4 }} />
+                                    <span style={{ fontSize: '0.85em' }}>收起</span>
+                                </>
+                            ) : (
+                                <>
+                                    <FiChevronDown style={{ fontSize: '1em', marginRight: 4 }} />
+                                    <span style={{ fontSize: '0.85em' }}>展开</span>
+                                </>
+                            )}
                         </button>
                     )}
                 </div>

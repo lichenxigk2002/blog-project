@@ -68,13 +68,13 @@ const ArticleCopyright: React.FC<ArticleCopyrightProps> = ({ article }) => {
 
   const formatHash = (hash: string) => {
     if (!hash) return '';
-    return `${hash.slice(0, 10)}...${hash.slice(-8)}`;
+    return `${hash}`;
   };
 
   // 移除 Crossbell 相关功能
-  // const getCrossbellUrl = (noteId: string) => {
-  //   return `https://crossbell.io/notes/${noteId}`;
-  // };
+  const getCrossbellUrl = (noteId: string) => {
+    return `https://crossbell.io/notes/${noteId}`;
+  };
 
   const getCrossbellExplorerUrl = (txHash: string) => {
     return `https://scan.crossbell.io/tx/${txHash}`;
@@ -196,7 +196,7 @@ const ArticleCopyright: React.FC<ArticleCopyrightProps> = ({ article }) => {
                         </a>
                       </div>
                       {/* 移除 Crossbell 相关的显示内容 */}
-                      {/* {copyrightInfo.noteId && (
+                      {copyrightInfo.noteId && (
                         <div className={styles.blockchainItem}>
                           <span className={styles.blockchainLabel}>Note ID：</span>
                           <a
@@ -209,7 +209,7 @@ const ArticleCopyright: React.FC<ArticleCopyrightProps> = ({ article }) => {
                             {copyrightInfo.noteId}
                           </a>
                         </div>
-                      )} */}
+                      )}
                       <div className={styles.blockchainItem}>
                         <span className={styles.blockchainLabel}>上链时间：</span>
                         <span className={styles.blockchainValue}>

@@ -1,0 +1,78 @@
+// Table structure and detail styles, colors use code block variables from globals.scss
+$table-radius: 8px;
+$table-font-size: 0.85rem;
+$table-margin: 0.5rem;
+$table-padding: 0.5rem 0.75rem;
+$table-header-padding: 0.5rem 1rem;
+$table-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+$table-zebra-bg: var(--code-zebra-bg);
+
+.tableContainer {
+  width: 100%;
+  overflow-x: auto;
+  margin: $table-margin 0;
+  border-radius: $table-radius;
+  box-shadow: $table-box-shadow;
+  background: var(--code-block-bg);
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: $table-font-size;
+  line-height: 1.6;
+  min-width: 480px;
+  border-radius: $table-radius;
+  overflow: hidden;
+  background: transparent;
+}
+
+.tableHead {
+  background: var(--code-header-bg); // 表头颜色
+}
+
+.tableHeader {
+  padding: $table-header-padding;
+  text-align: left;
+  font-weight: 600;
+  color: var(--code-text);
+  border-bottom: 1.5px solid var(--code-border);
+  background: inherit;
+  white-space: nowrap;
+}
+
+.tableBody {
+  background: var(--code-block-bg);
+}
+
+.tableRow {
+  transition: background 0.2s;
+
+  &:nth-child(even) {
+    background: $table-zebra-bg; // 更淡的斑马纹
+  }
+
+  &:hover {
+    background: var(--table-hover);
+  }
+}
+
+.tableCell {
+  padding: $table-padding;
+  border-bottom: 1px solid var(--code-border);
+  color: var(--code-text);
+  background: var(--table-zebra);
+}
+
+@media (max-width: 700px) {
+  .table {
+    min-width: 320px;
+    font-size: 0.8rem;
+  }
+
+  .tableHeader,
+  .tableCell {
+    padding: 0.4rem 0.5rem;
+  }
+}

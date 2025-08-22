@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './ArticleSearch.module.scss';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaSearch, FaTimes } from 'react-icons/fa';
+import { FiSearch, FiX } from 'react-icons/fi';
 
 interface SearchResult {
   text: string;
@@ -104,7 +104,7 @@ const ArticleSearch: React.FC<ArticleSearchProps> = ({ content, onResultClick })
       transition={{ duration: 0.5 }}
     >
       <div className={styles.searchInput}>
-        <FaSearch className={styles.searchIcon} />
+        <FiSearch className={styles.searchIcon} />
         <input
           type="text"
           placeholder="搜索文章内容..."
@@ -120,7 +120,7 @@ const ArticleSearch: React.FC<ArticleSearchProps> = ({ content, onResultClick })
             }}
             className={styles.clearButton}
           >
-            <FaTimes />
+            <FiX />
           </button>
         )}
       </div>

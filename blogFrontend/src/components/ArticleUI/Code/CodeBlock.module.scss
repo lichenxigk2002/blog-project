@@ -3,7 +3,7 @@ $border-radius: 8px;
 $header-padding: 0.5rem 1rem;
 $button-radius: 4px;
 $button-padding: 0.25rem 0.75rem;
-$button-font-size: 0.9rem;
+$button-font-size: 0.8rem;
 $button-gap: 0.5rem;
 $box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
@@ -36,13 +36,13 @@ $box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         border-bottom: 1px solid var(--code-border);
 
         .language {
-            font-size: 0.8rem;
+            font-size: 1rem;
             color: var(--lang-color);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
 
             // 语言色
             &-javascript {
                 --lang-color: #f7df1e;
-                color: black;
             }
 
             &-typescript {
@@ -68,6 +68,94 @@ $box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             &-java {
                 --lang-color: #ff9500;
             }
+
+            &-shell {
+                --lang-color: #89e051;
+            }
+
+            &-go {
+                --lang-color: #00add8;
+            }
+
+            &-php {
+                --lang-color: #4f5d95;
+            }
+
+            &-c {
+                --lang-color: #555555;
+            }
+
+            &-cpp {
+                --lang-color: #00599c;
+            }
+
+            &-ruby {
+                --lang-color: #cc342d;
+            }
+
+            &-kotlin {
+                --lang-color: #a97bff;
+            }
+
+            &-swift {
+                --lang-color: #f05138;
+            }
+
+            &-rust {
+                --lang-color: #dea584;
+            }
+
+            &-sql {
+                --lang-color: #e38c00;
+            }
+
+            &-yaml {
+                --lang-color: #cb171e;
+            }
+
+            &-xml {
+                --lang-color: #0060ac;
+            }
+
+            &-bash {
+                --lang-color: #89e051;
+            }
+
+            &-powershell {
+                --lang-color: #012456;
+            }
+
+            &-perl {
+                --lang-color: #0298c3;
+            }
+
+            &-r {
+                --lang-color: #198ce7;
+            }
+
+            &-dart {
+                --lang-color: #00b4ab;
+            }
+
+            &-scala {
+                --lang-color: #c22d40;
+            }
+
+            &-lua {
+                --lang-color: #000080;
+            }
+
+            &-matlab {
+                --lang-color: #e16737;
+            }
+
+            &-groovy {
+                --lang-color: #4298b8;
+            }
+
+            &-objectivec {
+                --lang-color: #438eff;
+            }
         }
 
         .buttonGroup {
@@ -77,6 +165,9 @@ $box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             .copyButton,
             .expandButton {
                 @include code-btn;
+                display: flex;
+                align-items: center;
+                gap: 0.2em;
 
                 &:hover {
                     transform: scale(1.05);

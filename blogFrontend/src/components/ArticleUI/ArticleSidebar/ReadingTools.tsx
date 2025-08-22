@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaFont, FaMoon, FaSun, FaFileExport, FaShareAlt, FaChevronUp } from 'react-icons/fa';
+import { FiType, FiMoon, FiSun, FiFileText, FiShare2, FiChevronUp } from 'react-icons/fi';
 import { useTheme } from '@/hooks/useTheme';
 import { useAppDispatch } from '@/redux/store';
 import { toggleTheme } from '@/redux/themeSlice';
@@ -69,14 +69,14 @@ const ReadingTools: React.FC<ReadingToolsProps> = ({
           className={`${styles.collapseButton} ${isCollapsed ? styles.collapsed : ''}`}
           onClick={() => setIsCollapsed(!isCollapsed)}
         >
-          <FaChevronUp />
+          <FiChevronUp />
         </button>
       </div>
       <div className={styles.toolContent}>
         <div className={styles.toolItem}>
           <div className={styles.toolHeader}>
             <span className={styles.toolTitle}>字体大小</span>
-            <FaFont className={styles.toolIcon} />
+            <FiType className={styles.toolIcon} />
           </div>
           <input
             type="range"
@@ -93,9 +93,9 @@ const ReadingTools: React.FC<ReadingToolsProps> = ({
           <div className={styles.toolHeader}>
             <span className={styles.toolTitle}>主题切换</span>
             {isDarkMode ? (
-              <FaMoon className={styles.toolIcon} />
+              <FiMoon className={styles.toolIcon} />
             ) : (
-              <FaSun className={styles.toolIcon} />
+              <FiSun className={styles.toolIcon} />
             )}
           </div>
           <button
@@ -117,17 +117,17 @@ const ReadingTools: React.FC<ReadingToolsProps> = ({
 
         <div className={styles.toolItem}>
           <button
-              className={`${styles.exportButton} ${styles.shareButton}`}
-              onClick={handleShareClick}
+            className={`${styles.exportButton} ${styles.shareButton}`}
+            onClick={handleShareClick}
           >
-            <FaShareAlt className={styles.toolIcon} />
+            <FiShare2 className={styles.toolIcon} />
             {isCopied ? '已复制' : '分享文章'}
           </button>
           <button
-              className={`${styles.exportButton} ${styles.shareButton}`}
-              onClick={handleExportMarkdown}
+            className={`${styles.exportButton} ${styles.shareButton}`}
+            onClick={handleExportMarkdown}
           >
-            <FaFileExport className={styles.toolIcon} />
+            <FiFileText className={styles.toolIcon} />
             导出 Markdown
           </button>
         </div>
