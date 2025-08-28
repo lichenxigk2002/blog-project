@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import styles from './Articles/Articles.module.scss';
 import { motion } from 'framer-motion';
 import Head from "next/head";
-import { FiClock, FiEye, FiHeart, FiTag, FiSearch, FiArrowUp, FiArrowDown, FiStar } from 'react-icons/fi';
+import { FiClock, FiEye, FiHeart, FiTag, FiSearch, FiArrowUp, FiArrowDown, FiStar, FiCalendar, FiEdit } from 'react-icons/fi';
 import { useLoading } from '@/hooks/useLoading';
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
 import LoadingMore from '@/components/LoadingMore/LoadingMore';
@@ -12,6 +12,7 @@ import { ArticlesAPI } from '@/api/ArticlesAPI';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import { useGlobalTip } from '@/hooks/useGlobalTip';
 import { httpError } from '@/http/core/error';
+import { formatDate, getRelativeDays } from '@/utils/dateUtils';
 
 // 新增：定义props类型
 interface ArticlesProps {
@@ -345,55 +346,88 @@ const Articles: React.FC<ArticlesProps> = ({ initialArticles }) => {
                             className={styles.articleLink}
                             onClick={() => handleArticleClick(article.id)}
                         >
-                            <div>
-                                <h1 className={styles.articleTitle}>
-                                    {article.title}
-                                    {article.isTop && <FiStar className={styles.topArticleIcon} />}
-                                </h1>
-                                <div className={styles.articleMeta}>
-                                    <span>{new Date(article.publishedAt).toLocaleDateString()}</span>
-                                </div>
-                                <div className={styles.articleExcerpt}>
-                                    {article.excerpt}
-                                </div>
-                                <div className={styles.metaContainer}>
-                                    {article.tags && article.tags.length > 0 && (
-                                        <div className={styles.tags} >
-                                            {article.tags.map(tag => (
-                                                <span key={tag.id} className={styles.tag} style={{
-                                                    backgroundColor: `${tag.color}40`,
-                                                }}>
-                                                    <FiTag style={{ marginRight: 4, verticalAlign: 'middle' }} />
-                                                    {tag.name}
+                            <div className={styles.articleContent}>
+                                <div className={styles.articleText}>
+                                    <h1 className={styles.articleTitle}>
+                                        {article.title}
+                                        {article.isTop && <FiStar className={styles.topArticleIcon} />}
+                                    </h1>
+                                    <div className={styles.articleMeta}>
+                                        <span>{formatDate(article.createdAt)}</span>
+                                    </div>
+                                    <div className={styles.articleExcerpt}>
+                                        {article.excerpt}
+                                    </div>
+                                    <div className={styles.metaContainer}>
+                                        {article.tags && article.tags.length > 0 && (
+                                            <div className={styles.tags} >
+                                                {article.tags.map(tag => (
+                                                    <span key={tag.id} className={styles.tag} style={{
+                                                        backgroundColor: `${tag.color}40`,
+                                                    }}>
+                                                        <FiTag style={{ marginRight: 4, verticalAlign: 'middle' }} />
+                                                        {tag.name}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        )}
+                                        {article && (
+                                            <div className={styles.metaInfo}>
+                                                {/* Views */}
+                                                <span className={styles.metaItem}>
+                                                    <FiEye style={{ marginRight: 4, verticalAlign: 'middle' }} />
+                                                    {article.viewCount}
                                                 </span>
-                                            ))}
-                                        </div>
-                                    )}
-                                    {article && (
-                                        <div className={styles.metaInfo}>
-                                            {/* Views */}
-                                            <span className={styles.metaItem}>
-                                                <FiEye style={{ marginRight: 4, verticalAlign: 'middle' }} />
-                                                {article.viewCount}
-                                            </span>
 
-                                            {/* Likes */}
-                                            <motion.div
-                                                className={styles.metaItem}
-                                                onClick={(e) => handleLike(article.id, e)}
-                                                style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center' }}
-                                                whileHover={{ scale: 1.05 }}
-                                                whileTap={{ scale: 0.95 }}
-                                            >
-                                                <FiHeart style={{ marginRight: 4, verticalAlign: 'middle' }} />
-                                                {article.likeCount}
-                                            </motion.div>
+                                                {/* Likes */}
+                                                <motion.div
+                                                    className={styles.metaItem}
+                                                    onClick={(e) => handleLike(article.id, e)}
+                                                    style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center' }}
+                                                    whileHover={{ scale: 1.05 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                >
+                                                    <FiHeart style={{ marginRight: 4, verticalAlign: 'middle' }} />
+                                                    {article.likeCount}
+                                                </motion.div>
 
-                                            {/* Reading Time */}
-                                            <span className={styles.metaItem}>
-                                                <FiClock style={{ marginRight: 4, verticalAlign: 'middle' }} />
-                                                预计阅读时间：{article.readingTime}分钟
-                                            </span>
+                                                {/* Reading Time */}
+                                                <span className={styles.metaItem}>
+                                                    <FiClock style={{ marginRight: 4, verticalAlign: 'middle' }} />
+                                                    预计阅读时间：{article.readingTime}分钟
+                                                </span>
+
+                                                {/* Published Time */}
+                                                <span className={styles.metaItem}>
+                                                    <FiCalendar style={{ marginRight: 4, verticalAlign: 'middle' }} />
+                                                    发布于{getRelativeDays(article.createdAt)}
+                                                </span>
+
+                                                {/* Updated Time */}
+                                                {article.publishedAt !== article.createdAt && (
+                                                    <span className={styles.metaItem}>
+                                                        <FiEdit style={{ marginRight: 4, verticalAlign: 'middle' }} />
+                                                        更新于{getRelativeDays(article.publishedAt)}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className={styles.articleImage}>
+                                    {article.coverImage ? (
+                                        <img
+                                            src={article.coverImage}
+                                            alt={article.title}
+                                            className={styles.coverImage}
+                                        />
+                                    ) : (
+                                        <div className={styles.noImage}>
+                                            <img
+                                                src="/images/loading.png"
+                                                alt="暂无图片"
+                                                className={styles.placeholderImage}
+                                            />
                                         </div>
                                     )}
                                 </div>
@@ -428,6 +462,8 @@ export const getStaticProps: GetStaticProps = async () => {
             .trim();
         return plainText.slice(0, 200) + (plainText.length > 200 ? '...' : '');
     };
+
+
     try {
         const response = await ArticlesAPI.getArticlesSimple();
         if (response && Array.isArray(response.data)) {

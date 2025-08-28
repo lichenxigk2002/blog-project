@@ -7,12 +7,12 @@ $spacing: (
     sm: 0.75rem,
     md: 1rem,
     lg: 1.5rem,
-    xl: 2rem
+    xl: 2rem,
 );
 
 // 混合器
 @mixin glass-effect {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(20px);
 }
 
@@ -35,7 +35,7 @@ $spacing: (
     padding: map-get($spacing, md);
     display: flex;
     flex-direction: column;
-    gap: map-get($spacing, lg);
+    gap: map-get($spacing, sm);
     max-height: calc(100vh - 200px);
     overflow-y: auto;
 
@@ -73,10 +73,60 @@ $spacing: (
 // 文章链接
 .articleLink {
     display: block;
-    padding: map-get($spacing, lg);
+    padding: map-get($spacing, md);
     text-decoration: none;
     color: inherit;
 }
+
+// 文章内容布局
+.articleContent {
+    display: flex;
+    gap: 20px;
+    align-items: center; // 改为 center，实现垂直居中
+}
+
+.articleText {
+    flex: 1;
+    min-width: 0; // 防止文字溢出
+}
+
+.articleImage {
+    width: 12rem;
+    height: 8rem;
+    flex-shrink: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--card-bg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.coverImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+
+}
+
+// 无图片时的占位样式
+.noImage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.placeholderImage {
+    width: 80%;
+    height: 80%;
+    opacity: 1;
+    filter: grayscale(30%);
+    transition: all 0.3s ease;
+    object-fit: contain;
+
+}
+
+
 
 // 文章标题
 .articleTitle {
@@ -248,15 +298,21 @@ $spacing: (
 // 文章元信息
 .metaInfo {
     display: flex;
-    gap: 16px;
-    margin-top: 8px;
+    gap: 12px;
+    margin-top: 6px;
     color: #666;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
 }
 
 .metaItem {
     display: inline-flex;
     align-items: center;
+    font-size: 0.75rem;
+
+    svg {
+        font-size: 0.9rem;
+        margin-right: 3px;
+    }
 }
 
 // 搜索和排序区域
@@ -406,4 +462,17 @@ $spacing: (
     .sortButton {
         justify-content: center;
     }
+
+    // 新增：文章内容布局样式
+    .articleContent {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .articleImage {
+        width: 100%;
+        height: 120px;
+    }
+
+
 }
