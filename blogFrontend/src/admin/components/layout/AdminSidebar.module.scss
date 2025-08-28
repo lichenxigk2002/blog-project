@@ -82,8 +82,8 @@
   text-decoration: none;
   transition: all 0.3s ease;
   font-size: 15px;
-  border-left: 4px solid transparent;
-  border-radius: 16px;
+  // border-left: 4px solid transparent;
+  border-radius: 8px;
   background: transparent;
   font-weight: 500;
   white-space: nowrap;
@@ -98,15 +98,73 @@
 .navLink:hover {
   color: #fff;
   background: linear-gradient(90deg, #a7e9ff 0%, #fbeaff 100%);
-  border-left-color: #a259ff;
+  // border-left-color: #a259ff;
   box-shadow: 0 2px 8px #fbeaff44;
 }
 
 .navItem.active .navLink {
   color: #fff;
   background: linear-gradient(90deg, #a7e9ff 0%, #fbeaff 100%);
-  border-left-color: #a259ff;
+  // border-left-color: #a259ff;
   box-shadow: 0 4px 16px #fbeaff88;
+}
+
+// 嵌套菜单样式
+.navItem.subItem {
+  margin: 4px 0;
+}
+
+.navItem.subItem .navLink {
+  padding: 10px 28px 10px 56px; // 子菜单缩进
+  font-size: 14px;
+  // border-left: 2px solid transparent;
+}
+
+.navItem.subItem .navLink:hover {
+  border-left-color: #a259ff;
+}
+
+.navItem.subItem.active .navLink {
+  border-left-color: #a259ff;
+}
+
+// 有子菜单的导航项
+.navLink.hasChildren {
+  cursor: pointer;
+  justify-content: space-between;
+}
+
+.navLink.hasChildren svg:last-child {
+  margin-right: 0;
+  margin-left: 8px;
+  transition: transform 0.3s ease;
+}
+
+// 子菜单容器
+.subMenu {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  background: rgba(255, 255, 255, 0.05);
+  margin: 0 16px;
+  border-radius: 12px;
+}
+
+.subMenu.expanded {
+  max-height: 500px; // 足够大的高度来显示子菜单
+}
+
+// 折叠状态下的样式调整
+.sidebar.collapsed .subMenu {
+  display: none;
+}
+
+.sidebar.collapsed .navLink.hasChildren {
+  justify-content: center;
+}
+
+.sidebar.collapsed .navLink.hasChildren svg:last-child {
+  display: none;
 }
 
 .navLink span {
