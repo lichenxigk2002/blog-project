@@ -36,7 +36,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                         {children}
                     </div>
                 </main>
-                <div style={{ flexShrink: 0,zIndex: 2 }}>
+                <div style={{ flexShrink: 0, zIndex: 2 }}>
                     <Footer />
                 </div>
                 <div style={{
