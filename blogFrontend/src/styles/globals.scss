@@ -41,140 +41,164 @@
   scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
 
-// 根元素字体大小设置和主题变量
 :root {
-  font-size: 16px;
-  --transition-duration: 0.3s;
-  // 白天模式变量
-  --nav-text-color: #333;
-  --nav-active-color: #000;
-  --nav-underline-color: #333;
-  --nav-underline-active-color: #000;
-  --text-color: #333;
-  --cursor-color: transparent;
-  --icon-color: invert(1) saturate(0) brightness(200%);
-  --user-name: #333;
-  --user-bio: #666;
-  --text: #333;
-  --text-reverse: white;
-  --icon-invert: black;
-  --border: rgba(143, 143, 143, 0.27);
-  --AI-background-color: rgba(221, 221, 221, 0.18);
-  --AI-background-color-reverse: rgba(0, 0, 0, 0.85);
-  --input-background: rgba(199, 199, 199, 0.2);
-  --background: rgba(255, 255, 255);
-  --code-header-bg: #f1f1f1;
-  --code-block-bg: #ffffff;
-  --code-zebra-bg: #fafbfc; // 比表头更淡的斑马纹
-  --code-border: #e0e0e0;
-  --code-text: #333333;
-  --shadow: rgba(0, 0, 0, 0.1);
-  --background-color: #ffffff;
-  --border-color: #e8e8e8;
-  --hover-color: rgba(162, 89, 255, 0.1);
-  --navbar-background: rgba(255, 255, 255);
-  --navbar-font-color: #333;
-  --calendar-empty: #ebedf0;
-  --tag-background: #f3f4f6;
-  --tag-background-color: #f3f4f6;
-  --tag-color: #9ca3af;
-  --like: #ff4d4f;
-  --metacard-background: linear-gradient(135deg, #f8f6f3 60%, #eaeaea 100%);
-  --metacard-border: 1px solid rgba(212, 175, 55, 0.10); // 白金色边框，淡淡的
-  // ====== Table Color Variables ======
-  --table-bg: #fff;
-  --table-head-bg: #f6f8fa;
-  --table-head-text: #222;
-  --table-text: #222;
-  --table-border: #e5e7eb;
-  --table-zebra: #fafbfc;
-  --table-hover: #f2f3f5;
-  // ====== End Table Color Variables ======
+  font-size: 16px; // 根元素字体大小
+  --transition-duration: 0.3s; // 主题切换动画时长
 
-  // ====== Footer Theme Variables ======
-  --footer-bg: #f5f5f5;
-  --footer-text: #333;
-  --footer-border: #e8e8e8;
-  // ====== End Footer Theme Variables ======
+  // ====== 基础颜色变量 ======
+  --text-color: #333; // 主要文本颜色
+  --text: #333; // 通用文本颜色
+  --text-reverse: white; // 反色文本
+  --border: rgba(143, 143, 143, 0.27); // 基础边框颜色
+  --border-color: #e8e8e8; // 组件边框颜色
+  --shadow: rgba(0, 0, 0, 0.1); // 阴影颜色
+  --background: rgba(255, 255, 255); // 基础背景色
+  --background-color: #ffffff; // 页面背景色
+  --hover-color: rgba(162, 89, 255, 0.1); // 悬停效果颜色
 
-  // ====== Background Theme Variables ======
-  --background-base-bg: #ffffff;
-  --background-grid-light: rgba(200, 200, 200, 0.1);
-  --background-glow-light: rgba(255, 255, 255, 0.1);
-  --background-particles-light: rgba(255, 255, 255, 0.1);
-  --background-spot-light: rgba(255, 255, 255, 0.1);
-  // ====== End Background Theme Variables ======
+  // ====== 导航栏主题变量 ======
+  --nav-text-color: #333; // 导航文字颜色
+  --nav-active-color: #000; // 导航激活状态颜色
+  --nav-underline-color: #333; // 导航下划线颜色
+  --nav-underline-active-color: #000; // 导航激活下划线颜色
+  --navbar-background: rgba(255, 255, 255); // 导航栏背景
+  --navbar-font-color: #333; // 导航栏字体颜色
 
-  // ====== Tooltip Theme Variables ======
-  --tooltip-bg: rgba(0, 0, 0, 0.9);
-  --tooltip-text: white;
-  --tooltip-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  // ====== End Tooltip Theme Variables ======
+  // ====== 用户信息主题变量 ======
+  --user-name: #333; // 用户名颜色
+  --user-bio: #666; // 用户简介颜色
+
+  // ====== 图标主题变量 ======
+  --cursor-color: transparent; // 光标颜色
+  --icon-color: invert(1) saturate(0) brightness(200%); // 图标滤镜
+  --icon-invert: black; // 图标反色
+
+  // ====== AI 聊天主题变量 ======
+  --AI-background-color: rgba(221, 221, 221, 0.18); // AI 背景色
+  --AI-background-color-reverse: rgba(0, 0, 0, 0.85); // AI 反色背景
+  --input-background: rgba(199, 199, 199, 0.2); // 输入框背景
+
+  // ====== 代码高亮主题变量 ======
+  --code-header-bg: #f1f1f1; // 代码块头部背景
+  --code-block-bg: #ffffff; // 代码块背景
+  --code-zebra-bg: #fafbfc; // 代码斑马纹背景
+  --code-border: #e0e0e0; // 代码块边框
+  --code-text: #333333; // 代码文字颜色
+
+  // ====== 标签主题变量 ======
+  --tag-background: #f3f4f6; // 标签背景
+  --tag-background-color: #f3f4f6; // 标签背景色
+  --tag-color: #9ca3af; // 标签文字颜色
+
+  // ====== 特殊功能主题变量 ======
+  --calendar-empty: #ebedf0; // 日历空白格颜色
+  --like: #ff4d4f; // 点赞按钮颜色
+  --metacard-background: linear-gradient(135deg, #f8f6f3 60%, #eaeaea 100%); // 元信息卡片背景
+  --metacard-border: 1px solid rgba(212, 175, 55, 0.10); // 元信息卡片边框
+
+  // ====== 表格主题变量 ======
+  --table-bg: #fff; // 表格背景
+  --table-head-bg: #f6f8fa; // 表头背景
+  --table-head-text: #222; // 表头文字
+  --table-text: #222; // 表格文字
+  --table-border: #e5e7eb; // 表格边框
+  --table-zebra: #fafbfc; // 表格斑马纹
+  --table-hover: #f2f3f5; // 表格悬停效果
+
+  // ====== 页脚主题变量 ======
+  --footer-bg: #f5f5f5; // 页脚背景
+  --footer-text: #333; // 页脚文字
+  --footer-border: #e8e8e8; // 页脚边框
+
+  // ====== 背景动效主题变量 ======
+  --background-base-bg: #ffffff; // 基础背景
+  --background-grid-light: rgba(200, 200, 200, 0.1); // 网格背景
+  --background-glow-light: rgba(255, 255, 255, 0.1); // 发光效果
+  --background-particles-light: rgba(255, 255, 255, 0.1); // 粒子效果
+  --background-spot-light: rgba(255, 255, 255, 0.1); // 聚光灯效果
+
+  // ====== 提示框主题变量 ======
+  --tooltip-bg: rgba(0, 0, 0, 0.9); // 提示框背景
+  --tooltip-text: white; // 提示框文字
+  --tooltip-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); // 提示框阴影
 }
 
 [data-theme="dark"] {
-  // 夜间模式变量
-  --nav-text-color: #ffffff;
-  --nav-active-color: #fff;
-  --nav-underline-color: rgb(255, 255, 255);
-  --nav-underline-active-color: #ffffff;
-  --text-color: #f0f0f0;
-  --cursor-color: transparent;
-  --icon-color: brightness(1000%) contrast(0%);
-  --user-name: #e5e5e5;
-  --user-bio: #dedede;
-  --text: white;
-  --text-reverse: #333;
-  --icon-invert: white;
-  --border: rgba(161, 161, 161, 0.63);
-  --AI-background-color: rgba(101, 101, 101, 0.22);
-  --AI-background-color-reverse: rgb(255, 255, 255);
-  --input-background: rgba(255, 255, 255, 0.2);
-  --background: rgb(58, 58, 58);
-  --code-header-bg: #212121;
-  --code-block-bg: #262626;
-  --code-border: #333333;
-  --code-text: #d4d4d4;
-  --shadow: rgba(255, 255, 255, 0.03);
-  --background-color: #1a1a1a;
-  --border-color: rgba(143, 143, 143, 0.51);
-  --hover-color: rgba(162, 89, 255, 0.2);
-  --navbar-background: rgb(58, 58, 58);
-  --navbar-font-color: #f0f0f0;
-  --calendar-empty: #161b22;
-  --tag-background: rgba(31, 41, 55, 0.22);
-  --tag-background-color: #1f2937;
-  --tag-color: #9ca3af;
-  --like: #de1b22;
-  --metacard-background: linear-gradient(135deg, #232526 60%, #1a1a1a 100%);
-  --metacard-border: 1px solid rgba(60, 60, 60, 0.7);
-  --table-bg: #23272f;
-  --table-head-bg: #2d333b;
-  --table-head-text: #e2e8f0;
-  --table-text: #e2e8f0;
-  --table-border: #3a3f4b;
-  --table-zebra: #242424;
-  --table-hover: #292929;
+  // ====== 基础颜色变量 ======
+  --text-color: #f0f0f0; // 主要文本颜色
+  --text: white; // 通用文本颜色
+  --text-reverse: #333; // 反色文本
+  --border: rgba(161, 161, 161, 0.63); // 基础边框颜色
+  --border-color: rgba(143, 143, 143, 0.51); // 组件边框颜色
+  --shadow: rgba(255, 255, 255, 0.03); // 阴影颜色
+  --background: rgb(58, 58, 58); // 基础背景色
+  --background-color: #1a1a1a; // 页面背景色
+  --hover-color: rgba(162, 89, 255, 0.2); // 悬停效果颜色
 
-  // ====== Footer Theme Variables ======
-  --footer-bg: #1a1a1a;
-  --footer-text: #e0e0e0;
-  --footer-border: rgba(143, 143, 143, 0.51);
-  // ====== End Footer Theme Variables ======
+  // ====== 导航栏主题变量 ======
+  --nav-text-color: #ffffff; // 导航文字颜色
+  --nav-active-color: #fff; // 导航激活状态颜色
+  --nav-underline-color: rgb(255, 255, 255); // 导航下划线颜色
+  --nav-underline-active-color: #ffffff; // 导航激活下划线颜色
+  --navbar-background: rgb(58, 58, 58); // 导航栏背景
+  --navbar-font-color: #f0f0f0; // 导航栏字体颜色
 
-  // ====== Background Theme Variables ======
-  --background-base-bg: #1a1a1a;
-  --background-grid-light: rgba(100, 100, 100, 0.15);
-  --background-glow-light: rgba(255, 255, 255, 0.05);
-  --background-particles-light: rgba(255, 255, 255, 0.05);
-  --background-spot-light: rgba(255, 255, 255, 0.05);
-  // ====== End Background Theme Variables ======
+  // ====== 用户信息主题变量 ======
+  --user-name: #e5e5e5; // 用户名颜色
+  --user-bio: #dedede; // 用户简介颜色
 
-  // ====== Tooltip Theme Variables ======
-  --tooltip-bg: rgba(255, 255, 255, 0.95);
-  --tooltip-text: #333;
-  --tooltip-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  // ====== End Tooltip Theme Variables ======
+  // ====== 图标主题变量 ======
+  --cursor-color: transparent; // 光标颜色
+  --icon-color: brightness(1000%) contrast(0%); // 图标滤镜
+  --icon-invert: white; // 图标反色
+
+  // ====== AI 聊天主题变量 ======
+  --AI-background-color: rgba(101, 101, 101, 0.22); // AI 背景色
+  --AI-background-color-reverse: rgb(255, 255, 255); // AI 反色背景
+  --input-background: rgba(255, 255, 255, 0.2); // 输入框背景
+
+  // ====== 代码高亮主题变量 ======
+  --code-header-bg: #212121; // 代码块头部背景
+  --code-block-bg: #262626; // 代码块背景
+  --code-border: #333333; // 代码块边框
+  --code-text: #d4d4d4; // 代码文字颜色
+
+  // ====== 标签主题变量 ======
+  --tag-background: rgba(31, 41, 55, 0.22); // 标签背景
+  --tag-background-color: #1f2937; // 标签背景色
+  --tag-color: #9ca3af; // 标签文字颜色
+
+  // ====== 特殊功能主题变量 ======
+  --calendar-empty: #161b22; // 日历空白格颜色
+  --like: #de1b22; // 点赞按钮颜色
+  --metacard-background: linear-gradient(135deg, #232526 60%, #1a1a1a 100%); // 元信息卡片背景
+  --metacard-border: 1px solid rgba(60, 60, 60, 0.7); // 元信息卡片边框
+
+  // ====== 表格主题变量 ======
+  --table-bg: #23272f; // 表格背景
+  --table-head-bg: #2d333b; // 表头背景
+  --table-head-text: #e2e8f0; // 表头文字
+  --table-text: #e2e8f0; // 表格文字
+  --table-border: #3a3f4b; // 表格边框
+  --table-zebra: #242424; // 表格斑马纹
+  --table-hover: #292929; // 表格悬停效果
+
+  // ====== 页脚主题变量 ======
+  --footer-bg: #1a1a1a; // 页脚背景
+  --footer-text: #e0e0e0; // 页脚文字
+  --footer-border: rgba(143, 143, 143, 0.51); // 页脚边框
+
+  // ====== 背景动效主题变量 ======
+  --background-base-bg: #1a1a1a; // 基础背景
+  --background-grid-light: rgba(100, 100, 100, 0.15); // 网格背景
+  --background-glow-light: rgba(255, 255, 255, 0.05); // 发光效果
+  --background-particles-light: rgba(255, 255, 255, 0.05); // 粒子效果
+  --background-spot-light: rgba(255, 255, 255, 0.05); // 聚光灯效果
+
+  // ====== 提示框主题变量 ======
+  --tooltip-bg: rgba(255, 255, 255, 0.95); // 提示框背景
+  --tooltip-text: #333; // 提示框文字
+  --tooltip-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); // 提示框阴影
 }
 
 // 媒体查询嵌套
