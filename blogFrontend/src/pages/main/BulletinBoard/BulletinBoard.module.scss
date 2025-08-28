@@ -207,7 +207,7 @@ $pinned-blue-bg: #b6b9ff;
   border-top: 1px dashed rgba(0, 0, 0, 0.08);
 }
 
-.messageContentTypewriter{
+.messageContentTypewriter {
   font-family: ShouZhang, serif;
 }
 
@@ -542,7 +542,7 @@ $pinned-blue-bg: #b6b9ff;
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(20px);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  z-index: 10000;
+  z-index: 20000;
   animation: slideUp 0.3s ease;
 
   * {
