@@ -55,29 +55,21 @@ $text-color: var(--text);
 
 .closeButton {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 24px;
-  height: 24px;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: none;
   border: none;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
+  font-size: 1.25rem;
   color: $text-color;
-  font-size: 16px;
-  font-weight: bold;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
+  padding: 0.25rem;
+  line-height: 1;
+  border-radius: 50%;
+  transition: all 0.1s ease;
+  caret-color: transparent;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: scale(1.1);
-  }
-
-  &:active {
-    transform: scale(0.95);
+    transform: rotate(90deg);
   }
 }
 
