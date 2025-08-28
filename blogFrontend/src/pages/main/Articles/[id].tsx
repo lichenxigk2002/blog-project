@@ -1,34 +1,32 @@
-// 导入必要的库和组件
-import { useRouter } from 'next/router';          // Next.js路由库，用于获取路由参数
-import React, { useEffect, useState, useRef } from 'react'; // React核心钩子
-import { Article } from '@/types/Article';    // 文章类型定义
-import styles from './[id].module.scss';       // CSS模块样式
-import { FaHeart, FaRegHeart } from 'react-icons/fa';   // FontAwesome图标库
-import ReactMarkdown from 'react-markdown';       // Markdown渲染组件
-import remarkGfm from 'remark-gfm'                // 支持GitHub Flavored Markdown的插件
-import rehypeRaw from 'rehype-raw';              // 支持HTML标签的插件
-import Link from 'next/link';                     // Next.js客户端导航组件
-import ArticleToc from '@/components/ArticleUI/ArticleToc/ArticleToc'; // 文章目录组件
-import { motion } from 'framer-motion';              // 动画库
-import { ArticlesAPI } from '@/api/ArticlesAPI';    // 文章API
-import CodeBlock from '@/components/ArticleUI/Code/CodeBlock';   // 代码高亮组件
-import Comments from '@/components/Comments/Comments'; // 评论组件
-import { FaArrowLeft } from "react-icons/fa";  // FontAwesome图标库
-import Head from "next/head";               // Next.js头部组件
+import React, { useEffect, useState, useRef } from 'react'; // React 核心钩子
+import { useRouter } from 'next/router'; // Next.js 路由钩子
+import Head from "next/head"; // Next.js 头部组件
+import Link from 'next/link'; // Next.js 链接组件
+import dynamic from 'next/dynamic'; // Next.js 动态导入
+import ReactMarkdown from 'react-markdown'; // Markdown 渲染组件
+import remarkGfm from 'remark-gfm'; // GitHub Flavored Markdown 插件
+import rehypeRaw from 'rehype-raw'; // 支持 HTML 标签的插件
+import { motion } from 'framer-motion'; // 动画库
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'; // 代码高亮组件
+import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism'; // 代码高亮主题
+import { FaHeart, FaRegHeart, FaArrowLeft } from "react-icons/fa"; // FontAwesome 图标
+import { FiEye, FiClock, FiCalendar, FiEdit, FiUser, FiTag } from 'react-icons/fi'; // Feather 图标
+import { ArticlesAPI } from '@/api/ArticlesAPI'; // 文章 API
+import { useLoading } from "@/hooks/useLoading"; // 加载状态钩子
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner'; // 加载动画组件
+import Comments from '@/components/Comments/Comments'; // 评论组件
 import RecentArticles from "@/components/RecentArticles/RecentArticles"; // 最近文章组件
-import ArticleSidebar from '@/components/ArticleUI/ArticleSidebar/ArticleSidebar';   // 文章侧边栏组件
-import ArticleCopyright from '@/components/ArticleUI/ArticleCopyright/ArticleCopyright';// 版权声明组件
-import { useLoading } from "@/hooks/useLoading"; // 自定义加载状态钩子
-import dynamic from 'next/dynamic';
-import MetaCard from '@/components/ArticleUI/MetaCard/MetaCard';
-import { Table, Thead, Tbody, Tr, Th, Td } from '@/components/ArticleUI/Table/Table';
-import ArticleImage from '@/components/ArticleUI/ArticleImage/ArticleImage';
-import ArticleVideo from '@/components/ArticleUI/ArticleVideo/ArticleVideo';
-import ArticleSummary from '@/components/ArticleUI/ArticleSummary';
-import { FiEye, FiClock, FiCalendar, FiEdit, FiUser, FiTag } from 'react-icons/fi';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import ArticleToc from '@/components/ArticleUI/ArticleToc/ArticleToc'; // 文章目录组件
+import ArticleSidebar from '@/components/ArticleUI/ArticleSidebar/ArticleSidebar'; // 文章侧边栏组件
+import ArticleCopyright from '@/components/ArticleUI/ArticleCopyright/ArticleCopyright'; // 版权声明组件
+import ArticleImage from '@/components/ArticleUI/ArticleImage/ArticleImage'; // 文章图片组件
+import ArticleVideo from '@/components/ArticleUI/ArticleVideo/ArticleVideo'; // 文章视频组件
+import ArticleSummary from '@/components/ArticleUI/ArticleSummary'; // 文章摘要组件
+import CodeBlock from '@/components/ArticleUI/Code/CodeBlock'; // 代码块组件
+import MetaCard from '@/components/ArticleUI/MetaCard/MetaCard'; // 元信息卡片组件
+import { Table, Thead, Tbody, Tr, Th, Td } from '@/components/ArticleUI/Table/Table'; // 表格组件
+import { Article } from '@/types/Article'; // 文章类型定义
+import styles from './[id].module.scss'; // 组件样式
 
 
 // 定义标题对象的类型
