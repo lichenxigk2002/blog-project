@@ -26,16 +26,16 @@ function getStartOfCalendar(weeks: number) {
 }
 
 interface Props {
-    articles: Article[];
+    articles: Array<{ createdAt: string }>;
     weeks?: number;
 }
 
 const ContributionCalendar: React.FC<Props> = ({ articles, weeks = 52 }) => {
-    // 统计每天的文章数量
+    // 统计每天的文章数量（基于创建时间，不检查状态）
     const countByDate: Record<string, number> = {};
     articles.forEach((a) => {
-        if (a.status === "published" && a.publishedAt) {
-            const date = a.publishedAt.slice(0, 10);
+        if (a.createdAt) {
+            const date = a.createdAt.slice(0, 10);
             countByDate[date] = (countByDate[date] || 0) + 1;
         }
     });
@@ -91,7 +91,7 @@ const ContributionCalendar: React.FC<Props> = ({ articles, weeks = 52 }) => {
                         <div
                             key={i}
                             className={styles.calendarDay}
-                            title={`${day.date}: ${day.count} 篇文章`}
+                            title={`${day.date}: ${day.count} 篇创作`}
                             style={{
                                 background: getColor(day.count),
                                 animationDelay: `${i * 0.01}s`
