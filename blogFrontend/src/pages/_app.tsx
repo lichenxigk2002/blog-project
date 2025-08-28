@@ -55,6 +55,8 @@ function ThemeWrapper({ children }: { children: React.ReactNode }) {
     const { isDarkMode } = useTheme();
 
     useEffect(() => {
+        console.log('🎨 ThemeWrapper: 应用主题', isDarkMode ? 'dark' : 'light');
+
         // 动态更新 HTML 的 data-theme 属性
         document.documentElement.setAttribute(
             'data-theme',
@@ -63,6 +65,9 @@ function ThemeWrapper({ children }: { children: React.ReactNode }) {
 
         // 同步更新 body 类名
         document.body.className = isDarkMode ? 'dark-mode' : 'light-mode';
+
+        console.log('🎨 已设置 data-theme:', document.documentElement.getAttribute('data-theme'));
+        console.log('🎨 已设置 body.className:', document.body.className);
     }, [isDarkMode]);
 
     return <>{children}</>;
