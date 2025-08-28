@@ -149,21 +149,18 @@ $z-bg: -2;
 
 /*网格*/
 .dynamicGrid {
-    position: absolute;
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
+    z-index: -2;
     background-image:
-        linear-gradient(rgba(200, 200, 200, 0.1) 0.0625rem, transparent 0.0625rem),
-        linear-gradient(90deg, rgba(200, 200, 200, 0.1) 0.0625rem, transparent 0.0625rem);
+        linear-gradient(var(--background-grid-light) 0.0625rem, transparent 0.0625rem),
+        linear-gradient(90deg, var(--background-grid-light) 0.0625rem, transparent 0.0625rem);
     background-size: 1.875rem 1.875rem;
     animation: gridMove 60s linear infinite;
     transition: background-image 0.3s ease;
-
-    &.darkGrid {
-        background-image:
-            linear-gradient(rgba(100, 100, 100, 0.15) 0.0625rem, transparent 0.0625rem),
-            linear-gradient(90deg, rgba(100, 100, 100, 0.15) 0.0625rem, transparent 0.0625rem);
-    }
 }
 
 @keyframes gridMove {
@@ -185,37 +182,14 @@ $z-bg: -2;
     z-index: -2;
     /* 置于最底层 */
     transition: background-color 0.3s ease;
-    background-color: #ffffff;
-
-    &.dark {
-        background-color: #1a1a1a;
-
-        .glowEffect {
-            background: radial-gradient(circle at 50% 50%,
-                    rgba(255, 255, 255, 0.05) 0%,
-                    rgba(255, 255, 255, 0.02) 30%,
-                    transparent 70%);
-        }
-
-        .particles {
-            background-image:
-                radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-                radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-        }
-
-        .lightSpot {
-            background: radial-gradient(circle at center,
-                    rgba(255, 255, 255, 0.05) 0%,
-                    transparent 70%);
-        }
-    }
+    background-color: var(--background-base-bg);
 
     .glowEffect {
         position: absolute;
         width: 100%;
         height: 100%;
         background: radial-gradient(circle at 50% 50%,
-                rgba(255, 255, 255, 0.1) 0%,
+                var(--background-glow-light) 0%,
                 rgba(255, 255, 255, 0.05) 30%,
                 transparent 70%);
         animation: glowPulse 8s ease-in-out infinite;
@@ -226,8 +200,8 @@ $z-bg: -2;
         width: 100%;
         height: 100%;
         background-image:
-            radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 0.0625rem, transparent 0.0625rem),
-            radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.1) 0.0625rem, transparent 0.0625rem);
+            radial-gradient(circle at 25% 25%, var(--background-particles-light) 0.0625rem, transparent 0.0625rem),
+            radial-gradient(circle at 75% 75%, var(--background-particles-light) 0.0625rem, transparent 0.0625rem);
         background-size: 3.125rem 3.125rem;
         animation: particleFloat 20s linear infinite;
     }
@@ -237,7 +211,7 @@ $z-bg: -2;
         width: 18.75rem;
         height: 18.75rem;
         background: radial-gradient(circle at center,
-                rgba(255, 255, 255, 0.1) 0%,
+                var(--background-spot-light) 0%,
                 transparent 70%);
         animation: spotMove 15s ease-in-out infinite;
     }

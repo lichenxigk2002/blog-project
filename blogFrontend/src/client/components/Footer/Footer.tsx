@@ -4,7 +4,8 @@ import { useTheme } from '@/hooks/useTheme';
 import { ArticlesAPI } from '@/api/ArticlesAPI';
 import { GalleryAPI } from '@/api/GalleryAPI';
 import { Article } from '@/types/Article';
-import { FaGithub, FaWeixin, FaEnvelope, FaMapMarkerAlt, FaCloud, FaTachometerAlt, FaRss } from 'react-icons/fa';
+import { FaGithub, FaCloud, FaTachometerAlt, FaRss, FaWeixin } from 'react-icons/fa';
+import { FiMail, FiMapPin } from 'react-icons/fi';
 import { SiBilibili, SiTiktok } from 'react-icons/si';
 import Link from "next/link";
 import { navRoutesItem } from "@/routes/nav-routes";
@@ -95,7 +96,7 @@ const Footer: React.FC = () => {
   }, []);
 
   return (
-    <footer className={`${styles.footer} ${isDarkMode ? styles.dark : styles.light}`}>
+    <footer className={styles.footer}>
       <div className={styles.footerContent}>
         <div className={styles.footerSection}>
           <h3>关于我のBlog</h3>
@@ -118,7 +119,7 @@ const Footer: React.FC = () => {
           <h3>联系我</h3>
           <div className={styles.contactInfo}>
             <a href="mailto:chenxili380@gmail.com" className={styles.contactItem}>
-              <FaEnvelope />Email: chenxili380@gmail.com
+              <FiMail />Email: chenxili380@gmail.com
             </a>
             <p className={styles.contactItem}><FaWeixin />WeChat: lichenxigk2002</p>
             <a
@@ -127,7 +128,7 @@ const Footer: React.FC = () => {
               rel="noopener noreferrer"
               className={styles.contactItem}
             >
-              <FaMapMarkerAlt />城市: 洛阳
+              <FiMapPin />城市: 洛阳
             </a>
           </div>
         </div>
@@ -135,15 +136,15 @@ const Footer: React.FC = () => {
           <h3>其他社交方式</h3>
           <div className={styles.links}>
             <a href="https://github.com/lichenxigk2002" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
-              <FaGithub className={styles.socialIcon} />
+              <FaGithub className={styles.socialIcon} data-icon="github" />
               <span>GitHub</span>
             </a>
             <a href="https://b23.tv/BZ0L6Gu" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
-              <SiBilibili className={styles.socialIcon} />
+              <SiBilibili className={styles.socialIcon} data-icon="bilibili" />
               <span>Bilibili</span>
             </a>
             <a href="https://v.douyin.com/x3B6KXOh924/ 7@2.com" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
-              <SiTiktok className={styles.socialIcon} />
+              <SiTiktok className={styles.socialIcon} data-icon="tiktok" />
               <span>抖音</span>
             </a>
           </div>
@@ -163,7 +164,7 @@ const Footer: React.FC = () => {
               onClick={() => setShowSubscribe(true)}
               type="button"
             >
-              <FaEnvelope style={{ marginRight: '0.4em', verticalAlign: '-0.1em' }} />
+              <FiMail style={{ marginRight: '0.4em', verticalAlign: '-0.1em' }} data-icon="envelope" />
               邮件订阅
             </button>
             <button
@@ -171,7 +172,7 @@ const Footer: React.FC = () => {
               onClick={() => setShowRssSubscribe(true)}
               type="button"
             >
-              <FaRss style={{ marginRight: '0.4em', verticalAlign: '-0.1em' }} />
+              <FaRss style={{ marginRight: '0.4em', verticalAlign: '-0.1em' }} data-icon="rss" />
               RSS订阅
             </button>
           </div>
@@ -179,7 +180,7 @@ const Footer: React.FC = () => {
       </div>
       <div className={styles.footerBottom}>
         <PerformanceMonitor />
-        <p>© {currentYear} 孤芳不自赏的博客已持续运行 {Math.floor((Date.now() - new Date('2025-05-26').getTime()) / 86400000)} 天 | 所有内容均为原创，保留所有权利 | Powered by Next.js + Spring Boot</p>
+        <p>© {currentYear} 孤芳不自赏的博客已持续运行 {Math.floor((Date.now() - new Date('2025-05-26').getTime()) / 86400000)} 天 | 所有内容均为原创，保留所有权利 | Powered by <a href="https://nextjs.org" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}><img src="/technologyStack/NextJS.png" alt="Next.js" style={{ height: '12px', verticalAlign: 'middle', margin: '0 2px', cursor: 'pointer' }} /></a> Next.js + <a href="https://spring.io" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}><img src="/technologyStack/spring.png" alt="Spring Boot" style={{ height: '12px', verticalAlign: 'middle', margin: '0 2px', cursor: 'pointer' }} /></a> Spring Boot</p>
 
         <div className={styles.serviceProviders}>
           {/* 添加腾讯云主品牌图标 */}

@@ -20,18 +20,10 @@ $bg-secondary: var(--bg-secondary);
   width: 100%;
   padding: 0.5rem 0;
   margin-top: 0.75rem;
-  border-top: 1px solid $border-color;
+  border-top: 1px solid var(--footer-border);
   z-index: 2;
-
-  &.light {
-    background-color: #f5f5f5;
-    color: #333;
-  }
-
-  &.dark {
-    background-color: #1a1a1a;
-    color: #e0e0e0;
-  }
+  background-color: var(--footer-bg);
+  color: var(--footer-text);
 }
 
 .footerContent {
@@ -142,6 +134,14 @@ $bg-secondary: var(--bg-secondary);
 
   &:hover .socialIcon[data-icon="github"] {
     color: #333;
+  }
+
+  &:hover .socialIcon[data-icon="bilibili"] {
+    color: #00A1D6;
+  }
+
+  &:hover .socialIcon[data-icon="tiktok"] {
+    color: #000000;
   }
 
   &:hover .socialIcon[data-icon="instagram"] {
@@ -502,13 +502,40 @@ $bg-secondary: var(--bg-secondary);
   cursor: pointer;
   box-shadow: none;
   border-radius: 0;
-  transition: color 0.2s;
+  transition: all 0.3s ease;
   vertical-align: baseline;
 
   &:hover {
     color: var(--primary-color, #00e6c0);
     background: none;
     border: none;
+    transform: translateY(-1px);
+  }
+
+  // 邮件图标悬浮效果
+  &:hover svg[data-icon="envelope"] {
+    color: #1E88E5;
+    transform: scale(1.1);
+  }
+
+  // RSS图标悬浮效果
+  &:hover svg[data-icon="rss"] {
+    color: #FF6600;
+    transform: scale(1.1);
+  }
+
+  // 邮件按钮悬浮时文字颜色
+  &:hover:has(svg[data-icon="envelope"]) {
+    color: #1E88E5;
+  }
+
+  // RSS按钮悬浮时文字颜色
+  &:hover:has(svg[data-icon="rss"]) {
+    color: #FF6600;
+  }
+
+  svg {
+    transition: all 0.3s ease;
   }
 }
 
@@ -573,10 +600,10 @@ $bg-secondary: var(--bg-secondary);
 .beianBadge,
 .footerBadgeWrapper {
   transition:
-          background 0.2s,
-          color 0.2s,
-          border 0.2s,
-          transform 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+    background 0.2s,
+    color 0.2s,
+    border 0.2s,
+    transform 0.35s cubic-bezier(0.23, 1, 0.32, 1);
   will-change: transform;
 }
 
@@ -585,6 +612,5 @@ $bg-secondary: var(--bg-secondary);
   /* 轻微的3D旋转，perspective让旋转有立体感 */
   transform: perspective(400px) rotateY(-8deg) scale(1.03);
   /* 你也可以试试 rotateX(6deg) 或 rotateY(8deg) 看哪个更喜欢 */
-  box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
 }
-

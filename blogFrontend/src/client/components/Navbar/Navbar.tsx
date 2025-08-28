@@ -2,12 +2,10 @@ import React, { useState, useEffect } from 'react';
 import NavbarCenter from "@/client/components/Navbar/NavbarCenter/NavbarCenter";
 import NavbarLeft from "@/client/components/Navbar/NavbarLeft/NavbarLeft";
 import NavbarRight from "@/client/components/Navbar/NavbarRight/NavbarRight";
-import { useTheme } from '@/hooks/useTheme';
 import styles from './Navbar.module.scss';
 import { FiMenu, FiX } from 'react-icons/fi';
 
 const Navbar: React.FC = () => {
-    const { isDarkMode } = useTheme();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
 
@@ -33,7 +31,7 @@ const Navbar: React.FC = () => {
     };
 
     return (
-        <div className={`${styles.navbar} ${isDarkMode ? styles.dark : styles.light}`}>
+        <div className={styles.navbar}>
             <div className={styles.navbarContainer}>
                 {/* 左侧导航 */}
                 <NavbarLeft />
@@ -59,7 +57,7 @@ const Navbar: React.FC = () => {
 
             {/* 移动端展开的菜单 */}
             {isMobile && isMenuOpen && (
-                <div className={`${styles.mobileMenu} ${isDarkMode ? styles.dark : styles.light}`}>
+                <div className={styles.mobileMenu}>
                     <div className={styles.mobileMenuContent}>
                         <NavbarRight />
                     </div>

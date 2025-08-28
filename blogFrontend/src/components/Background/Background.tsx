@@ -1,15 +1,12 @@
 // Background.tsx
 import React from 'react';
 import styles from './Background.module.scss';
-import { useTheme } from '@/hooks/useTheme';
 
 const Background: React.FC = () => {
-    const { isDarkMode } = useTheme();
-
     return (
         <>
             {/* 新增背景层 */}
-            <div className={`${styles.backgroundBase} ${isDarkMode ? styles.dark : ''}`}></div>
+            <div className={styles.backgroundBase}></div>
 
             {/* 原有容器 */}
             <div className={styles.backgroundBlocks}>
@@ -21,8 +18,8 @@ const Background: React.FC = () => {
                 <div className={`${styles.bgBlock} ${styles.pentagram} ${styles.block5}`}></div>
                 <div className={`${styles.bgBlock} ${styles.circle2} ${styles.block6}`}></div>
 
-                {/* 网格添加主题类名 */}
-                <div className={`${styles.dynamicGrid} ${isDarkMode ? styles.darkGrid : ''}`}></div>
+                {/* 网格 */}
+                <div className={styles.dynamicGrid}></div>
             </div>
         </>
     );
