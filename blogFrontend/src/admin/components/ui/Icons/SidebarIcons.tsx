@@ -90,6 +90,14 @@ export const FriendLinksIcon: React.FC<IconProps> = ({ size = 20, color = 'curre
   </svg>
 );
 
+export const RssIcon: React.FC<IconProps> = ({ size = 20, color = 'currentColor', className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M4 11a9 9 0 0 1 9 9" />
+    <path d="M4 4a16 16 0 0 1 16 16" />
+    <circle cx="5" cy="19" r="1" />
+  </svg>
+);
+
 export const SettingsIcon: React.FC<IconProps> = ({ size = 20, color = 'currentColor', className = '' }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" className={className}>
     <circle cx="12" cy="12" r="3"></circle>
@@ -160,6 +168,8 @@ export const getSidebarIcon = (path: string, props: IconProps = {}) => {
       return <BulletinBoardIcon {...props} />;
     case '/admin/friendlinks':
       return <FriendLinksIcon {...props} />;
+    case '/admin/friendlinks/rss':
+      return <RssIcon {...props} />;
     case '/admin/settings':
       return <SettingsIcon {...props} />;
     case '/admin/copyright':
