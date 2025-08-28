@@ -189,4 +189,47 @@ export const HashIcon: React.FC<IconProps> = ({ size = 16, color = 'currentColor
     <line x1="10" y1="3" x2="8" y2="21"></line>
     <line x1="16" y1="3" x2="14" y2="21"></line>
   </svg>
+);
+
+export const ChevronDownIcon: React.FC<IconProps> = ({ size = 16, color = 'currentColor', className = '' }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke={color}
+    strokeWidth="2"
+    className={className}
+  >
+    <polyline points="6 9 12 15 18 9"></polyline>
+  </svg>
+);
+
+export const ChevronRightIcon: React.FC<IconProps> = ({ size = 16, color = 'currentColor', className = '' }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke={color}
+    strokeWidth="2"
+    className={className}
+  >
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+);
+
+export const TestIcon: React.FC<IconProps> = ({ size = 16, color = 'currentColor', className = '' }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke={color}
+    strokeWidth="2"
+    className={className}
+  >
+    <path d="M9 12l2 2 4-4"></path>
+    <path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"></path>
+  </svg>
 ); 
