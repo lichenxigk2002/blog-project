@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ArticlesAPI } from "@/api/ArticlesAPI";
 import ContributionCalendar from "@/components/ContributionCalendar/ContributionCalendar";
-import { Article } from "@/types/Article";
+import { ArticleListItem } from "@/types/Article";
 import styles from "./WritingStats/WritingStats.module.scss";
 import { motion } from "framer-motion";
 import { FaBook, FaCalendarAlt, FaFire, FaChartLine, FaPalette } from "react-icons/fa";
@@ -43,7 +43,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
             }}>
                 <p style={{ margin: '0 0 5px 0', color: '#666' }}>{label}</p>
                 <p style={{ margin: 0, color: '#333', fontWeight: 'bold' }}>
-                    {payload[0].value} 篇文章
+                    {payload[0].value} 篇创作
                 </p>
             </div>
         );
@@ -52,7 +52,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 const WritingStats: React.FC = () => {
-    const [articles, setArticles] = useState<Article[]>([]);
+    const [articles, setArticles] = useState<ArticleListItem[]>([]);
     const [stats, setStats] = useState<Stats>({
         totalArticles: 0,
         articlesThisYear: 0,
@@ -69,34 +69,35 @@ const WritingStats: React.FC = () => {
     const [showColorPicker, setShowColorPicker] = useState(false);
 
     useEffect(() => {
-        ArticlesAPI.getArticles().then((res) => {
-            const publishedArticles = res.data.filter((a: Article) => a.status === "published");
-            setArticles(publishedArticles);
-            calculateStats(publishedArticles);
+        ArticlesAPI.getArticlesSimple().then((res) => {
+            // 只要有创建时间的文章就统计，不需要看是否发布
+            const articlesWithCreationTime = res.data.filter((a: ArticleListItem) => a.createdAt);
+            setArticles(articlesWithCreationTime);
+            calculateStats(articlesWithCreationTime);
         });
     }, []);
 
-    const calculateStats = (articles: Article[]) => {
+    const calculateStats = (articles: ArticleListItem[]) => {
         const now = new Date();
         const thisYear = now.getFullYear();
         const thisMonth = now.getMonth();
 
-        // 按月份统计文章数量
+        // 按月份统计文章数量（基于创建时间）
         const monthlyStats = new Array(12).fill(0);
-        // 按星期统计文章数量
+        // 按星期统计文章数量（基于创建时间）
         const dailyStats = new Array(7).fill(0);
-        // 记录连续发布的天数
-        const publishDates = new Set<string>();
+        // 记录连续创作的天数（基于创建时间）
+        const creationDates = new Set<string>();
 
         articles.forEach(article => {
-            if (article.publishedAt) {
-                const date = new Date(article.publishedAt);
+            if (article.createdAt) {
+                const date = new Date(article.createdAt);
                 // 验证日期是否有效
                 if (!isNaN(date.getTime())) {
                     monthlyStats[date.getMonth()]++;
                     dailyStats[date.getDay()]++;
                     const dateStr = date.toISOString().split('T')[0];
-                    publishDates.add(dateStr);
+                    creationDates.add(dateStr);
                 }
             }
         });
@@ -119,11 +120,11 @@ const WritingStats: React.FC = () => {
         const mostActiveMonth = months[monthlyStats.indexOf(Math.max(...monthlyStats))];
         const mostActiveDay = days[dailyStats.indexOf(Math.max(...dailyStats))];
 
-        // 计算连续发布天数
+        // 计算连续创作天数
         let currentStreak = 0;
         let longestStreak = 0;
         let tempStreak = 0;
-        const sortedDates = Array.from(publishDates).sort();
+        const sortedDates = Array.from(creationDates).sort();
 
         for (let i = 0; i < sortedDates.length; i++) {
             const currentDate = new Date(sortedDates[i]);
@@ -139,20 +140,20 @@ const WritingStats: React.FC = () => {
             }
         }
 
-        // 计算当前连续发布天数
+        // 计算当前连续创作天数
         const today = new Date().toISOString().split('T')[0];
         let checkDate = new Date();
-        while (publishDates.has(checkDate.toISOString().split('T')[0])) {
+        while (creationDates.has(checkDate.toISOString().split('T')[0])) {
             currentStreak++;
             checkDate.setDate(checkDate.getDate() - 1);
         }
 
         setStats({
             totalArticles: articles.length,
-            articlesThisYear: articles.filter(a => a.publishedAt && new Date(a.publishedAt).getFullYear() === thisYear).length,
+            articlesThisYear: articles.filter(a => a.createdAt && new Date(a.createdAt).getFullYear() === thisYear).length,
             articlesThisMonth: articles.filter(a => {
-                if (!a.publishedAt) return false;
-                const date = new Date(a.publishedAt);
+                if (!a.createdAt) return false;
+                const date = new Date(a.createdAt);
                 return !isNaN(date.getTime()) && date.getFullYear() === thisYear && date.getMonth() === thisMonth;
             }).length,
             mostActiveMonth,
@@ -251,14 +252,14 @@ const WritingStats: React.FC = () => {
                 <div className={styles.statCard}>
                     <FaCalendarAlt className={styles.statIcon} />
                     <div className={styles.statContent}>
-                        <h3>今年文章</h3>
+                        <h3>今年创作</h3>
                         <p>{stats.articlesThisYear}</p>
                     </div>
                 </div>
                 <div className={styles.statCard}>
                     <FaFire className={styles.statIcon} />
                     <div className={styles.statContent}>
-                        <h3>本月文章</h3>
+                        <h3>本月创作</h3>
                         <p>{stats.articlesThisMonth}</p>
                     </div>
                 </div>
@@ -273,7 +274,7 @@ const WritingStats: React.FC = () => {
 
             <div className={styles.chartsGrid}>
                 <div className={styles.chartCard}>
-                    <h3>月度文章分布</h3>
+                    <h3>月度创作分布</h3>
                     <div className={styles.chartContainer}>
                         <ResponsiveContainer width="100%" height={300}>
                             <AreaChart data={stats.monthlyData}>
@@ -307,7 +308,7 @@ const WritingStats: React.FC = () => {
                 </div>
 
                 <div className={styles.chartCard}>
-                    <h3>星期文章分布</h3>
+                    <h3>星期创作分布</h3>
                     <div className={styles.chartContainer}>
                         <ResponsiveContainer width="100%" height={300}>
                             <PieChart>
@@ -342,11 +343,11 @@ const WritingStats: React.FC = () => {
                 <div style={{ margin: '0 75px' }}>
                     <ContributionCalendar articles={articles} />
                     <div className={styles.legend}>
-                        <span>文章频率：</span>
+                        <span>创作频率：</span>
                         <div className={styles.legendItems}>
                             <div className={styles.legendItem}>
                                 <div className={styles.legendColor} style={{ backgroundColor: 'var(--calendar-empty)' }}></div>
-                                <span>未发布</span>
+                                <span>未创作</span>
                             </div>
                             <div className={styles.legendItem}>
                                 <div className={styles.legendColor} style={{ backgroundColor: 'var(--calendar-level-1)' }}></div>
@@ -375,11 +376,11 @@ const WritingStats: React.FC = () => {
                     <p>{stats.mostActiveDay}</p>
                 </div>
                 <div className={styles.detailCard}>
-                    <h3>最长连续发布</h3>
+                    <h3>最长连续创作</h3>
                     <p>{stats.longestStreak} 天</p>
                 </div>
                 <div className={styles.detailCard}>
-                    <h3>当前连续发布</h3>
+                    <h3>当前连续创作</h3>
                     <p>{stats.currentStreak} 天</p>
                 </div>
             </div>
