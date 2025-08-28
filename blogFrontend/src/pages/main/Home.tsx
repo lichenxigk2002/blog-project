@@ -267,7 +267,7 @@ const Home: React.FC<HomeProps> = ({ latestArticles: initialArticles, tags: init
                                         </div>
                                         <div className={styles.statItem}>
                                             <span>{stats.views}</span>
-                                            <p>总访问量</p>
+                                            <p>文章阅读量</p>
                                         </div>
                                     </div>
                                 </section>
