@@ -71,10 +71,10 @@ const ArticleCopyright: React.FC<ArticleCopyrightProps> = ({ article }) => {
     return `${hash}`;
   };
 
-  // 移除 Crossbell 相关功能
-  const getCrossbellUrl = (noteId: string) => {
-    return `https://crossbell.io/notes/${noteId}`;
-  };
+  // // 移除 Crossbell 相关功能
+  // const getCrossbellUrl = (noteId: string) => {
+  //   return `https://crossbell.io/notes/${noteId}`;
+  // };
 
   const getCrossbellExplorerUrl = (txHash: string) => {
     return `https://scan.crossbell.io/tx/${txHash}`;
@@ -196,20 +196,20 @@ const ArticleCopyright: React.FC<ArticleCopyrightProps> = ({ article }) => {
                         </a>
                       </div>
                       {/* 移除 Crossbell 相关的显示内容 */}
-                      {copyrightInfo.noteId && (
-                        <div className={styles.blockchainItem}>
-                          <span className={styles.blockchainLabel}>Note ID：</span>
-                          <a
-                            href={getCrossbellUrl(copyrightInfo.noteId)}
-                            className={styles.blockchainLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            title="在 Crossbell 上查看内容"
-                          >
-                            {copyrightInfo.noteId}
-                          </a>
-                        </div>
-                      )}
+                      {/*{copyrightInfo.noteId && (*/}
+                      {/*  <div className={styles.blockchainItem}>*/}
+                      {/*    <span className={styles.blockchainLabel}>Note ID：</span>*/}
+                      {/*    <a*/}
+                      {/*      href={getCrossbellUrl(copyrightInfo.noteId)}*/}
+                      {/*      className={styles.blockchainLink}*/}
+                      {/*      target="_blank"*/}
+                      {/*      rel="noopener noreferrer"*/}
+                      {/*      title="在 Crossbell 上查看内容"*/}
+                      {/*    >*/}
+                      {/*      {copyrightInfo.noteId}*/}
+                      {/*    </a>*/}
+                      {/*  </div>*/}
+                      {/*)}*/}
                       <div className={styles.blockchainItem}>
                         <span className={styles.blockchainLabel}>上链时间：</span>
                         <span className={styles.blockchainValue}>
