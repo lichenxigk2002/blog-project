@@ -21,6 +21,8 @@ export interface Article {
     readingTime: number;
     isTop?: boolean; // 是否置顶
     sortOrder?: number; // 排序权重
+    taobaoSummary?: string; // 桃宝助手摘要
+    aiSummary?: string; // 豆包助手摘要
 
     tags: Array<{
         id: number;

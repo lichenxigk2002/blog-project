@@ -123,6 +123,16 @@ public class Articles implements Serializable {
      */
     private Integer sortOrder;
 
+    /**
+     * 桃宝风格摘要
+     */
+    private String taobaoSummary;
+
+    /**
+     * 豆包AI摘要
+     */
+    private String aiSummary;
+
     @TableField(exist = false)
     private List<Tags> tags; // 新增
 

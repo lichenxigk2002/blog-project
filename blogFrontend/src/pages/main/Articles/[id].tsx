@@ -8,21 +8,27 @@ import ReactMarkdown from 'react-markdown';       // Markdown渲染组件
 import remarkGfm from 'remark-gfm'                // 支持GitHub Flavored Markdown的插件
 import rehypeRaw from 'rehype-raw';              // 支持HTML标签的插件
 import Link from 'next/link';                     // Next.js客户端导航组件
-import ArticleToc from '@/components/ArticleToc/ArticleToc'; // 文章目录组件
+import ArticleToc from '@/components/ArticleUI/ArticleToc/ArticleToc'; // 文章目录组件
 import { motion } from 'framer-motion';              // 动画库
 import { ArticlesAPI } from '@/api/ArticlesAPI';    // 文章API
-import CodeBlock from '@/components/Code/CodeBlock';   // 代码高亮组件
+import CodeBlock from '@/components/ArticleUI/Code/CodeBlock';   // 代码高亮组件
 import Comments from '@/components/Comments/Comments'; // 评论组件
 import { FaArrowLeft } from "react-icons/fa";  // FontAwesome图标库
 import Head from "next/head";               // Next.js头部组件
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner'; // 加载动画组件
 import RecentArticles from "@/components/RecentArticles/RecentArticles"; // 最近文章组件
-import ArticleSidebar from '@/components/ArticleSidebar/ArticleSidebar';   // 文章侧边栏组件
-import ArticleCopyright from '@/components/ArticleCopyright/ArticleCopyright';// 版权声明组件
+import ArticleSidebar from '@/components/ArticleUI/ArticleSidebar/ArticleSidebar';   // 文章侧边栏组件
+import ArticleCopyright from '@/components/ArticleUI/ArticleCopyright/ArticleCopyright';// 版权声明组件
 import { useLoading } from "@/hooks/useLoading"; // 自定义加载状态钩子
 import dynamic from 'next/dynamic';
-import MetaCard from '@/components/MetaCard/MetaCard';
-
+import MetaCard from '@/components/ArticleUI/MetaCard/MetaCard';
+import { Table, Thead, Tbody, Tr, Th, Td } from '@/components/ArticleUI/Table/Table';
+import ArticleImage from '@/components/ArticleUI/ArticleImage/ArticleImage';
+import ArticleVideo from '@/components/ArticleUI/ArticleVideo/ArticleVideo';
+import ArticleSummary from '@/components/ArticleUI/ArticleSummary';
+import { FiEye, FiClock, FiCalendar, FiEdit, FiUser, FiTag } from 'react-icons/fi';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 
 // 定义标题对象的类型
@@ -35,8 +41,8 @@ interface Heading {
 
 const ArticleDetail: React.FC = () => {
     // 使用路由钩子获取路由参数
-    const SequenceDiagram = dynamic(() => import('@/components/SequenceDiagram/SequenceDiagram'), { ssr: false });
-    const MermaidDiagram = dynamic(() => import('@/components/MermaidDiagram/MermaidDiagram'), { ssr: false });
+    const SequenceDiagram = dynamic(() => import('@/components/ArticleUI/SequenceDiagram/SequenceDiagram'), { ssr: false });
+    const MermaidDiagram = dynamic(() => import('@/components/ArticleUI/MermaidDiagram/MermaidDiagram'), { ssr: false });
     const router = useRouter(); // Next.js路由对象
     const { id } = router.query; // 从URL中获取文章ID
 
@@ -213,7 +219,7 @@ const ArticleDetail: React.FC = () => {
                 <meta property="og:title" content={article.title} />
                 <meta property="og:description" content={article.content.substring(0, 160)} />
                 <meta property="og:type" content="article" />
-                <meta property="article:published_time" content={article.publishedAt} />
+                <meta property="article:published_time" content={article.createdAt} />
                 <meta property="article:author" content="博主" />
                 <meta name="twitter:card" content="summary" />
                 <meta name="twitter:title" content={article.title} />
@@ -225,8 +231,8 @@ const ArticleDetail: React.FC = () => {
                             "@context": "https://schema.org",
                             "@type": "BlogPosting",
                             "headline": article.title,
-                            "datePublished": article.publishedAt,
-                            "dateModified": article.updatedAt || article.publishedAt,
+                            "datePublished": article.createdAt,
+                            "dateModified": article.updatedAt || article.createdAt,
                             "author": {
                                 "@type": "Person",
                                 "name": "孤芳不自赏"
@@ -302,64 +308,57 @@ const ArticleDetail: React.FC = () => {
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 0.4 }}
                             >
-                                <time
-                                    className={styles.date}
-                                    dateTime={article.publishedAt}
-                                    itemProp="datePublished"
-                                >
-                                    发布时间: {new Date(article.publishedAt).toLocaleDateString()}
-                                </time>
-                                <span className={styles.status}>
-                                    文章状态: {
-                                        article.status === 'published'
-                                            ? '已发布'
-                                            : article.status === 'archived'
-                                                ? '已归档'
-                                                : '草稿'
-                                    }
-                                </span>
-                                <motion.span
-                                    className={styles.likeButton}
-                                    whileHover={{ scale: 1.05 }}
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        handleLike();
-                                    }}
-                                    style={{ cursor: 'pointer' }}
-                                >
-                                    <motion.div
-                                        className={styles.heartWrapper}
-                                        animate={{
-                                            scale: [1, 1.2, 1],
-                                            rotate: [0, -10, 10, 0],
+                                <div className={styles.metaInfo}>
+                                    {/* Views */}
+                                    <span className={styles.metaItem}>
+                                        <FiEye style={{ marginRight: 4, verticalAlign: 'middle' }} />
+                                        {article.viewCount || 0}
+                                    </span>
+
+                                    {/* Likes */}
+                                    <motion.span
+                                        className={styles.metaItem}
+                                        whileHover={{ scale: 1.05 }}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            handleLike();
                                         }}
-                                        transition={{
-                                            duration: 0.5,
-                                            ease: "easeInOut",
-                                            times: [0, 0.2, 0.4, 1]
-                                        }}
+                                        style={{ cursor: 'pointer' }}
                                     >
                                         {isLiked ? (
-                                            <FaHeart className={styles.heartIcon} style={{ color: 'var(--like)' }} />
+                                            <FaHeart style={{ marginRight: 4, verticalAlign: 'middle', color: 'var(--like)' }} />
                                         ) : (
-                                            <FaRegHeart className={styles.heartIcon} />
+                                            <FaRegHeart style={{ marginRight: 4, verticalAlign: 'middle' }} />
                                         )}
-                                    </motion.div>
-                                    <motion.span
-                                        className={styles.likeCount}
-                                        animate={{
-                                            scale: [1, 1.2, 1],
-                                            y: [0, -10, 0]
-                                        }}
-                                        transition={{
-                                            duration: 0.5,
-                                            ease: "easeInOut"
-                                        }}
-                                    >
                                         {likeCount}
                                     </motion.span>
-                                </motion.span>
+
+                                    {/* Reading Time */}
+                                    <span className={styles.metaItem}>
+                                        <FiClock style={{ marginRight: 4, verticalAlign: 'middle' }} />
+                                        预计阅读时间：{article.readingTime || 5}分钟
+                                    </span>
+
+
+                                    {/* Author */}
+                                    <span className={styles.metaItem}>
+                                        <FiUser style={{ marginRight: 4, verticalAlign: 'middle' }} />
+                                        作者：{'孤芳不自赏'}
+                                    </span>
+
+                                    {/* Status */}
+                                    <span className={styles.metaItem}>
+                                        <FiTag style={{ marginRight: 4, verticalAlign: 'middle' }} />
+                                        状态：{
+                                            article.status === 'published'
+                                                ? '已发布'
+                                                : article.status === 'archived'
+                                                    ? '已归档'
+                                                    : '草稿'
+                                        }
+                                    </span>
+                                </div>
                             </motion.div>
                         </header>
 
@@ -371,6 +370,14 @@ const ArticleDetail: React.FC = () => {
                             transition={{ delay: 0.5 }}
                             itemProp="articleBody"
                         >
+                            {/* AI摘要组件 */}
+                            <ArticleSummary
+                                title={article.title}
+                                content={article.content}
+                                taobaoSummary={article.taobaoSummary}
+                                aiSummary={article.aiSummary}
+                            />
+
                             <ReactMarkdown
                                 rehypePlugins={[[rehypeRaw], [remarkGfm]]}
                                 components={{
@@ -523,28 +530,16 @@ const ArticleDetail: React.FC = () => {
                                     pre: ({ node, ...props }) => <pre className={styles.pre} {...props} />,
 
                                     // 添加表格相关组件
-                                    table: ({ node, ...props }) => (
-                                        <div className={styles.tableContainer}>
-                                            <table className={styles.table} {...props} />
-                                        </div>
-                                    ),
-                                    thead: ({ node, ...props }) => <thead className={styles.tableHead} {...props} />,
-                                    tbody: ({ node, ...props }) => <tbody className={styles.tableBody} {...props} />,
-                                    tr: ({ node, ...props }) => <tr className={styles.tableRow} {...props} />,
-                                    th: ({ node, ...props }) => <th className={styles.tableHeader} {...props} />,
-                                    td: ({ node, ...props }) => <td className={styles.tableCell} {...props} />,
+                                    table: ({ node, ...props }) => <Table {...props} />,
+                                    thead: ({ node, ...props }) => <Thead {...props} />,
+                                    tbody: ({ node, ...props }) => <Tbody {...props} />,
+                                    tr: ({ node, ...props }) => <Tr {...props} />,
+                                    th: ({ node, ...props }) => <Th {...props} />,
+                                    td: ({ node, ...props }) => <Td {...props} />,
 
                                     // 添加视频组件
-                                    video: ({ node, ...props }) => (
-                                        <div className={styles.videoContainer}>
-                                            <video
-                                                className={styles.video}
-                                                controls
-                                                preload="metadata"
-                                                {...props}
-                                            />
-                                        </div>
-                                    ),
+                                    video: ({ node, ...props }) => <ArticleVideo {...props} />,
+                                    img: ({ node, ...props }) => <ArticleImage {...props} />,
                                 }}
                             >
                                 {article.content}
@@ -563,7 +558,7 @@ const ArticleDetail: React.FC = () => {
                     </article>
 
                     <RecentArticles />
-                    <Comments articleId={article.id} />
+                    <Comments articleId={article.id!} />
                 </main>
                 {/* 右侧栏 ArticleSidebar，大屏显示 */}
                 <aside className={styles.rightSidebar}>

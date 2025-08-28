@@ -365,7 +365,7 @@ const ArticleManagement: React.FC = () => {
           {article.isTop && <span style={{ color: '#ffd700', marginLeft: '8px' }}>⭐</span>}
         </div>
         <div className={styles.tableCell}>
-          {article.publishedAt ? new Date(article.publishedAt).toLocaleString() : '-'}
+          {article.createdAt ? new Date(article.createdAt).toLocaleString() : '-'}
         </div>
         <div className={styles.tableCell}>
           <span className={`${styles.statusTag} ${article.status === 'published'
@@ -445,10 +445,10 @@ const ArticleManagement: React.FC = () => {
           </div>
           <div
             className={`${styles.tableHeaderCell} ${styles.sortable}`}
-            onClick={() => handleSort('publishedAt')}
+            onClick={() => handleSort('createdAt')}
           >
             发布时间
-            {sortField === 'publishedAt' && (
+            {sortField === 'createdAt' && (
               <span className={styles.sortIcon}>
                 {sortOrder === 'asc' ? '↑' : '↓'}
               </span>
@@ -524,8 +524,8 @@ const ArticleManagement: React.FC = () => {
                   {paginatedArticles.find(item => item.id?.toString() === activeId)?.title}
                 </div>
                 <div className={styles.tableCell}>
-                  {paginatedArticles.find(item => item.id?.toString() === activeId)?.publishedAt ?
-                    new Date(paginatedArticles.find(item => item.id?.toString() === activeId)!.publishedAt!).toLocaleString() : '-'}
+                  {paginatedArticles.find(item => item.id?.toString() === activeId)?.createdAt ?
+                    new Date(paginatedArticles.find(item => item.id?.toString() === activeId)!.createdAt!).toLocaleString() : '-'}
                 </div>
                 <div className={styles.tableCell}>
                   <span className={`${styles.statusTag} ${paginatedArticles.find(item => item.id?.toString() === activeId)?.status === 'published'

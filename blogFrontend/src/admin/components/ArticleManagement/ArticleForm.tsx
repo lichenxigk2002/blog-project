@@ -6,6 +6,7 @@ import MarkdownToolbar from './MarkdownToolbar';
 import { MarkdownImageAPI } from '@/api/MarkdownImageAPI';
 import { SubscribeAPI, Subscriber } from '@/api/SubscribeAPI';
 import { ArticlesAPI } from "@/api/ArticlesAPI";
+import { AIArticleSummaryAPI } from '@/api/AIArticleSummaryAPI';
 import OperationTipModal from '../ui/OperationTipModal/OperationTipModal';
 import { buildArticleData } from '@/utils/articleUtils';
 import { useSelector } from "react-redux";
@@ -35,6 +36,8 @@ interface ArticleFormData {
   shouldNotify: boolean;
   notifyUserIds: number[];
   isTop: boolean; // 新增置顶字段
+  taobaoSummary?: string; // 桃宝助手摘要
+  aiSummary?: string; // 豆包助手摘要
 }
 
 interface ArticleFormProps {
@@ -57,6 +60,8 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
     shouldNotify: false,
     notifyUserIds: [],
     isTop: false,
+    taobaoSummary: '',
+    aiSummary: '',
     ...initialValues
   });
 
@@ -70,11 +75,12 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
   const lastSaveData = useRef<ArticleFormData | null>(null);
   const autoSaveEnabled = useSelector((state: RootState) => state.settings.contentSettings.autoSaveEnabled)
   const newArticleNotification = useSelector((state: RootState) => state.settings.notificationSettings.newArticleNotification);
-  const [autoSaveTip, setAutoSaveTip] = useState<{ open: boolean, message: string, type: 'success' | 'failure' }>({
+  const [autoSaveTip, setAutoSaveTip] = useState<{ open: boolean, message: string, type: 'success' | 'error' }>({
     open: false,
     message: '',
     type: 'success'
   });
+  const [generatingSummary, setGeneratingSummary] = useState<'taobao' | 'ai' | null>(null);
 
   // 定义状态选项
   const statusOptions: SelectOption[] = [
@@ -111,7 +117,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
       lastSaveData.current = dataForBackend;
       setAutoSaveTip({ open: true, message: '自动保存成功', type: 'success' });
     } catch (e) {
-      setAutoSaveTip({ open: true, message: '自动保存失败', type: 'failure' });
+      setAutoSaveTip({ open: true, message: '自动保存失败', type: 'error' });
     }
   }
 
@@ -225,6 +231,53 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
     }
   };
 
+  // 生成摘要功能
+  const handleGenerateSummary = async (style: 'taobao' | 'ai') => {
+    if (!formData.title || !formData.content) {
+      alert('请先填写文章标题和内容');
+      return;
+    }
+
+    setGeneratingSummary(style);
+    try {
+      let result;
+      if (style === 'taobao') {
+        result = await AIArticleSummaryAPI.generateTaobaoSummary({
+          title: formData.title,
+          content: formData.content
+        });
+      } else {
+        result = await AIArticleSummaryAPI.generateAISummary({
+          title: formData.title,
+          content: formData.content
+        });
+      }
+
+      if (result.success) {
+        setFormData(prev => ({ ...prev, [style === 'taobao' ? 'taobaoSummary' : 'aiSummary']: result.data.summary }));
+        setAutoSaveTip({
+          open: true,
+          message: `${style === 'taobao' ? '桃宝' : 'AI'}摘要生成成功！`,
+          type: 'success'
+        });
+      } else {
+        setAutoSaveTip({
+          open: true,
+          message: result.message || '摘要生成失败',
+          type: 'error'
+        });
+      }
+    } catch (error) {
+      setAutoSaveTip({
+        open: true,
+        message: `摘要生成失败: ${error instanceof Error ? error.message : '未知错误'}`,
+        type: 'error'
+      });
+    } finally {
+      setGeneratingSummary(null);
+    }
+  };
+
   useEffect(() => {
     if (!autoSaveEnabled) return;
 
@@ -276,7 +329,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
         />
       </FormItem>
 
-      <FormItem>
+      <FormItem >
         <FormInput
           type="textarea"
           name="excerpt"
@@ -285,29 +338,69 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
           placeholder="请输入文章摘要"
           label="摘要"
         />
-      </FormItem>
-      <div className={styles.formItemRow}>
-        <FormItem>
-          <FormInput
-            type="text"
-            name="coverImage"
-            value={formData.coverImage}
-            onChange={handleInputChange}
-            placeholder="请输入封面图片URL"
-            label="封面图片"
-          />
-        </FormItem>
+        {/* 桃宝摘要和AI摘要 - 两栏布局 */}
+        <div className={styles.formItemRow} style={{ marginTop: '16px' }}>
+          <FormItem className={styles.compactFormItem}>
+            <FormInput
+              type="textarea"
+              name="taobaoSummary"
+              value={formData.taobaoSummary || ''}
+              onChange={handleInputChange}
+              placeholder="桃宝风格的摘要将在这里显示..."
+              label="桃宝摘要"
+            />
+            <Button
+              variant="primary"
+              size="small"
+              onClick={() => handleGenerateSummary('taobao')}
+              disabled={generatingSummary === 'taobao' || !formData.title || !formData.content}
+              style={{ marginTop: '8px' }}
+            >
+              {generatingSummary === 'taobao' ? '生成中...' : '生成桃宝摘要'}
+            </Button>
+          </FormItem>
 
-        <FormItem>
-          <FormInput
-            type="text"
-            name="readingTime"
-            value={formData.readingTime}
-            onChange={handleInputChange}
-            placeholder="请输入阅读时间"
-            label="阅读时间"
-          />
-        </FormItem>
+          <FormItem>
+            <FormInput
+              type="textarea"
+              name="aiSummary"
+              value={formData.aiSummary || ''}
+              onChange={handleInputChange}
+              placeholder="豆包风格的摘要将在这里显示..."
+              label="AI摘要"
+            />
+            <Button
+              variant="success"
+              size="small"
+              onClick={() => handleGenerateSummary('ai')}
+              disabled={generatingSummary === 'ai' || !formData.title || !formData.content}
+              style={{ marginTop: '8px' }}
+            >
+              {generatingSummary === 'ai' ? '生成中...' : '生成AI摘要'}
+            </Button>
+          </FormItem>
+        </div>
+      </FormItem>
+
+      {/* 封面图片和阅读时间 - 减少上方空白 */}
+      <div className={styles.formItemRow} style={{ marginTop: '8px' }}>
+        <FormInput
+          type="text"
+          name="coverImage"
+          value={formData.coverImage}
+          onChange={handleInputChange}
+          placeholder="请输入封面图片URL"
+          label="封面图片"
+        />
+
+        <FormInput
+          type="text"
+          name="readingTime"
+          value={formData.readingTime}
+          onChange={handleInputChange}
+          placeholder="请输入阅读时间"
+          label="阅读时间"
+        />
       </div>
       <div className={styles.formItemRow}>
         <FormItem>

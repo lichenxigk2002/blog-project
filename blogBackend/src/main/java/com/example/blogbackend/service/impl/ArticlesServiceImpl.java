@@ -129,6 +129,10 @@ public class ArticlesServiceImpl extends ServiceImpl<ArticlesMapper, Articles> i
         article.setIsTop(false); // 新文章默认不置顶
         article.setSortOrder(0); // 临时设置，后面会更新
 
+        // 设置AI摘要字段
+        article.setTaobaoSummary(dto.getTaobaoSummary());
+        article.setAiSummary(dto.getAiSummary());
+
         this.save(article);
 
         // 获取当前最大的sort_order值，新文章设置为max + 10
@@ -182,6 +186,10 @@ public class ArticlesServiceImpl extends ServiceImpl<ArticlesMapper, Articles> i
         article.setReadingTime(dto.getReadingTime());
         article.setIsTop(dto.getIsTop());
         article.setSortOrder(dto.getSortOrder());
+
+        // 设置AI摘要字段
+        article.setTaobaoSummary(dto.getTaobaoSummary());
+        article.setAiSummary(dto.getAiSummary());
 
         boolean updated = this.updateById(article);
         if (!updated) {

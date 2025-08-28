@@ -34,6 +34,10 @@ public class ArticleDTO {
     private Boolean isTop; // 是否置顶
     private Integer sortOrder; // 排序权重
 
+    // 新增：AI摘要字段
+    private String taobaoSummary;  // 桃宝风格摘要
+    private String aiSummary;      // 豆包AI摘要
+
     // getter/setter 省略，可用 Lombok @Data
     public Integer getId() {
         return id;
