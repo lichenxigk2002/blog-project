@@ -5,11 +5,11 @@ export const HTTP_STATUS = {
     PROCESSING: 102,
 
     // 成功状态码
-    OK: 200,
-    CREATED: 201,
-    ACCEPTED: 202,
-    NO_CONTENT: 204,
-    PARTIAL_CONTENT: 206,
+    OK: 200, // 请求成功
+    CREATED: 201, // 创建成功
+    ACCEPTED: 202, // 已接受
+    NO_CONTENT: 204, // 无内容
+    PARTIAL_CONTENT: 206, // 部分内容
 
     // 重定向状态码
     MOVED_PERMANENTLY: 301,
