@@ -48,12 +48,15 @@ interface Route {
     id: number;
     path: string;
     name: string;
-    component: React.ComponentType<any>; // 改为any以支持不同props类型
+    component?: React.ComponentType<any>; // any以支持不同props类型
     exact?: boolean
-    renderType: 'ssr' | 'ssg' | 'csr'; // 新增渲染类型标记
-    children?: Route[]; // 新增嵌套路由支持
+    renderType?: 'ssr' | 'ssg' | 'csr'; // 渲染类型标记
+    children?: Route[]; // 嵌套路由支持
     showInNav: boolean;
-    showInDropdown?: boolean; // 新增：是否在下拉菜单中显示
+    showInDropdown?: boolean; // 是否在下拉菜单中显示
+    isExternal?: boolean; // 是否为外部链接
+    externalUrl?: string; // 外部链接
+    target?: '_blank' | '_self'; // 外部链接打开方式
 }
 export const navRoutesItem: Route[] = [
     {
@@ -90,6 +93,14 @@ export const navRoutesItem: Route[] = [
                 renderType: 'ssg', // 文章详情建议SSG+ISR
                 showInNav: false,
                 showInDropdown: false
+            }, {
+                id: 302,
+                path: '/main/Archive',
+                name: '归档',
+                component: Archive,
+                renderType: 'ssg', // 归档建议SSG
+                showInNav: false,
+                showInDropdown: true,
             }
         ]
     }, {
@@ -108,18 +119,40 @@ export const navRoutesItem: Route[] = [
         showInNav: true
     }, {
         id: 5,
-        path: '/main/Archive',
-        name: '归档',
-        component: Archive,
-        renderType: 'ssg', // 归档建议SSG
-        showInNav: true
+        path: '/main/BulletinBoard',
+        name: '留言',
+        component: BulletinBoard,
+        renderType: 'csr', // 留言建议CSR
+        showInNav: true,
+        children: [
+            {
+                id: 501,
+                path: '/main/Thoughts',
+                name: '灵感',
+                component: Thoughts,
+                renderType: 'ssg', // 灵感建议SSG
+                showInNav: false,
+                showInDropdown: true,
+            }
+        ]
     }, {
         id: 6,
-        path: '/main/Thoughts',
-        name: '灵感',
-        component: Thoughts,
-        renderType: 'ssg', // 灵感建议SSG
-        showInNav: true
+        path: '/main/FriendLinks',
+        name: '友链',
+        component: FriendLinks,
+        renderType: 'ssg', // 友链建议SSG
+        showInNav: true,
+        children: [
+            {
+                id: 601,
+                path: '/main/Moments',
+                name: '朋友圈',
+                component: dynamic(() => import('@/pages/main/Moments'), { loading: () => <LoadingSpinner /> }),
+                renderType: 'csr', // 朋友圈建议CSR
+                showInNav: false,
+                showInDropdown: true,
+            }
+        ]
     }, {
         id: 7,
         path: '/main/XiaoXiAI',
@@ -137,22 +170,6 @@ export const navRoutesItem: Route[] = [
         children: [
             {
                 id: 801,
-                path: '/main/BulletinBoard',
-                name: '留言板',
-                component: BulletinBoard,
-                renderType: 'csr', // 改为CSR以提高加载速度
-                showInNav: false,
-                showInDropdown: true
-            }, {
-                id: 802,
-                path: '/main/FriendLinks',
-                name: '友链',
-                component: FriendLinks,
-                renderType: 'ssg', // 友链建议SSG
-                showInNav: false,
-                showInDropdown: true
-            }, {
-                id: 803,
                 path: '/main/WritingStats',
                 name: '创作统计',
                 component: WritingStats,
@@ -160,7 +177,7 @@ export const navRoutesItem: Route[] = [
                 showInNav: false,
                 showInDropdown: true
             }, {
-                id: 804,
+                id: 802,
                 path: '/main/Questions',
                 name: '面试题汇总',
                 component: Questions,
