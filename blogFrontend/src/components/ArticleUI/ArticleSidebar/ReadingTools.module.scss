@@ -14,13 +14,18 @@ $transition: all 0.2s ease;
   /* 阴影效果 */
   background: rgba(255, 255, 255, 0.2);
   /* 半透明背景 */
-  transition: 0.3s $transition;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
 
   &.collapsed {
     padding: 0.5rem;
 
     .toolContent {
-      display: none;
+      max-height: 0;
+      opacity: 0;
+      transform: translateY(-10px);
+      pointer-events: none;
     }
   }
 }
@@ -155,7 +160,8 @@ $transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 4px;
 
   &.collapsed {
     transform: rotate(180deg);
@@ -163,9 +169,16 @@ $transition: all 0.2s ease;
 
   &:hover {
     opacity: 0.8;
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
   }
 }
 
 .toolContent {
-  transition: $transition;
+  max-height: 500px;
+  /* 设置一个足够大的最大高度 */
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: auto;
 }
