@@ -97,7 +97,7 @@ const Profile: React.FC = () => {
             username: res.data.username || '',
             email: '',
             phone: res.data.phone || '',
-            avatar: res.data.avatar || '',
+            avatar: res.data.avatar && res.data.avatar.trim() !== '' && res.data.avatar !== '/default-avatar.png' ? res.data.avatar : '',
             code: '',
           });
         } else if (isMounted) {
@@ -329,13 +329,29 @@ const Profile: React.FC = () => {
       <div className={styles.profileCard}>
         <h2 style={{ textAlign: 'center', marginBottom: 24 }}>个人信息</h2>
         <div className={styles.avatarWrapper}>
-          <img
-            src={form.avatar || '/images/avatar-default.png'}
-            alt="头像"
-            className={styles.avatarImg}
-            onClick={() => fileInputRef.current?.click()}
-            title="点击更换头像"
-          />
+          {form.avatar && form.avatar.trim() !== '' && form.avatar !== '/default-avatar.png' ? (
+            <img
+              src={form.avatar}
+              alt="头像"
+              className={styles.avatarImg}
+              onClick={() => fileInputRef.current?.click()}
+              title="点击更换头像"
+            />
+          ) : (
+            <div
+              className={styles.defaultAvatar}
+              onClick={() => fileInputRef.current?.click()}
+              title="点击更换头像"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className={styles.avatarIcon}
+              >
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+              </svg>
+            </div>
+          )}
           {avatarUploading && <div className={styles.avatarUploading}>上传中...</div>}
           <input
             type="file"
