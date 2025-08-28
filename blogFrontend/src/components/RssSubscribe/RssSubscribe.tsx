@@ -3,7 +3,7 @@ import styles from './RssSubscribe.module.scss';
 import { useTheme } from '@/hooks/useTheme';
 import { RssAPI, RssInfo } from '@/api/RssAPI';
 import OperationTipModal from '../OperationTipModal/OperationTipModal';
-import { FaRss, FaClipboard, FaEye, FaBook, FaLightbulb, FaInfoCircle } from 'react-icons/fa';
+import { FiRss, FiClipboard, FiEye, FiBook, FiInfo, FiSun } from 'react-icons/fi';
 
 interface RssSubscribeProps {
   open: boolean;
@@ -75,7 +75,7 @@ const RssSubscribe: React.FC<RssSubscribeProps> = ({ open, onClose }) => {
         </button>
 
         <div className={styles.header}>
-          <h2><FaRss style={{ marginRight: '0.4em', verticalAlign: '-0.1em' }} />RSS订阅</h2>
+          <h2><FiRss style={{ marginRight: '0.4em', verticalAlign: '-0.1em' }} />RSS订阅</h2>
           <p className={styles.description}>
             通过RSS订阅，及时获取最新文章更新
           </p>
@@ -84,7 +84,7 @@ const RssSubscribe: React.FC<RssSubscribeProps> = ({ open, onClose }) => {
         {rssInfo && (
           <div className={styles.content}>
             <div className={styles.infoSection}>
-              <h3><FaInfoCircle style={{ marginRight: '0.4em', verticalAlign: '-0.1em' }} />订阅信息</h3>
+              <h3><FiInfo style={{ marginRight: '0.4em', verticalAlign: '-0.1em' }} />订阅信息</h3>
               <div className={styles.infoItem}>
                 <span className={styles.label}>博客名称：</span>
                 <span>{rssInfo.title}</span>
@@ -100,7 +100,7 @@ const RssSubscribe: React.FC<RssSubscribeProps> = ({ open, onClose }) => {
             </div>
 
             <div className={styles.feedSection}>
-              <h3><FaRss style={{ marginRight: '0.4em', verticalAlign: '-0.1em' }} />RSS Feed链接</h3>
+              <h3><FiRss style={{ marginRight: '0.4em', verticalAlign: '-0.1em' }} />RSS Feed链接</h3>
               <div className={styles.feedUrl}>
                 <input
                   type="text"
@@ -113,7 +113,7 @@ const RssSubscribe: React.FC<RssSubscribeProps> = ({ open, onClose }) => {
                   className={styles.copyButton}
                   title="复制链接"
                 >
-                  <FaClipboard />
+                  <FiClipboard />
                 </button>
               </div>
             </div>
@@ -123,18 +123,18 @@ const RssSubscribe: React.FC<RssSubscribeProps> = ({ open, onClose }) => {
                 onClick={handleOpenFeed}
                 className={styles.actionButton}
               >
-                <FaEye style={{ marginRight: '0.4em', verticalAlign: '-0.1em' }} />预览Feed
+                <FiEye style={{ marginRight: '0.4em', verticalAlign: '-0.1em' }} />预览Feed
               </button>
               <button
                 onClick={handleSubscribeInstructions}
                 className={styles.actionButton}
               >
-                <FaBook style={{ marginRight: '0.4em', verticalAlign: '-0.1em' }} />订阅教程
+                <FiBook style={{ marginRight: '0.4em', verticalAlign: '-0.1em' }} />订阅教程
               </button>
             </div>
 
             <div className={styles.tips}>
-              <h4><FaLightbulb style={{ marginRight: '0.4em', verticalAlign: '-0.1em' }} />使用提示</h4>
+              <h4><FiSun style={{ marginRight: '0.4em', verticalAlign: '-0.1em' }} />使用提示</h4>
               <ul>
                 <li>将RSS Feed链接添加到您喜欢的RSS阅读器中</li>
                 <li>推荐使用Feedly、Inoreader、NetNewsWire等RSS阅读器</li>
