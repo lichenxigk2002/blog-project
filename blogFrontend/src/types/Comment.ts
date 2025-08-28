@@ -12,6 +12,12 @@ export interface Comment extends Identifiable, Timestamped {
   isLiked?: boolean;
   articleTitle: string;
   replies?: Comment[];
+
+  // 用户设备信息
+  networkOperator?: string;
+  ipLocation?: string;
+  browserVersion?: string;
+  operatingSystem?: string;
 }
 
 // 评论列表响应

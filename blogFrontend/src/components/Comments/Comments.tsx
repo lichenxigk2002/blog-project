@@ -5,15 +5,46 @@ import type { Comment } from '@/types/Comment';
 import styles from './Comments.module.scss';
 import { LoginModalContext } from '@/context/LoginModalContext';
 import { CommentIcon, HeartIcon, TrashIcon, LoginIcon, SmileIcon } from '@/client/components/ui/Icons'
+import { FiMapPin, FiMonitor, FiGlobe } from 'react-icons/fi';
+import {
+  FaWindows,
+  FaApple,
+  FaLinux,
+  FaChrome,
+  FaFirefox,
+  FaEdge,
+  FaSafari,
+  FaInternetExplorer
+} from 'react-icons/fa';
 import OperationTipModal from '@/components/OperationTipModal/OperationTipModal';
 import DOMPurify from 'dompurify';
 import dynamic from 'next/dynamic';
+import { collectUserDeviceInfo } from '@/utils/userInfoCollector';
 
 interface CommentsProps {
   articleId: number;
   previewCommentsEnabled?: boolean; // 新增
 }
 const EmojiPicker = dynamic(() => import('../EmojiPicker/EmojiPicker'), { ssr: false });
+
+// 获取操作系统图标
+const getOSIcon = (os: string) => {
+  if (os.toLowerCase().includes('windows')) return <FaWindows />;
+  if (os.toLowerCase().includes('mac') || os.toLowerCase().includes('ios')) return <FaApple />;
+  if (os.toLowerCase().includes('linux') || os.toLowerCase().includes('android')) return <FaLinux />;
+  return <FiMonitor />;
+};
+
+// 获取浏览器图标
+const getBrowserIcon = (browser: string) => {
+  if (browser.toLowerCase().includes('chrome')) return <FaChrome />;
+  if (browser.toLowerCase().includes('firefox')) return <FaFirefox />;
+  if (browser.toLowerCase().includes('edge')) return <FaEdge />;
+  if (browser.toLowerCase().includes('safari')) return <FaSafari />;
+  if (browser.toLowerCase().includes('internet explorer') || browser.toLowerCase().includes('ie')) return <FaInternetExplorer />;
+  return <FiGlobe />;
+};
+
 const isValidAvatar = (avatar?: string | null) => {
   if (!avatar) return false;
   if (avatar.trim() === '') return false;
@@ -100,7 +131,7 @@ const CommentActions: React.FC<{
 
 // 评论框组件
 const CommentForm: React.FC<{
-  onSubmit: (content: string, parentId?: number) => Promise<void>;
+  onSubmit: (content: string, parentId?: number, deviceInfo?: any) => Promise<void>;
   loading: boolean;
   parentId?: number;
   onCancel?: () => void;
@@ -130,7 +161,9 @@ const CommentForm: React.FC<{
 
     try {
       setError(null);
-      await onSubmit(content.trim(), parentId);
+      // 收集用户设备信息
+      const deviceInfo = collectUserDeviceInfo();
+      await onSubmit(content.trim(), parentId, deviceInfo);
       setContent('');
       if (onCancel) onCancel();
     } catch (err: any) {
@@ -213,12 +246,13 @@ const CommentItem: React.FC<{
   onReply: (comment: Comment) => void;
   onDelete: (id: number) => Promise<void>;
   onLike: (id: number) => Promise<void>;
+  onSubmit: (content: string, parentId?: number, deviceInfo?: any) => Promise<void>;
   isLiked: boolean;
   isOwner: boolean;
   isLoggedIn: boolean;
   level?: number;
   allComments?: Comment[];
-}> = ({ comment, onReply, onDelete, onLike, isLiked, isOwner, isLoggedIn, level = 0, allComments = [] }) => {
+}> = ({ comment, onReply, onDelete, onLike, onSubmit, isLiked, isOwner, isLoggedIn, level = 0, allComments = [] }) => {
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [likes, setLikes] = useState(comment.likes || 0);
   const [localIsLiked, setLocalIsLiked] = useState(isLiked);
@@ -242,16 +276,49 @@ const CommentItem: React.FC<{
       <div className={styles.commentMain}>
         <UserAvatar username={comment.username} avatar={comment.avatar} />
         <div className={styles.commentContent}>
-          {parentComment && (
-            <div className={styles.replyTo}>
-              回复 <span className={styles.replyToUsername}>@{parentComment.username}</span>
-            </div>
-          )}
           <div className={styles.commentHeader}>
-            <span className={styles.username}>{comment.username}</span>
-            <span className={styles.time}>
-              {new Date(comment.createdAt).toLocaleString()}
-            </span>
+            <div className={styles.headerLeft}>
+              <span className={styles.username}>{comment.username}</span>
+              {parentComment && (
+                <span className={styles.replyTo}>
+                  回复 <span className={styles.replyToUsername}>@{parentComment.username}</span>
+                </span>
+              )}
+            </div>
+            <div className={styles.headerRight}>
+              <span className={styles.time}>
+                {new Date(comment.createdAt).toLocaleString()}
+              </span>
+              {/* 用户设备信息 */}
+              {(comment.browserVersion || comment.operatingSystem || comment.ipLocation) && (
+                <div className={styles.userDeviceInfo}>
+                  {comment.ipLocation && (
+                    <span className={styles.infoItem}>
+                      <span className={styles.infoIcon}>
+                        <FiMapPin />
+                      </span>
+                      {comment.ipLocation}
+                    </span>
+                  )}
+                  {comment.operatingSystem && (
+                    <span className={styles.infoItem}>
+                      <span className={styles.infoIcon}>
+                        {getOSIcon(comment.operatingSystem)}
+                      </span>
+                      {comment.operatingSystem}
+                    </span>
+                  )}
+                  {comment.browserVersion && (
+                    <span className={styles.infoItem}>
+                      <span className={styles.infoIcon}>
+                        {getBrowserIcon(comment.browserVersion)}
+                      </span>
+                      {comment.browserVersion}
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
           <div className={styles.commentText}
             dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(comment.content) }}
@@ -270,8 +337,9 @@ const CommentItem: React.FC<{
       {showReplyForm && isLoggedIn && (
         <div className={styles.replyFormWrapper}>
           <CommentForm
-            onSubmit={async (content) => {
+            onSubmit={async (content, parentId, deviceInfo) => {
               // 处理回复提交
+              await onSubmit(content, parentId, deviceInfo);
               setShowReplyForm(false);
             }}
             loading={false}
@@ -291,6 +359,7 @@ const CommentItem: React.FC<{
               onReply={onReply}
               onDelete={onDelete}
               onLike={onLike}
+              onSubmit={onSubmit}
               isLiked={false}
               isOwner={user?.id === reply.userId}
               isLoggedIn={isLoggedIn}
@@ -309,10 +378,11 @@ const CommentList: React.FC<{
   comments: Comment[];
   onDelete: (id: number) => Promise<void>;
   onLike: (id: number) => Promise<void>;
+  onSubmit: (content: string, parentId?: number, deviceInfo?: any) => Promise<void>;
   loading: boolean;
   onReply: (comment: Comment) => void;
   isLoggedIn: boolean;
-}> = ({ comments, onDelete, onLike, loading, onReply, isLoggedIn }) => {
+}> = ({ comments, onDelete, onLike, onSubmit, loading, onReply, isLoggedIn }) => {
   const user = useAppSelector(state => state.auth.user);
   const [visibleComments, setVisibleComments] = useState<Comment[]>([]);
 
@@ -335,6 +405,7 @@ const CommentList: React.FC<{
           onReply={onReply}
           onDelete={onDelete}
           onLike={onLike}
+          onSubmit={onSubmit}
           isLiked={false}
           isOwner={user?.id === comment.userId}
           isLoggedIn={isLoggedIn}
@@ -380,7 +451,7 @@ const Comments: React.FC<CommentsProps> = ({ articleId, previewCommentsEnabled }
     }
   };
 
-  const handleSubmit = async (content: string, parentId?: number) => {
+  const handleSubmit = async (content: string, parentId?: number, deviceInfo?: any) => {
     if (!user) {
       setTipMessage('请先登录');
       setTipType('warning');
@@ -393,7 +464,12 @@ const Comments: React.FC<CommentsProps> = ({ articleId, previewCommentsEnabled }
         articleId,
         userId: user.id,
         content,
-        parentId: parentId || null
+        parentId: parentId || null,
+        // 添加用户设备信息
+        networkOperator: deviceInfo?.networkOperator,
+        ipLocation: deviceInfo?.ipLocation,
+        browserVersion: deviceInfo?.browserVersion,
+        operatingSystem: deviceInfo?.operatingSystem
       } as any);
 
       // 处理字符串响应（成功消息）
@@ -509,6 +585,7 @@ const Comments: React.FC<CommentsProps> = ({ articleId, previewCommentsEnabled }
           comments={comments}
           onDelete={handleDeleteComment}
           onLike={handleLike}
+          onSubmit={handleSubmit}
           loading={loading}
           onReply={handleReply}
           isLoggedIn={isLoggedIn}

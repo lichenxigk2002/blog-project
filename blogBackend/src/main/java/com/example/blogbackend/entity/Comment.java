@@ -59,4 +59,24 @@ public class Comment {
      * 更新时间
      */
     private LocalDateTime updatedAt;
+
+    /**
+     * 网络运营商
+     */
+    private String networkOperator;
+
+    /**
+     * IP属地（省份/城市）
+     */
+    private String ipLocation;
+
+    /**
+     * 浏览器版本
+     */
+    private String browserVersion;
+
+    /**
+     * 操作系统
+     */
+    private String operatingSystem;
 }
