@@ -2,6 +2,7 @@ export interface AdminRoute {
   id: number;
   path: string;
   name: string;
+  children?: AdminRoute[];
 }
 
 export const adminRoutes: AdminRoute[] = [
@@ -47,7 +48,19 @@ export const adminRoutes: AdminRoute[] = [
   }, {
     id: 10,
     path: '/admin/friendlinks',
-    name: '友链管理'
+    name: '友链管理',
+    children: [
+      {
+        id: 1001,
+        path: '/admin/friendlinks',
+        name: '友链列表'
+      },
+      {
+        id: 1002,
+        path: '/admin/friendlinks/rss',
+        name: 'RSS管理'
+      }
+    ]
   }, {
     id: 11,
     path: '/admin/settings',
