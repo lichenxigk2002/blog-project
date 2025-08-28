@@ -72,25 +72,27 @@ $font-family-title: 'ZiHun', serif;
     height: 280px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     /* 阴影效果 */
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.096);
     /* 半透明背景 */
     border-radius: 8px;
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
     transition: transform 0.2s;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
 }
 
-.boxGrip:hover {
-    transform: translateY(-5px);
-}
+// .boxGrip:hover {
+//     transform: translateY(-5px);
+// }
 
 .imageBox {
     width: 350px;
     height: 180px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     /* 阴影效果 */
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0);
     /* 半透明背景 */
     border-radius: 8px 8px 0 0;
     overflow: hidden;
@@ -98,6 +100,11 @@ $font-family-title: 'ZiHun', serif;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: transform 0.2s;
+
+    &:hover {
+        transform: scale(1.05);
+    }
 
 }
 
@@ -107,14 +114,74 @@ $font-family-title: 'ZiHun', serif;
 }
 
 .noImage {
-    width: 100%;
+    display: flex;
+    flex-direction: row; // 改为水平排列
+    align-items: center;
+    justify-content: flex-start; // 左对齐
     height: 100%;
+    gap: 16px; // 图片和文字之间的间距
+}
+
+.placeholderImage {
+    width: 64px;
+    height: 64px;
+    opacity: 0.6;
+    filter: grayscale(30%);
+    transition: all 0.3s ease;
+    flex-shrink: 0; // 防止图片被压缩
+
+    &:hover {
+        opacity: 0.8;
+        filter: grayscale(0%);
+        transform: scale(1.1);
+    }
+}
+
+.noImageText {
+    font-size: 14px;
+    color: #999;
+    text-align: left; // 左对齐
+    line-height: 1.6;
+    writing-mode: vertical-rl; // 文字竖着排列
+    text-orientation: mixed; // 保持中文正常方向
+    height: 120px; // 给文字一个固定高度
     display: flex;
     align-items: center;
-    justify-content: center;
-    color: #666;
+}
+
+.noImage {
+    display: flex;
+    flex-direction: row; // 改为水平排列
+    align-items: center;
+    justify-content: flex-start; // 左对齐
+    height: 100%;
+    gap: 2rem; // 图片和文字之间的间距
+}
+
+.placeholderImage {
+    width: 128px;
+    height: 128px;
+    opacity: 1;
+    filter: grayscale(30%);
+    transition: all 0.3s ease;
+    flex-shrink: 0; // 防止图片被压缩
+
+    &:hover {
+        filter: grayscale(0%);
+        transform: scale(1.1);
+    }
+}
+
+.noImageText {
     font-size: 14px;
-    background-color: #f5f5f5;
+    color: #999;
+    text-align: left; // 左对齐
+    line-height: 1.6;
+    writing-mode: vertical-lr; // 文字竖着排列
+    text-orientation: mixed; // 保持中文正常方向
+    height: 140px; // 给文字一个固定高度
+    display: flex;
+    align-items: center;
 }
 
 .contentBox {

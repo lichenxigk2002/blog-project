@@ -19,7 +19,7 @@ const RecentArticles: React.FC = () => {
                 // 只取最新发布的5篇文章
                 const latestArticles = data
                     .filter((item: any) => item.status === 'published')
-                    .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+                    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
                     .slice(0, 5);
                 setArticles(latestArticles);
             } catch (error) {
@@ -61,13 +61,18 @@ const RecentArticles: React.FC = () => {
                                     />
                                 ) : (
                                     <div className={styles.noImage}>
-                                        <span className={styles.noImageText}>咦，这里空空如也，期待你的精彩图片！</span>
+                                        <img
+                                            src="/images/loading.png"
+                                            alt="暂无图片"
+                                            className={styles.placeholderImage}
+                                        />
+                                        <span className={styles.noImageText}>这篇文章没有配图，但内容依然精彩~</span>
                                     </div>
                                 )}
                             </div>
                             <div className={styles.contentBox}>
                                 <div className={styles.tagBox}>{article.title}</div>
-                                <div className={styles.tagBox}>{new Date(article.publishedAt).toLocaleDateString()}</div>
+                                <div className={styles.tagBox}>{new Date(article.createdAt).toLocaleDateString()}</div>
                                 <div className={styles.tagBox}>预计阅读时间: {article.readingTime}分钟</div>
                             </div>
                         </div>
