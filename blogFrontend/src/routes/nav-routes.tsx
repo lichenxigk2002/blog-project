@@ -46,7 +46,7 @@ const About = dynamic(() => import('@/pages/main/About'), {
 
 interface Route {
     id: number;
-    path: string;
+    path?: string;
     name: string;
     component?: React.ComponentType<any>; // any以支持不同props类型
     exact?: boolean
@@ -184,7 +184,16 @@ export const navRoutesItem: Route[] = [
                 renderType: 'ssg', // 面试题汇总建议SSG
                 showInNav: false,
                 showInDropdown: true
-            }
+            },
+            // {
+            //     id:803,
+            //     name: '验证信息',
+            //     isExternal: true,
+            //     externalUrl: 'https://cert.bloginc.cn/blog?domain=https://www.gfbzsblog.site/',
+            //     target: '_blank',
+            //     showInNav: false,
+            //     showInDropdown: true,
+            // }
             // ,{
             //     id: 805,
             //     path: '/main/TechnologyStack',
