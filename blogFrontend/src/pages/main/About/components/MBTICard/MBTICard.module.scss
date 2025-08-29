@@ -112,4 +112,41 @@ $text-color: #bababa;
     cursor: pointer;
     transition: transform 0.3s ease;
   }
+
+  // 响应式设计
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+
+    .mbtiType {
+      grid-column: 1;
+      grid-row: 1;
+      padding-left: 0;
+      text-align: center;
+    }
+
+    .mbtiFeatures {
+      display: none; // 在窄屏幕上隐藏进度条
+    }
+
+    .mbtiImage {
+      grid-column: 1;
+      grid-row: 2;
+      padding: 1rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.5rem;
+
+    .mbtiType {
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+
+    .mbtiImage {
+      padding: 0.5rem;
+    }
+  }
 }
