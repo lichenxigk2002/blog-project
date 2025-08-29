@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { motion, useAnimation } from 'framer-motion';
 import MBTICard from '@/pages/main/About/components/MBTICard/MBTICard';
 import PersonalInfoCard from '@/pages/main/About/components/PersonalInfoCard/PersonalInfoCard';
+import FutureSelfCard from '@/pages/main/About/components/FutureSelfCard/FutureSelfCard';
 
 const About: React.FC = () => {
     const avatarRef = useRef<HTMLImageElement>(null);
@@ -107,9 +108,7 @@ const About: React.FC = () => {
                 <div className={`${styles.itemCard} ${styles.itemCard12}`}>
                     <h1>喜欢的游戏</h1>
                 </div>
-                <div className={`${styles.itemCard} ${styles.itemCard13}`}>
-                    <h1>致10年后的自己</h1>
-                </div>
+                <FutureSelfCard />
                 <div className={`${styles.itemCard} ${styles.itemCard14}`}>
                     <h1>学习计划</h1>
                 </div>

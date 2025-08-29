@@ -67,6 +67,8 @@ $text-color: #bababa;
 .itemCard4 {
   grid-column: 1/9;
   grid-row: 4/6;
+  position: relative;
+  overflow: hidden;
 }
 
 .itemCard5 {
@@ -109,6 +111,8 @@ $text-color: #bababa;
 .itemCard13 {
   grid-column: 1/8;
   grid-row: 10/14;
+  position: relative;
+  overflow: hidden;
 }
 
 .itemCard14 {
