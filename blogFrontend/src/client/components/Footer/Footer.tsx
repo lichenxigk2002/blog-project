@@ -180,7 +180,7 @@ const Footer: React.FC = () => {
       </div>
       <div className={styles.footerBottom}>
         <PerformanceMonitor />
-        <p>© {currentYear} 孤芳不自赏的博客已持续运行 {Math.floor((Date.now() - new Date('2025-05-26').getTime()) / 86400000)} 天 | 所有内容均为原创，保留所有权利 | Powered by <a href="https://nextjs.org" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}><img src="/technologyStack/NextJS.png" alt="Next.js" style={{ height: '12px', verticalAlign: 'middle', margin: '0 2px', cursor: 'pointer' }} /></a> Next.js + <a href="https://spring.io" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}><img src="/technologyStack/spring.png" alt="Spring Boot" style={{ height: '12px', verticalAlign: 'middle', margin: '0 2px', cursor: 'pointer' }} /></a> Spring Boot</p>
+        <p>© {currentYear} 孤芳不自赏的博客已持续运行 {Math.floor((Date.now() - new Date('2024-05-26').getTime()) / 86400000)} 天 | 所有内容均为原创，保留所有权利 | Powered by <a href="https://nextjs.org" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}><img src="/technologyStack/NextJS.png" alt="Next.js" style={{ height: '12px', verticalAlign: 'middle', margin: '0 2px', cursor: 'pointer' }} /></a> Next.js + <a href="https://spring.io" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}><img src="/technologyStack/spring.png" alt="Spring Boot" style={{ height: '12px', verticalAlign: 'middle', margin: '0 2px', cursor: 'pointer' }} /></a> Spring Boot</p>
 
         <div className={styles.serviceProviders}>
           {/* 添加腾讯云主品牌图标 */}
