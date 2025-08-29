@@ -1,0 +1,38 @@
+.galaxyContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// 全屏背景样式
+.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+}
+
+// 页面背景样式
+.pageBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+// 内容层样式
+.contentLayer {
+  position: relative;
+  z-index: 1;
+}
