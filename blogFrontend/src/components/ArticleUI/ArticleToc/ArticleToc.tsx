@@ -245,22 +245,28 @@ const ArticleToc: React.FC<ArticleTocProps> = ({ headings, contentHeight, conten
 
       {/* 目录内容区域 - 显示多级标题导航 */}
       <div className={styles.toc}>
-        <ul className={styles.tocList}>
-          {headings.map((heading) => (
-            <li
-              key={heading.id}
-              className={`${styles.tocItem} ${styles[`level${heading.level}`]} ${activeId === heading.id ? styles.active : ''}`}
-            >
-              <a
-                href={`#${heading.id}`}
-                className={styles.tocLink}
-                onClick={(e) => handleLinkClick(e, heading.id)}
+        {headings.length > 0 ? (
+          <ul className={styles.tocList}>
+            {headings.map((heading) => (
+              <li
+                key={heading.id}
+                className={`${styles.tocItem} ${styles[`level${heading.level}`]} ${activeId === heading.id ? styles.active : ''}`}
               >
-                {heading.text}
-              </a>
-            </li>
-          ))}
-        </ul>
+                <a
+                  href={`#${heading.id}`}
+                  className={styles.tocLink}
+                  onClick={(e) => handleLinkClick(e, heading.id)}
+                >
+                  {heading.text}
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div className={styles.emptyToc}>
+            <p className={styles.emptyText}>当前作者没有设置目录项</p>
+          </div>
+        )}
       </div>
     </div>
   );
