@@ -25,6 +25,7 @@ $intro-font-weight: lighter;
   width: 100%;
   display: block;
   position: relative;
+  font-family: var(--font-zihun-ccy);
 
   .englishTitle {
     position: absolute;
@@ -38,6 +39,7 @@ $intro-font-weight: lighter;
     white-space: nowrap;
     z-index: 0;
     pointer-events: none;
+    font-family: var(--font-zihun-ccy);
   }
 }
 
