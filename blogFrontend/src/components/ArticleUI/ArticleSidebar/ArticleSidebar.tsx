@@ -8,7 +8,7 @@ interface ArticleSidebarProps {
   onFontSizeChange: (size: number) => void;
   readingTime: number;
   onExportOutline: (format: 'markdown' | 'pdf') => void;
-  onResultClick: (index: number) => void;
+  onResultClick: (paraId: string | number) => void;
   contentRef: React.RefObject<HTMLDivElement>;
 }
 
