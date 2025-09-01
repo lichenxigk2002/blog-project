@@ -1,14 +1,19 @@
 $text-color: #bababa;
 
 @mixin card {
-  border-radius: 0.75rem;
+  border-radius: 1.25rem;
   /* 圆角半径 */
   box-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1);
   /* 阴影效果 */
-  background: rgba(255, 255, 255, 0.09);
-  /* 半透明背景 */
+  background: linear-gradient(135deg,
+      #f8f4ff 0%, // 奶白紫
+      #f2ebff 25%, // 很淡的奶紫
+      #ede3ff 50%, // 淡奶紫
+      #e8daff 75%, // 奶紫色调
+      #e3d1ff 100%) !important; // 稍深奶紫
   backdrop-filter: blur(1.25rem);
   /* 背景模糊 */
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .mbtiCard {
@@ -20,12 +25,24 @@ $text-color: #bababa;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   grid-template-rows: repeat(4, 1fr);
+  font-family: var(--font-zihun-ccy);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
 
   .mbtiType {
     grid-column: 1/5;
     grid-row: 1/2;
     color: #8b6f9c;
     padding-left: 1rem;
+    font-family: var(--font-zihun-ccy);
+
+    h1 {
+      font-family: var(--font-zihun-ccy);
+    }
 
     .mbtiLink {
       margin-top: 0.5rem;
@@ -57,6 +74,7 @@ $text-color: #bababa;
         font-size: 0.8rem;
         color: $text-color;
         min-width: 4rem;
+        font-family: var(--font-zihun-ccy);
       }
 
       .progressContainer {
@@ -90,6 +108,7 @@ $text-color: #bababa;
         color: $text-color;
         min-width: 4rem;
         text-align: right;
+        font-family: var(--font-zihun-ccy);
       }
 
       .percentage {
@@ -98,6 +117,7 @@ $text-color: #bababa;
         font-weight: bold;
         min-width: 2rem;
         text-align: center;
+        font-family: var(--font-zihun-ccy);
       }
     }
   }
@@ -114,39 +134,57 @@ $text-color: #bababa;
   }
 
   // 响应式设计
+  @media (max-width: 1024px) {
+    .mbtiFeatures {
+      .featureBar {
+
+        &:nth-child(4),
+        &:nth-child(5) {
+          display: none; // 在中等屏幕上隐藏最后两个进度条
+        }
+      }
+    }
+  }
+
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto;
+    grid-template-rows: 1fr;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     .mbtiType {
-      grid-column: 1;
-      grid-row: 1;
-      padding-left: 0;
-      text-align: center;
+      display: none; // 隐藏标题
     }
 
     .mbtiFeatures {
-      display: none; // 在窄屏幕上隐藏进度条
+      display: none; // 隐藏进度条
     }
 
     .mbtiImage {
       grid-column: 1;
-      grid-row: 2;
-      padding: 1rem;
+      grid-row: 1;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      img {
+        max-width: 180px;
+        height: auto;
+      }
     }
   }
 
   @media (max-width: 480px) {
     padding: 0.5rem;
 
-    .mbtiType {
-      h1 {
-        font-size: 1.5rem;
-      }
-    }
-
     .mbtiImage {
-      padding: 0.5rem;
+      img {
+        max-width: 140px;
+        height: auto;
+      }
     }
   }
 }
