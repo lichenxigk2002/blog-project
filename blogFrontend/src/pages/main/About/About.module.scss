@@ -2,14 +2,48 @@ $avatar-border-color: var(--border);
 $text-color: #bababa;
 
 @mixin card {
-  border-radius: 0.75rem;
-  /* 圆角半径 */
+  border-radius: 1.25rem;
   box-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1);
-  /* 阴影效果 */
-  background: rgba(255, 255, 255, 0.09);
-  /* 半透明背景 */
   backdrop-filter: blur(1.25rem);
-  /* 背景模糊 */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+// 基础渐变 - 蓝紫色调
+@mixin gradientCard1 {
+  @include card;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+// 变体2 - 紫粉色调
+@mixin gradientCard2 {
+  @include card;
+  background: linear-gradient(135deg, #764ba2 0%, #f093fb 100%);
+}
+
+// 变体3 - 蓝绿色调
+@mixin gradientCard3 {
+  @include card;
+  background: linear-gradient(135deg, #667eea 0%, #4ecdc4 100%);
+}
+
+// 变体4 - 紫橙色调
+@mixin gradientCard4 {
+  @include card;
+  background: linear-gradient(135deg, #764ba2 0%, #ffa726 100%);
+}
+
+// 变体5 - 蓝粉色调
+@mixin gradientCard5 {
+  @include card;
+  background: linear-gradient(135deg, #667eea 0%, #ec407a 100%);
+}
+
+// 变体6 - 三色渐变
+@mixin gradientCard6 {
+  @include card;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
 }
 
 .container {
@@ -21,92 +55,57 @@ $text-color: #bababa;
   max-width: 90rem;
   height: 100%;
   padding: 1rem;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .itemCard {
   @include card;
+  background: rgba(255, 255, 255, 0.09);
   color: var(--text);
   padding: 1rem;
 }
 
-.itemCard1 {
-  grid-column: 1/13;
-  grid-row: 1/3;
-  display: flex;
-  box-sizing: border-box;
-  justify-content: center;
-  align-items: center;
-
-  .avatarContainer {
-    position: relative;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-
-    &:hover {
-      transform: scale(1.05);
-    }
-  }
-
-  .avatar {
-    width: 14rem;
-    height: 14rem;
-    border-radius: 50%;
-    border: 0.4rem solid $avatar-border-color;
-    position: relative;
-
-  }
-}
-
-
-
 .itemCard3 {
+  @include gradientCard3;
+  color: #ffffff;
   grid-column: 6/13;
+
+  h1 {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+  }
 }
 
-.itemCard4 {
-  grid-column: 1/9;
-  grid-row: 4/6;
-  position: relative;
-  overflow: hidden;
-}
 
-.itemCard5 {
-  grid-column: 9/13;
-  grid-row: 4/5;
-}
 
-.itemCard6 {
-  grid-column: 9/13;
-  grid-row: 5/6;
-}
+
 
 .itemCard7 {
+  @include gradientCard2;
+  color: #ffffff;
   grid-column: 1/5;
   grid-row: 6/8;
+
+  h1 {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+  }
 }
-
-
 
 .itemCard9 {
+  @include gradientCard4;
+  color: #ffffff;
   grid-column: 11/13;
   grid-row: 6/7;
+
+  h1 {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+  }
 }
 
-.itemCard10 {
-  grid-column: 11/13;
-  grid-row: 7/8;
-}
 
-.itemCard11 {
-  grid-column: 1/7;
-  grid-row: 8/10;
-}
 
-.itemCard12 {
-  grid-column: 7/13;
-  grid-row: 8/10;
-}
+
+
+
 
 .itemCard13 {
   grid-column: 1/8;
@@ -116,21 +115,45 @@ $text-color: #bababa;
 }
 
 .itemCard14 {
+  @include gradientCard5;
+  color: #ffffff;
   grid-column: 8/13;
   grid-row: 10/11;
+
+  h1 {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+  }
 }
 
 .itemCard15 {
+  @include gradientCard6;
+  color: #ffffff;
   grid-column: 8/10;
   grid-row: 11/14;
+
+  h1 {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+  }
 }
 
 .itemCard16 {
+  @include gradientCard1;
+  color: #ffffff;
   grid-column: 10/13;
   grid-row: 13/14;
+
+  h1 {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+  }
 }
 
 .itemCard17 {
+  @include gradientCard3;
+  color: #ffffff;
   grid-column: 10/13;
   grid-row: 11/13;
+
+  h1 {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+  }
 }
