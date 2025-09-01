@@ -1,0 +1,288 @@
+@mixin card {
+  border-radius: 1.25rem;
+  box-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(1.25rem);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.portfolioCard {
+  @include card;
+  background: #1a1a1a; // 深黑色背景
+  color: #ffffff;
+  padding: 0;
+  grid-column: 1/5;
+  grid-row: 6/8;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  // 顶部白线
+  .topLine {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.3) 20%,
+        rgba(255, 255, 255, 0.8) 50%,
+        rgba(255, 255, 255, 0.3) 80%,
+        transparent 100%);
+    z-index: 10;
+  }
+
+  // 聚光灯效果
+  .spotlight {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200%;
+    height: 100%;
+    background: radial-gradient(ellipse at top center,
+        rgba(255, 255, 255, 0.15) 0%,
+        rgba(255, 255, 255, 0.08) 30%,
+        rgba(255, 255, 255, 0.03) 60%,
+        transparent 80%);
+    pointer-events: none;
+    z-index: 1;
+    animation: spotlightPulse 4s ease-in-out infinite;
+  }
+
+  // 标题区域
+  .titleSection {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.5rem 0 1rem 1.5rem;
+    z-index: 20;
+    position: relative;
+  }
+
+  h1 {
+    font-family: var(--font-zihun-ccy);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #ffffff;
+    margin: 0;
+    font-size: 1.4rem;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  }
+
+  .currentTitle {
+    font-family: var(--font-zihun-ccy);
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin: 0;
+    opacity: 0.8;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    transition: all 0.6s ease-in-out;
+  }
+
+  .carouselContainer {
+    flex: 1;
+    position: relative;
+    margin: 0 1.5rem 1.5rem 1.5rem;
+    z-index: 15;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .carousel {
+    position: relative;
+    width: 100%;
+    height: 15rem;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow:
+      0 8px 25px rgba(0, 0, 0, 0.4),
+      inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  }
+
+  .carouselItem {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: all 0.6s ease-in-out;
+    transform: scale(0.9);
+    border-radius: 0.75rem;
+    overflow: hidden;
+
+    &.active {
+      opacity: 1;
+      transform: scale(1);
+      box-shadow:
+        0 0 20px rgba(255, 255, 255, 0.2),
+        inset 0 0 30px rgba(255, 255, 255, 0.1);
+    }
+
+    .projectImage {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 0.75rem;
+      transition: all 0.6s ease-in-out;
+    }
+  }
+
+
+
+  // 指示器容器
+  .indicators {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 30;
+    height: 20px;
+    width: 120px; // 增加宽度以适应更大的间距
+    gap: 16px; // 增加点之间的间距
+  }
+
+  // 位置点
+  .positionDot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.activeDot {
+      background: rgba(255, 255, 255, 0.8);
+      transform: scale(1.2);
+    }
+  }
+
+  // 滚动图标
+  .rollingIcon {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+
+    img {
+      width: 12px;
+      height: 12px;
+      object-fit: contain;
+      opacity: 0.9;
+      transition: transform 0.3s ease;
+    }
+
+    &.rolling img {
+      animation: rollingSpin 0.6s ease-in-out;
+    }
+  }
+
+  // 说明文字
+  .description {
+    position: absolute;
+    bottom: 0.5rem;
+    right: 1.5rem;
+    font-size: 0.75rem;
+    color: #888888;
+    font-family: var(--font-zihun-ccy);
+    opacity: 0.7;
+    z-index: 25;
+    pointer-events: none;
+  }
+}
+
+// 聚光灯脉冲动画
+@keyframes spotlightPulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+}
+
+// 滚动旋转动画
+@keyframes rollingSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .portfolioCard {
+    h1 {
+      font-size: 1.2rem;
+      margin: 1rem 0 0.8rem 1rem;
+    }
+
+    .carouselContainer {
+      margin: 0 1rem 1rem 1rem;
+    }
+
+    .carousel {
+      height: 150px;
+    }
+
+    .carouselItem {
+      .itemContent h3 {
+        font-size: 1.2rem;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .portfolioCard {
+    h1 {
+      font-size: 1.1rem;
+      margin: 0.8rem 0 0.6rem 0.8rem;
+    }
+
+    .carouselContainer {
+      margin: 0 0.8rem 0.8rem 0.8rem;
+    }
+
+    .carousel {
+      height: 120px;
+    }
+
+    .carouselItem {
+      .itemContent h3 {
+        font-size: 1rem;
+      }
+    }
+
+    .prevBtn,
+    .nextBtn {
+      width: 35px;
+      height: 35px;
+      font-size: 1.2rem;
+    }
+  }
+}
