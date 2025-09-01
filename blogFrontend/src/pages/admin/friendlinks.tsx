@@ -9,7 +9,7 @@ const Friendlinks: React.FC = () => {
         <AdminLayout>
             <div>
                 <Head>
-                    <title>管理员页面 | 版权管理</title>
+                    <title>管理员页面 | 友链管理</title>
                     <meta name="description" />
                 </Head>
                 <FriendLinksManagement />
