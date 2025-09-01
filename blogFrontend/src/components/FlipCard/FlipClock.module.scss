@@ -30,7 +30,7 @@ $clock-em-size-mobile: 40px;
   text-align: center;
 
   :global(.M-FlipCard) {
-    margin: 0 3px;
+    margin: 0 10px; // 增加单个卡片间距从3px到5px
   }
 
   em {
