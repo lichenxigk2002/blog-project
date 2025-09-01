@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import styles from './ArticleSummary.module.scss';
 import { summaryConfig } from '@/config/AISummary';
+import { FiChevronUp, FiChevronDown } from 'react-icons/fi';
 import Typerwriter from '../../Typewriter/Typewriter';
 
 // 配色方案配置
@@ -90,6 +91,7 @@ const ArticleSummary: React.FC<ArticleSummaryProps> = ({ taobaoSummary, aiSummar
   }
 
   const [currentColorIndex, setCurrentColorIndex] = useState(() => getStoredColorThemeIndex());
+  const [isExpanded, setIsExpanded] = useState(true);
   const [currentMode, setCurrentMode] = useState<'taobao' | 'ai'>(() => {
     // 优先使用本地存储的模式，如果没有则根据摘要内容判断
     const storedMode = getStoredSummaryMode();
@@ -205,10 +207,18 @@ const ArticleSummary: React.FC<ArticleSummaryProps> = ({ taobaoSummary, aiSummar
             className={styles.modeToggleBtn}
             onClick={toggleMode}
             disabled={isAvatarChanging || isTextChanging}
-            title={`当前：${currentMode === 'taobao' ? '桃宝模式' : 'AI模式'}，点击切换（会自动保存）\n快捷键：Ctrl+M`}
+            title={`当前：${currentMode === 'taobao' ? '胡桃模式' : '豆包模式'}，点击切换（会自动保存）\n快捷键：Ctrl+M`}
           >
-            {currentMode === 'taobao' ? '切换到AI摘要' : '切换到桃宝Summary'}
+            {currentMode === 'taobao' ? '切换到豆包摘要' : '切换到胡桃摘要'}
           </button>
+          <button
+              className={`${styles.toggleHeightBtn} ${isExpanded ? styles.expanded : ''}`}
+              onClick={() => setIsExpanded(!isExpanded)}
+              title={`当前：${isExpanded ? '收起' : '展开'}`}
+          >
+            <FiChevronDown />
+          </button>
+
           <button
             className={styles.colorToggleBtn}
             onClick={nextColor}
@@ -221,20 +231,28 @@ const ArticleSummary: React.FC<ArticleSummaryProps> = ({ taobaoSummary, aiSummar
 
       {/* 摘要内容 */}
       <div className={styles.summaryContent}>
-        <Typerwriter
-          text={(currentMode === 'taobao' ? taobaoSummary : aiSummary) || ''}
-          delay={75}
-          className={styles.summaryText}
-          cursorChar="_"
-        />
+        <div
+            className={`${styles.summaryTextWrapper} ${isExpanded ? styles.expanded : ''}`}
+        >
+          <Typerwriter
+              text={(currentMode === 'taobao' ? taobaoSummary : aiSummary) || ''}
+              delay={75}
+              className={styles.summaryText}
+              cursorChar="_"
+          />
+        </div>
       </div>
 
       {/* Powered By 标识 */}
       <div className={styles.poweredBy}>
         <span>Powered By</span>
-        <span className={styles.modelName}>
-          {currentMode === 'taobao' ? 'DeepSeek V1' : '豆包大模型'}
-        </span>
+        <a className={styles.modelName}
+           href={currentMode === 'taobao' ? 'https://platform.deepseek.com/usage' : 'https://console.volcengine.com/ark/region:ark+cn-beijing/model/detail?Id=doubao-seed-1-6'}
+           target="_blank"
+           rel="noopener noreferrer"
+        >
+          {currentMode === 'taobao' ? 'DeepSeek V1' : 'Doubao-Seed-1.6'}
+        </a>
       </div>
     </div>
   );
