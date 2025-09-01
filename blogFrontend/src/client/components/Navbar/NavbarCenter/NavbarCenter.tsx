@@ -5,6 +5,7 @@ import { navRoutesItem } from "@/routes/nav-routes";
 import { usePathname, useParams } from 'next/navigation';
 import { ArticlesAPI } from '@/api/ArticlesAPI';
 import { Article } from '@/types/Article';
+import NavbarFocus from './NavbarFocus';
 
 const NavbarCenter: React.FC = () => {
     const pathname = usePathname();
@@ -13,6 +14,8 @@ const NavbarCenter: React.FC = () => {
     const [showArticleInfo, setShowArticleInfo] = useState(false);
     const [openDropdowns, setOpenDropdowns] = useState<{ [key: number]: boolean }>({});
     const closeTimerRefs = useRef<{ [key: number]: NodeJS.Timeout }>({});
+    const navListRef = useRef<HTMLUListElement>(null);
+    const navItemRefs = useRef<HTMLElement[]>([]);
 
     // 监听滚动事件
     useEffect(() => {
@@ -89,47 +92,75 @@ const NavbarCenter: React.FC = () => {
 
     const mainNavItems = navRoutesItem.filter(item => item.showInNav);
 
+    // 找到当前激活的导航项索引
+    const activeNavIndex = mainNavItems.findIndex(item => pathname === item.path);
+
     // 否则显示常规导航
     return (
-        <ul className={styles.navList}>
-            {mainNavItems.map((item) => {
-                const hasChildren = item.children && item.children.length > 0;
-                const hasVisibleChildren = hasChildren && item.children!.some(child => child.showInDropdown);
-                const isDropdownOpen = openDropdowns[item.id] || false;
+        <div style={{ position: 'relative' }}>
+            <ul className={styles.navList} ref={navListRef}>
+                {mainNavItems.map((item, index) => {
+                    const hasChildren = item.children && item.children.length > 0;
+                    const hasVisibleChildren = hasChildren && item.children!.some(child => child.showInDropdown);
+                    const isDropdownOpen = openDropdowns[item.id] || false;
 
-                return (
-                    <li
-                        key={item.id}
-                        className={`${styles.navItem} ${hasVisibleChildren ? styles.dropdownContainer : ''}`}
-                        onMouseEnter={hasVisibleChildren ? () => handleMouseEnter(item.id) : undefined}
-                        onMouseLeave={hasVisibleChildren ? () => handleMouseLeave(item.id) : undefined}
-                    >
-                        <Link
-                            href={item.path}
-                            prefetch={true}
-                            className={`${styles.navLink} ${pathname === item.path ? styles.activeLink : ''}`}
+                    return (
+                        <li
+                            key={item.id}
+                            ref={el => {
+                                if (el) {
+                                    navItemRefs.current[index] = el;
+                                }
+                            }}
+                            className={`${styles.navItem} ${hasVisibleChildren ? styles.dropdownContainer : ''}`}
+                            onMouseEnter={hasVisibleChildren ? () => handleMouseEnter(item.id) : undefined}
+                            onMouseLeave={hasVisibleChildren ? () => handleMouseLeave(item.id) : undefined}
                         >
-                            {item.name}
-                        </Link>
-                        {hasVisibleChildren && isDropdownOpen && (
-                            <div className={styles.dropdown}>
-                                {item.children!
-                                    .filter(child => child.showInDropdown) // 只显示 showInDropdown: true 的子路由
-                                    .map((child) => (
-                                        <Link
-                                            key={child.id}
-                                            href={child.path}
-                                            className={`${styles.dropdownItem} ${pathname === child.path ? styles.activeLink : ''}`}
-                                        >
-                                            {child.name}
-                                        </Link>
-                                    ))}
-                            </div>
-                        )}
-                    </li>
-                );
-            })}
-        </ul>
+                            <Link
+                                href={item.path}
+                                prefetch={true}
+                                className={`${styles.navLink} ${pathname === item.path ? styles.activeLink : ''}`}
+                            >
+                                {item.name}
+                            </Link>
+                            {hasVisibleChildren && isDropdownOpen && (
+                                <div className={styles.dropdown}>
+                                    {item.children!
+                                        .filter(child => child.showInDropdown) // 只显示 showInDropdown: true 的子路由
+                                        .map((child) => (
+                                            child.isExternal ? (
+                                                <a
+                                                    key={child.id}
+                                                    href={child.externalUrl || child.path}
+                                                    target={child.target || '_blank'}
+                                                    rel="noopener noreferrer"
+                                                    className={`${styles.dropdownItem} ${pathname === child.path ? styles.activeLink : ''}`}
+                                                >
+                                                    {child.name}
+                                                </a>
+                                            ) : (
+                                                <Link
+                                                    key={child.id}
+                                                    href={child.path}
+                                                    className={`${styles.dropdownItem} ${pathname === child.path ? styles.activeLink : ''}`}
+                                                >
+                                                    {child.name}
+                                                </Link>
+                                            )
+                                        ))}
+                                </div>
+                            )}
+                        </li>
+                    );
+                })}
+            </ul>
+            <NavbarFocus
+                activeIndex={activeNavIndex}
+                navItems={navItemRefs.current}
+                containerRef={navListRef}
+                animationDuration={0.4}
+            />
+        </div>
     );
 };
 

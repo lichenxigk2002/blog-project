@@ -27,11 +27,40 @@ $icon-invert: var(--icon-invert);
     @include transition();
     background: none;
     border: none;
+    padding: 8px;
 
     &:hover {
         background: rgba(0, 0, 0, 0.05);
     }
+
+    // 回到顶部按钮的淡入淡出动画
+    &.scrollTopButton {
+        opacity: 0;
+        transform: translateY(10px);
+        pointer-events: none;
+        transition: all 0.3s ease-out;
+
+        &.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        &.hide {
+            opacity: 0;
+            transform: translateY(10px);
+            pointer-events: none;
+        }
+    }
 }
+
+[data-theme="dark"] .iconButton {
+    &:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+}
+
+
 
 .iconImage {
     width: 15px;

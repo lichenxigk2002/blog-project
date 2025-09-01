@@ -80,15 +80,13 @@ const NavbarRight: React.FC = () => {
     return (
         <div className={styles.navRight}>
             {/* 1. 回到顶部按钮 */}
-            {showScrollTop && (
-                <button
-                    className={styles.iconButton}
-                    onClick={handleScrollTop}
-                    title="回到顶部"
-                >
-                    <FaChevronUp style={{ color: 'var(--text)', fontSize: '1rem' }} />
-                </button>
-            )}
+            <button
+                className={`${styles.iconButton} ${styles.scrollTopButton} ${showScrollTop ? styles.show : styles.hide}`}
+                onClick={handleScrollTop}
+                title="回到顶部"
+            >
+                <FaChevronUp style={{ color: 'var(--text)', fontSize: '1rem' }} />
+            </button>
 
             {/* 2. GitHub按钮 */}
             <button className={styles.iconButton}>

@@ -21,6 +21,7 @@ $navbar-font-color: var(--navbar-font-color);
     @include transition();
     background: $navbar-bg;
     color: $navbar-font-color;
+    border-bottom: 1px solid var(--navbar-border-bottom);
 
     /* 保留动画 */
     @keyframes slideIn {
