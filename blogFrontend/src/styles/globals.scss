@@ -54,15 +54,16 @@
   --shadow: rgba(0, 0, 0, 0.1); // 阴影颜色
   --background: rgba(255, 255, 255); // 基础背景色
   --background-color: #ffffff; // 页面背景色
-  --hover-color: rgba(162, 89, 255, 0.1); // 悬停效果颜色
+  --hover-color: rgba(0, 0, 0, 0.05); // 悬停效果颜色
 
   // ====== 导航栏主题变量 ======
   --nav-text-color: #333; // 导航文字颜色
   --nav-active-color: #000; // 导航激活状态颜色
   --nav-underline-color: #333; // 导航下划线颜色
   --nav-underline-active-color: #000; // 导航激活下划线颜色
-  --navbar-background: rgba(255, 255, 255); // 导航栏背景
+  --navbar-background: linear-gradient(135deg, #fefefe 60%, #f5f7fa 100%); // 导航栏背景 - 陶瓷白渐变
   --navbar-font-color: #333; // 导航栏字体颜色
+  --navbar-border-bottom: rgba(0, 0, 0, 0.1); // 导航栏底部边框
 
   // ====== 用户信息主题变量 ======
   --user-name: #333; // 用户名颜色
@@ -89,6 +90,36 @@
   --tag-background: #f3f4f6; // 标签背景
   --tag-background-color: #f3f4f6; // 标签背景色
   --tag-color: #9ca3af; // 标签文字颜色
+
+  // ====== 浮动标签主题变量 ======
+  --floating-tag-text: #333333; // 浮动标签文字颜色
+  --floating-tag-text-hover: #222222; // 浮动标签悬停文字颜色
+
+  // ====== 头像卡片浮动标签颜色 ======
+  --avatar-tag-1-bg: #E3F2FD;
+  --avatar-tag-1-border: #E3F2FD80;
+  --avatar-tag-1-hover: #E3F2FDCC;
+  --avatar-tag-2-bg: #F3E5F5;
+  --avatar-tag-2-border: #F3E5F580;
+  --avatar-tag-2-hover: #F3E5F5CC;
+  --avatar-tag-3-bg: #E8F5E8;
+  --avatar-tag-3-border: #E8F5E880;
+  --avatar-tag-3-hover: #E8F5E8CC;
+  --avatar-tag-4-bg: #FFF3E0;
+  --avatar-tag-4-border: #FFF3E080;
+  --avatar-tag-4-hover: #FFF3E0CC;
+  --avatar-tag-5-bg: #FFEBEE;
+  --avatar-tag-5-border: #FFEBEE80;
+  --avatar-tag-5-hover: #FFEBEECC;
+  --avatar-tag-6-bg: #F1F8E9;
+  --avatar-tag-6-border: #F1F8E980;
+  --avatar-tag-6-hover: #F1F8E9CC;
+  --avatar-tag-7-bg: #E8EAF6;
+  --avatar-tag-7-border: #E8EAF680;
+  --avatar-tag-7-hover: #E8EAF6CC;
+  --avatar-tag-8-bg: #FFF8E1;
+  --avatar-tag-8-border: #FFF8E180;
+  --avatar-tag-8-hover: #FFF8E1CC;
 
   // ====== 特殊功能主题变量 ======
   --calendar-empty: #ebedf0; // 日历空白格颜色
@@ -133,15 +164,16 @@
   --shadow: rgba(255, 255, 255, 0.03); // 阴影颜色
   --background: rgb(58, 58, 58); // 基础背景色
   --background-color: #1a1a1a; // 页面背景色
-  --hover-color: rgba(162, 89, 255, 0.2); // 悬停效果颜色
+  --hover-color: rgba(255, 255, 255, 0.1); // 悬停效果颜色
 
   // ====== 导航栏主题变量 ======
   --nav-text-color: #ffffff; // 导航文字颜色
   --nav-active-color: #fff; // 导航激活状态颜色
   --nav-underline-color: rgb(255, 255, 255); // 导航下划线颜色
   --nav-underline-active-color: #ffffff; // 导航激活下划线颜色
-  --navbar-background: rgb(58, 58, 58); // 导航栏背景
+  --navbar-background: linear-gradient(135deg, #232526 60%, #1a1a1a 100%); // 导航栏背景 - 深色渐变
   --navbar-font-color: #f0f0f0; // 导航栏字体颜色
+  --navbar-border-bottom: rgba(255, 255, 255, 0.15); // 导航栏底部边框 - 白色半透明
 
   // ====== 用户信息主题变量 ======
   --user-name: #e5e5e5; // 用户名颜色
@@ -168,6 +200,36 @@
   --tag-background-color: #1f2937; // 标签背景色
   --tag-color: #9ca3af; // 标签文字颜色
 
+  // ====== 浮动标签主题变量 ======
+  --floating-tag-text: #d4d4d4; // 浮动标签文字颜色
+  --floating-tag-text-hover: #e0e0e0; // 浮动标签悬停文字颜色
+
+  // ====== 头像卡片浮动标签颜色 ======
+  --avatar-tag-1-bg: #42A5F5;
+  --avatar-tag-1-border: #42A5F580;
+  --avatar-tag-1-hover: #42A5F5CC;
+  --avatar-tag-2-bg: #AB47BC;
+  --avatar-tag-2-border: #AB47BC80;
+  --avatar-tag-2-hover: #AB47BCCC;
+  --avatar-tag-3-bg: #66BB6A;
+  --avatar-tag-3-border: #66BB6A80;
+  --avatar-tag-3-hover: #66BB6ACC;
+  --avatar-tag-4-bg: #FF7043;
+  --avatar-tag-4-border: #FF704380;
+  --avatar-tag-4-hover: #FF7043CC;
+  --avatar-tag-5-bg: #EC407A;
+  --avatar-tag-5-border: #EC407A80;
+  --avatar-tag-5-hover: #EC407ACC;
+  --avatar-tag-6-bg: #8BC34A;
+  --avatar-tag-6-border: #8BC34A80;
+  --avatar-tag-6-hover: #8BC34ACC;
+  --avatar-tag-7-bg: #5C6BC0;
+  --avatar-tag-7-border: #5C6BC080;
+  --avatar-tag-7-hover: #5C6BC0CC;
+  --avatar-tag-8-bg: #FFCA28;
+  --avatar-tag-8-border: #FFCA2880;
+  --avatar-tag-8-hover: #FFCA28CC;
+
   // ====== 特殊功能主题变量 ======
   --calendar-empty: #161b22; // 日历空白格颜色
   --like: #de1b22; // 点赞按钮颜色
@@ -189,11 +251,11 @@
   --footer-border: rgba(143, 143, 143, 0.51); // 页脚边框
 
   // ====== 背景动效主题变量 ======
-  --background-base-bg: #1a1a1a; // 基础背景
-  --background-grid-light: rgba(100, 100, 100, 0.15); // 网格背景
-  --background-glow-light: rgba(255, 255, 255, 0.05); // 发光效果
-  --background-particles-light: rgba(255, 255, 255, 0.05); // 粒子效果
-  --background-spot-light: rgba(255, 255, 255, 0.05); // 聚光灯效果
+  --background-base-bg: #0d0d0d; // 更深的纯黑背景
+  --background-grid-light: rgba(255, 255, 255, 0.04); // 纯白网格 - 降低透明度让网格更浅
+  --background-glow-light: rgba(255, 255, 255, 0.12); // 纯白发光效果
+  --background-particles-light: rgba(255, 255, 255, 0.06); // 纯白粒子效果
+  --background-spot-light: rgba(255, 255, 255, 0.1); // 纯白聚光灯效果
 
   // ====== 提示框主题变量 ======
   --tooltip-bg: rgba(255, 255, 255, 0.95); // 提示框背景
