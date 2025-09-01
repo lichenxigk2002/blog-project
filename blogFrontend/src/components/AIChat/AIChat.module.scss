@@ -4,8 +4,8 @@ $text-color: var(--text);
 $text-reverse: var(--text-reverse);
 $AI-background-color: var(--AI-background-color);
 $AI-background-color-reverse: var(--AI-background-color-reverse);
-$background-color: var(--background-color);
-$border: var(--border);
+$background-color: var(--navbar-background);
+$border: var(--navbar-border-bottom);
 $nav-active-color: var(--nav-active-color);
 $hover-color: var(--hover-color);
 
@@ -104,7 +104,7 @@ $hover-color: var(--hover-color);
 /* 消息内容样式 */
 .messageContent {
   font-size: 0.9rem;
-  font-family: 华文细黑, sans-serif;
+  font-family: var(--font-zihun-ccy), 华文细黑, sans-serif;
   line-height: 1.8;
   min-height: 1.3em;
 }
@@ -119,11 +119,11 @@ $hover-color: var(--hover-color);
 /* 列表样式 */
 .messageContent ul,
 .messageContent ol {
-  margin: 0 ;
-  padding-left: 1.5em ;
-  list-style-position: inside ;
-  font-size: 15px ;
-  line-height: 1.5 ;
+  margin: 0;
+  padding-left: 1.5em;
+  list-style-position: inside;
+  font-size: 15px;
+  line-height: 1.5;
 }
 
 .messageContent ul {
@@ -135,10 +135,10 @@ $hover-color: var(--hover-color);
 }
 
 .messageContent li {
-  margin: 0 ;
-  padding: 0 ;
-  font-size: 15px ;
-  line-height: 1.5 ;
+  margin: 0;
+  padding: 0;
+  font-size: 15px;
+  line-height: 1.5;
   list-style-position: inside
 }
 
@@ -171,6 +171,7 @@ $hover-color: var(--hover-color);
   margin-top: 0;
   padding-right: 0.5rem;
   padding-left: 0.5rem;
+  font-family: var(--font-zihun-ccy), 华文细黑, sans-serif;
 }
 
 /* 输入表单样式 */
@@ -192,6 +193,7 @@ $hover-color: var(--hover-color);
   background: transparent;
   color: $text-color;
   font-size: 0.9rem;
+  font-family: var(--font-zihun-ccy), 华文细黑, sans-serif;
   resize: none;
   height: 36px;
   min-height: 36px;
@@ -226,6 +228,7 @@ $hover-color: var(--hover-color);
   border: none;
   border-radius: 4px;
   font-size: 0.9rem;
+  font-family: var(--font-zihun-ccy), 华文细黑, sans-serif;
   cursor: pointer;
   transition: all 0.3s ease;
   height: 36px;
@@ -429,9 +432,9 @@ $hover-color: var(--hover-color);
   align-items: center;
   padding: 0.75rem 1rem;
   background: $background-color;
-  border-bottom: 1px solid $border;
+  border: 1px solid $border;
   margin-bottom: 0.5rem;
-  border-radius: 8px 8px 0 0;
+  border-radius: 8px;
 }
 
 .sessionInfo {
@@ -777,8 +780,7 @@ $hover-color: var(--hover-color);
 
 .modelSelectorDropdown {
   position: absolute;
-  top: calc(100% - 40px);
-  left: -110px;
+  top: calc(100%);
   width: 110%;
   background: var(--background);
   border-radius: 0.4rem;
