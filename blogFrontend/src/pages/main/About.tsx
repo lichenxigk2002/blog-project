@@ -1,127 +1,70 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import styles from './About/About.module.scss'
-import Image from 'next/image';
-import { motion, useAnimation } from 'framer-motion';
+import Head from "next/head";
 import MBTICard from '@/pages/main/About/components/MBTICard/MBTICard';
 import PersonalInfoCard from '@/pages/main/About/components/PersonalInfoCard/PersonalInfoCard';
 import FutureSelfCard from '@/pages/main/About/components/FutureSelfCard/FutureSelfCard';
+import AvatarCard from '@/pages/main/About/components/AvatarCard/AvatarCard';
+import TechStackCard from '@/pages/main/About/components/TechStackCard/TechStackCard';
+import GameCard from '@/pages/main/About/components/GameCard/GameCard';
+import AnimeCard from '@/pages/main/About/components/AnimeCard/AnimeCard';
+import MusicCard from '@/pages/main/About/components/MusicCard/MusicCard';
+import SocialPlatformCard from '@/pages/main/About/components/SocialPlatformCard/SocialPlatformCard';
+import MottoCard from '@/pages/main/About/components/MottoCard/MottoCard';
+import BiographyCard from '@/pages/main/About/components/BiographyCard/BiographyCard';
+import PortfolioCard from '@/pages/main/About/components/PortfolioCard/PortfolioCard';
+import SkillsCard from '@/pages/main/About/components/SkillsCard/SkillsCard';
+import ToolsCard from '@/pages/main/About/components/ToolsCard/ToolsCard';
+import StudyPlanCard from '@/pages/main/About/components/StudyPlanCard/StudyPlanCard';
+import FriendsCard from '@/pages/main/About/components/FriendsCard/FriendsCard';
+import RecentStatusCard from '@/pages/main/About/components/RecentStatusCard/RecentStatusCard';
+import OperationTipModal from '@/components/OperationTipModal/OperationTipModal';
 
 const About: React.FC = () => {
-    const avatarRef = useRef<HTMLImageElement>(null);
-    const avatarControls = useAnimation();
+    const [showModal, setShowModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState('');
+    const [modalType, setModalType] = useState<'success' | 'info'>('success');
 
-    useEffect(() => {
-        // 初始动画
-        avatarControls.start({
-            scale: 1,
-            opacity: 1,
-            transition: {
-                duration: 1,
-                ease: "easeOut"
-            }
-        });
-
-        // 持续旋转动画
-        avatarControls.start({
-            rotate: [0, 2, 0, -2, 0],
-            transition: {
-                duration: 3,
-                ease: "easeInOut",
-                repeat: Infinity,
-                repeatType: "reverse"
-            }
-        });
-
-        // 浮动动画
-        avatarControls.start({
-            y: [0, -10, 0],
-            transition: {
-                duration: 2,
-                ease: "easeInOut",
-                repeat: Infinity,
-                repeatType: "reverse"
-            }
-        });
-    }, [avatarControls]);
-
-    const handleMouseEnter = () => {
-        avatarControls.start({
-            scale: 1.05,
-            transition: {
-                duration: 0.3,
-                ease: "easeOut"
-            }
-        });
-    };
-
-    const handleMouseLeave = () => {
-        avatarControls.start({
-            scale: 1,
-            transition: {
-                duration: 0.3,
-                ease: "easeOut"
-            }
-        });
+    const handleShowModal = (message: string, type: 'success' | 'info') => {
+        setModalMessage(message);
+        setModalType(type);
+        setShowModal(true);
     };
 
     return (
         <div>
+            <Head>
+                <title>关于我 | 代码的追梦者</title>
+                <meta name="description" />
+            </Head>
             <div className={styles.container}>
-                <div className={`${styles.itemCard} ${styles.itemCard1}`}>
-                    <motion.div
-                        ref={avatarRef}
-                        onMouseEnter={handleMouseEnter}
-                        onMouseLeave={handleMouseLeave}
-                        className={styles.avatarContainer}
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={avatarControls}
-                    >
-                        <Image src={'/images/avatar_20250520_215057.png'} alt={'avatar'} width={100} height={100} className={styles.avatar} />
-                    </motion.div>
-                </div>
+                <AvatarCard />
                 <PersonalInfoCard />
-                <div className={`${styles.itemCard} ${styles.itemCard3}`}>
-                    <h1>生平</h1>
-                </div>
-                <div className={`${styles.itemCard} ${styles.itemCard4}`}>
-                    <h1>技术栈</h1>
-                </div>
-                <div className={`${styles.itemCard} ${styles.itemCard5}`}>
-                    <h1>社交平台</h1>
-                </div>
-                <div className={`${styles.itemCard} ${styles.itemCard6}`}>
-                    <h1>座右铭</h1>
-                </div>
-                <div className={`${styles.itemCard} ${styles.itemCard7}`}>
-                    <h1>作品集</h1>
-                </div>
+                <BiographyCard />
+                <TechStackCard />
+                <SocialPlatformCard onShowModal={handleShowModal} />
+                <MottoCard />
+                <PortfolioCard />
                 <MBTICard />
-                <div className={`${styles.itemCard} ${styles.itemCard9}`}>
-                    <h1>特长</h1>
-                </div>
-                <div className={`${styles.itemCard} ${styles.itemCard10}`}>
-                    <h1>最近在听</h1>
-                </div>
-                <div className={`${styles.itemCard} ${styles.itemCard11}`}>
-                    <h1>喜欢的动漫</h1>
-                </div>
-                <div className={`${styles.itemCard} ${styles.itemCard12}`}>
-                    <h1>喜欢的游戏</h1>
-                </div>
+                <SkillsCard />
+                <MusicCard />
+                <AnimeCard />
+                <GameCard />
                 <FutureSelfCard />
-                <div className={`${styles.itemCard} ${styles.itemCard14}`}>
-                    <h1>学习计划</h1>
-                </div>
-                <div className={`${styles.itemCard} ${styles.itemCard15}`}>
-                    朋友们
-                </div>
-                <div className={`${styles.itemCard} ${styles.itemCard16}`}>
-                    最近状态
-                </div>
-                <div className={`${styles.itemCard} ${styles.itemCard17}`}>
-                    常用工具
-                </div>
+                <StudyPlanCard />
+                <FriendsCard />
+                <RecentStatusCard />
+                <ToolsCard />
             </div>
+
+            <OperationTipModal
+                open={showModal}
+                onClose={() => setShowModal(false)}
+                message={modalMessage}
+                type={modalType}
+                autoClose={true}
+                autoCloseDelay={2000}
+            />
         </div>
     );
 };
