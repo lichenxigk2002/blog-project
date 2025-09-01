@@ -1,0 +1,205 @@
+.gameCardContainer {
+  border-radius: 1.25rem;
+  color: #2d3748;
+  padding: 0;
+  grid-column: 7/13;
+  grid-row: 8/10;
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-wenkai);
+  background: linear-gradient(135deg, #F5D76E 0%, #F7C242 50%, #F5D76E 100%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  h1 {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    margin: 0;
+    font-family: var(--font-zihun-ccy);
+    font-weight: 700;
+    color: #ffffff;
+    font-size: 1.4rem;
+    z-index: 20;
+    text-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.3),
+      0 4px 8px rgba(245, 215, 110, 0.2),
+      0 0 15px rgba(255, 255, 255, 0.1);
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.2));
+    transition: all 0.3s ease;
+    letter-spacing: 0.05em;
+  }
+
+  // 悬浮时标题效果
+  &:hover h1 {
+    transform: scale(1.05) translateY(-2px);
+    text-shadow:
+      0 3px 6px rgba(0, 0, 0, 0.4),
+      0 6px 12px rgba(245, 215, 110, 0.3),
+      0 0 25px rgba(255, 255, 255, 0.2);
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3));
+  }
+}
+
+.gameCarousel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  padding: 3rem 0 1rem 0;
+
+  // 左右淡出遮罩 - 使用CSS mask实现更自然的透明度渐变
+  -webkit-mask-image: linear-gradient(to right,
+      transparent 0%,
+      rgba(0, 0, 0, 0.1) 3%,
+      rgba(0, 0, 0, 0.7) 6%,
+      black 12%,
+      black 88%,
+      rgba(0, 0, 0, 0.7) 94%,
+      rgba(0, 0, 0, 0.1) 97%,
+      transparent 100%);
+  mask-image: linear-gradient(to right,
+      transparent 0%,
+      rgba(0, 0, 0, 0.1) 3%,
+      rgba(0, 0, 0, 0.7) 6%,
+      black 12%,
+      black 88%,
+      rgba(0, 0, 0, 0.7) 94%,
+      rgba(0, 0, 0, 0.1) 97%,
+      transparent 100%);
+}
+
+.gameTrack {
+  display: flex;
+  width: max-content;
+  user-select: none;
+  height: 100%;
+  align-items: center;
+}
+
+.gameList {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.gameItem {
+  flex: 0 0 auto;
+  margin-right: 1.5rem;
+}
+
+.gameContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.gameCard {
+  width: 12rem;
+  height: 18rem;
+  border-radius: 1rem;
+  overflow: hidden;
+  position: relative;
+  background: #ffffff;
+  border: 0.125rem solid rgba(255, 255, 255, 0.8);
+}
+
+.gameImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) !important;
+
+  .gameContent:hover & {
+    transform: scale(1.05);
+  }
+}
+
+.gameName {
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  text-align: center;
+  margin-top: 1rem;
+  max-width: 13.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .gameCardContainer {
+    padding: 0;
+
+    h1 {
+      font-size: 1rem;
+      top: 0.8rem;
+      left: 0.8rem;
+    }
+  }
+
+  .gameCarousel {
+    padding: 2.5rem 0 0.8rem 0;
+  }
+
+  .gameCard {
+    width: 10rem;
+    height: 15rem;
+    border-radius: 0.875rem;
+  }
+
+  .gameName {
+    font-size: 0.9rem;
+    margin-top: 0.8rem;
+    max-width: 11.25rem;
+  }
+
+  .gameItem {
+    margin-right: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .gameCardContainer {
+    padding: 0;
+
+    h1 {
+      font-size: 0.9rem;
+      top: 0.6rem;
+      left: 0.6rem;
+    }
+  }
+
+  .gameCarousel {
+    padding: 2rem 0 0.6rem 0;
+  }
+
+  .gameCard {
+    width: 8.5rem;
+    height: 12.75rem;
+    border-radius: 0.75rem;
+  }
+
+  .gameName {
+    font-size: 0.8rem;
+    margin-top: 0.6rem;
+    max-width: 9.5rem;
+  }
+
+  .gameItem {
+    margin-right: 1.2rem;
+  }
+}
