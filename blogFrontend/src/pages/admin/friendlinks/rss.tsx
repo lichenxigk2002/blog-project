@@ -7,7 +7,7 @@ const RssManagementPage: React.FC = () => {
   return (
     <>
       <Head>
-        <title>RSS管理 - 博客管理后台</title>
+        <title>管理员页面 | RSS管理</title>
         <meta name="description" content="管理RSS源和友链关联" />
       </Head>
 
