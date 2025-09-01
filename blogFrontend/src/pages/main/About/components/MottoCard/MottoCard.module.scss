@@ -1,0 +1,414 @@
+@mixin card {
+  border-radius: 1.25rem;
+  box-shadow:
+    0 8px 32px rgba(31, 38, 135, 0.37),
+    0 16px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.mottoContainer {
+  @include card;
+  color: var(--text);
+  padding: 0;
+  grid-column: 9/13;
+  grid-row: 5/6;
+  position: relative;
+  overflow: hidden;
+
+  // 新的动态渐变背景
+  background:
+    radial-gradient(circle at 20% 20%, rgba(120, 119, 198, 0.8) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(255, 119, 198, 0.8) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.8) 0%, transparent 50%),
+    linear-gradient(135deg,
+      rgba(74, 144, 226, 0.9) 0%,
+      rgba(119, 82, 254, 0.9) 25%,
+      rgba(255, 94, 157, 0.9) 50%,
+      rgba(255, 154, 0, 0.9) 75%,
+      rgba(74, 144, 226, 0.9) 100%);
+  background-size: 400% 400%, 300% 300%, 200% 200%, 200% 200%;
+  animation: gradientShift 8s ease-in-out infinite;
+
+  // 添加动态波纹效果
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 400%;
+    height: 400%;
+    transform: translate(-50%, -50%);
+    background:
+      radial-gradient(ellipse at center,
+        transparent 20%,
+        rgba(255, 255, 255, 0.03) 40%,
+        transparent 60%,
+        rgba(255, 255, 255, 0.05) 80%,
+        transparent 100%);
+    animation: pulseWave 6s ease-in-out infinite;
+    pointer-events: none;
+    opacity: 0.8;
+  }
+
+  // 添加流动星光效果
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+      linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%),
+      radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.6) 1px, transparent 2px),
+      radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.4) 1px, transparent 2px),
+      radial-gradient(circle at 60% 20%, rgba(255, 255, 255, 0.5) 1px, transparent 2px),
+      radial-gradient(circle at 30% 80%, rgba(255, 255, 255, 0.7) 1px, transparent 2px);
+    background-size: 200% 200%, 40px 40px, 60px 60px, 80px 80px, 50px 50px;
+    animation: flowingStars 12s ease-in-out infinite;
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+  h1 {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    margin: 0;
+    font-family: var(--font-zihun-ccy);
+    font-weight: 700;
+    color: #ffffff;
+    font-size: 1.4rem;
+    z-index: 30;
+    letter-spacing: 0.05em;
+  }
+
+
+
+  // 整体悬浮效果
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 12px 40px rgba(31, 38, 135, 0.45),
+      0 20px 40px rgba(0, 0, 0, 0.15),
+      inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  }
+}
+
+.mottoContent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  z-index: 20;
+}
+
+.mottoText {
+  font-family: var(--font-zihun-ccy);
+  font-size: 2rem;
+  font-weight: 900;
+  text-align: center;
+  line-height: 1.6;
+  max-width: 90%;
+  letter-spacing: 0.15em;
+  position: relative;
+  z-index: 25;
+}
+
+.textLine {
+  display: block;
+  margin: 0.5rem 0;
+  position: relative;
+}
+
+.char {
+  display: inline-block;
+  font-family: var(--font-zihun-ccy);
+  font-weight: 900;
+  font-size: 2rem;
+  background: linear-gradient(135deg,
+      #ffffff 0%,
+      #f8fafc 20%,
+      #e2e8f0 40%,
+      #cbd5e1 60%,
+      #94a3b8 80%,
+      #ffffff 100%);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow:
+    0 0 20px rgba(255, 255, 255, 0.5),
+    0 0 40px rgba(255, 255, 255, 0.3);
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
+  animation: advancedShimmer 4s ease-in-out infinite;
+  transform-style: preserve-3d;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+
+
+
+  &:hover {
+    background: linear-gradient(135deg,
+        #ffd700 0%,
+        #ffed4e 20%,
+        #fff59d 40%,
+        #ffeb3b 60%,
+        #ffc107 80%,
+        #ffd700 100%);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter:
+      drop-shadow(0 4px 8px rgba(255, 215, 0, 0.4)) drop-shadow(0 0 20px rgba(255, 215, 0, 0.6)) drop-shadow(0 0 40px rgba(255, 215, 0, 0.4));
+    text-shadow:
+      0 0 30px rgba(255, 215, 0, 0.8),
+      0 0 60px rgba(255, 215, 0, 0.4);
+    animation: enhancedGoldShimmer 0.8s ease-in-out infinite;
+    transform: scale(1.2) translateY(-8px) rotateX(10deg) rotateY(5deg);
+
+
+  }
+
+  // 为每个字符添加不同的延迟效果
+  &:nth-child(1) {
+    animation-delay: 0s;
+  }
+
+  &:nth-child(2) {
+    animation-delay: 0.1s;
+  }
+
+  &:nth-child(3) {
+    animation-delay: 0.2s;
+  }
+
+  &:nth-child(4) {
+    animation-delay: 0.3s;
+  }
+
+  &:nth-child(5) {
+    animation-delay: 0.4s;
+  }
+
+  &:nth-child(6) {
+    animation-delay: 0.5s;
+  }
+
+  &:nth-child(7) {
+    animation-delay: 0.6s;
+  }
+
+  &:nth-child(8) {
+    animation-delay: 0.7s;
+  }
+}
+
+.punctuation {
+  display: inline-block;
+  font-family: var(--font-zihun-ccy);
+  font-weight: 900;
+  font-size: 2rem;
+  background: linear-gradient(135deg, #ffffff 0%, #f0f8ff 50%, #e6f3ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow:
+    0 0 15px rgba(255, 255, 255, 0.6),
+    0 0 30px rgba(255, 255, 255, 0.3);
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
+  animation: enhancedPulse 3s ease-in-out infinite;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: scale(1.2) rotate(10deg);
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #fff59d 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+// 新的动画关键帧
+@keyframes gradientShift {
+
+  0%,
+  100% {
+    background-position: 0% 0%, 0% 0%, 0% 0%, 0% 50%;
+  }
+
+  25% {
+    background-position: 100% 100%, 50% 50%, 25% 25%, 50% 0%;
+  }
+
+  50% {
+    background-position: 50% 50%, 100% 100%, 50% 50%, 100% 50%;
+  }
+
+  75% {
+    background-position: 0% 100%, 25% 25%, 75% 75%, 50% 100%;
+  }
+}
+
+@keyframes pulseWave {
+
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.8;
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0.4;
+  }
+}
+
+@keyframes flowingStars {
+
+  0%,
+  100% {
+    background-position: 0% 0%, 0% 0%, 100% 100%, 0% 100%, 100% 0%;
+    opacity: 0.7;
+  }
+
+  25% {
+    background-position: 50% 50%, 25% 25%, 75% 75%, 25% 75%, 75% 25%;
+    opacity: 0.9;
+  }
+
+  50% {
+    background-position: 100% 100%, 50% 50%, 50% 50%, 50% 50%, 50% 50%;
+    opacity: 0.5;
+  }
+
+  75% {
+    background-position: 50% 50%, 75% 75%, 25% 25%, 75% 25%, 25% 75%;
+    opacity: 0.8;
+  }
+}
+
+
+
+@keyframes advancedShimmer {
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
+    transform: perspective(500px) rotateX(0deg);
+  }
+
+  25% {
+    background-position: 50% 0%;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+    transform: perspective(500px) rotateX(2deg);
+  }
+
+  50% {
+    background-position: 100% 50%;
+    filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.6));
+    transform: perspective(500px) rotateX(0deg);
+  }
+
+  75% {
+    background-position: 50% 100%;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+    transform: perspective(500px) rotateX(-2deg);
+  }
+}
+
+@keyframes enhancedGoldShimmer {
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+    transform: scale(1.2) translateY(-8px) rotateX(10deg) rotateY(5deg);
+  }
+
+  50% {
+    background-position: 100% 50%;
+    transform: scale(1.25) translateY(-12px) rotateX(15deg) rotateY(-5deg);
+  }
+}
+
+@keyframes enhancedPulse {
+
+  0%,
+  100% {
+    opacity: 0.9;
+    transform: scale(1) rotate(0deg);
+  }
+
+  33% {
+    opacity: 1;
+    transform: scale(1.05) rotate(2deg);
+  }
+
+  66% {
+    opacity: 0.95;
+    transform: scale(1.02) rotate(-1deg);
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .mottoContainer {
+    h1 {
+      font-size: 1rem;
+      top: 0.8rem;
+      left: 0.8rem;
+    }
+
+    &::before,
+    &::after {
+      animation-duration: 12s, 10s;
+    }
+  }
+
+  .mottoText {
+    font-size: 1.5rem;
+    max-width: 85%;
+  }
+
+  .char {
+    font-size: 1.5rem;
+  }
+
+  .punctuation {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .mottoContainer {
+    h1 {
+      font-size: 0.9rem;
+      top: 0.6rem;
+      left: 0.6rem;
+    }
+  }
+
+  .mottoText {
+    font-size: 1.3rem;
+    max-width: 90%;
+  }
+
+  .char {
+    font-size: 1.3rem;
+  }
+
+  .punctuation {
+    font-size: 1.3rem;
+  }
+}
