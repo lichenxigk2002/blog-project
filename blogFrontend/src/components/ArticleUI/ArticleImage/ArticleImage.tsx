@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import styles from './ArticleImage.module.scss';
 
 interface ArticleImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
@@ -51,7 +52,7 @@ const ArticleImage: React.FC<ArticleImageProps> = ({
         draggable={false}
         {...rest}
       />
-      {showModal && (
+      {showModal && createPortal(
         <div className={styles.articleImageModal} onClick={() => setShowModal(false)}>
           <img
             src={src}
@@ -60,7 +61,8 @@ const ArticleImage: React.FC<ArticleImageProps> = ({
             onClick={e => e.stopPropagation()}
             draggable={false}
           />
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
