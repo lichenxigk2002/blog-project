@@ -162,11 +162,35 @@ const ArticleDetail: React.FC = () => {
         // 实现导出大纲逻辑
     };
 
-    const handleResultClick = (index: number) => {
+    const handleResultClick = (paraId: string | number) => {
         // 实现搜索结果点击逻辑
-        const element = document.querySelector(`[data-index="${index}"]`);
+        let element: HTMLElement | null = null;
+
+        if (typeof paraId === 'string') {
+            // 新的段落ID格式
+            element = document.getElementById(paraId);
+        } else {
+            // 兼容旧的数字索引格式
+            element = document.querySelector(`[data-index="${paraId}"]`);
+        }
+
         if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // 考虑导航栏高度的平滑滚动
+            const nav = document.querySelector('nav') as HTMLElement;
+            const navHeight = nav?.offsetHeight || 60; // 确保至少减去60px导航栏高度
+            const elementPosition = element.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - navHeight - 20; // 减去导航栏高度和额外20px间距
+
+            window.scrollTo({
+                top: Math.max(0, offsetPosition), // 确保不会滚动到负值
+                behavior: 'smooth'
+            });
+
+            // 添加高亮效果
+            element.classList.add('search-highlight');
+            setTimeout(() => {
+                element?.classList.remove('search-highlight');
+            }, 2000);
         }
     };
 
@@ -254,22 +278,8 @@ const ArticleDetail: React.FC = () => {
             </Head>
             <div className={styles.grailLayout}>
                 {/* 左侧栏 ArticleToc，大屏显示 */}
-                {headings.length > 0 && (
-                    <aside className={styles.leftSidebar}>
-                        <div className={styles.sidebarInner}>
-                            <ArticleToc
-                                headings={headings}
-                                title={article.title}
-                                contentHeight={contentHeight}
-                                contentTop={contentTop}
-                            />
-                        </div>
-                    </aside>
-                )}
-
-                {/* 手机端 ArticleToc，独立显示 */}
-                {headings.length > 0 && (
-                    <div className={styles.mobileTocWrapper}>
+                <aside className={styles.leftSidebar}>
+                    <div className={styles.sidebarInner}>
                         <ArticleToc
                             headings={headings}
                             title={article.title}
@@ -277,7 +287,17 @@ const ArticleDetail: React.FC = () => {
                             contentTop={contentTop}
                         />
                     </div>
-                )}
+                </aside>
+
+                {/* 手机端 ArticleToc，独立显示 */}
+                <div className={styles.mobileTocWrapper}>
+                    <ArticleToc
+                        headings={headings}
+                        title={article.title}
+                        contentHeight={contentHeight}
+                        contentTop={contentTop}
+                    />
+                </div>
 
                 {/* 主内容区，宽度固定居中 */}
                 <main className={styles.articleMain}>
@@ -429,14 +449,18 @@ const ArticleDetail: React.FC = () => {
                                         />
                                     ),
                                     // 段落样式
-                                    p: ({ node, ...props }) => (
-                                        <p
-                                            className="article-content-text-size"
-                                            itemProp="text"
-                                            // style={{ fontFamily: "'Noto Serif SC', 'SimSun', 'STSong', serif" }}
-                                            {...props}
-                                        />
-                                    ),
+                                    p: (() => {
+                                        let paragraphIndex = 0;
+                                        return ({ node, ...props }) => (
+                                            <p
+                                                id={`para-${paragraphIndex++}`}
+                                                className="article-content-text-size"
+                                                itemProp="text"
+                                                // style={{ fontFamily: "'Noto Serif SC', 'SimSun', 'STSong', serif" }}
+                                                {...props}
+                                            />
+                                        );
+                                    })(),
 
                                     //列表样式
                                     ul: ({ node, ...props }) => (
