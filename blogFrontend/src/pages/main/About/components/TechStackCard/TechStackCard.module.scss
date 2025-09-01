@@ -1,0 +1,249 @@
+@mixin card {
+  border-radius: 1.25rem;
+  box-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(1.25rem);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.techStackCard {
+  @include card;
+  color: #5a4a3a;
+  padding: 1.5rem;
+  grid-column: 1/9;
+  grid-row: 4/6;
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-zihun-ccy);
+
+  // 奶白、奶粉、奶黄渐变背景（深浅模式统一）
+  background: linear-gradient(135deg,
+      #fefcf8 0%, // 奶白色
+      #fdf8f2 25%, // 很淡的奶粉色
+      #fcf4e8 50%, // 淡奶粉色
+      #faf0dc 75%, // 奶黄色调
+      #f8ecd0 100%) !important; // 深一点的奶黄色，添加!important确保优先级
+
+
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  // 添加微妙的内阴影增加层次感
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg,
+        rgba(255, 255, 255, 0.1) 0%,
+        transparent 30%,
+        transparent 70%,
+        rgba(255, 248, 220, 0.1) 100%);
+    pointer-events: none;
+    border-radius: 0.75rem;
+  }
+
+  h1 {
+    font-family: var(--font-zihun-ccy);
+    font-weight: 700; // 加粗字体
+    letter-spacing: 0.02em;
+    color: #6b5b4a;
+    margin-bottom: 1rem; // 减少底部间距
+    text-align: left; // 左对齐
+    font-size: 1.4rem; // 增大字号
+    position: relative;
+    z-index: 3; // 确保在遮罩之上
+  }
+}
+
+// 技术栈轮播样式
+.techCarousel {
+  position: relative;
+  overflow: hidden;
+  height: 240px; // 增加高度容纳三行
+
+  // 左右渐变遮罩
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: clamp(16px, 6%, 60px);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  &::before {
+    left: 0;
+    background: linear-gradient(to right,
+        #fefcf8 0%,
+        rgba(253, 248, 242, 0.9) 30%,
+        rgba(252, 244, 232, 0.6) 60%,
+        rgba(250, 240, 220, 0.2) 85%,
+        transparent 100%);
+  }
+
+  &::after {
+    right: 0;
+    background: linear-gradient(to left,
+        rgba(250, 240, 220, 0.9) 30%,
+        rgba(252, 244, 232, 0.6) 60%,
+        rgba(253, 248, 242, 0.2) 85%,
+        transparent 100%);
+  }
+}
+
+.techRow {
+  height: calc(100% / 3); // 每行占三分之一高度
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.techTrack {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  user-select: none;
+  height: 100%;
+  align-items: center;
+}
+
+.techList {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.techItem {
+  flex: 0 0 auto;
+  margin-right: 1.2rem; // 稍微减少间距让更多图标显示
+
+  &:last-child {
+    margin-right: 1.2rem;
+  }
+}
+
+.techContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem 0.7rem;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 55px;
+  cursor: pointer;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    0 1px 4px rgba(0, 0, 0, 0.02);
+  user-select: none; // 防止文字选中
+  outline: none; // 移除默认焦点轮廓
+
+  &:hover {
+    transform: translateY(-2px) scale(1.05);
+    background: rgba(255, 255, 255, 0.6);
+    border-color: rgba(255, 255, 255, 0.8);
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.08),
+      0 2px 6px rgba(0, 0, 0, 0.04);
+  }
+
+  &:active {
+    transform: translateY(-1px) scale(1.02);
+    transition: all 0.1s ease;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #6b5b4a;
+    outline-offset: 2px;
+  }
+}
+
+.techImage {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  margin-bottom: 0.25rem;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+  transition: transform 0.2s ease;
+
+  .techContent:hover & {
+    transform: scale(1.08);
+  }
+}
+
+.techName {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: #5a4a3a;
+  text-align: center;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .techStackCard {
+    padding: 1rem;
+
+    h1 {
+      font-size: 1.1rem; // 移动端稍小但仍比原来大
+      margin-bottom: 0.8rem;
+      font-weight: 700; // 保持加粗
+      text-align: left; // 保持左对齐
+    }
+  }
+
+  .techCarousel {
+    height: 180px;
+  }
+
+  .techContent {
+    padding: 0.4rem 0.5rem;
+    min-width: 45px;
+  }
+
+  .techImage {
+    width: 22px;
+    height: 22px;
+    margin-bottom: 0.2rem;
+  }
+
+  .techName {
+    font-size: 0.5rem;
+  }
+
+  .techItem {
+    margin-right: 0.8rem;
+
+    &:last-child {
+      margin-right: 0.8rem;
+    }
+  }
+}
+
+// 减少动画偏好
+@media (prefers-reduced-motion: reduce) {
+  .techTrack {
+    transform: translate3d(0, 0, 0) !important;
+  }
+
+  .techContent {
+    transition: none !important;
+  }
+}

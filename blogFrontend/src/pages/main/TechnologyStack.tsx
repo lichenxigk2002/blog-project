@@ -1,6 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
-import TechnologyStackHexGallery from '@/components/TechnologyStackGallery/TechnologyStackHexGallery';
+import TechnologyStackHexGallery from '@/pages/main/About/components/TechStackCard/TechnologyStackHexGallery';
 
 const TechnologyStackPage: React.FC = () => {
   return (
