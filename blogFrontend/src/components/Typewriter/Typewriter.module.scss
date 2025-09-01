@@ -17,6 +17,13 @@ $cursor-color: var(--cursor-color, currentColor);
     transition: color 0.3s ease;
     /* 添加颜色过渡 */
 
+    span.cursor {
+        animation: blink 1s infinite;
+        margin-left: 0.125rem;
+        font-family: inherit;
+        color: $cursor-color;
+    }
+
     @media (max-width: 1440px) {
         font-size: 1.1rem;
     }
