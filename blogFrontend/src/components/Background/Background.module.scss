@@ -87,6 +87,7 @@ $z-bg: -2;
 
         &.pentagram {
             @include block-shape(pentagram);
+            filter: blur(1.5rem); // 五边形额外模糊
         }
 
         &.block3 {
@@ -223,6 +224,7 @@ $z-bg: -2;
     100% {
         opacity: 0.5;
         transform: scale(1);
+
     }
 
     50% {
