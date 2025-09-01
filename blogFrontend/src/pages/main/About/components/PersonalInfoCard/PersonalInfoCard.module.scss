@@ -1,8 +1,9 @@
 @mixin card {
-  border-radius: 0.75rem;
+  border-radius: 1.25rem;
   box-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1);
   background: linear-gradient(135deg, rgb(255, 112, 189), rgb(183, 106, 255));
   backdrop-filter: blur(1.25rem);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .personalInfoCard {
@@ -17,6 +18,12 @@
   font-family: 'ZiHun', 'Microsoft YaHei', sans-serif;
   position: relative;
   overflow: hidden;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
 
   // 旋转背景装饰
   &::before {
@@ -46,10 +53,26 @@
       font-weight: 400;
 
       &:first-child {
-        font-size: 1rem;
-        font-weight: 600;
+        font-family: var(--font-zihun-ccy);
+        font-size: 1.2rem;
+        font-weight: 700;
         margin-bottom: 1rem;
-        letter-spacing: 0.3px;
+        letter-spacing: 0.05em;
+        text-shadow:
+          0 2px 4px rgba(0, 0, 0, 0.3),
+          0 4px 8px rgba(255, 112, 189, 0.2),
+          0 0 15px rgba(255, 255, 255, 0.1);
+        filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.2));
+        transition: all 0.3s ease;
+
+        &:hover {
+          transform: scale(1.02);
+          text-shadow:
+            0 3px 6px rgba(0, 0, 0, 0.4),
+            0 6px 12px rgba(255, 112, 189, 0.3),
+            0 0 25px rgba(255, 255, 255, 0.2);
+          filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3));
+        }
       }
 
       &:nth-child(2) {
