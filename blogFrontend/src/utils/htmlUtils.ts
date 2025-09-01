@@ -107,4 +107,76 @@ export const cleanHtmlTagsWithLimit = (html: string, maxLength: number, suffix: 
   }
 
   return text.substring(0, maxLength) + suffix;
+};
+
+/**
+ * 清理Markdown语法和HTML标签，返回纯文本
+ * @param text 包含Markdown语法和HTML标签的文本
+ * @returns 清理后的纯文本
+ */
+export const cleanMarkdownAndHtml = (text: string): string => {
+  if (!text) return '';
+
+  let cleanText = text;
+
+  // 1. 清理Markdown语法
+  cleanText = cleanText
+    // 移除标题语法 (# ## ### 等)
+    .replace(/^#{1,6}\s+/gm, '')
+    // 移除粗体和斜体语法 (**text** *text* __text__ _text_)
+    .replace(/(\*\*|__)(.*?)\1/g, '$2')
+    .replace(/(\*|_)(.*?)\1/g, '$2')
+    // 移除删除线语法 (~~text~~)
+    .replace(/~~(.*?)~~/g, '$1')
+    // 移除行内代码语法 (`code`)
+    .replace(/`([^`]+)`/g, '$1')
+    // 移除代码块语法 (```lang ... ```)
+    .replace(/```[\s\S]*?```/g, '')
+    // 移除链接语法 [text](url) 保留text
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    // 移除图片语法 ![alt](url)
+    .replace(/!\[[^\]]*\]\([^)]+\)/g, '')
+    // 移除引用语法 (> text)
+    .replace(/^>\s+/gm, '')
+    // 移除列表语法 (- * + 1. 等)
+    .replace(/^[\s]*[-*+]\s+/gm, '')
+    .replace(/^[\s]*\d+\.\s+/gm, '')
+    // 移除水平分割线 (--- *** ___)
+    .replace(/^[-*_]{3,}$/gm, '')
+    // 移除表格语法中的管道符
+    .replace(/\|/g, ' ');
+
+  // 2. 清理HTML标签
+  cleanText = cleanHtmlTags(cleanText);
+
+  // 3. 清理HTML实体和特殊符号
+  cleanText = cleanText
+    // 清理常见的HTML实体
+    .replace(/&emsp;/g, ' ')    // 全角空格
+    .replace(/&ensp;/g, ' ')    // 半角空格
+    .replace(/&nbsp;/g, ' ')    // 不间断空格
+    .replace(/&ldquo;/g, '"')   // 左双引号
+    .replace(/&rdquo;/g, '"')   // 右双引号
+    .replace(/&lsquo;/g, "'")   // 左单引号
+    .replace(/&rsquo;/g, "'")   // 右单引号
+    .replace(/&mdash;/g, '—')   // 长破折号
+    .replace(/&ndash;/g, '–')   // 短破折号
+    .replace(/&amp;/g, '&')     // &符号
+    .replace(/&lt;/g, '<')      // 小于号
+    .replace(/&gt;/g, '>')      // 大于号
+    .replace(/&quot;/g, '"')    // 双引号
+    // 清理其他常见HTML实体（通用模式）
+    .replace(/&#?\w+;/g, ' ');
+
+  // 4. 清理多余的空白字符
+  cleanText = cleanText
+    // 替换多个连续空格为单个空格
+    .replace(/\s+/g, ' ')
+    // 移除行首尾空格
+    .replace(/^\s+|\s+$/gm, '')
+    // 移除多个连续换行
+    .replace(/\n\s*\n/g, '\n')
+    .trim();
+
+  return cleanText;
 }; 
