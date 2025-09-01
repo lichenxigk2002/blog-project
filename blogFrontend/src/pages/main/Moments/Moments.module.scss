@@ -219,7 +219,7 @@
 
     span {
       font-size: 0.85rem;
-      color: var(--text-secondary);
+      color: var(--text);
       display: block;
     }
   }
@@ -242,7 +242,7 @@
 .articleDescription {
   margin: 0 0 0.75rem 0;
   font-size: 0.9rem;
-  color: var(--text-secondary);
+  color: var(--text);
   line-height: 1.5;
   overflow: hidden;
   display: -webkit-box;
@@ -257,7 +257,7 @@
 // 作者信息 - 简洁设计
 .author {
   font-size: 0.85rem;
-  color: var(--text-secondary);
+  color: var(--text);
   font-style: italic;
   margin-top: auto;
   padding-top: 0.5rem;
