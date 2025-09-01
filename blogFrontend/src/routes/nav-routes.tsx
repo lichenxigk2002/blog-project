@@ -67,15 +67,15 @@ export const navRoutesItem: Route[] = [
         renderType: 'ssg', // 首页建议SSG
         showInNav: true,
         children: [
-            // {
-            //     id: 101,
-            //     path: '/main/About',
-            //     name: '关于我',
-            //     component: About,
-            //     renderType: 'ssg',
-            //     showInNav: false,
-            //     showInDropdown: true
-            // },
+            {
+                id: 101,
+                path: '/main/About',
+                name: '关于我',
+                component: About,
+                renderType: 'ssg',
+                showInNav: false,
+                showInDropdown: true
+            },
         ]
     }, {
         id: 2,
@@ -184,15 +184,17 @@ export const navRoutesItem: Route[] = [
                 renderType: 'ssg', // 面试题汇总建议SSG
                 showInNav: false,
                 showInDropdown: true
+            }, {
+                id: 803,
+                path: '#',
+                name: '验证信息',
+                isExternal: true,
+                externalUrl: 'https://cert.bloginc.cn/blog?domain=https://www.gfbzsblog.site/',
+                target: '_blank',
+                renderType: 'csr',
+                showInNav: false,
+                showInDropdown: true
             }
-            // ,{
-            //     id: 805,
-            //     path: '/main/TechnologyStack',
-            //     name: '技术栈',
-            //     component: TechnologyStack,
-            //     renderType: 'csr', // 技术栈建议CSR
-            //     showInNav: false
-            // }
         ]
     }, {
         id: 1001,
