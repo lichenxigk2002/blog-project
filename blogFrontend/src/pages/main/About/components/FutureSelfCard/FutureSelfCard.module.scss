@@ -10,6 +10,12 @@
   padding: 0;
   grid-column: 1/8;
   grid-row: 10/14;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
 }
 
 .backgroundContainer {
@@ -59,7 +65,7 @@
   border-radius: 0;
   padding: 1rem;
   color: #ffffff;
-  font-family: "Microsoft YaHei", "微软雅黑", "PingFang SC", "SimSun", "宋体", "Arial", "Helvetica", sans-serif;
+  font-family: var(--font-zihun-ccy);
   line-height: 1.6;
   font-size: 0.9rem;
   border: none;
@@ -80,18 +86,30 @@
 
 .title {
   text-align: center;
-  font-size: 1.6rem;
+  font-size: 1.7rem;
   font-weight: bold;
+  font-family: var(--font-zihun-ccy);
   color: #ffffff;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
-  background: #ffffff;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  text-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    0 4px 8px rgba(102, 126, 234, 0.2),
+    0 0 15px rgba(255, 255, 255, 0.1);
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.2));
+  letter-spacing: 0.05em;
+  transition: all 0.3s ease;
 
   @media (max-width: 768px) {
     font-size: 1.5rem;
     margin-bottom: 1.5rem;
+  }
+
+  &:hover {
+    transform: scale(1.02);
+    text-shadow:
+      0 3px 6px rgba(0, 0, 0, 0.4),
+      0 6px 12px rgba(102, 126, 234, 0.3),
+      0 0 25px rgba(255, 255, 255, 0.2);
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3));
   }
 }
 
@@ -100,6 +118,7 @@
     margin-bottom: 0.8rem;
     text-align: justify;
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+    font-family: var(--font-zihun-ccy);
   }
 }
 
@@ -122,22 +141,26 @@
   color: #fc9dff52;
   margin-right: 0.5rem;
   font-size: 1rem;
+  font-family: var(--font-zihun-ccy);
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
   min-width: 1.2rem;
 }
 
 .pointContent {
   flex: 1;
+  font-family: var(--font-zihun-ccy);
 
   strong {
     color: #fc9dff52;
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+    font-family: var(--font-zihun-ccy);
   }
 }
 
 .highlight {
   font-size: 1rem;
   font-weight: bold;
+  font-family: var(--font-zihun-ccy);
   color: #ffd700;
   text-align: center;
   margin: 1.5rem 0;
@@ -157,12 +180,14 @@
   text-align: right;
   margin-top: 1rem;
   border-top: 1px solid rgba(255, 255, 255, 0.3);
+  font-family: var(--font-zihun-ccy);
 
   p {
     margin-bottom: 0.3rem;
     font-style: italic;
     color: rgba(255, 255, 255, 0.9);
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+    font-family: var(--font-zihun-ccy);
   }
 
   .ps {
@@ -170,6 +195,7 @@
     color: rgba(255, 255, 255, 0.7);
     font-style: normal;
     margin-top: 0.3rem;
+    font-family: var(--font-zihun-ccy);
   }
 }
 
