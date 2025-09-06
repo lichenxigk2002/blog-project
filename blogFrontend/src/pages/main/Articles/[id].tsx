@@ -26,7 +26,8 @@ import CodeBlock from '@/components/ArticleUI/Code/CodeBlock'; // 代码块组�
 import MetaCard from '@/components/ArticleUI/MetaCard/MetaCard'; // 元信息卡片组件
 import { Table, Thead, Tbody, Tr, Th, Td } from '@/components/ArticleUI/Table/Table'; // 表格组件
 import { Article } from '@/types/Article'; // 文章类型定义
-import styles from './[id].module.scss'; // 组件样式
+import styles from './[id].module.scss';
+import StrikethroughText from "@/components/ArticleUI/StrikethroughText/StrikethroughText"; // 组件样式
 
 
 // 定义标题对象的类型
@@ -558,6 +559,13 @@ const ArticleDetail: React.FC = () => {
                                     tr: ({ node, ...props }) => <Tr {...props} />,
                                     th: ({ node, ...props }) => <Th {...props} />,
                                     td: ({ node, ...props }) => <Td {...props} />,
+
+                                    // 当 Markdown 是：~~删除的文字~~
+                                    del: ({ node, children, ...props }) => (
+                                        <StrikethroughText {...props}>
+                                            {children}
+                                        </StrikethroughText>
+                                    ),
 
                                     // 添加视频组件
                                     video: ({ node, ...props }) => <ArticleVideo {...props} />,
