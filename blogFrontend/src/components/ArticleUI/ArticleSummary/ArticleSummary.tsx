@@ -212,9 +212,9 @@ const ArticleSummary: React.FC<ArticleSummaryProps> = ({ taobaoSummary, aiSummar
             {currentMode === 'taobao' ? '切换到豆包摘要' : '切换到胡桃摘要'}
           </button>
           <button
-              className={`${styles.toggleHeightBtn} ${isExpanded ? styles.expanded : ''}`}
-              onClick={() => setIsExpanded(!isExpanded)}
-              title={`当前：${isExpanded ? '收起' : '展开'}`}
+            className={`${styles.toggleHeightBtn} ${isExpanded ? styles.expanded : ''}`}
+            onClick={() => setIsExpanded(!isExpanded)}
+            title={`当前：${isExpanded ? '收起' : '展开'}`}
           >
             <FiChevronDown />
           </button>
@@ -232,13 +232,13 @@ const ArticleSummary: React.FC<ArticleSummaryProps> = ({ taobaoSummary, aiSummar
       {/* 摘要内容 */}
       <div className={styles.summaryContent}>
         <div
-            className={`${styles.summaryTextWrapper} ${isExpanded ? styles.expanded : ''}`}
+          className={`${styles.summaryTextWrapper} ${isExpanded ? styles.expanded : ''}`}
         >
           <Typerwriter
-              text={(currentMode === 'taobao' ? taobaoSummary : aiSummary) || ''}
-              delay={75}
-              className={styles.summaryText}
-              cursorChar="_"
+            text={(currentMode === 'taobao' ? taobaoSummary : aiSummary) || ''}
+            delay={75}
+            className={styles.summaryText}
+            cursorChar="_"
           />
         </div>
       </div>
@@ -247,9 +247,9 @@ const ArticleSummary: React.FC<ArticleSummaryProps> = ({ taobaoSummary, aiSummar
       <div className={styles.poweredBy}>
         <span>Powered By</span>
         <a className={styles.modelName}
-           href={currentMode === 'taobao' ? 'https://platform.deepseek.com/usage' : 'https://console.volcengine.com/ark/region:ark+cn-beijing/model/detail?Id=doubao-seed-1-6'}
-           target="_blank"
-           rel="noopener noreferrer"
+          href={currentMode === 'taobao' ? 'https://platform.deepseek.com/usage' : 'https://console.volcengine.com/ark/region:ark+cn-beijing/model/detail?Id=doubao-seed-1-6'}
+          target="_blank"
+          rel="noopener noreferrer"
         >
           {currentMode === 'taobao' ? 'DeepSeek V1' : 'Doubao-Seed-1.6'}
         </a>

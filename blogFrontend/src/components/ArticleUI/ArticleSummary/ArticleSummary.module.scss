@@ -1,6 +1,6 @@
 .articleSummary {
   margin: 0.5rem 0;
-  padding: 12px;
+  padding: 12px 12px 6px 12px;
   background: rgba(255, 255, 255, 0.15);
   border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -142,11 +142,13 @@
 
       svg {
         display: block;
-        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* 平面翻滚动画 */
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        /* 平面翻滚动画 */
       }
 
       &.expanded svg {
-        transform: rotate(180deg); /* 平面旋转180° */
+        transform: rotate(180deg);
+        /* 平面旋转180° */
       }
     }
 
@@ -202,11 +204,15 @@
     margin-bottom: 8px;
 
     .summaryTextWrapper {
-      max-height: 0; // 一行的高度（可调）
+      max-height: 30px; // 保留一行半的高度 (12px字体 * 1.5行高 * 1.5行)
       overflow: hidden;
       position: relative;
-      transition: max-height 0.6s ease, opacity 1s ease; /* 展开收起动画更平滑 */
+      transition: max-height 0.6s ease, opacity 1s ease;
+      /* 展开收起动画更平滑 */
 
+      // 默认状态：无遮罩，完全显示
+      -webkit-mask-image: none;
+      mask-image: none;
 
       .summaryText {
         margin: 0;
@@ -227,14 +233,36 @@
       }
 
       &.expanded {
-        max-height: 999px; /* 展开显示所有内容 */
-        transition: max-height 0.8s ease, opacity 0.6s ease; /* 展开动画更慢 */
+        max-height: 999px;
+        /* 展开显示所有内容 */
+        transition: max-height 0.8s ease, opacity 0.6s ease;
+        /* 展开动画更慢 */
+
+        // 展开时无遮罩，完全显示
         -webkit-mask-image: none;
-        mask-image: none; /* 移除遮罩 */
-        opacity: 1;
-        &::after {
-          opacity: 0; // 展开时隐藏阴影
-        }
+        mask-image: none;
+      }
+
+      // 收起状态：有遮罩，高度限制
+      &:not(.expanded) {
+        max-height: 30px;
+        transition: max-height 0.6s ease, opacity 0.6s ease;
+
+        // 收起时显示渐变遮罩，与高度变化同步
+        -webkit-mask-image: linear-gradient(to bottom,
+            rgba(0, 0, 0, 0.8) 0%,
+            rgba(0, 0, 0, 0.6) 20%,
+            rgba(0, 0, 0, 0.4) 40%,
+            rgba(0, 0, 0, 0.2) 60%,
+            rgba(0, 0, 0, 0.1) 80%,
+            transparent 100%);
+        mask-image: linear-gradient(to bottom,
+            rgba(0, 0, 0, 0.8) 0%,
+            rgba(0, 0, 0, 0.6) 20%,
+            rgba(0, 0, 0, 0.4) 40%,
+            rgba(0, 0, 0, 0.2) 60%,
+            rgba(0, 0, 0, 0.1) 80%,
+            transparent 100%);
       }
     }
 
@@ -246,11 +274,12 @@
     align-items: center;
     gap: 6px;
     margin-top: 8px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(133, 133, 133, 0.1);
     font-size: 10px;
     color: var(--text-color);
     opacity: 0.7;
     justify-content: center;
+    padding-top: 6px;
 
     .modelName {
       font-weight: 600;
@@ -481,5 +510,7 @@
       background: var(--primary-light-dark, #2c5282);
       border-color: var(--primary-border-dark, #4a5568);
     }
+
+
   }
 }
