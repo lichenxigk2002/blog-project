@@ -101,6 +101,16 @@ export const navRoutesItem: Route[] = [
                 renderType: 'ssg', // 归档建议SSG
                 showInNav: false,
                 showInDropdown: true,
+            }, {
+                id: 303,
+                path: '#',
+                name: '文档',
+                isExternal: true,
+                externalUrl: 'https://doc.gfbzsblog.site/',
+                target: '_blank',
+                renderType: 'csr',
+                showInNav: false,
+                showInDropdown: true
             }
         ]
     }, {
@@ -156,7 +166,7 @@ export const navRoutesItem: Route[] = [
     }, {
         id: 7,
         path: '/main/XiaoXiAI',
-        name: '小熙',
+        name: '聊天',
         component: XiaoXiAI,
         renderType: 'csr', // AI聊天建议CSR
         showInNav: true
