@@ -64,14 +64,14 @@ const ProfileCard: React.FC = () => {
                     >
                         孤芳不自赏
                     </motion.h1>
-                    <motion.p
-                        className={styles.userBio}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.2 }} // 去掉 delay，缩短 duration
-                    >
-                        Java+TypeScript全栈开发者，正在学习HarmonyOS Next，励志成为Web3.0的先锋
-                    </motion.p>
+                    {/*<motion.p*/}
+                    {/*    className={styles.userBio}*/}
+                    {/*    initial={{ opacity: 0 }}*/}
+                    {/*    animate={{ opacity: 1 }}*/}
+                    {/*    transition={{ duration: 0.2 }} // 去掉 delay，缩短 duration*/}
+                    {/*>*/}
+                    {/*    Java+TypeScript全栈开发者，正在学习HarmonyOS Next，励志成为Web3.0的先锋*/}
+                    {/*</motion.p>*/}
                 </div>
             </motion.div>
 
@@ -87,7 +87,7 @@ const ProfileCard: React.FC = () => {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 1, duration: 0.5 }}
                 >
-                    🔥前端开发探索者
+                    🔥Java+TypeScript全栈开发者
                 </motion.p>
                 <motion.p
                     initial={{ opacity: 0 }}
