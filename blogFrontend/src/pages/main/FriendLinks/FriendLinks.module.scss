@@ -159,6 +159,31 @@ $shadow-hover: 0 8px 16px rgba(0, 0, 0, 0.12);
   color: $text-color;
   border: 1px solid var(--border);
 
+  // 特别推荐伪元素
+  &.specialRecommended::before {
+    content: "特别推荐";
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 8px;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+    animation: specialBadgePulse 2s infinite;
+    letter-spacing: 0.5px;
+    transform: scale(0.9);
+    transition: all 0.3s ease;
+  }
+
+  &.specialRecommended:hover::before {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+  }
+
   .avatar {
     width: 64px;
     height: 64px;
@@ -742,5 +767,207 @@ $shadow-hover: 0 8px 16px rgba(0, 0, 0, 0.12);
     width: 120px;
     margin-bottom: 1rem;
     display: block;
+  }
+}
+
+// 特别推荐标识脉冲动画
+@keyframes specialBadgePulse {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(0.9);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(0.95);
+  }
+}
+
+/* 本站信息头部 - 可点击的标题区域 */
+.siteInfoHeader {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 0;
+  transition: all 0.3s ease;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  h2 {
+    color: var(--text);
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .expandIcon {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    transition: transform 0.3s ease;
+  }
+}
+
+/* 本站信息卡片 - 展开/收起动画 */
+.siteInfoCard {
+  display: inline-block;
+  text-align: left;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease-out;
+
+  &.expanded {
+    max-height: 1000px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+}
+
+/* 展开图标旋转动画 */
+.expandIcon {
+  font-size: 1.2rem;
+  color: var(--text) !important;
+  transition: transform 0.3s ease;
+
+  &.rotated {
+    transform: rotate(180deg);
+  }
+}
+
+/* 本站信息文本 - 左对齐 */
+.siteInfoText {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  text-align: left;
+
+  div {
+    color: var(--text);
+    margin-bottom: 0.5rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  b {
+    color: var(--text);
+    font-weight: 600;
+    margin-right: 0.5rem;
+  }
+
+  a {
+    color: #1890ff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: #40a9ff;
+    }
+  }
+
+  @media (max-width: 768px) {
+    text-align: center;
+  }
+}
+
+/* 友链要求区域 - 左对齐 */
+.requirementsSection {
+  padding: 1rem 0;
+  margin: 1.5rem 0 0 0;
+  text-align: left !important; // 添加 !important 覆盖父元素的 center
+
+  h3 {
+    color: var(--text);
+    margin: 1.5rem 0 1rem 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: left !important; // 确保标题也左对齐
+  }
+
+  @media (max-width: 768px) {
+    text-align: center;
+
+    h3 {
+      text-align: center;
+    }
+  }
+}
+
+/* 友链要求列表 - 左对齐 */
+.requirementsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left !important; // 添加 !important 覆盖父元素的 center
+
+  li {
+    position: relative;
+    padding: 0.5rem 0 0.5rem 1.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+    text-align: left !important; // 确保每个列表项都左对齐
+
+    &:before {
+      content: "•";
+      color: var(--text);
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+    }
+
+    &:hover {
+      transform: translateX(4px);
+    }
+  }
+
+  @media (max-width: 768px) {
+    text-align: center;
+
+    li {
+      text-align: center;
+    }
+  }
+}
+
+/* 展开/收起动画 */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    max-height: 1000px;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 1;
+    max-height: 1000px;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-10px);
   }
 }

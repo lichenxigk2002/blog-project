@@ -15,17 +15,18 @@ interface FriendLinksPageProps {
 }
 
 const SITE_INFO = {
-    name: "孤芳不自赏的Blog",
+    name: "孤芳不自赏",
     url: "https://www.gfbzsblog.site/",
     description: "日益努力，而后风生水起",
     avatarUrl: "/images/avatar_20250520_215057.png"
 };
 
 const REQUIREMENTS = [
-    "网站内容健康积极，定期更新原创内容，保持活跃度",
-    "申请前请先在贵站友链专区添加本站链接（名称+网址）",
-    "网站需备案且能稳定访问，无恶意弹窗/违规内容",
-    "添加后请在本站留言板留言，站长会第一时间回复，记得真实邮箱才能收到回复哦！",
+    "站长非常喜欢交朋友，所以欢迎大家大胆的来申请友链！",
+    "申请前请先在贵站友链专区添加本站链接哦（名称+网址），非常感谢😉",
+    "网站需备案且能稳定访问，无恶意弹窗/违规内容，如果使用https证书会更好！",
+    "希望贵站内容健康积极，定期更新原创内容，站长对版权比较重视，因此如果有转载的文章，一定要标明转载文章的出处！",
+    "麻烦朋友添加后请在本站留言板留言，站长看到会第一时间回复并且通过，记得真实邮箱才能收到回复！",
 ];
 
 const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => {
@@ -53,6 +54,9 @@ const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => 
     const iframeContainerRef = useRef<HTMLDivElement>(null);
     const leftListRef = useRef<HTMLDivElement>(null);
     // const [iframeLoaded, setIframeLoaded] = useState<boolean | 'fail'>(false);
+
+    // 在状态管理部分添加展开/收起状态
+    const [isSiteInfoExpanded, setIsSiteInfoExpanded] = useState(false);
 
 
     useEffect(() => {
@@ -220,192 +224,189 @@ const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => 
 
     return (
         <>
-        {!isDetailView && (
-            <div className={styles.container}
-                 style={isDetailView ? { padding: 0 } : undefined}
-            >
-                <Head>
-                    <title>友人帐 | 海内存知己，天涯若比邻</title>
-                    <meta name="description" content="友链交换，让我们的博客世界更加精彩" />
-                </Head>
-                {isLoading && <LoadingSpinner />}
-                <div className={isDetailView ? styles.fadeOut : styles.fadeIn}>
-                    <PageHeader
-                        headerText="朋友们"
-                        introText="互联网的美好，在于让有趣的灵魂跨越山海相遇。这里是我在数字世界里遇到的宝藏创作者——他们用文字编织思想的星空，用真诚分享点亮彼此的世界。每一篇文章都是独特的礼物，每一次阅读都是一场温暖的邂逅。。"
-                        englishTitle="FriendLinks"
+            {!isDetailView && (
+                <div className={styles.container}
+                    style={isDetailView ? { padding: 0 } : undefined}
+                >
+                    <Head>
+                        <title>友人帐 | 海内存知己，天涯若比邻</title>
+                        <meta name="description" content="友链交换，让我们的博客世界更加精彩" />
+                    </Head>
+                    {isLoading && <LoadingSpinner />}
+                    <div className={isDetailView ? styles.fadeOut : styles.fadeIn}>
+                        <PageHeader
+                            headerText="朋友们"
+                            introText="互联网的美好，在于让有趣的灵魂跨越山海相遇。这里是我在数字世界里遇到的宝藏创作者——他们用文字编织思想的星空，用真诚分享点亮彼此的世界。每一篇文章都是独特的礼物，每一次阅读都是一场温暖的邂逅。。"
+                            englishTitle="FriendLinks"
+                        />
+                    </div>
+                    {/* 友链列表 */}
+                    {/*{isDetailView && (*/}
+                    {/*    <div className={styles.backButtonContainer}>*/}
+                    {/*        <button className={styles.backButton} onClick={handleBackToList}>*/}
+                    {/*            <span>←</span> 返回友链列表*/}
+                    {/*        </button>*/}
+                    {/*    </div>*/}
+                    {/*)}*/}
+                    <div className={`${styles.mainContent} ${isDetailView ? styles.detailView : ''}`}>
+                        {/* 友链列表 */}
+                        <div className={`${styles.friendLinksSection} ${!isDetailView ? styles.fadeIn : styles.fadeOut}`}>
+                            {Array.isArray(friendLinks) && friendLinks.length > 0 ? (
+                                <div className={`${styles.friendLinksGrid} ${isDetailView ? styles.verticalList : ''}`}>
+                                    {friendLinks
+                                        .filter((link) => link.status === 'approved')
+                                        .map((link, index) => (
+                                            <motion.div
+                                                key={link.id}
+                                                className={`${styles.friendLinkCard} ${link.name === "Grtsinry43's Blog" ? styles.specialRecommended : ''}`}
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                transition={{ delay: index * 0.1, duration: 0.5 }}
+                                                onClick={(e) => handleFriendLinkClick(e, link)}
+                                                onMouseEnter={() => handleCardMouseEnter(link.id.toString())}
+                                                onMouseLeave={() => handleCardMouseLeave(link.id.toString())}
+                                                role="button"
+                                                tabIndex={0}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter' || e.key === ' ') {
+                                                        e.preventDefault();
+                                                        handleFriendLinkClick(e as any, link);
+                                                    }
+                                                }}
+                                            >
+                                                <div className={styles.avatar}>
+                                                    <img src={link.avatarUrl} alt={link.name} />
+                                                </div>
+                                                <div className={styles.bgAvatar}>
+                                                    <img src={link.avatarUrl} alt={link.name + '背景'} />
+                                                </div>
+                                                <div className={styles.info}>
+                                                    <h3
+                                                        style={hoverColors[link.id.toString()]?.h3 ? { color: hoverColors[link.id.toString()].h3 } : {}}
+                                                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(link.name) }}
+                                                    />
+                                                    <p
+                                                        style={hoverColors[link.id.toString()]?.p ? { color: hoverColors[link.id.toString()].p } : {}}
+                                                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(link.description) }}
+                                                    />
+                                                </div>
+                                            </motion.div>
+                                        ))}
+                                </div>
+                            ) : (
+                                <p className={styles.emptyMessage}>暂无友链，快来申请吧！</p>
+                            )}
+                        </div>
+                    </div> {/* 主要内容区域的结束标签 - 只包裹友链列表 */}
+
+                    {/* 申请友链按钮 - 在详情视图时隐藏 */}
+                    <div className={`${styles.applyButtonWrapper} ${isDetailView ? styles.fadeOut : styles.fadeIn}`}>
+                        <div style={{ textAlign: 'center', margin: '2.5rem 0 1.5rem 0' }}>
+                            <button className={styles.simpleButton} style={{ maxWidth: 180 }} onClick={() => setModalOpen(true)}>
+                                点我来交朋友啦
+                            </button>
+                        </div>
+                    </div>
+                    {/* 本站信息 - 可收起/展开，包含友链要求 */}
+                    <div className={`${styles.siteInfoWrapper} ${isDetailView ? styles.fadeOut : styles.fadeIn}`}>
+                        <section className={styles.siteInfoSection}>
+                            <div className={styles.siteInfoHeader} onClick={() => setIsSiteInfoExpanded(!isSiteInfoExpanded)}>
+                                <h2>本站信息</h2>
+                                <span className={`${styles.expandIcon} ${isSiteInfoExpanded ? styles.rotated : ''}`}>
+                                    {isSiteInfoExpanded ? '−' : '+'}
+                                </span>
+                            </div>
+
+                            <div className={`${styles.siteInfoCard} ${isSiteInfoExpanded ? styles.expanded : ''}`}>
+                                <div className={styles.siteInfoText}>
+                                    <div><b>头像链接：</b><a href={SITE_INFO.avatarUrl} target="_blank" rel="noopener noreferrer">点我获取</a></div>
+                                    <div><b>我的名字：</b>{SITE_INFO.name}</div>
+                                    <div><b>网站地址：</b><a href={SITE_INFO.url} target="_blank" rel="noopener noreferrer">{SITE_INFO.url}</a></div>
+                                    <div><b>网站描述：</b>{SITE_INFO.description}</div>
+                                </div>
+
+                                {/* 友链要求也放在本站信息内 */}
+                                <div className={styles.requirementsSection}>
+                                    <h3>友链要求</h3>
+                                    <ul className={styles.requirementsList}>
+                                        {REQUIREMENTS.map((item, idx) => <li key={idx}>{item}</li>)}
+                                    </ul>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    {/* 申请友链模态框 */}
+                    {modalOpen && (
+                        <div className={styles.friendLinksFormWrapper}>
+                            <div className={styles.loginCard}>
+                                <button className={styles.closeButton} onClick={() => setModalOpen(false)} title="关闭">×</button>
+                                <form className={styles.form} onSubmit={handleSubmit} autoComplete="off">
+                                    <h2 className={styles.header}>申请友链</h2>
+                                    <div className={styles.inputGroup}>
+                                        <label className={styles.label} htmlFor="name">网站名称</label>
+                                        <input
+                                            type="text"
+                                            id="name"
+                                            name="name"
+                                            value={formData.name}
+                                            onChange={handleInputChange}
+                                            placeholder="网站名称"
+                                            className={styles.input}
+                                            required
+                                        />
+                                    </div>
+                                    <div className={styles.inputGroup}>
+                                        <label className={styles.label} htmlFor="url">网站地址</label>
+                                        <input
+                                            type="url"
+                                            id="url"
+                                            name="url"
+                                            value={formData.url}
+                                            onChange={handleInputChange}
+                                            placeholder="网站地址"
+                                            className={styles.input}
+                                            required
+                                        />
+                                    </div>
+                                    <div className={styles.inputGroup}>
+                                        <label className={styles.label} htmlFor="avatarUrl">头像图片地址</label>
+                                        <input
+                                            type="url"
+                                            id="avatarUrl"
+                                            name="avatarUrl"
+                                            value={formData.avatarUrl}
+                                            onChange={handleInputChange}
+                                            placeholder="头像图片地址"
+                                            className={styles.input}
+                                            required
+                                        />
+                                    </div>
+                                    <div className={styles.inputGroup}>
+                                        <label className={styles.label} htmlFor="description">网站描述</label>
+                                        <textarea
+                                            id="description"
+                                            name="description"
+                                            value={formData.description}
+                                            onChange={handleInputChange}
+                                            placeholder="网站描述"
+                                            className={styles.input}
+                                            required
+                                        />
+                                    </div>
+                                    <button type="submit" className={styles.submitButton}>提交申请</button>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+                    <OperationTipModal
+                        open={tipOpen}
+                        onClose={() => setTipOpen(false)}
+                        message={tipMessage}
+                        type={tipType}
                     />
                 </div>
-                {/* 友链列表 */}
-                {/*{isDetailView && (*/}
-                {/*    <div className={styles.backButtonContainer}>*/}
-                {/*        <button className={styles.backButton} onClick={handleBackToList}>*/}
-                {/*            <span>←</span> 返回友链列表*/}
-                {/*        </button>*/}
-                {/*    </div>*/}
-                {/*)}*/}
-                <div className={`${styles.mainContent} ${isDetailView ? styles.detailView : ''}`}>
-                    {/* 友链列表 */}
-                    <div className={`${styles.friendLinksSection} ${!isDetailView ? styles.fadeIn : styles.fadeOut}`}>
-                        {Array.isArray(friendLinks) && friendLinks.length > 0 ? (
-                            <div className={`${styles.friendLinksGrid} ${isDetailView ? styles.verticalList : ''}`}>
-                                {friendLinks
-                                    .filter((link) => link.status === 'approved')
-                                    .map((link, index) => (
-                                        <motion.div
-                                            key={link.id}
-                                            className={styles.friendLinkCard}
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            transition={{ delay: index * 0.1, duration: 0.5 }}
-                                            onClick={(e) => handleFriendLinkClick(e, link)}
-                                            onMouseEnter={() => handleCardMouseEnter(link.id.toString())}
-                                            onMouseLeave={() => handleCardMouseLeave(link.id.toString())}
-                                            role="button"
-                                            tabIndex={0}
-                                            onKeyDown={(e) => {
-                                                if (e.key === 'Enter' || e.key === ' ') {
-                                                    e.preventDefault();
-                                                    handleFriendLinkClick(e as any, link);
-                                                }
-                                            }}
-                                        >
-                                            <div className={styles.avatar}>
-                                                <img src={link.avatarUrl} alt={link.name} />
-                                            </div>
-                                            <div className={styles.bgAvatar}>
-                                                <img src={link.avatarUrl} alt={link.name + '背景'} />
-                                            </div>
-                                            <div className={styles.info}>
-                                                <h3
-                                                    style={hoverColors[link.id.toString()]?.h3 ? { color: hoverColors[link.id.toString()].h3 } : {}}
-                                                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(link.name) }}
-                                                />
-                                                <p
-                                                    style={hoverColors[link.id.toString()]?.p ? { color: hoverColors[link.id.toString()].p } : {}}
-                                                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(link.description) }}
-                                                />
-                                            </div>
-                                        </motion.div>
-                                    ))}
-                            </div>
-                        ) : (
-                            <p className={styles.emptyMessage}>暂无友链，快来申请吧！</p>
-                        )}
-                    </div>
-                </div> {/* 主要内容区域的结束标签 - 只包裹友链列表 */}
-
-
-
-
-                {/* 本站信息 */}
-                {/* 本站信息 - 在详情视图时隐藏 */}
-                <div className={`${styles.siteInfoWrapper} ${isDetailView ? styles.fadeOut : styles.fadeIn}`}>
-                    <section className={styles.siteInfoSection}>
-                        <h2 style={{ color: 'var(--text)' }}>本站信息</h2>
-                        <div className={styles.siteInfoCard}>
-                            <div className={styles.siteInfoText}>
-                                <div><b>头像链接：</b><a href={SITE_INFO.avatarUrl} target="_blank" rel="noopener noreferrer">点我获取</a></div>
-                                <div><b>网站名称：</b>{SITE_INFO.name}</div>
-                                <div><b>网站地址：</b><a href={SITE_INFO.url} target="_blank" rel="noopener noreferrer">{SITE_INFO.url}</a></div>
-                                <div><b>网站描述：</b>{SITE_INFO.description}</div>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-
-                {/* 申请友链按钮 - 在详情视图时隐藏 */}
-                <div className={`${styles.applyButtonWrapper} ${isDetailView ? styles.fadeOut : styles.fadeIn}`}>
-                    <div style={{ textAlign: 'center', margin: '2.5rem 0 1.5rem 0' }}>
-                        <button className={styles.simpleButton} style={{ maxWidth: 180 }} onClick={() => setModalOpen(true)}>
-                            申请友链
-                        </button>
-                    </div>
-                </div>
-
-                {/* 友链要求 - 在详情视图时隐藏 */}
-                <div className={`${styles.requirementsWrapper} ${isDetailView ? styles.fadeOut : styles.fadeIn}`}>
-                    <section className={styles.requirementsSection}>
-                        <h3 style={{ color: 'var(--text)' }}>友链要求</h3>
-                        <ul className={styles.requirementsList}>
-                            {REQUIREMENTS.map((item, idx) => <li key={idx}>{item}</li>)}
-                        </ul>
-                    </section>
-                </div>
-
-
-
-                {/* 申请友链模态框 */}
-                {modalOpen && (
-                    <div className={styles.friendLinksFormWrapper}>
-                        <div className={styles.loginCard}>
-                            <button className={styles.closeButton} onClick={() => setModalOpen(false)} title="关闭">×</button>
-                            <form className={styles.form} onSubmit={handleSubmit} autoComplete="off">
-                                <h2 className={styles.header}>申请友链</h2>
-                                <div className={styles.inputGroup}>
-                                    <label className={styles.label} htmlFor="name">网站名称</label>
-                                    <input
-                                        type="text"
-                                        id="name"
-                                        name="name"
-                                        value={formData.name}
-                                        onChange={handleInputChange}
-                                        placeholder="网站名称"
-                                        className={styles.input}
-                                        required
-                                    />
-                                </div>
-                                <div className={styles.inputGroup}>
-                                    <label className={styles.label} htmlFor="url">网站地址</label>
-                                    <input
-                                        type="url"
-                                        id="url"
-                                        name="url"
-                                        value={formData.url}
-                                        onChange={handleInputChange}
-                                        placeholder="网站地址"
-                                        className={styles.input}
-                                        required
-                                    />
-                                </div>
-                                <div className={styles.inputGroup}>
-                                    <label className={styles.label} htmlFor="avatarUrl">头像图片地址</label>
-                                    <input
-                                        type="url"
-                                        id="avatarUrl"
-                                        name="avatarUrl"
-                                        value={formData.avatarUrl}
-                                        onChange={handleInputChange}
-                                        placeholder="头像图片地址"
-                                        className={styles.input}
-                                        required
-                                    />
-                                </div>
-                                <div className={styles.inputGroup}>
-                                    <label className={styles.label} htmlFor="description">网站描述</label>
-                                    <textarea
-                                        id="description"
-                                        name="description"
-                                        value={formData.description}
-                                        onChange={handleInputChange}
-                                        placeholder="网站描述"
-                                        className={styles.input}
-                                        required
-                                    />
-                                </div>
-                                <button type="submit" className={styles.submitButton}>提交申请</button>
-                            </form>
-                        </div>
-                    </div>
-                )}
-                <OperationTipModal
-                    open={tipOpen}
-                    onClose={() => setTipOpen(false)}
-                    message={tipMessage}
-                    type={tipType}
-                />
-            </div>
-        )}
+            )}
 
             <div className={styles.ViewContainer}>
                 {isDetailView && selectedFriendLink && (
@@ -417,7 +418,7 @@ const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => 
                                     .map((link) => (
                                         <div
                                             key={link.id}
-                                            className={`${styles.friendLinkCard} ${styles.narrowCard}`}
+                                            className={`${styles.friendLinkCard} ${styles.narrowCard} ${link.name === "Grtsinry43's Blog" ? styles.specialRecommended : ''}`}
                                             onClick={(e) => handleFriendLinkClick(e, link)}
                                             onMouseEnter={() => handleCardMouseEnter(link.id.toString())}
                                             onMouseLeave={() => handleCardMouseLeave(link.id.toString())}
