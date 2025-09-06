@@ -47,21 +47,24 @@ const NavbarFocus: React.FC<NavbarFocusProps> = ({
     });
   }, [activeIndex, navItems, containerRef]);
 
-  if (activeIndex === -1) return null;
+  // 移除这个条件，让组件始终渲染以支持消失动画
 
   return (
     <motion.div
       className={styles.focusFrame}
       animate={{
-        x: focusRect.x,
-        y: focusRect.y,
-        width: focusRect.width,
-        height: focusRect.height,
-        opacity: activeIndex >= 0 ? 1 : 0
+        x: activeIndex >= 0 ? focusRect.x : focusRect.x,
+        y: activeIndex >= 0 ? focusRect.y : focusRect.y,
+        width: activeIndex >= 0 ? focusRect.width : 0,
+        height: activeIndex >= 0 ? focusRect.height : 0,
+        opacity: activeIndex >= 0 ? 1 : 0,
+        scale: activeIndex >= 0 ? 1 : 0.6
       }}
       transition={{
         duration: animationDuration,
-        ease: [0.68, -0.55, 0.265, 1.55] // 弹性动画曲线
+        ease: [0.68, -0.55, 0.265, 1.55], // 弹性动画曲线
+        opacity: { duration: 0.3 }, // 透明度变化稍快
+        scale: { duration: 0.4 } // 缩放变化稍慢
       }}
       style={
         {
@@ -69,6 +72,12 @@ const NavbarFocus: React.FC<NavbarFocusProps> = ({
           '--glow-color': glowColor
         } as React.CSSProperties
       }
+      // 当没有选中项时，动画完成后隐藏元素
+      onAnimationComplete={() => {
+        if (activeIndex === -1) {
+          // 可以在这里添加额外的逻辑，比如完全隐藏元素
+        }
+      }}
     >
       <span className={`${styles.corner} ${styles.topLeft}`}></span>
       <span className={`${styles.corner} ${styles.topRight}`}></span>
