@@ -1,0 +1,44 @@
+# 首页静态内容配置
+page:
+  title: "孤芳不自赏知识空间"
+  description: "记录我的技术思考、设计理念和生活感悟"
+
+# 打字机效果文本
+typewriter:
+  text1: "这里是孤芳不自赏的Blog"
+  text2: "日益努力，而后风生水起"
+  delay1: 100
+  delay2: 200
+  cursorChar: "|"
+
+# 箭头组件文本
+arrow:
+  text1: "钥在锁先，行胜于言"
+  text2: "Prepare the solution beforethe problem; action speaks louder."
+
+# 内容区域标题
+content:
+  latestArticles: "最新文章"
+  recentPhotos: "近期照片"
+  blogStats: "博客统计"
+
+# 统计项目
+stats:
+  articles: "文章数"
+  tags: "标签数"
+  views: "文章阅读量"
+
+# 日期格式
+dateFormat:
+  locale: "zh-CN"
+  options:
+    year: "numeric"
+    month: "2-digit"
+    day: "2-digit"
+
+# 动画配置
+animation:
+  articleDelay: 120
+  photoDelay: 120
+  observerThreshold: 0.2
+  rootMargin: "0px 0px 200px 0px"
