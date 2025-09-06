@@ -97,6 +97,13 @@ const GameCard: React.FC = () => {
       description: "战术射击游戏",
       color: "#FF4655",
       officialUrl: "https://df.qq.com/"
+    },{
+      id: 10,
+      name: "LoveLive学院偶像祭(已停服)",
+      image: "https://images-1359353257.cos.ap-beijing.myqcloud.com/images/fee69c00-8f97-4c30-8dc8-825a503dd721.png",
+      description: "音乐节奏游戏",
+      color: "#4FC3F7",
+      officialUrl: "https://llwiki.org/zh/LoveLive!%E5%AD%B8%E5%9C%92%E5%81%B6%E5%83%8F%E7%A5%AD"
     }
   ];
 
