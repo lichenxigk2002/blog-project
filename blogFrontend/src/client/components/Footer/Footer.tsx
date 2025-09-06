@@ -8,6 +8,7 @@ import { FaGithub, FaCloud, FaTachometerAlt, FaRss, FaWeixin } from 'react-icons
 import { FiMail, FiMapPin } from 'react-icons/fi';
 import { SiBilibili, SiTiktok } from 'react-icons/si';
 import Link from "next/link";
+import Image from 'next/image';
 import { navRoutesItem } from "@/routes/nav-routes";
 import SubscribeModal from '@/components/SubscribeModal/SubscribeModal';
 import RssSubscribe from '@/components/RssSubscribe/RssSubscribe';
@@ -241,6 +242,17 @@ const Footer: React.FC = () => {
         </div>
         <div className={styles.footerBottomBox}>
           <a href="https://beian.miit.gov.cn" className={styles.beianBadge} target="_blank" rel="noopener noreferrer">
+            <Image
+              src="/images/fd4693ad8333d60b.webp"
+              alt="ICP备案图标"
+              width={16}
+              height={16}
+              style={{
+                verticalAlign: 'middle',
+                marginRight: '4px',
+                display: 'inline-block'
+              }}
+            />
             晋ICP备2025060785号
           </a>
           <a href="https://bloginc.kamyang.com/tech-expert/18852.html">
