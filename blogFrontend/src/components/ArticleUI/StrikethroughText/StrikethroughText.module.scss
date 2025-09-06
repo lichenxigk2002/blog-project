@@ -1,0 +1,40 @@
+.strikethroughText {
+  position: relative;
+  transition: all 0.3s ease;
+  filter: blur(3px);
+  opacity: 0.3;
+  text-decoration: none;
+  cursor: pointer;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: transparent;
+    transform: translateY(-50%);
+    transition: all 0.3s ease;
+  }
+
+  &[data-hovered="true"] {
+    filter: blur(0);
+    opacity: 1;
+    text-decoration: line-through;
+
+    &::before {
+      background-color: var(--text, #333);
+    }
+  }
+
+  &:hover {
+    filter: blur(0);
+    opacity: 1;
+    text-decoration: line-through;
+
+    &::before {
+      background-color: var(--text, #333);
+    }
+  }
+}
