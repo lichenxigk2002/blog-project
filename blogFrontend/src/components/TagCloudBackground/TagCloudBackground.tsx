@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { motion, useAnimation } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import {
     Book, Bookmark, FileText, Hash, Link, Paperclip, Type, Sparkles,
     Code, Terminal, Database, Server, Cpu, Layers, GitBranch,
@@ -87,89 +87,38 @@ const getRandomTag = (tags: TagItem[]): TagItem => {
 };
 
 const TagItem: React.FC<TagItemProps> = ({ icon: Icon, isLeft, delay, name, index }) => {
-    const controls = useAnimation();
-    const [isHovered, setIsHovered] = useState(false);
-
-    const handleHover = useCallback(() => {
-        setIsHovered(true);
-        controls.start({
-            scale: 1.2,
-            rotateX: Math.random() * 30 - 15,
-            rotateY: Math.random() * 30 - 15,
-            transition: {
-                duration: 0.3,
-                type: "spring",
-                stiffness: 300,
-                damping: 20
-            }
-        });
-    }, [controls]);
-
-    const handleHoverEnd = useCallback(() => {
-        setIsHovered(false);
-        controls.start({
-            scale: 1,
-            rotateX: 0,
-            rotateY: 0,
-            transition: {
-                duration: 0.3,
-                type: "spring",
-                stiffness: 300,
-                damping: 20
-            }
-        });
-    }, [controls]);
-
     return (
         <motion.div
-            initial={{ opacity: 0, x: isLeft ? 100 : -100 }}
-            variants={{
-                floating: {
-                    opacity: [0, 0.8, 0],
-                    x: isLeft ? [-100, 0, 100] : [100, 0, -100],
-                    y: [0, -(Math.random() * 2 + 1), 0, (Math.random() + 2), 0],
-                    rotateX: [0, 5, 0, -5, 0],
-                    rotateY: [0, -5, 0, 5, 0],
-                }
+            initial={{ opacity: 0, x: isLeft ? 50 : -50 }}
+            animate={{
+                opacity: [0, 0.6, 0],
+                x: isLeft ? [-50, 0, 50] : [50, 0, -50],
             }}
-            animate="floating"
             transition={{
-                duration: 5 + Math.random() * 2,
-                delay: delay + index * 0.1,
+                duration: 8 + Math.random() * 4,
+                delay: delay + index * 0.2,
                 repeat: Infinity,
                 repeatType: 'loop',
                 ease: 'linear'
             }}
-            onHoverStart={handleHover}
-            onHoverEnd={handleHoverEnd}
             className={styles.tagItem}
         >
-            <div className={`${styles.badge} ${isHovered ? styles.badgeHovered : ''}`}>
+            <div className={styles.badge}>
                 <Icon size={14} style={{ color: 'var(--tag-color)' }} />
                 <span>{name}</span>
-                {isHovered && (
-                    <motion.div
-                        initial={{ scale: 0, rotateX: 90 }}
-                        animate={{ scale: 1, rotateX: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className={styles.sparkle}
-                    >
-                        <Sparkles size={12} />
-                    </motion.div>
-                )}
             </div>
         </motion.div>
     );
 };
 
 const TagRow: React.FC<TagRowProps> = ({ isLeft, tags, rowIndex }) => {
-    const rowTags = Array.from({ length: 8 }, (_, num) => {
+    const rowTags = Array.from({ length: 6 }, (_, num) => {
         const randomTag = getRandomTag(tags);
         return {
             icon: getRandomIcon(),
             name: randomTag.name,
             color: randomTag.color,
-            delay: num * 0.5 + rowIndex * 0.2,
+            delay: num * 0.8 + rowIndex * 0.3,
             index: num
         };
     });
@@ -177,9 +126,9 @@ const TagRow: React.FC<TagRowProps> = ({ isLeft, tags, rowIndex }) => {
     return (
         <motion.div
             className={`${styles.row} ${isLeft ? styles.rowLeft : styles.rowRight}`}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: rowIndex * 0.1 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: rowIndex * 0.2 }}
         >
             {rowTags.map((tag, index) => (
                 <TagItem
@@ -197,7 +146,7 @@ const TagCloudBackground: React.FC<TagCloudBackgroundProps> = ({ tags }) => {
 
     useEffect(() => {
         const updateRows = () => {
-            const numberOfRows = Math.ceil(window.innerHeight / 50);
+            const numberOfRows = Math.ceil(window.innerHeight / 80);
             setRows(Array.from({ length: numberOfRows }, (_, i) => ({
                 isLeft: i % 2 === 0,
                 index: i

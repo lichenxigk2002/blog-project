@@ -7,7 +7,7 @@ import { useLoading } from '@/hooks/useLoading';
 import { TagsAPI } from '@/api/TagsAPI';
 import { Tag } from "@/types/Tags";
 import PageHeader from '../../components/PageHeader/PageHeader';
-import TagCloudBackground from "@/components/TagCloudBackground/TagCloudBackground";
+import TagCloudBackground from "../../components/TagCloudBackground/TagCloudBackground";
 import { motion } from 'framer-motion';
 import { useGlobalTip } from '@/hooks/useGlobalTip';
 import { httpError } from '@/http/core/error';
@@ -21,19 +21,12 @@ const tagVariants = {
     initial: {
         opacity: 0,
         y: 20,
-        scale: 0.8,
-        rotate: -5
+        scale: 0.8
     },
     animate: {
         opacity: 1,
         y: 0,
-        scale: 1,
-        rotate: 0
-    },
-    hover: {
-        scale: 1.05,
-        rotate: 2,
-        transition: { duration: 0.2 }
+        scale: 1
     }
 };
 
@@ -79,6 +72,18 @@ const Tags: React.FC<TagsProps> = ({ initialTags }) => {
 
     return (
         <div className={styles.container}>
+            {/* 固定定位的灵感来源链接 */}
+            <div className={styles.inspirationCredit}>
+                该页面灵感来源于{' '}
+                <a
+                    href="https://blog.grtsinry43.com/tags"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Grtsinry43
+                </a>
+            </div>
+
             <Head>
                 <title>标签云 | 探索知识的无限可能</title>
                 <meta name="description" content="通过标签探索文章，发现更多精彩内容，让知识触手可及" />
@@ -98,7 +103,6 @@ const Tags: React.FC<TagsProps> = ({ initialTags }) => {
                         key={tag.id}
                         initial={tagVariants.initial}
                         animate={tagVariants.animate}
-                        whileHover={tagVariants.hover}
                         transition={{
                             delay: index * ANIMATION_DELAY,
                             duration: 0.5,
