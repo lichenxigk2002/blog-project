@@ -347,8 +347,8 @@ $shadow-hover: 0 8px 16px rgba(0, 0, 0, 0.12);
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(20px);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  z-index: 10000;
-  animation: slideUp 0.3s ease;
+  z-index: 2001;
+  /* 移除动画，直接显示 */
 }
 
 .header {
@@ -461,7 +461,6 @@ $shadow-hover: 0 8px 16px rgba(0, 0, 0, 0.12);
   font-weight: 500;
   cursor: pointer;
   transition: box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
     color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
     background 0.4s cubic-bezier(0.4, 0, 0.2, 1),
     border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -472,7 +471,7 @@ $shadow-hover: 0 8px 16px rgba(0, 0, 0, 0.12);
   background: var(--primary-color);
   color: var(--text);
   border-color: #1890ff;
-  transform: translateY(-8px) scale(1.06) rotateZ(-1deg);
+  /* 移除 transform 动画 */
 }
 
 .friendLinksFormWrapper {
@@ -487,6 +486,7 @@ $shadow-hover: 0 8px 16px rgba(0, 0, 0, 0.12);
   z-index: 2000;
   pointer-events: auto;
   background: none;
+  animation: fadeIn 0.3s ease;
 }
 
 //控制其他内容的显示和隐藏
@@ -969,5 +969,27 @@ $shadow-hover: 0 8px 16px rgba(0, 0, 0, 0.12);
     opacity: 0;
     max-height: 0;
     transform: translateY(-10px);
+  }
+}
+
+// 添加渐入动画
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+// 添加渐入缩放动画
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
   }
 }
