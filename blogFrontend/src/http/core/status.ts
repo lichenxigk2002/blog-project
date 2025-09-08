@@ -1,34 +1,34 @@
 export const HTTP_STATUS = {
-    // 信息性状态码
-    CONTINUE: 100,
-    SWITCHING_PROTOCOLS: 101,
-    PROCESSING: 102,
+    // 信息性状态码 (1xx) - 表示请求已被接收，继续处理
+    CONTINUE: 100, // 客户端应继续其请求，服务器已收到请求头，等待请求体
+    SWITCHING_PROTOCOLS: 101, // 服务器根据客户端的请求切换协议，如从HTTP切换到WebSocket
+    PROCESSING: 102, // 服务器已收到并正在处理请求，但无响应可用，用于避免客户端超时
 
-    // 成功状态码
-    OK: 200, // 请求成功
-    CREATED: 201, // 创建成功
-    ACCEPTED: 202, // 已接受
-    NO_CONTENT: 204, // 无内容
-    PARTIAL_CONTENT: 206, // 部分内容
+    // 成功状态码 (2xx) - 表示请求已成功被服务器接收、理解并处理
+    OK: 200, // 请求成功，服务器返回请求的数据
+    CREATED: 201, // 请求成功并且服务器创建了新的资源，常用于POST请求
+    ACCEPTED: 202, // 服务器已接受请求，但尚未处理完成，通常用于异步处理
+    NO_CONTENT: 204, // 服务器成功处理了请求，但没有返回任何内容，常用于DELETE请求
+    PARTIAL_CONTENT: 206, // 服务器成功处理了部分GET请求，用于断点续传或分片下载
 
-    // 重定向状态码
-    MOVED_PERMANENTLY: 301,
-    FOUND: 302,
-    SEE_OTHER: 303,
-    NOT_MODIFIED: 304,
-    TEMPORARY_REDIRECT: 307,
-    PERMANENT_REDIRECT: 308,
+    // 重定向状态码 (3xx) - 表示需要进一步操作以完成请求
+    MOVED_PERMANENTLY: 301, // 请求的资源已永久移动到新位置，搜索引擎会更新索引
+    FOUND: 302, // 请求的资源临时从不同的URI响应请求，但搜索引擎不会更新索引
+    SEE_OTHER: 303, // 对应当前请求的响应可以在另一个URI上被找到，且应该使用GET方法获取
+    NOT_MODIFIED: 304, // 资源未修改，客户端可以使用缓存的版本
+    TEMPORARY_REDIRECT: 307, // 请求的资源临时从不同的URI响应请求，保持原始请求方法
+    PERMANENT_REDIRECT: 308, // 资源已永久移动到新位置，保持原始请求方法
 
-    // 客户端错误
-    BAD_REQUEST: 400,
-    UNAUTHORIZED: 401,
-    FORBIDDEN: 403,
-    NOT_FOUND: 404,
-    METHOD_NOT_ALLOWED: 405,
+    // 客户端错误状态码 (4xx) - 表示客户端请求有错误
+    BAD_REQUEST: 400, // 请求语法错误或参数错误，服务器无法理解
+    UNAUTHORIZED: 401, // 请求需要用户认证，通常需要登录或提供有效的认证信息
+    FORBIDDEN: 403, // 服务器理解请求但拒绝执行，通常因为权限不足
+    NOT_FOUND: 404, // 服务器无法找到请求的资源，资源不存在或URL错误
+    METHOD_NOT_ALLOWED: 405, // 请求方法不被允许，如对只支持GET的接口使用POST
 
-    // 服务端错误
-    INTERNAL_SERVER_ERROR: 500,
-    BAD_GATEWAY: 502,
-    SERVICE_UNAVAILABLE: 503,
-    GATEWAY_TIMEOUT: 504
+    // 服务端错误状态码 (5xx) - 表示服务器在处理请求时发生错误
+    INTERNAL_SERVER_ERROR: 500, // 服务器内部错误，通常是代码异常或配置问题
+    BAD_GATEWAY: 502, // 作为网关或代理的服务器从上游服务器收到无效响应
+    SERVICE_UNAVAILABLE: 503, // 服务器暂时过载或维护中，无法处理请求
+    GATEWAY_TIMEOUT: 504 // 作为网关或代理的服务器没有及时从上游服务器收到请求
 } as const;
