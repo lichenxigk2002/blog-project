@@ -15,21 +15,21 @@
 - 前端：Next.js 15 + React 18 + TypeScript + Redux Toolkit + SCSS + Framer Motion
 - 后端：Spring Boot 3 + MyBatis Plus + MySQL
 - 部署：宝塔Linux + Nginx
-- 其他：腾讯云COS、腾讯云SES、DeepSeek API 接口、腾讯云CDN内容分发与全球加速
+- 其他：腾讯云COS、腾讯云SES、DeepSeek API 接口、腾讯云CDN内容分发与全球加速、Crossbell区块链、IPFS分布式存储
 
 ## 目录结构
 
 - /api：接口集中封装，类型安全，便于维护，接口变动一处修改即可全站生效
 
-- /components：多个可复用组件，支持动画、响应式、主题切换，包括AI聊天、评论、目录、弹窗、分页、表情、打字机、代码高亮、友链、头像预览等
+- /components：多个可复用组件，支持动画、响应式、主题切换，包括AI聊天、评论、目录、弹窗、分页、表情、打字机、代码高亮、友链、头像预览、区块链版权、实时在线统计、3D星空背景、代码雨动画、对角线图片画廊、水印保护等
 
 - /pages：Next.js 路由自动映射，包含主站、后台、404、首页、文章、归档、友链、相册、灵感、统计、AI 聊天、搜索、标签、留言板等页面
 
 - /redux：全局状态管理，覆盖权限、主题、系统设置、认证、管理员认证等，支持异步操作、持久化
 
-- /hooks：自定义 Hook，业务逻辑解耦，包括useAIChat、useAuth、useLoading、useDebounce、useThrottle、useTheme、useError等
+- /hooks：自定义 Hook，业务逻辑解耦，包括useAIChat、useAuth、useLoading、useDebounce、useThrottle、useTheme、useError、useVirtualScroll等
 
-- /utils：工具函数库，http 封装、加密、格式化、AI 工具、文章工具、类型安全、校验等功能
+- /utils：工具函数库，http 封装、加密、格式化、AI 工具、文章工具、类型安全、校验、用户信息收集、平台图标识别等功能
 
 - /routes：路由集中配置，导航菜单自动生成，支持嵌套路由、权限控制
 
@@ -49,9 +49,9 @@
 
 - 动画和交互：使用Framer Motion、Typewriter等库，注重用户体验
 
-- 功能：包含文章、标签、友链、相册、公告、AI 聊天、评论、后台管理、权限、邮箱通知、云存储、统计分析等
+- 功能：包含文章、标签、友链、相册、公告、AI 聊天、评论、后台管理、权限、邮箱通知、云存储、统计分析、区块链版权保护、实时在线统计、高级视觉效果等
 
-- 细节体验：智能文章目录、评论区 Markdown/表情/楼中楼、AI 聊天流式响应、操作提示弹窗、主题切换、后台权限管理、性能监控等
+- 细节体验：智能文章目录、评论区 Markdown/表情/楼中楼、AI 聊天流式响应、操作提示弹窗、主题切换、后台权限管理、性能监控、防篡改水印、设备信息收集等
 
 ---
 
@@ -110,21 +110,43 @@
 
 - 友链页面
 
-友链页面除了展示链接外，还提供了实时预览功能：点击任意友链，右侧会弹出对方网站的实时窗口（iframe 预览），不用跳转就能预览对方站点。如果对方网站不支持嵌入，会有友好的提示。预览区自适应缩放，窗口高度和布局会自动同步。
+友链页面除了展示链接外，还提供了实时预览功能：点击任意友链，右侧会弹出对方网站的实时窗口（iframe 预览），不用跳转就能预览对方站点。如果对方网站不支持嵌入，会有友好的提示。预览区自适应缩放，窗口高度和布局会自动同步。支持自动识别平台并显示对应的品牌图标。
 
-<img src="https://images-1359353257.cos.ap-beijing.myqcloud.com/images/fb9a1c27-7118-453e-9cf7-e4520e75ba7b.png" alt="图片" width="1000" />
+<img src="https://images-1359353257.cos.ap-beijing.myqcloud.com/images/fb9a1b27-7118-453e-9cf7-e4520e75ba7b.png" alt="图片" width="1000" />
 
 - 暗黑/明亮模式切换
 
 主题切换支持在明亮模式和暗黑模式之间切换，整个站点的配色、背景、字体会实时变化。所有页面、组件、动画都适配了主题变化，细节统一。
 
-<img src="https://images-1359353257.cos.ap-beijing.myqcloud.com/images/ac3a310c-11a6-40cc-9337-7042a6f7dc1f.png" alt="图片" width="1000" />
+<img src="https://images-1359353257.cos.ap-beijing.myqcloud.com/images/ac3a310c-11a6-40cc-9337-4a6f7dc1f.png" alt="图片" width="1000" />
+
+- 区块链版权保护
+
+支持将文章发布到Crossbell区块链，实现版权保护和时间戳证明。文章内容可存储到IPFS分布式网络，确保内容的永久性和不可篡改性。后台提供完整的版权信息管理界面，包括区块链交易状态追踪、IPFS哈希管理等。
+
+- 实时在线统计
+
+通过WebSocket连接实时显示当前在线用户数量，动态更新用户进入/离开状态，提供实时的社区活跃度展示。
+
+- 高级视觉效果
+
+- **3D星空背景**：基于WebGL的Galaxy组件，提供沉浸式的星空体验
+- **代码雨动画**：黑客帝国风格的CodeRain组件，增加科技感
+- **对角线图片画廊**：DiagonalImageGallery组件，独特的对角线切割展示效果
+- **贡献日历**：GitHub风格的ContributionCalendar，展示文章创作活跃度
+
+- 智能工具组件
+
+- **字数统计**：WordCount组件，支持中英文混合文本的智能统计
+- **水印保护**：Watermark组件，防篡改的页面水印系统
+- **虚拟滚动**：useVirtualScroll Hook，优化长列表性能
+- **设备信息收集**：自动收集用户设备、浏览器、操作系统信息
 
 - 后台管理
 
 后台管理系统用于管理博客的所有内容和功能。采用模块化、组件化的设计，每个功能区独立成模块，便于维护和扩展。
 
-后台分为文章管理、评论管理、标签管理、用户管理、友链管理、留言板管理、相册管理、灵感管理、面试题收集管理、系统设置等多个板块。每个板块都有专属的表单、列表、筛选、批量操作、权限校验等功能，支持增删改查、批量导入导出、内容审核、置顶、回复、关联等操作。
+后台分为文章管理、评论管理、标签管理、用户管理、友链管理、留言板管理、相册管理、灵感管理、面试题收集管理、版权管理、系统设置等多个板块。每个板块都有专属的表单、列表、筛选、批量操作、权限校验等功能，支持增删改查、批量导入导出、内容审核、置顶、回复、关联等操作。
 
 后台采用响应式布局，适配不同屏幕，包含权限管理和路由守卫。每个管理模块都拆分成独立的 React 组件，样式隔离，逻辑清晰。
 
@@ -139,6 +161,10 @@
 **留言板管理**
 
 <img src="https://images-1359353257.cos.ap-beijing.myqcloud.com/images/026cad66-9562-483b-82d6-eebf24eacbc2.png" alt="图片" width="1000" />
+
+**版权管理**
+
+新增的版权管理模块，支持文章版权信息管理、Crossbell区块链交易状态追踪、IPFS哈希管理等功能。
 
 **全局系统设置**
 
@@ -198,6 +224,13 @@ COS_URL=https://your-cos-url
 # Google OAuth（如用到）
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+# Crossbell区块链（如用到）
+CROSSBELL_PRIVATE_KEY=your_crossbell_private_key
+CROSSBELL_CONTRACT_ADDRESS=your_crossbell_contract_address
+
+# IPFS配置（如用到）
+IPFS_GATEWAY_URL=https://ipfs.io/ipfs/
 ```
 
 #### 3. 启动后端
@@ -221,6 +254,7 @@ NEXT_PUBLIC_BASE_URL=http://localhost:8000/api
 NEXT_PUBLIC_PASSWORD_SALT=your-salt-here
 NEXT_PUBLIC_API_ENDPOINT=https://api.deepseek.com/v1/chat/completions
 NEXT_PUBLIC_API_KEY=your-deepseek-api-key
+NEXT_PUBLIC_WS_URL=ws://localhost:8000/ws
 ```
 
 #### 2. 启动前端
@@ -244,6 +278,7 @@ npm run dev
 - **代码分割**：路由级和组件级的代码分割，减少主包体积
 - **Tree Shaking**：移除未使用的代码，减少打包体积
 - **缓存策略**：静态资源强缓存，接口智能缓存
+- **WebSocket优化**：实时通信，减少轮询请求
 - **Lighthouse 评分 99+**：性能、可访问性、最佳实践等方面表现良好
 
 > **首页 LCP 0.6s，FCP 0.4s**
