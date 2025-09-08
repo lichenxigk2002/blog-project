@@ -294,7 +294,7 @@ const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => 
                                         ))}
                                 </div>
                             ) : (
-                                <p className={styles.emptyMessage}>暂无友链，快来申请吧！</p>
+                                <p className={styles.emptyMessage}>朋友们正在赶过来</p>
                             )}
                         </div>
                     </div> {/* 主要内容区域的结束标签 - 只包裹友链列表 */}
@@ -336,75 +336,76 @@ const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => 
                         </section>
                     </div>
 
-                    {/* 申请友链模态框 */}
-                    {modalOpen && (
-                        <div className={styles.friendLinksFormWrapper}>
-                            <div className={styles.loginCard}>
-                                <button className={styles.closeButton} onClick={() => setModalOpen(false)} title="关闭">×</button>
-                                <form className={styles.form} onSubmit={handleSubmit} autoComplete="off">
-                                    <h2 className={styles.header}>申请友链</h2>
-                                    <div className={styles.inputGroup}>
-                                        <label className={styles.label} htmlFor="name">网站名称</label>
-                                        <input
-                                            type="text"
-                                            id="name"
-                                            name="name"
-                                            value={formData.name}
-                                            onChange={handleInputChange}
-                                            placeholder="网站名称"
-                                            className={styles.input}
-                                            required
-                                        />
-                                    </div>
-                                    <div className={styles.inputGroup}>
-                                        <label className={styles.label} htmlFor="url">网站地址</label>
-                                        <input
-                                            type="url"
-                                            id="url"
-                                            name="url"
-                                            value={formData.url}
-                                            onChange={handleInputChange}
-                                            placeholder="网站地址"
-                                            className={styles.input}
-                                            required
-                                        />
-                                    </div>
-                                    <div className={styles.inputGroup}>
-                                        <label className={styles.label} htmlFor="avatarUrl">头像图片地址</label>
-                                        <input
-                                            type="url"
-                                            id="avatarUrl"
-                                            name="avatarUrl"
-                                            value={formData.avatarUrl}
-                                            onChange={handleInputChange}
-                                            placeholder="头像图片地址"
-                                            className={styles.input}
-                                            required
-                                        />
-                                    </div>
-                                    <div className={styles.inputGroup}>
-                                        <label className={styles.label} htmlFor="description">网站描述</label>
-                                        <textarea
-                                            id="description"
-                                            name="description"
-                                            value={formData.description}
-                                            onChange={handleInputChange}
-                                            placeholder="网站描述"
-                                            className={styles.input}
-                                            required
-                                        />
-                                    </div>
-                                    <button type="submit" className={styles.submitButton}>提交申请</button>
-                                </form>
-                            </div>
-                        </div>
-                    )}
                     <OperationTipModal
                         open={tipOpen}
                         onClose={() => setTipOpen(false)}
                         message={tipMessage}
                         type={tipType}
                     />
+                </div>
+            )}
+
+            {/* 申请友链模态框 - 移出条件渲染，独立于 isDetailView 状态 */}
+            {modalOpen && (
+                <div className={styles.friendLinksFormWrapper}>
+                    <div className={styles.loginCard}>
+                        <button className={styles.closeButton} onClick={() => setModalOpen(false)} title="关闭">×</button>
+                        <form className={styles.form} onSubmit={handleSubmit} autoComplete="off">
+                            <h2 className={styles.header}>申请友链</h2>
+                            <div className={styles.inputGroup}>
+                                <label className={styles.label} htmlFor="name">网站名称</label>
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleInputChange}
+                                    placeholder="网站名称"
+                                    className={styles.input}
+                                    required
+                                />
+                            </div>
+                            <div className={styles.inputGroup}>
+                                <label className={styles.label} htmlFor="url">网站地址</label>
+                                <input
+                                    type="url"
+                                    id="url"
+                                    name="url"
+                                    value={formData.url}
+                                    onChange={handleInputChange}
+                                    placeholder="网站地址"
+                                    className={styles.input}
+                                    required
+                                />
+                            </div>
+                            <div className={styles.inputGroup}>
+                                <label className={styles.label} htmlFor="avatarUrl">头像图片地址</label>
+                                <input
+                                    type="url"
+                                    id="avatarUrl"
+                                    name="avatarUrl"
+                                    value={formData.avatarUrl}
+                                    onChange={handleInputChange}
+                                    placeholder="头像图片地址"
+                                    className={styles.input}
+                                    required
+                                />
+                            </div>
+                            <div className={styles.inputGroup}>
+                                <label className={styles.label} htmlFor="description">网站描述</label>
+                                <textarea
+                                    id="description"
+                                    name="description"
+                                    value={formData.description}
+                                    onChange={handleInputChange}
+                                    placeholder="网站描述"
+                                    className={styles.input}
+                                    required
+                                />
+                            </div>
+                            <button type="submit" className={styles.submitButton}>提交申请</button>
+                        </form>
+                    </div>
                 </div>
             )}
 
@@ -486,7 +487,7 @@ const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => 
                                     {iframeLoaded === 'fail' && (
                                         <div className={styles.iframeError}>
                                             <img src="/images/cannotPreview.png" alt="无法预览" />
-                                            该网站不允许嵌入预览，请点击右上角“去浏览”按钮访问。
+                                            该网站不允许嵌入预览，请点击右上角"去浏览"按钮访问。
                                         </div>
                                     )}
                                     */}
