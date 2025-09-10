@@ -28,6 +28,10 @@ $clock-em-size-mobile: 40px;
 
 .clock {
   text-align: center;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
 
   :global(.M-FlipCard) {
     margin: 0 10px; // 增加单个卡片间距从3px到5px
@@ -49,11 +53,13 @@ $clock-em-size-mobile: 40px;
   justify-content: center;
   gap: $clock-gap;
   font-family: $clock-font-family;
-  position: absolute;
-  right: 1rem;
-  top: 1rem;
+  position: relative; // 改为相对定位
   width: 100%;
-  height: 100%;
+  max-width: 100%;
+  height: auto;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  padding: 0 1rem; // 添加内边距替代绝对定位
 
   .flipClockUnit {
     display: flex;
@@ -62,6 +68,7 @@ $clock-em-size-mobile: 40px;
     gap: $clock-unit-gap;
     flex: 1;
     min-width: 0;
+    max-width: 100%;
 
     .flipClockLabel {
       font-size: $clock-label-size;
@@ -90,8 +97,7 @@ $clock-em-size-mobile: 40px;
 @media screen and (min-width: 1920px) {
   .flipClock {
     gap: $clock-gap;
-    right: 1rem;
-    top: 1rem;
+    padding: 0 1rem;
 
     .flipClockUnit {
       gap: $clock-unit-gap;
@@ -117,8 +123,7 @@ $clock-em-size-mobile: 40px;
 @media screen and (min-width: 1367px) and (max-width: 1919px) {
   .flipClock {
     gap: 0.25rem;
-    right: 0.5rem;
-    top: 0.5rem;
+    padding: 0 0.5rem;
 
     .flipClockUnit {
       gap: 0.125rem;
@@ -144,8 +149,7 @@ $clock-em-size-mobile: 40px;
 @media screen and (min-width: 1050px) and (max-width: 1366px) {
   .flipClock {
     gap: 0.125rem;
-    right: 0.5rem;
-    top: 0.5rem;
+    padding: 0 0.5rem;
 
     .flipClockUnit {
       gap: 0.03125rem;
@@ -171,8 +175,7 @@ $clock-em-size-mobile: 40px;
 @media screen and (max-width: 1049px) {
   .flipClock {
     gap: 0.125rem;
-    right: 0.5rem;
-    top: 0.5rem;
+    padding: 0 0.5rem;
 
     .flipClockUnit {
       gap: 0.03125rem;
@@ -198,11 +201,16 @@ $clock-em-size-mobile: 40px;
 @media screen and (max-width: 767px) {
   .flipClock {
     gap: 0.125rem;
-    right: 0.25rem;
-    top: 0.25rem;
+    padding: 0 0.25rem;
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
+    overflow-x: hidden;
 
     .flipClockUnit {
       gap: $clock-unit-gap-mobile;
+      flex: 1;
+      min-width: 0;
     }
 
     .flipClockLabel {

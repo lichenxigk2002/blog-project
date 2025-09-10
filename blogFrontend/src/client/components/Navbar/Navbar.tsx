@@ -1,29 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import NavbarCenter from "@/client/components/Navbar/NavbarCenter/NavbarCenter";
 import NavbarLeft from "@/client/components/Navbar/NavbarLeft/NavbarLeft";
 import NavbarRight from "@/client/components/Navbar/NavbarRight/NavbarRight";
 import styles from './Navbar.module.scss';
 import { FiMenu, FiX } from 'react-icons/fi';
+import { useMobile } from '@/hooks/useMobile';
 
 const Navbar: React.FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [isMobile, setIsMobile] = useState(false);
-
-    // 监听窗口大小变化
-    useEffect(() => {
-        const checkIsMobile = () => {
-            setIsMobile(window.innerWidth < 768);
-        };
-
-        // 初始检查
-        checkIsMobile();
-
-        // 添加窗口大小变化监听
-        window.addEventListener('resize', checkIsMobile);
-
-        // 清理监听器
-        return () => window.removeEventListener('resize', checkIsMobile);
-    }, []);
+    const { isMobile } = useMobile();
 
     // 切换菜单开关
     const toggleMenu = () => {
@@ -33,8 +18,8 @@ const Navbar: React.FC = () => {
     return (
         <div className={styles.navbar}>
             <div className={styles.navbarContainer}>
-                {/* 左侧导航 */}
-                <NavbarLeft />
+                {/* 左侧导航 - 移动端隐藏 */}
+                {!isMobile && <NavbarLeft />}
 
                 {/* 中间导航，保持居中 */}
                 <div className={styles.centerContainer}>

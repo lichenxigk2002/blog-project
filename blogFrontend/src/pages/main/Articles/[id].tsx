@@ -28,6 +28,7 @@ import { Table, Thead, Tbody, Tr, Th, Td } from '@/components/ArticleUI/Table/Ta
 import { Article } from '@/types/Article'; // 文章类型定义
 import styles from './[id].module.scss';
 import StrikethroughText from "@/components/ArticleUI/StrikethroughText/StrikethroughText"; // 组件样式
+import { useMobile } from '@/hooks/useMobile';
 
 
 // 定义标题对象的类型
@@ -54,7 +55,7 @@ const ArticleDetail: React.FC = () => {
     const [contentTop, setContentTop] = useState(0);       // 文章内容顶部位置
     const [likeCount, setLikeCount] = useState<number>();// 点赞数
     const [isLiked, setIsLiked] = useState(false); // 添加点赞状态
-    const [isMobile, setIsMobile] = useState(false); //  添加移动设备状态
+    const { isMobile } = useMobile(); // 使用移动端检测hook
     const { isLoading } = useLoading(); //  加载状态钩子
 
 
@@ -63,7 +64,7 @@ const ArticleDetail: React.FC = () => {
     //监听窗口大小变化
     useEffect(() => {
         const checkMobile = () => { // 添加移动设备状态
-            setIsMobile(window.innerWidth <= 768); //小于768px为移动设备
+            // setIsMobile(window.innerWidth <= 768); //小于768px为移动设备
         };
         checkMobile(); // 检查当前设备
         window.addEventListener('resize', checkMobile);  //监听窗口大小变化
@@ -457,7 +458,7 @@ const ArticleDetail: React.FC = () => {
                                                 id={`para-${paragraphIndex++}`}
                                                 className="article-content-text-size"
                                                 itemProp="text"
-                                                // style={{ fontFamily: "'Noto Serif SC', 'SimSun', 'STSong', serif" }}
+                                                // style={{ fontFamily: "'Noto Serif SC", 'SimSun', 'STSong', serif" }}
                                                 {...props}
                                             />
                                         );
@@ -467,21 +468,21 @@ const ArticleDetail: React.FC = () => {
                                     ul: ({ node, ...props }) => (
                                         <ul
                                             className={styles.list}
-                                            // style={{ fontFamily: "'Noto Serif SC', 'SimSun', 'STSong', serif" }}
+                                            // style={{ fontFamily: "'Noto Serif SC", 'SimSun', 'STSong', serif" }}
                                             {...props}
                                         />
                                     ),
                                     ol: ({ node, ...props }) => (
                                         <ol
                                             className={styles.list}
-                                            // style={{ fontFamily: "'Noto Serif SC', 'SimSun', 'STSong', serif" }}
+                                            // style={{ fontFamily: "'Noto Serif SC", 'SimSun', 'STSong', serif" }}
                                             {...props}
                                         />
                                     ),
                                     li: ({ node, ...props }) => (
                                         <li
                                             className="article-content-text-size"
-                                            // style={{ fontFamily: "'Noto Serif SC', 'SimSun', 'STSong', serif" }}
+                                            // style={{ fontFamily: "'Noto Serif SC", 'SimSun', 'STSong', serif" }}
                                             {...props}
                                         />
                                     ),
@@ -490,7 +491,7 @@ const ArticleDetail: React.FC = () => {
                                     blockquote: ({ node, ...props }) => (
                                         <blockquote
                                             className="article-content-text-size"
-                                            // style={{ fontFamily: "'Noto Serif SC', 'SimSun', 'STSong', serif" }}
+                                            // style={{ fontFamily: "'Noto Serif SC", 'SimSun', 'STSong', serif" }}
                                             {...props}
                                         />
                                     ),

@@ -8,6 +8,7 @@ import PageHeader from '../../components/PageHeader/PageHeader';
 import type { FriendLinks } from "@/types/FriendLinks";
 import OperationTipModal from '@/components/OperationTipModal/OperationTipModal';
 import DOMPurify from 'dompurify';
+import { useMobile } from '@/hooks/useMobile';
 
 // 新增：定义props类型
 interface FriendLinksPageProps {
@@ -32,6 +33,7 @@ const REQUIREMENTS = [
 const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => {
     const { isLoading } = useLoading();
     const [friendLinks, setFriendLinks] = useState<FriendLinks[]>(initialFriendLinks || []);
+    const { isMobile } = useMobile(); // 使用移动端检测hook
     const [formData, setFormData] = useState({
         name: '',
         url: '',
@@ -58,6 +60,20 @@ const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => 
     // 在状态管理部分添加展开/收起状态
     const [isSiteInfoExpanded, setIsSiteInfoExpanded] = useState(false);
 
+    // 检测是否为移动端
+    useEffect(() => {
+        const checkIsMobile = () => {
+            // setIsMobile(window.innerWidth <= 768); // This line is now handled by useMobile
+        };
+
+        // checkIsMobile(); // This line is now handled by useMobile
+        // window.addEventListener('resize', checkIsMobile); // This line is now handled by useMobile
+
+        return () => {
+            // window.removeEventListener('resize', checkIsMobile); // This line is now handled by useMobile
+        };
+    }, []);
+
 
     useEffect(() => {
         function updateScale() {
@@ -71,8 +87,10 @@ const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => 
             setScale(Math.min(scaleW, scaleH, 1)); // 不放大，只缩小
         }
         updateScale();
-        window.addEventListener('resize', updateScale);
-        return () => window.removeEventListener('resize', updateScale);
+        // window.addEventListener('resize', updateScale); // This line is now handled by useMobile
+        return () => {
+            // window.removeEventListener('resize', updateScale); // This line is now handled by useMobile
+        };
     }, [isDetailView, selectedFriendLink]);
 
     // 彻底修正：每次都用最新宽度计算高度，所有相关容器高度同步
@@ -95,8 +113,10 @@ const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => 
             }
         }
         updateDetailSectionHeight();
-        window.addEventListener('resize', updateDetailSectionHeight);
-        return () => window.removeEventListener('resize', updateDetailSectionHeight);
+        // window.addEventListener('resize', updateDetailSectionHeight); // This line is now handled by useMobile
+        return () => {
+            // window.removeEventListener('resize', updateDetailSectionHeight); // This line is now handled by useMobile
+        };
     }, [isDetailView, selectedFriendLink]);
 
     // useEffect(() => {
@@ -137,9 +157,16 @@ const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => 
 
     const handleFriendLinkClick = (e: React.MouseEvent, friendLink: FriendLinks) => {
         e.preventDefault();
+
+        // 移动端直接跳转，不显示详情页
+        if (isMobile) {
+            window.open(friendLink.url, '_blank', 'noopener,noreferrer');
+            return;
+        }
+
+        // 桌面端显示详情页
         setSelectedFriendLink(friendLink);
         setIsDetailView(true);
-
     };
 
     // 新增：返回友链列表
@@ -409,94 +436,87 @@ const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => 
                 </div>
             )}
 
-            <div className={styles.ViewContainer}>
-                {isDetailView && selectedFriendLink && (
-                    <div className={`${styles.detailViewWrapper} ${isDetailView ? styles.fadeIn : styles.fadeOut}`}>
-                        <div className={styles.verticalListSection}>
-                            <div className={styles.verticalList} ref={leftListRef}>
-                                {friendLinks
-                                    .filter((link) => link.status === 'approved')
-                                    .map((link) => (
-                                        <div
-                                            key={link.id}
-                                            className={`${styles.friendLinkCard} ${styles.narrowCard} ${link.name === "Grtsinry43's Blog" ? styles.specialRecommended : ''}`}
-                                            onClick={(e) => handleFriendLinkClick(e, link)}
-                                            onMouseEnter={() => handleCardMouseEnter(link.id.toString())}
-                                            onMouseLeave={() => handleCardMouseLeave(link.id.toString())}
-                                            role="button"
-                                            tabIndex={0}
-                                            onKeyDown={(e) => {
-                                                if (e.key === 'Enter' || e.key === ' ') {
-                                                    e.preventDefault();
-                                                    handleFriendLinkClick(e as any, link);
-                                                }
-                                            }}
-                                        >
-                                            <div className={styles.avatar}>
-                                                <img src={link.avatarUrl} alt={link.name} />
+            {/* 详情视图 - 只在桌面端显示 */}
+            {!isMobile && (
+                <div className={styles.ViewContainer}>
+                    {isDetailView && selectedFriendLink && (
+                        <div className={`${styles.detailViewWrapper} ${isDetailView ? styles.fadeIn : styles.fadeOut}`}>
+                            <div className={styles.verticalListSection}>
+                                <div className={styles.verticalList} ref={leftListRef}>
+                                    {friendLinks
+                                        .filter((link) => link.status === 'approved')
+                                        .map((link) => (
+                                            <div
+                                                key={link.id}
+                                                className={`${styles.friendLinkCard} ${styles.narrowCard} ${link.name === "Grtsinry43's Blog" ? styles.specialRecommended : ''}`}
+                                                onClick={(e) => handleFriendLinkClick(e, link)}
+                                                onMouseEnter={() => handleCardMouseEnter(link.id.toString())}
+                                                onMouseLeave={() => handleCardMouseLeave(link.id.toString())}
+                                                role="button"
+                                                tabIndex={0}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter' || e.key === ' ') {
+                                                        e.preventDefault();
+                                                        handleFriendLinkClick(e as any, link);
+                                                    }
+                                                }}
+                                            >
+                                                <div className={styles.avatar}>
+                                                    <img src={link.avatarUrl} alt={link.name} />
+                                                </div>
+                                                <div className={styles.bgAvatar}>
+                                                    <img src={link.avatarUrl} alt={link.name + '背景'} />
+                                                </div>
+                                                <div className={styles.info}>
+                                                    <h3
+                                                        style={hoverColors[link.id.toString()]?.h3 ? { color: hoverColors[link.id.toString()].h3 } : {}}
+                                                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(link.name) }}
+                                                    />
+                                                    <p
+                                                        style={hoverColors[link.id.toString()]?.p ? { color: hoverColors[link.id.toString()].p } : {}}
+                                                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(link.description) }}
+                                                    />
+                                                </div>
                                             </div>
-                                            <div className={styles.bgAvatar}>
-                                                <img src={link.avatarUrl} alt={link.name + '背景'} />
-                                            </div>
-                                            <div className={styles.info}>
-                                                <h3
-                                                    style={hoverColors[link.id.toString()]?.h3 ? { color: hoverColors[link.id.toString()].h3 } : {}}
-                                                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(link.name) }}
-                                                />
-                                                <p
-                                                    style={hoverColors[link.id.toString()]?.p ? { color: hoverColors[link.id.toString()].p } : {}}
-                                                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(link.description) }}
-                                                />
-                                            </div>
-                                        </div>
-                                    ))}
+                                        ))}
+                                </div>
                             </div>
-                        </div>
-                        <div className={styles.detailSection} ref={detailSectionRef}>
-                            <div className={styles.detailHeader} ref={detailHeaderRef}>
-                                <div className={styles.detailInfo}>
-                                    <img src={selectedFriendLink.avatarUrl} alt={selectedFriendLink.name} className={styles.detailAvatar} />
-                                    <div className={styles.detailText}>
-                                        <h2>{selectedFriendLink.name}</h2>
-                                        <p>{selectedFriendLink.description}</p>
+                            <div className={styles.detailSection} ref={detailSectionRef}>
+                                <div className={styles.detailHeader} ref={detailHeaderRef}>
+                                    <div className={styles.detailInfo}>
+                                        <img src={selectedFriendLink.avatarUrl} alt={selectedFriendLink.name} className={styles.detailAvatar} />
+                                        <div className={styles.detailText}>
+                                            <h2>{selectedFriendLink.name}</h2>
+                                            <p>{selectedFriendLink.description}</p>
+                                        </div>
+                                    </div>
+                                    <div style={{ display: 'flex', gap: '1rem' }}>
+                                        <button className={styles.visitButton} onClick={handleBackToList}>
+                                            返回<FaLink />
+                                        </button>
+                                        <button className={styles.visitButton} onClick={handleVisitWebsite}>
+                                            去浏览🚀
+                                        </button>
                                     </div>
                                 </div>
-                                <div style={{ display: 'flex', gap: '1rem' }}>
-                                    <button className={styles.visitButton} onClick={handleBackToList}>
-                                        返回<FaLink />
-                                    </button>
-                                    <button className={styles.visitButton} onClick={handleVisitWebsite}>
-                                        去浏览🚀
-                                    </button>
-
-                                </div>
-                            </div>
-                            <div className={styles.iframeContainer} ref={iframeContainerRef}>
-                                <div
-                                    ref={previewRef}
-                                    className={styles.previewWrapper}
-                                >
-                                    <iframe
-                                        src={selectedFriendLink.url}
-                                        title={`${selectedFriendLink.name} - 博客预览`}
-                                        className={styles.previewIframe}
-                                        sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
-                                    // onLoad={() => setIframeLoaded(true)}
-                                    />
-                                    {/*
-                                    {iframeLoaded === 'fail' && (
-                                        <div className={styles.iframeError}>
-                                            <img src="/images/cannotPreview.png" alt="无法预览" />
-                                            该网站不允许嵌入预览，请点击右上角"去浏览"按钮访问。
-                                        </div>
-                                    )}
-                                    */}
+                                <div className={styles.iframeContainer} ref={iframeContainerRef}>
+                                    <div
+                                        ref={previewRef}
+                                        className={styles.previewWrapper}
+                                    >
+                                        <iframe
+                                            src={selectedFriendLink.url}
+                                            title={`${selectedFriendLink.name} - 博客预览`}
+                                            className={styles.previewIframe}
+                                            sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                )}
-            </div>
+                    )}
+                </div>
+            )}
         </>
     );
 };

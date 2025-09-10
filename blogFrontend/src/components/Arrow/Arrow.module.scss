@@ -15,12 +15,28 @@ $wisdom2-font: 'AgencyFB', serif;
 .wisdom1 {
     font-family: $wisdom1-font;
     color: $text-color;
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    text-align: center;
+    padding: 0 1rem;
 }
 
 .wisdom2 {
     margin-top: 0;
     font-family: $wisdom2-font;
     color: $text-color;
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    text-align: center;
+    padding: 0 1rem;
 }
 
 .Arrow {
@@ -45,4 +61,42 @@ $wisdom2-font: 'AgencyFB', serif;
 
 .showBottom {
     @include flex-center;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    padding: 0 1rem;
+}
+
+// 移动端优化
+@media (max-width: 48rem) {
+    .wisdom1 {
+        font-size: 0.9rem;
+        padding: 0 0.5rem;
+    }
+
+    .wisdom2 {
+        font-size: 0.8rem;
+        padding: 0 0.5rem;
+    }
+
+    .showBottom {
+        padding: 0 0.5rem;
+    }
+}
+
+@media (max-width: 30rem) {
+    .wisdom1 {
+        font-size: 0.8rem;
+        padding: 0 0.25rem;
+    }
+
+    .wisdom2 {
+        font-size: 0.7rem;
+        padding: 0 0.25rem;
+    }
+
+    .showBottom {
+        padding: 0 0.25rem;
+    }
 }

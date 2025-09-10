@@ -7,6 +7,7 @@
   width: 100%;
   height: auto;
   transition: box-shadow 0.3s;
+  max-width: 100%; // 确保不超过容器宽度
 }
 
 .articleImageModal {
@@ -36,4 +37,19 @@
   background: #fff;
   display: block;
   object-fit: contain;
+}
+
+// 移动端样式
+@media (max-width: 768px) {
+  .articleImageThumb {
+    max-width: 100vw; // 确保不超过视口宽度
+    width: 100%;
+    cursor: default; // 移除点击放大功能
+    margin: 1em auto; // 稍微减小边距
+  }
+
+  // 在移动端隐藏模态框功能
+  .articleImageModal {
+    display: none !important;
+  }
 }

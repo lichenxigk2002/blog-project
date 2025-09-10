@@ -56,18 +56,15 @@
   border-radius: 50%;
 }
 
-
 /* 响应式设计 */
 @media (max-width: 768px) {
+  .dropdown {
+    left: -350%; // 移动端改为左侧对齐
+    transform: none; // 移除居中变换
+  }
+
   .avatar {
     width: 28px;
     height: 28px;
   }
-}
-
-/* 暗黑主题适配 */
-[data-theme="dark"] .dropdown {
-  background: rgba(30, 30, 30, 0.95);
-  border-color: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
 }

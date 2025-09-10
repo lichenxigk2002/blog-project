@@ -6,6 +6,7 @@ import { usePathname, useParams } from 'next/navigation';
 import { ArticlesAPI } from '@/api/ArticlesAPI';
 import { Article } from '@/types/Article';
 import NavbarFocus from './NavbarFocus';
+import { useMobile } from '@/hooks/useMobile';
 
 const NavbarCenter: React.FC = () => {
     const pathname = usePathname();
@@ -13,6 +14,7 @@ const NavbarCenter: React.FC = () => {
     const [currentArticle, setCurrentArticle] = useState<Article | null>(null);
     const [showArticleInfo, setShowArticleInfo] = useState(false);
     const [openDropdowns, setOpenDropdowns] = useState<{ [key: number]: boolean }>({});
+    const { isMobile } = useMobile();
     const closeTimerRefs = useRef<{ [key: number]: NodeJS.Timeout }>({});
     const navListRef = useRef<HTMLUListElement>(null);
     const navItemRefs = useRef<HTMLElement[]>([]);
@@ -20,17 +22,16 @@ const NavbarCenter: React.FC = () => {
     // 监听滚动事件
     useEffect(() => {
         const handleScroll = () => {
-            // 只有当前是文章页时才处理滚动
             if (params?.id) {
                 setShowArticleInfo(window.scrollY > 500);
             } else {
-                setShowArticleInfo(false); // 非文章页强制关闭
+                setShowArticleInfo(false);
             }
         };
 
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [params?.id]); // 依赖 id 变化
+    }, [params?.id]);
 
     // 获取文章数据
     useEffect(() => {
@@ -63,7 +64,7 @@ const NavbarCenter: React.FC = () => {
     const handleMouseLeave = (itemId: number) => {
         closeTimerRefs.current[itemId] = setTimeout(() => {
             setOpenDropdowns(prev => ({ ...prev, [itemId]: false }));
-        }, 300); // 300ms 延迟关闭
+        }, 300);
     };
 
     // 清理定时器
@@ -82,9 +83,6 @@ const NavbarCenter: React.FC = () => {
         return (
             <div className={styles.articleInfo}>
                 <h2 className={styles.articleTitle}>当前文章：{currentArticle.title}</h2>
-                {/*<span className={styles.articleDate}>*/}
-                {/*    {new Date(currentArticle.publishedAt).toLocaleDateString()}*/}
-                {/*</span>*/}
                 <span className={styles.articleExcerpt}>{currentArticle.excerpt}</span>
             </div>
         );
@@ -95,7 +93,7 @@ const NavbarCenter: React.FC = () => {
     // 找到当前激活的导航项索引
     const activeNavIndex = mainNavItems.findIndex(item => pathname === item.path);
 
-    // 否则显示常规导航
+    // 显示常规导航
     return (
         <div style={{ position: 'relative' }}>
             <ul className={styles.navList} ref={navListRef}>
@@ -126,7 +124,7 @@ const NavbarCenter: React.FC = () => {
                             {hasVisibleChildren && isDropdownOpen && (
                                 <div className={styles.dropdown}>
                                     {item.children!
-                                        .filter(child => child.showInDropdown) // 只显示 showInDropdown: true 的子路由
+                                        .filter(child => child.showInDropdown)
                                         .map((child) => (
                                             child.isExternal ? (
                                                 <a
@@ -154,12 +152,15 @@ const NavbarCenter: React.FC = () => {
                     );
                 })}
             </ul>
-            <NavbarFocus
-                activeIndex={activeNavIndex}
-                navItems={navItemRefs.current}
-                containerRef={navListRef}
-                animationDuration={0.4}
-            />
+            {/* 移动端不显示NavbarFocus动画，桌面端保留 */}
+            {!isMobile && (
+                <NavbarFocus
+                    activeIndex={activeNavIndex}
+                    navItems={navItemRefs.current}
+                    containerRef={navListRef}
+                    animationDuration={0.6}
+                />
+            )}
         </div>
     );
 };

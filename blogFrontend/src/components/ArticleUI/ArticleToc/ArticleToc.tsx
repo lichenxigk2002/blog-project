@@ -3,6 +3,7 @@ import { IoIosArrowDown } from 'react-icons/io';
 import { FaArrowLeft, FaList } from 'react-icons/fa';
 import styles from './ArticleToc.module.scss';
 import { useRouter } from "next/router";
+import { useMobile } from '@/hooks/useMobile';
 
 /**
  * 文章标题结构接口
@@ -47,26 +48,13 @@ const ArticleToc: React.FC<ArticleTocProps> = ({ headings, contentHeight, conten
   const [readingProgress, setReadingProgress] = useState(0);
 
   // 移动端检测状态 - 用于响应式布局切换
-  const [isMobile, setIsMobile] = useState(false);
+  const { isMobile } = useMobile(); // 使用移动端检测hook
 
   // 目录容器引用 - 用于DOM操作和样式控制
   const tocRef = useRef<HTMLDivElement>(null);
 
   // Next.js路由对象 - 用于移动端返回功能
   const routerBack = useRouter();
-
-  /**
-   * 移动端检测逻辑
-   * 监听窗口大小变化，动态切换移动端/桌面端模式
-   */
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   /**
    * 核心滚动监听逻辑

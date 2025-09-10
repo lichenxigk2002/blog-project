@@ -196,7 +196,7 @@ $shadow: var(--shadow);
     margin-top: 0.5rem;
 
     .articleCreatedAt,
-    .articleViewCount{
+    .articleViewCount {
         text-decoration: none !important;
     }
 
@@ -313,6 +313,7 @@ $shadow: var(--shadow);
     transform: translateY(30px);
     transition: opacity 0.5s, transform 0.5s;
 }
+
 .fadeIn {
     opacity: 1;
     transform: translateY(0);
@@ -382,7 +383,11 @@ $shadow: var(--shadow);
 // 手机设备 (768px以下)
 @media (max-width: 48rem) {
     .container {
-        margin-top: 6rem;
+        margin-top: 3rem;
+        width: 100%;
+        max-width: 100vw;
+        box-sizing: border-box;
+        padding: 0 1rem;
     }
 
     .showTop {
@@ -390,6 +395,10 @@ $shadow: var(--shadow);
         padding: 0 1rem;
         min-height: auto;
         gap: 1.5rem;
+        width: 100%;
+        max-width: 100vw;
+        box-sizing: border-box;
+        overflow-x: hidden;
     }
 
     .box1 {
@@ -398,6 +407,10 @@ $shadow: var(--shadow);
         height: auto;
         margin-top: 0;
         order: 1;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        overflow-x: hidden;
     }
 
     .box2 {
@@ -406,6 +419,8 @@ $shadow: var(--shadow);
         max-width: 100%;
         height: auto;
         order: 3;
+        box-sizing: border-box;
+        overflow-x: hidden;
     }
 
     .typewriter1,
@@ -414,6 +429,11 @@ $shadow: var(--shadow);
         max-width: 100%;
         height: auto;
         align-content: center;
+        box-sizing: border-box;
+        overflow-x: hidden;
+        word-wrap: break-word;
+        word-break: break-word;
+        overflow-wrap: break-word;
     }
 
     .typewriter1 {
@@ -427,88 +447,106 @@ $shadow: var(--shadow);
     .flipClock {
         margin: 1.5rem auto;
         order: 2;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow-x: hidden;
     }
 
     .arrowWrapper {
         order: 4;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow-x: hidden;
     }
 
     .mainContentArea {
         flex-direction: column;
         padding: 1rem;
         gap: 1.5rem;
+        width: 100%;
+        max-width: 100vw;
+        box-sizing: border-box;
+        overflow-x: hidden;
     }
 
     .mainContentLeft,
     .mainContentRight {
         max-width: 100%;
+        box-sizing: border-box;
+        overflow-x: hidden;
     }
 
     .latestArticlesTitle {
         font-size: 1.5rem;
         margin: 1.5rem 0 1rem;
+        max-width: 100%;
+        box-sizing: border-box;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
     }
 
     .articlesGrid {
         padding: 0.5rem;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow-x: hidden;
     }
 
     .articleCard {
         padding: 0.75rem;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow-x: hidden;
+    }
+
+    .articleTitle {
+        max-width: 100%;
+        box-sizing: border-box;
+        word-wrap: break-word;
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .articleDescription {
+        max-width: 100%;
+        box-sizing: border-box;
+        word-wrap: break-word;
+        word-break: break-word;
+        overflow-wrap: break-word;
     }
 
     .photosGrid {
         grid-template-columns: 1fr;
         gap: 0.5rem;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow-x: hidden;
     }
 
     .photoCard {
         height: 200px;
-    }
-}
-
-// 小手机设备 (480px以下)
-@media (max-width: 30rem) {
-    .container {
-        margin-top: 4rem;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow-x: hidden;
     }
 
-    .showTop {
-        padding: 0 0.5rem;
-        gap: 1rem;
+    .stats {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow-x: hidden;
     }
 
-    .typewriter1 {
-        font-size: 1.5rem !important;
-        align-content: center;
-    }
-
-    .typewriter2 {
-        font-size: 2rem !important;
-        align-content: center;
-    }
-
-    .flipClock {
-        margin: 1rem auto;
-    }
-
-    .mainContentArea {
-        padding: 0.5rem;
-    }
-
-    .latestArticlesTitle {
-        font-size: 1.25rem;
-    }
-
-    .articleTitle {
-        font-size: 0.9rem;
-    }
-
-    .articleDescription {
-        font-size: 0.8rem;
-    }
-
-    .articleMeta {
-        font-size: 0.75rem;
+    .statsGrid {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow-x: hidden;
     }
 }

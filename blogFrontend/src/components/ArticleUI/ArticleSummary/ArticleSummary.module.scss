@@ -455,27 +455,82 @@
 @media (max-width: 768px) {
   .articleSummary {
     margin: 16px 0;
-    padding: 16px;
+    padding: 12px;
 
     .summaryHeader {
-      flex-direction: column;
-      text-align: center;
-      gap: 12px;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 8px;
+      text-align: left;
 
       .summaryIcon {
-        width: 40px;
-        height: 40px;
-        font-size: 18px;
+        width: 32px;
+        height: 32px;
+        flex-shrink: 0;
+      }
+
+      .summaryTitle {
+        flex: 1;
+        min-height: auto;
+        margin-right: 8px;
+
+        h3 {
+          font-size: 14px;
+          margin: 0 0 2px 0;
+        }
+
+        p {
+          display: none; // 隐藏描述文字
+        }
+      }
+
+      .headerButtons {
+        display: flex;
+        flex-direction: row; // 改为横向排列
+        gap: 4px;
+        margin-left: 0;
+        flex-shrink: 0;
+        align-items: center; // 垂直居中对齐
+      }
+
+      .modeToggleBtn {
+        padding: 4px 8px;
+        font-size: 10px;
+        white-space: nowrap;
+        min-width: 80px;
+      }
+
+      .toggleHeightBtn {
+        width: 28px;
+        height: 28px;
+        font-size: 14px;
+      }
+
+      .colorToggleBtn {
+        width: 28px;
+        height: 28px;
+        font-size: 14px;
       }
     }
 
-    .summaryActions {
-      flex-direction: column;
+    // 调整摘要内容
+    .summaryContent {
+      margin-top: 8px;
+      margin-bottom: 8px;
 
-      .actionBtn {
-        width: 100%;
-        min-width: auto;
+      .summaryTextWrapper {
+        .summaryText {
+          font-size: 11px;
+          line-height: 1.4;
+        }
       }
+    }
+
+    // 调整Powered By
+    .poweredBy {
+      font-size: 9px;
+      margin-top: 6px;
+      padding-top: 4px;
     }
   }
 }
