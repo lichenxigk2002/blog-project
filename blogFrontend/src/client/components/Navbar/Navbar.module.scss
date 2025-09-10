@@ -102,14 +102,37 @@ $navbar-font-color: var(--navbar-font-color);
 }
 
 @media (max-width: 768px) {
+    .navbar {
+        justify-content: stretch;
+    }
+
     .navbarContainer {
-        justify-content: space-between;
+        width: 100%;
+        padding: 0 1rem;
+        justify-content: center;
+        position: relative;
+        box-sizing: border-box;
+    }
+
+    .centerContainer {
+        position: static;
+        transform: none;
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        margin-right: 60px;
+        /* 为汉堡菜单留出空间 */
     }
 
     .menuToggle {
         display: flex;
         align-items: center;
         justify-content: center;
+        position: absolute;
+        right: 1rem;
+        width: 40px;
+        /* 固定汉堡菜单宽度 */
+        height: 40px;
     }
 
     /* 隐藏桌面端右侧导航 */

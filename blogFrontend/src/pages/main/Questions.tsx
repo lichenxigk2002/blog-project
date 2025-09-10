@@ -176,7 +176,6 @@ const Questions: React.FC<QuestionsPageProps> = ({ initialQuestions }) => {
 
       <div className={styles.searchSortContainer}>
         <div className={styles.searchBox}>
-          <FiSearch className={styles.searchIcon} />
           <input
             type="text"
             className={styles.searchInput}

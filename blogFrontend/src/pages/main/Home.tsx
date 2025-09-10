@@ -13,6 +13,7 @@ import type { Tag } from '@/types/Tags';
 import { ArticleListItem } from '@/types/Article';
 import { Gallery } from '@/types/Gallery';
 import dynamic from 'next/dynamic';
+import { useMobile } from '@/hooks/useMobile';
 const FlipClock = dynamic(() => import('@/components/FlipCard/FlipClock'), { ssr: false });
 
 // 新增：定义props类型
@@ -33,6 +34,9 @@ const Home: React.FC<HomeProps> = ({ latestArticles: initialArticles, tags: init
     const [visibleArticleIndexes, setVisibleArticleIndexes] = useState<number[]>([]);
     const [visiblePhotoIndexes, setVisiblePhotoIndexes] = useState<number[]>([]);
     const articlesRef = useRef<HTMLDivElement>(null);
+
+    // 使用自定义Hook检测移动端
+    const { isMobile } = useMobile();
 
     // 添加滚动处理函数
     const handleArrowClick = () => {
@@ -228,7 +232,7 @@ const Home: React.FC<HomeProps> = ({ latestArticles: initialArticles, tags: init
 
                             <div className={styles.mainContentRight}>
                                 <h2 className={styles.latestArticlesTitle}>近期照片</h2>
-                                <div className={styles.photosGrid}>
+                                <div className={`${styles.photosGrid} ${isMobile ? styles.photosGridMobile : ''}`}>
                                     {recentPhotos.map((photo, idx) => (
                                         <Link href="/main/Gallery" key={photo.id}>
                                             <div className={`${styles.photoCard} ${visiblePhotoIndexes.includes(idx) ? styles.fadeIn : styles.hidden}`}>

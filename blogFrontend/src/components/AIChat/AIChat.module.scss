@@ -609,6 +609,9 @@ $hover-color: var(--hover-color);
   .sessionList {
     width: 280px;
     max-height: 350px;
+    right: 20px !important; // 从右边20px改为10px，往左移动10px
+    min-width: 280px; // 稍微缩小宽度以适应移动端
+    max-height: 400px; // 稍微缩小高度
   }
 
   .sessionListHeader {

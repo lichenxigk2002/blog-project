@@ -1,7 +1,4 @@
-/* Typewriter.module.scss
-
-
- */
+/* Typewriter.module.scss */
 
 // 变量定义
 $text-color: var(--text-color, #333);
@@ -11,11 +8,16 @@ $cursor-color: var(--cursor-color, currentColor);
     font-size: 1.2rem;
     line-height: 1.5;
     color: $text-color;
-    /* 使用 CSS 变量 */
     display: inline-block;
     position: relative;
     transition: color 0.3s ease;
-    /* 添加颜色过渡 */
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
 
     span.cursor {
         animation: blink 1s infinite;
@@ -34,6 +36,8 @@ $cursor-color: var(--cursor-color, currentColor);
 
     @media (max-width: 480px) {
         font-size: 1rem;
+        max-width: 100%;
+        width: 100%;
     }
 }
 
@@ -42,7 +46,6 @@ $cursor-color: var(--cursor-color, currentColor);
     margin-left: 0.125rem;
     font-family: inherit;
     color: $cursor-color;
-    /* 独立光标颜色控制 */
 }
 
 @keyframes blink {

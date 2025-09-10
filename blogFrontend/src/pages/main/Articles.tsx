@@ -300,7 +300,7 @@ const Articles: React.FC<ArticlesProps> = ({ initialArticles }) => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                     >
-                        搜索
+                        <FiSearch />
                     </motion.button>
                 </div>
                 <motion.button
@@ -344,7 +344,7 @@ const Articles: React.FC<ArticlesProps> = ({ initialArticles }) => {
                         <Link
                             href={`/main/Articles/${article.id}`}
                             className={styles.articleLink}
-                            onClick={() => handleArticleClick(article.id)}
+                            onClick={() => handleArticleClick(article.id as number)}
                         >
                             <div className={styles.articleContent}>
                                 <div className={styles.articleText}>
@@ -382,7 +382,7 @@ const Articles: React.FC<ArticlesProps> = ({ initialArticles }) => {
                                                 {/* Likes */}
                                                 <motion.div
                                                     className={styles.metaItem}
-                                                    onClick={(e) => handleLike(article.id, e)}
+                                                    onClick={(e) => handleLike(article.id as number, e)}
                                                     style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center' }}
                                                     whileHover={{ scale: 1.05 }}
                                                     whileTap={{ scale: 0.95 }}

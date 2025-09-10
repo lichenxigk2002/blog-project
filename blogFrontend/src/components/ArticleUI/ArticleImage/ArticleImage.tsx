@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import styles from './ArticleImage.module.scss';
+import { useMobile } from '@/hooks/useMobile';
 
 interface ArticleImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   className?: string;
@@ -16,27 +17,32 @@ const ArticleImage: React.FC<ArticleImageProps> = ({
   ...rest
 }) => {
   const [showModal, setShowModal] = useState(false);
+  const { isMobile } = useMobile();
 
-  // esc关闭
-  const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (e.key === 'Escape') setShowModal(false);
-  }, []);
-  useEffect(() => {
-    if (showModal) {
-      window.addEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
+  // 处理图片点击事件
+  const handleImageClick = useCallback(() => {
+    if (!isMobile) { // 移动端禁用点击放大
+      setShowModal(true);
     }
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = '';
-    };
-  }, [showModal, handleKeyDown]);
+  }, [isMobile]);
+
+  // 关闭模态框
+  const handleCloseModal = useCallback(() => {
+    setShowModal(false);
+  }, []);
+
+  // 阻止模态框背景点击关闭
+  const handleModalClick = useCallback((e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      handleCloseModal();
+    }
+  }, [handleCloseModal]);
 
   // 文章内图片样式
   const thumbStyle: React.CSSProperties = {
-    maxWidth: width || (style && style.width) || undefined,
+    // 移动端强制使用屏幕宽度，桌面端使用原有逻辑
+    maxWidth: isMobile ? '100vw' : (width || (style && style.width) || undefined),
+    width: isMobile ? '100%' : undefined, // 移动端强制100%宽度
     ...style,
   };
 
@@ -47,19 +53,17 @@ const ArticleImage: React.FC<ArticleImageProps> = ({
         alt={alt}
         className={`${styles.articleImageThumb} ${className}`}
         style={thumbStyle}
-        onClick={() => setShowModal(true)}
-        title={'点击放大预览'}
-        draggable={false}
+        onClick={handleImageClick}
+        title={isMobile ? undefined : '点击放大预览'}
         {...rest}
       />
       {showModal && createPortal(
-        <div className={styles.articleImageModal} onClick={() => setShowModal(false)}>
+        <div className={styles.articleImageModal} onClick={handleModalClick}>
           <img
             src={src}
             alt={alt}
             className={styles.articleImageModalImg}
-            onClick={e => e.stopPropagation()}
-            draggable={false}
+            onClick={handleCloseModal}
           />
         </div>,
         document.body

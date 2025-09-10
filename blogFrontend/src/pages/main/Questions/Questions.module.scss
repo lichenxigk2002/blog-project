@@ -41,10 +41,8 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(255, 255, 255, 0.05);
   padding: 0.5rem 1rem;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
 }
 
@@ -413,7 +411,7 @@
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
-  padding: 0.25rem;
+  padding: 0.25rem 0.25rem 0.25rem 1rem;
   background: transparent;
 }
 

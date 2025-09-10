@@ -11,6 +11,7 @@ import TagCloudBackground from "../../components/TagCloudBackground/TagCloudBack
 import { motion } from 'framer-motion';
 import { useGlobalTip } from '@/hooks/useGlobalTip';
 import { httpError } from '@/http/core/error';
+import { useMobile } from '@/hooks/useMobile';
 
 // 常量
 const MAX_TAGS = 100;
@@ -38,8 +39,21 @@ interface TagsProps {
 const Tags: React.FC<TagsProps> = ({ initialTags }) => {
     const router = useRouter();
     const [tags, setTags] = useState<Tag[]>(initialTags || []);
+    const { isMobile } = useMobile(); // 使用移动端检测hook
     const { isLoading, withLoading } = useLoading();
     const { showTip } = useGlobalTip();
+
+    // 检测是否为移动端
+    useEffect(() => {
+        const checkIsMobile = () => {
+            // setIsMobile(window.innerWidth <= 768); // This line is removed as per the new_code
+        };
+
+        checkIsMobile();
+        window.addEventListener('resize', checkIsMobile);
+
+        return () => window.removeEventListener('resize', checkIsMobile);
+    }, []);
 
     // 处理标签点击
     const handleTagClick = (tag: Tag) => {
@@ -73,16 +87,18 @@ const Tags: React.FC<TagsProps> = ({ initialTags }) => {
     return (
         <div className={styles.container}>
             {/* 固定定位的灵感来源链接 */}
-            <div className={styles.inspirationCredit}>
-                该页面灵感来源于{' '}
-                <a
-                    href="https://blog.grtsinry43.com/tags"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    Grtsinry43
-                </a>
-            </div>
+            {!isMobile && (
+                <div className={styles.inspirationCredit}>
+                    该页面灵感来源于{' '}
+                    <a
+                        href="https://blog.grtsinry43.com/tags"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Grtsinry43
+                    </a>
+                </div>
+            )}
 
             <Head>
                 <title>标签云 | 探索知识的无限可能</title>
@@ -130,9 +146,12 @@ const Tags: React.FC<TagsProps> = ({ initialTags }) => {
                 ))}
             </div>
 
-            <TagCloudBackground
-                tags={tags.map(({ name, color }) => ({ name, color }))}
-            />
+            {/* 移动端不渲染背景组件 */}
+            {!isMobile && (
+                <TagCloudBackground
+                    tags={tags.map(({ name, color }) => ({ name, color }))}
+                />
+            )}
         </div>
     );
 };

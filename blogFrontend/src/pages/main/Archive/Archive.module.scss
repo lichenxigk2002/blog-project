@@ -306,32 +306,83 @@ $colors: (
 // 响应式设计
 @media (max-width: 768px) {
   .container {
-    padding: map-get($spacing, md);
+    padding: map-get($spacing, sm); // 减小容器内边距
   }
 
   .title {
-    font-size: 2rem;
-    margin-bottom: map-get($spacing, xl);
+    font-size: 1.8rem; // 减小标题字体
+    margin-bottom: map-get($spacing, lg); // 减小底部间距
+  }
+
+  .introText {
+    font-size: 0.85rem; // 减小介绍文字
+    margin-bottom: map-get($spacing, md); // 减小底部间距
   }
 
   .timeline {
-    padding-left: map-get($spacing, lg);
+    padding-left: map-get($spacing, md); // 减小时间线左边距
   }
 
-  .year::before {
-    left: -2rem;
+  .year {
+    font-size: 1.4rem; // 减小年份字体
+    margin-bottom: map-get($spacing, md); // 减小底部间距
+
+    &::before {
+      left: -1.5rem; // 调整圆点位置
+    }
+  }
+
+  .monthGroup {
+    margin-bottom: map-get($spacing, md); // 减小月份组间距
+    margin-left: map-get($spacing, sm); // 减小左边距
+  }
+
+  .month {
+    font-size: 1rem; // 减小月份字体
+    margin-bottom: map-get($spacing, sm); // 减小底部间距
+  }
+
+  .articleItem {
+    margin-bottom: map-get($spacing, sm); // 减小文章项间距
+  }
+
+  .dateContainer {
+    margin-bottom: 0.25rem; // 减小日期容器间距
+    padding-left: 1.2rem; // 减小左边距
   }
 
   .articleLink {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: map-get($spacing, xs);
-    padding: 0.8rem map-get($spacing, md);
+    flex-direction: row; // 改为左右布局
+    align-items: center; // 垂直居中
+    gap: map-get($spacing, sm); // 增加左右间距
+    padding: 0.6rem map-get($spacing, sm);
+  }
+
+  .articleTitle {
+    font-size: 0.95rem; // 减小标题字体
+    margin-left: 0; // 移除左边距
+    line-height: 1.3; // 减小行高
+    flex: 1; // 占据剩余空间
   }
 
   .articleDate {
-    font-size: 0.8rem;
+    font-size: 0.75rem; // 减小日期字体
     margin-left: 0;
+    flex-shrink: 0; // 防止日期被压缩
+    min-width: 60px; // 设置最小宽度
+  }
+
+  .articleType {
+    font-size: 0.7rem; // 减小标签字体
+    padding: 1px 6px; // 减小标签内边距
+    margin-right: 4px; // 减小右边距
+    flex-shrink: 0; // 防止标签被压缩
+  }
+
+  .dot {
+    left: -12px; // 调整圆点位置
+    width: 8px; // 减小圆点尺寸
+    height: 8px;
   }
 }
 
