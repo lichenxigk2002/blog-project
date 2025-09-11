@@ -133,6 +133,10 @@ public class ArticlesServiceImpl extends ServiceImpl<ArticlesMapper, Articles> i
         article.setTaobaoSummary(dto.getTaobaoSummary());
         article.setAiSummary(dto.getAiSummary());
 
+        // 设置宵宫信件字段
+        article.setShowYoimiyaLetter(dto.getShowYoimiyaLetter());
+        article.setYoimiyaLetterContent(dto.getYoimiyaLetterContent());
+
         this.save(article);
 
         // 获取当前最大的sort_order值，新文章设置为max + 10
@@ -190,6 +194,10 @@ public class ArticlesServiceImpl extends ServiceImpl<ArticlesMapper, Articles> i
         // 设置AI摘要字段
         article.setTaobaoSummary(dto.getTaobaoSummary());
         article.setAiSummary(dto.getAiSummary());
+
+        // 设置宵宫信件字段
+        article.setShowYoimiyaLetter(dto.getShowYoimiyaLetter());
+        article.setYoimiyaLetterContent(dto.getYoimiyaLetterContent());
 
         boolean updated = this.updateById(article);
         if (!updated) {
