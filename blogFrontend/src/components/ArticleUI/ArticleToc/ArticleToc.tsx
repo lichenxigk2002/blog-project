@@ -24,6 +24,7 @@ interface ArticleTocProps {
   title: string;          // 文章标题
   contentHeight: number;  // 文章内容高度，用于计算阅读进度
   contentTop: number;     // 文章内容顶部位置，用于进度计算
+  onReadingProgressChange?: (progress: number) => void; // 新增：进度变化回调
 }
 
 /**
@@ -37,7 +38,12 @@ interface ArticleTocProps {
  * 5. 平滑滚动跳转 - 点击目录项平滑跳转到对应标题
  * 6. 自适应展开收起 - 桌面端可展开/收起，移动端全屏显示
  */
-const ArticleToc: React.FC<ArticleTocProps> = ({ headings, contentHeight, contentTop }) => {
+const ArticleToc: React.FC<ArticleTocProps> = ({
+  headings,
+  contentHeight,
+  contentTop,
+  onReadingProgressChange
+}) => {
   // 组件展开状态 - 控制目录的显示/隐藏
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -93,6 +99,11 @@ const ArticleToc: React.FC<ArticleTocProps> = ({ headings, contentHeight, conten
       };
 
       setReadingProgress(calculateProgress());
+
+      // 新增：通知父组件进度变化
+      if (onReadingProgressChange) {
+        onReadingProgressChange(calculateProgress());
+      }
 
       /**
        * 智能标题高亮算法
