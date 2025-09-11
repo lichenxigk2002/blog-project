@@ -93,7 +93,6 @@ const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => 
         };
     }, [isDetailView, selectedFriendLink]);
 
-    // 彻底修正：每次都用最新宽度计算高度，所有相关容器高度同步
     useEffect(() => {
         function updateDetailSectionHeight() {
             if (

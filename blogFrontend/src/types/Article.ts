@@ -23,6 +23,8 @@ export interface Article {
     sortOrder?: number; // 排序权重
     taobaoSummary?: string; // 桃宝助手摘要
     aiSummary?: string; // 豆包助手摘要
+    showYoimiyaLetter?: boolean; // 是否显示宵宫的信
+    yoimiyaLetterContent?: string; // 宵宫的信内容
 
     tags: Array<{
         id: number;

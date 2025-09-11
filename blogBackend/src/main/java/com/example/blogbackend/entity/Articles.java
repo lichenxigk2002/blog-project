@@ -132,6 +132,14 @@ public class Articles implements Serializable {
      * 豆包AI摘要
      */
     private String aiSummary;
+    /**
+     * 是否展示信件
+     */
+    private Boolean showYoimiyaLetter;
+    /**
+     * 信件内容
+     */
+    private String yoimiyaLetterContent;
 
     @TableField(exist = false)
     private List<Tags> tags; // 新增

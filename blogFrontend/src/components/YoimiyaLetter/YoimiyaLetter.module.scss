@@ -1,0 +1,213 @@
+.letterOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.3); // 从0.6改为0.3，更淡
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.3s ease;
+}
+
+.letterContainer {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.4)),
+    url('/images/YoimiyaLetterBackground.png');
+  background-size: auto 100%;
+  background-position: right center;
+  background-repeat: no-repeat;
+  border-radius: 12px; // 从16px改为12px
+  padding: 18px; // 从24px改为18px
+  max-width: 600px; // 从700px改为600px
+  width: 90%;
+  max-height: 55vh; // 从60vh改为55vh
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border: 2px solid #fbbf24;
+  animation: slideUp 0.4s ease;
+  position: relative;
+
+  // 信封折痕效果
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, #fbbf24 20%, #fbbf24 80%, transparent 100%);
+    border-radius: 12px 12px 0 0; // 从16px改为12px
+  }
+
+  // 邮票效果 - 使用CSS变量动态设置图片
+  &::after {
+    content: '';
+    position: absolute;
+    top: 25px; // 从30px改为25px
+    right: 60px; // 从80px改为60px
+    width: 70px; // 从80px改为70px
+    height: 70px; // 从80px改为70px
+    background-image: var(--stamp-image, url('/images/YoimiyaLetter_1.jpg'));
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border: 3px solid white; // 从4px改为3px
+    border-radius: 4px;
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.2),
+      0 2px 4px rgba(0, 0, 0, 0.1),
+      inset 0 1px 2px rgba(255, 255, 255, 0.3);
+
+    // 添加倾斜效果，像贴上去的
+    transform: rotate(-2deg);
+
+    // 添加一些随机的阴影效果
+    &::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 6px;
+      z-index: -1;
+      transform: rotate(1deg);
+    }
+  }
+}
+
+.letterHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px; // 从20px改为16px
+  padding-bottom: 10px; // 从12px改为10px
+  border-bottom: none;
+
+  h3 {
+    margin: 0;
+    color: #dc2626;
+    font-size: 18px; // 从20px改为18px
+    font-weight: 600;
+    font-family: 'zihunccy', 'Noto Sans SC', sans-serif;
+    position: relative;
+
+    // 添加短一点的分割线
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -10px; // 从-12px改为-10px
+      left: 0;
+      width: 100px; // 从120px改为100px
+      height: 1px;
+      background: #fb923c;
+    }
+  }
+}
+
+.closeBtn {
+  position: absolute;
+  top: 12px; // 从16px改为12px
+  right: 12px; // 从16px改为12px
+  background: none;
+  border: none;
+  font-size: 20px; // 从24px改为20px
+  color: #ff5e00;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: rotate(90deg);
+  }
+}
+
+.letterContent {
+  background: transparent;
+  border-radius: 6px; // 从8px改为6px
+  padding: 8px 16px; // 从20px改为16px
+  border: none;
+  box-shadow: none;
+  min-height: 150px; // 从200px改为150px
+  position: relative;
+
+  p {
+    margin: 0 0 12px 0; // 从16px改为12px
+    font-family: 'ShouZhang', 'Noto Sans SC', sans-serif;
+    line-height: 1.7; // 从1.8改为1.7
+    color: #374151;
+    font-size: 14px; // 从15px改为14px
+    position: relative;
+    z-index: 1;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.letterSignature {
+  text-align: right;
+  margin-top: 16px; // 从20px改为16px
+  color: #ea580c;
+  font-weight: 500;
+  font-style: italic;
+  font-family: 'zihunccy', 'Noto Sans SC', sans-serif;
+  position: relative;
+
+  // 签名上方虚线
+  &::before {
+    content: '';
+    position: absolute;
+    top: -8px; // 从-10px改为-8px
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: repeating-linear-gradient(to right,
+        #fbbf24 0px,
+        #fbbf24 4px,
+        transparent 4px,
+        transparent 8px);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .letterContainer {
+    width: 95%;
+    padding: 20px;
+    max-height: 70vh;
+    max-width: 90%;
+  }
+
+  .letterContent {
+    padding: 16px;
+  }
+}

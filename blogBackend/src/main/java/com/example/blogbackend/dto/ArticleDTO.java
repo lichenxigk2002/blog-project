@@ -38,6 +38,10 @@ public class ArticleDTO {
     private String taobaoSummary;  // 桃宝风格摘要
     private String aiSummary;      // 豆包AI摘要
 
+    // 新增：宵宫寄语字段
+    private Boolean showYoimiyaLetter;
+    private String yoimiyaLetterContent;
+
     // getter/setter 省略，可用 Lombok @Data
     public Integer getId() {
         return id;

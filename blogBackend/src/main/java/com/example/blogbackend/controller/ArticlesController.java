@@ -83,6 +83,8 @@ public class ArticlesController {
                     simpleArticle.put("isTop", article.getIsTop());
                     simpleArticle.put("sortOrder", article.getSortOrder());
                     simpleArticle.put("tags", article.getTags());
+                    simpleArticle.put("showYoimiyaLetter", article.getShowYoimiyaLetter());
+                    simpleArticle.put("yoimiyaLetterContent", article.getYoimiyaLetterContent());
                     return simpleArticle;
                 })
                 .collect(Collectors.toList());
