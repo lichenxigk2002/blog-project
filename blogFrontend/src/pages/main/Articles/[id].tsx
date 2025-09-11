@@ -29,6 +29,8 @@ import { Article } from '@/types/Article'; // 文章类型定义
 import styles from './[id].module.scss';
 import StrikethroughText from "@/components/ArticleUI/StrikethroughText/StrikethroughText"; // 组件样式
 import { useMobile } from '@/hooks/useMobile';
+import YoimiyaLetter from '@/components/YoimiyaLetter/YoimiyaLetter'; // 宵宫信件组件
+import OperationTipModal from '@/components/OperationTipModal/OperationTipModal';
 
 
 // 定义标题对象的类型
@@ -60,16 +62,6 @@ const ArticleDetail: React.FC = () => {
 
 
     const contentRef = useRef<HTMLDivElement>(null);    // 使用ref获取文章内容DOM元素的引用
-
-    //监听窗口大小变化
-    useEffect(() => {
-        const checkMobile = () => { // 添加移动设备状态
-            // setIsMobile(window.innerWidth <= 768); //小于768px为移动设备
-        };
-        checkMobile(); // 检查当前设备
-        window.addEventListener('resize', checkMobile);  //监听窗口大小变化
-        return () => window.removeEventListener('resize', checkMobile);  //移除监听
-    }, []);
 
     // 点赞操作
     const handleLike = async () => {
@@ -605,6 +597,16 @@ const ArticleDetail: React.FC = () => {
                     </div>
                 </aside>
             </div>
+            {/* 宵宫信件 */}
+            {article?.showYoimiyaLetter && article?.yoimiyaLetterContent && (
+                <YoimiyaLetter
+                    isVisible={false}
+                    onClose={() => { }}
+                    content={article.yoimiyaLetterContent}
+                    autoTrigger={true}
+                    triggerDelay={30000}
+                />
+            )}
         </motion.div>
     );
 }

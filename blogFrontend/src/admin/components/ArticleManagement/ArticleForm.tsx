@@ -17,6 +17,7 @@ import FormInput from '../ui/FormInput/FormInput';
 import Checkbox from '../ui/Checkbox/Checkbox';
 import MultiSelect, { MultiSelectOption } from '../ui/MultiSelect/MultiSelect';
 import FormItem from '../ui/FormItem/FormItem';
+import { YoimiyaLetterAPI } from '@/api/YoimiyaLetterAPI';
 
 interface Tag {
   id: number;
@@ -38,6 +39,8 @@ interface ArticleFormData {
   isTop: boolean; // 新增置顶字段
   taobaoSummary?: string; // 桃宝助手摘要
   aiSummary?: string; // 豆包助手摘要
+  showYoimiyaLetter?: boolean; // 新增
+  yoimiyaLetterContent?: string; // 新增
 }
 
 interface ArticleFormProps {
@@ -62,6 +65,8 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
     isTop: false,
     taobaoSummary: '',
     aiSummary: '',
+    showYoimiyaLetter: false, // 新增
+    yoimiyaLetterContent: '', // 新增
     ...initialValues
   });
 
@@ -80,7 +85,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
     message: '',
     type: 'success'
   });
-  const [generatingSummary, setGeneratingSummary] = useState<'taobao' | 'ai' | null>(null);
+  const [generatingSummary, setGeneratingSummary] = useState<'taobao' | 'ai' | 'yoimiya' | null>(null);
 
   // 定义状态选项
   const statusOptions: SelectOption[] = [
@@ -232,7 +237,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
   };
 
   // 生成摘要功能
-  const handleGenerateSummary = async (style: 'taobao' | 'ai') => {
+  const handleGenerateSummary = async (style: 'taobao' | 'ai' | 'yoimiya') => {
     if (!formData.title || !formData.content) {
       alert('请先填写文章标题和内容');
       return;
@@ -246,31 +251,48 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
           title: formData.title,
           content: formData.content
         });
-      } else {
+      } else if (style === 'ai') {
         result = await AIArticleSummaryAPI.generateAISummary({
+          title: formData.title,
+          content: formData.content
+        });
+      } else if (style === 'yoimiya') {
+        result = await YoimiyaLetterAPI.generateYoimiyaLetter({
           title: formData.title,
           content: formData.content
         });
       }
 
       if (result.success) {
-        setFormData(prev => ({ ...prev, [style === 'taobao' ? 'taobaoSummary' : 'aiSummary']: result.data.summary }));
+        if (style === 'yoimiya') {
+          setFormData(prev => ({
+            ...prev,
+            yoimiyaLetterContent: result.data.letterContent,
+            showYoimiyaLetter: true
+          }));
+        } else {
+          setFormData(prev => ({
+            ...prev,
+            [style === 'taobao' ? 'taobaoSummary' : 'aiSummary']: result.data.summary
+          }));
+        }
+
         setAutoSaveTip({
           open: true,
-          message: `${style === 'taobao' ? '桃宝' : 'AI'}摘要生成成功！`,
+          message: `${style === 'taobao' ? '桃宝' : style === 'ai' ? 'AI' : '宵宫'}${style === 'yoimiya' ? '信件' : '摘要'}生成成功！`,
           type: 'success'
         });
       } else {
         setAutoSaveTip({
           open: true,
-          message: result.message || '摘要生成失败',
+          message: result.message || `${style === 'yoimiya' ? '信件' : '摘要'}生成失败`,
           type: 'error'
         });
       }
     } catch (error) {
       setAutoSaveTip({
         open: true,
-        message: `摘要生成失败: ${error instanceof Error ? error.message : '未知错误'}`,
+        message: `${style === 'yoimiya' ? '信件' : '摘要'}生成失败: ${error instanceof Error ? error.message : '未知错误'}`,
         type: 'error'
       });
     } finally {
@@ -378,6 +400,35 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ allTags, initialValues, onSub
             >
               {generatingSummary === 'ai' ? '生成中...' : '生成AI摘要'}
             </Button>
+          </FormItem>
+        </div>
+
+        {/* 宵宫信件 - 单独一行，与上面等宽 */}
+        <div className={styles.formItemRow} style={{ marginTop: '16px' }}>
+          <FormItem className={styles.compactFormItem}>
+            <FormInput
+              type="textarea"
+              name="yoimiyaLetterContent"
+              value={formData.yoimiyaLetterContent || ''}
+              onChange={handleInputChange}
+              placeholder="宵宫的信件内容将在这里显示..."
+              label="宵宫的信"
+            />
+            <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+              <Button
+                variant="warning"
+                size="small"
+                onClick={() => handleGenerateSummary('yoimiya')}
+                disabled={generatingSummary === 'yoimiya' || !formData.title || !formData.content}
+              >
+                {generatingSummary === 'yoimiya' ? '生成中...' : '生成宵宫信件'}
+              </Button>
+              <Checkbox
+                checked={formData.showYoimiyaLetter || false}
+                onChange={(checked) => handleCheckboxChange('showYoimiyaLetter', checked)}
+                label="显示宵宫信件"
+              />
+            </div>
           </FormItem>
         </div>
       </FormItem>
