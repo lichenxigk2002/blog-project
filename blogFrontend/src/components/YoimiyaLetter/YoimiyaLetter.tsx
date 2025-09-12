@@ -130,7 +130,7 @@ const YoimiyaLetter: React.FC<YoimiyaLetterProps> = ({
               <div dangerouslySetInnerHTML={{
                 __html: content
                   .split('\n')
-                  .map(line => line.trim() ? `<p style="text-indent: 2em; margin: 0.5em 0;">${line}</p>` : '<br>')
+                  .map(line => line.trim() ? `<p style="text-indent: 2em; margin: 0.1em 0;">${line}</p>` : '<br>')
                   .join('')
               }} />
             </div>

@@ -604,7 +604,7 @@ const ArticleDetail: React.FC = () => {
                     onClose={() => { }}
                     content={article.yoimiyaLetterContent}
                     autoTrigger={true}
-                    triggerDelay={30000}
+                    triggerDelay={45000}
                 />
             )}
         </motion.div>
