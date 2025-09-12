@@ -135,7 +135,6 @@
   color: #ff4d4f;
 }
 
-
 /* 热门标签样式 */
 .tagList {
   display: flex;
@@ -244,5 +243,311 @@ $secondary: #6c3ec1;
     width: 100%;
     height: 260px;
     min-width: 0;
+  }
+}
+
+// 每日一图和最近评论区域 - 使用flexbox布局
+.dailySection {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  align-items: flex-start;
+}
+
+// 每日一图容器 - 固定正方形
+.dailyImageCard {
+  @include card;
+  width: 400px;
+  height: 400px;
+  flex-shrink: 0; // 防止收缩
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $card-hover-shadow;
+  }
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  h3 {
+    color: #6c3ec1;
+    font-size: 1.25rem;
+    margin: 0;
+    font-weight: 600;
+  }
+}
+
+.imageCounter {
+  color: #a259ff;
+  font-size: 0.875rem;
+  background: rgba(162, 89, 255, 0.1);
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+}
+
+// 图片容器 - 正方形
+.imageContainer {
+  position: relative;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  flex: 1;
+  overflow: hidden;
+  border-radius: 8px;
+  padding: 20px; // 添加内边距，让图片变小
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid white; // 从3px改为2px，边框变细
+  box-shadow:
+    0 3px 8px rgba(0, 0, 0, 0.15), // 减少阴影强度
+    0 1px 3px rgba(0, 0, 0, 0.1),
+    inset 0 1px 2px rgba(255, 255, 255, 0.3);
+  transform: rotate(-0.5deg); // 从-1deg改为-0.5deg，旋转角度变小
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: rotate(0deg) scale(1.01); // 从1.02改为1.01，缩放变小
+  }
+}
+
+.dailyImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: all 0.3s ease;
+}
+
+.imageOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.imageContainer:hover .imageOverlay {
+  opacity: 1;
+}
+
+.clickHint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: white;
+  font-size: 0.875rem;
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.imageInfo {
+  text-align: center;
+}
+
+.imageTitle {
+  color: #6c3ec1;
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0 0 0.5rem 0;
+}
+
+.imageDescription {
+  color: #a259ff;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+// 右侧容器区域 - 使用flexbox垂直排列
+.rightSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  flex: 1;
+  min-width: 0;
+}
+
+// 评论和留言容器
+.recentComments,
+.recentBulletins {
+  @include card;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+
+  h2 {
+    color: #6c3ec1;
+    font-size: 1.25rem;
+    margin: 0 0 1rem 0;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+}
+
+// 评论和留言列表容器
+.commentList,
+.bulletinList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  // 隐藏滚动条但保持滚动功能
+  scrollbar-width: none; // Firefox
+  -ms-overflow-style: none; // IE/Edge
+
+  &::-webkit-scrollbar {
+    display: none; // Chrome/Safari
+  }
+}
+
+.commentItem,
+.bulletinItem {
+  padding: 0.75rem;
+  background: rgba(162, 89, 255, 0.05);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba(162, 89, 255, 0.1);
+    transform: translateX(4px);
+  }
+}
+
+.commentHeader,
+.bulletinHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.commentAuthor,
+.bulletinName {
+  color: #6c3ec1;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.commentDate,
+.bulletinDate {
+  color: #a259ff;
+  font-size: 0.75rem;
+}
+
+.commentContent,
+.bulletinContent {
+  color: #374151;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+}
+
+.commentArticle {
+  color: #a259ff;
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+.bulletinGender {
+  color: #a259ff;
+  font-size: 0.75rem;
+  background: rgba(162, 89, 255, 0.1);
+  padding: 0.125rem 0.5rem;
+  border-radius: 4px;
+}
+
+.bulletinStatus {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.approved {
+  background: rgba(82, 196, 26, 0.1);
+  color: #52c41a;
+}
+
+.rejected {
+  background: rgba(255, 69, 0, 0.1);
+  color: #ff4d4f;
+}
+
+.pending {
+  background: rgba(250, 173, 20, 0.1);
+  color: #faad14;
+}
+
+.noComments,
+.noBulletins {
+  text-align: center;
+  color: #6c3ec1;
+  font-size: 0.875rem;
+  padding: 2rem;
+}
+
+// 响应式设计
+@media (max-width: 1200px) {
+  .dailyImageCard {
+    width: 350px;
+    height: 350px;
+  }
+
+  .recentComments,
+  .recentBulletins {
+    height: 350px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .dailyImageCard {
+    width: 300px;
+    height: 300px;
+  }
+
+  .recentComments,
+  .recentBulletins {
+    height: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dailySection {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .dailyImageCard {
+    width: 100%;
+    height: 300px;
+  }
+
+  .recentComments,
+  .recentBulletins {
+    height: 250px;
+    padding: 1rem;
   }
 }
