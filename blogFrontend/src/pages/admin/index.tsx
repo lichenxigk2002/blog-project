@@ -3,6 +3,9 @@ import AdminLayout from '@/admin/components/layout/AdminLayout';
 import AdminRouteGuard from '@/admin/components/AdminRouteGuard/AdminRouteGuard';
 import { ArticlesAPI } from '@/api/ArticlesAPI';
 import { TagsAPI } from '@/api/TagsAPI';
+import { CommentsAPI } from '@/api/CommentsAPI';
+import { ThoughtsAPI } from '@/api/ThoughtsAPI';
+import { BulletinBoardAPI } from '@/api/BulletinBoardAPI';
 import styles from './index.module.scss';
 import Head from "next/head";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
@@ -32,6 +35,41 @@ interface TagsResponse {
   error?: string;
 }
 
+interface Comment {
+  id: number;
+  content: string;
+  author: string;
+  createdAt: string;
+  articleTitle?: string;
+}
+
+interface CommentsResponse extends Array<Comment> {
+  // getAllComments 直接返回 Comment[] 数组
+}
+
+interface BulletinMessage {
+  id: number;
+  name: string;
+  email: string;
+  gender: '小哥哥' | '小姐姐';
+  content: string;
+  status?: 'pending' | 'approved' | 'rejected';
+  reply?: string;
+  replyTime?: string;
+  isPinned?: boolean;
+  avatar?: string;
+  sendEmail?: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface BulletinResponse {
+  records: BulletinMessage[];
+  total: number;
+  current: number;
+  size: number;
+}
+
 const AdminDashboard: React.FC = () => {
   const [stats, setStats] = useState({
     totalArticles: 0,
@@ -42,6 +80,20 @@ const AdminDashboard: React.FC = () => {
   });
 
   const [monthlyData, setMonthlyData] = useState<{ name: string; value: number }[]>([]);
+  const [recentComments, setRecentComments] = useState<Comment[]>([]);
+  const [recentBulletins, setRecentBulletins] = useState<BulletinMessage[]>([]);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // 图片列表
+  const imageList = [
+    '/background/Ganyu.png',
+    '/background/Furina.png',
+    '/background/Sangonomiya.png',
+    '/background/HuTao.jpg',
+    '/background/Yoimiya.jpg',
+    '/background/KeQing.jpg',
+    '/background/Kamisato.jpg',
+  ];
 
   useEffect(() => {
     fetchDashboardData();
@@ -55,6 +107,32 @@ const AdminDashboard: React.FC = () => {
       // 获取带文章数量的标签列表
       const tagsResponse = await TagsAPI.getTagsWithCount();
       const tags = Array.isArray(tagsResponse) ? tagsResponse : [];
+
+      // 获取最近评论
+      try {
+        const commentsResponse = await CommentsAPI.getAllComments() as Comment[];
+        if (commentsResponse && Array.isArray(commentsResponse)) {
+          const recentComments = commentsResponse
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+            .slice(0, 5);
+          setRecentComments(recentComments);
+        }
+      } catch (error) {
+        console.error('Failed to fetch comments:', error);
+      }
+
+      // 获取最近留言板消息
+      try {
+        const bulletinResponse = await BulletinBoardAPI.getMessages(1, 5) as BulletinResponse;
+        if (bulletinResponse && bulletinResponse.records) {
+          const recentBulletins = bulletinResponse.records
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+            .slice(0, 5);
+          setRecentBulletins(recentBulletins);
+        }
+      } catch (error) {
+        console.error('Failed to fetch bulletin messages:', error);
+      }
 
       if (!articlesResponse || !tagsResponse) {
         console.error('Failed to fetch dashboard data: No response');
@@ -120,6 +198,15 @@ const AdminDashboard: React.FC = () => {
       }
     });
     return data;
+  };
+
+  const handleImageClick = () => {
+    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % imageList.length);
+  };
+
+  const getImageName = (imagePath: string) => {
+    const fileName = imagePath.split('/').pop() || '';
+    return fileName.split('.')[0];
   };
 
   // 饼图颜色
@@ -281,6 +368,109 @@ const AdminDashboard: React.FC = () => {
                   ))
                 ) : (
                   <div className={styles.noTags}>暂无标签数据</div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* 每日一图和最近评论 */}
+          <div className={styles.dailySection}>
+            <div className={styles.dailyImageCard}>
+              <div className={styles.cardHeader}>
+                <h3>每日一图</h3>
+                <div className={styles.imageCounter}>
+                  {currentImageIndex + 1} / {imageList.length}
+                </div>
+              </div>
+
+              <div className={styles.imageContainer} onClick={handleImageClick}>
+                <div className={styles.imageWrapper}>
+                  <img
+                    src={imageList[currentImageIndex]}
+                    alt={`每日一图 - ${getImageName(imageList[currentImageIndex])}`}
+                    className={styles.dailyImage}
+                  />
+                </div>
+                <div className={styles.imageOverlay}>
+                  <div className={styles.clickHint}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    <span>点击切换</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.imageInfo}>
+                <p className={styles.imageTitle}>{getImageName(imageList[currentImageIndex])}</p>
+                <p className={styles.imageDescription}>点击图片切换下一张</p>
+              </div>
+            </div>
+
+            <div className={styles.recentComments}>
+              <h2>最近评论</h2>
+              <div className={styles.commentList}>
+                {recentComments && recentComments.length > 0 ? (
+                  recentComments.map((comment) => (
+                    <div key={comment.id} className={styles.commentItem}>
+                      <div className={styles.commentHeader}>
+                        <span className={styles.commentAuthor}>{comment.author}</span>
+                        <span className={styles.commentDate}>
+                          {new Date(comment.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <div className={styles.commentContent}>
+                        {comment.content.length > 50
+                          ? `${comment.content.substring(0, 50)}...`
+                          : comment.content
+                        }
+                      </div>
+                      {comment.articleTitle && (
+                        <div className={styles.commentArticle}>
+                          来自: {comment.articleTitle}
+                        </div>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div className={styles.noComments}>暂无评论数据</div>
+                )}
+              </div>
+            </div>
+
+            <div className={styles.recentBulletins}>
+              <h2>最近留言</h2>
+              <div className={styles.bulletinList}>
+                {recentBulletins && recentBulletins.length > 0 ? (
+                  recentBulletins.map((bulletin) => (
+                    <div key={bulletin.id} className={styles.bulletinItem}>
+                      <div className={styles.bulletinHeader}>
+                        <span className={styles.bulletinName}>{bulletin.name}</span>
+                        <span className={styles.bulletinGender}>{bulletin.gender}</span>
+                        <span className={styles.bulletinDate}>
+                          {new Date(bulletin.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <div className={styles.bulletinContent}>
+                        {bulletin.content.length > 50
+                          ? `${bulletin.content.substring(0, 50)}...`
+                          : bulletin.content
+                        }
+                      </div>
+                      <div className={styles.bulletinStatus}>
+                        <span className={`${styles.statusTag} ${bulletin.status === 'approved' ? styles.approved :
+                          bulletin.status === 'rejected' ? styles.rejected :
+                            styles.pending
+                          }`}>
+                          {bulletin.status === 'approved' ? '已通过' :
+                            bulletin.status === 'rejected' ? '已拒绝' : '待审核'}
+                        </span>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className={styles.noBulletins}>暂无留言数据</div>
                 )}
               </div>
             </div>
