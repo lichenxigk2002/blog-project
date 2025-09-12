@@ -19,11 +19,11 @@
   background-size: auto 100%;
   background-position: right center;
   background-repeat: no-repeat;
-  border-radius: 12px; // 从16px改为12px
-  padding: 18px; // 从24px改为18px
-  max-width: 600px; // 从700px改为600px
+  border-radius: 12px;
+  padding: 18px;
+  max-width: 600px;
   width: 90%;
-  max-height: 55vh; // 从60vh改为55vh
+  max-height: 55vh;
   overflow: hidden;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
   border: 2px solid #fbbf24;
@@ -39,22 +39,22 @@
     right: 0;
     height: 2px;
     background: linear-gradient(90deg, transparent 0%, #fbbf24 20%, #fbbf24 80%, transparent 100%);
-    border-radius: 12px 12px 0 0; // 从16px改为12px
+    border-radius: 12px 12px 0 0;
   }
 
   // 邮票效果 - 使用CSS变量动态设置图片
   &::after {
     content: '';
     position: absolute;
-    top: 25px; // 从30px改为25px
-    right: 60px; // 从80px改为60px
-    width: 70px; // 从80px改为70px
-    height: 70px; // 从80px改为70px
+    top: 25px;
+    right: 60px;
+    width: 70px;
+    height: 70px;
     background-image: var(--stamp-image, url('/images/YoimiyaLetter_1.jpg'));
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    border: 3px solid white; // 从4px改为3px
+    border: 3px solid white;
     border-radius: 4px;
     box-shadow:
       0 4px 12px rgba(0, 0, 0, 0.2),
@@ -84,14 +84,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px; // 从20px改为16px
-  padding-bottom: 10px; // 从12px改为10px
+  margin-bottom: 16px;
+  padding-bottom: 10px;
   border-bottom: none;
 
   h3 {
     margin: 0;
     color: #dc2626;
-    font-size: 18px; // 从20px改为18px
+    font-size: 18px;
     font-weight: 600;
     font-family: 'zihunccy', 'Noto Sans SC', sans-serif;
     position: relative;
@@ -100,9 +100,9 @@
     &::after {
       content: '';
       position: absolute;
-      bottom: -10px; // 从-12px改为-10px
+      bottom: -10px;
       left: 0;
-      width: 100px; // 从120px改为100px
+      width: 100px;
       height: 1px;
       background: #fb923c;
     }
@@ -111,11 +111,11 @@
 
 .closeBtn {
   position: absolute;
-  top: 12px; // 从16px改为12px
-  right: 12px; // 从16px改为12px
+  top: 12px;
+  right: 12px;
   background: none;
   border: none;
-  font-size: 20px; // 从24px改为20px
+  font-size: 20px;
   color: #ff5e00;
   cursor: pointer;
   padding: 4px;
@@ -129,19 +129,19 @@
 
 .letterContent {
   background: transparent;
-  border-radius: 6px; // 从8px改为6px
-  padding: 8px 16px; // 从20px改为16px
+  border-radius: 6px;
+  padding: 8px 16px;
   border: none;
   box-shadow: none;
-  min-height: 150px; // 从200px改为150px
+  min-height: 150px;
   position: relative;
 
   p {
-    margin: 0 0 12px 0; // 从16px改为12px
+    margin: 0 0 12px 0;
     font-family: 'ShouZhang', 'Noto Sans SC', sans-serif;
-    line-height: 1.7; // 从1.8改为1.7
+    line-height: 1.7;
     color: #374151;
-    font-size: 14px; // 从15px改为14px
+    font-size: 14px;
     position: relative;
     z-index: 1;
 
@@ -153,7 +153,7 @@
 
 .letterSignature {
   text-align: right;
-  margin-top: 16px; // 从20px改为16px
+  margin-top: 16px;
   color: #ea580c;
   font-weight: 500;
   font-style: italic;
@@ -164,7 +164,7 @@
   &::before {
     content: '';
     position: absolute;
-    top: -8px; // 从-10px改为-8px
+    top: -8px;
     left: 0;
     right: 0;
     height: 1px;
@@ -201,13 +201,55 @@
 // 响应式设计
 @media (max-width: 768px) {
   .letterContainer {
-    width: 95%;
-    padding: 20px;
-    max-height: 70vh;
-    max-width: 90%;
+    width: 90%; // 从95%改为90%，增加外边距
+    padding: 14px; // 从16px减小到14px
+    max-height: 60vh; // 从65vh减小到60vh
+    max-width: 90%; // 从95%改为90%，增加外边距
+    border-radius: 8px;
+    margin: 20px auto; // 增加上下外边距
+  }
+
+  .letterHeader {
+    margin-bottom: 10px; // 从12px减小到10px
+    padding-bottom: 6px; // 从8px减小到6px
+
+    h3 {
+      font-size: 15px; // 从16px减小到15px
+
+      &::after {
+        width: 70px; // 从80px减小到70px
+      }
+    }
+  }
+
+  .closeBtn {
+    top: 8px; // 从10px减小到8px
+    right: 8px; // 从10px减小到8px
+    font-size: 16px; // 从18px减小到16px
   }
 
   .letterContent {
-    padding: 16px;
+    padding: 10px; // 从12px减小到10px
+    min-height: 100px; // 从120px减小到100px
+
+    p {
+      font-size: 12px; // 从13px减小到12px
+      line-height: 1.5; // 从1.6减小到1.5
+      margin-bottom: 8px; // 从10px减小到8px
+    }
+  }
+
+  .letterSignature {
+    margin-top: 10px; // 从12px减小到10px
+    font-size: 12px; // 从13px减小到12px
+  }
+
+  // 邮票在移动端也要调整
+  .letterContainer::after {
+    top: 15px; // 从20px减小到15px
+    right: 40px; // 从50px减小到40px
+    width: 50px; // 从60px减小到50px
+    height: 50px; // 从60px减小到50px
+    border: 2px solid white;
   }
 }
