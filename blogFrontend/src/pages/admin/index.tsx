@@ -4,7 +4,6 @@ import AdminRouteGuard from '@/admin/components/AdminRouteGuard/AdminRouteGuard'
 import { ArticlesAPI } from '@/api/ArticlesAPI';
 import { TagsAPI } from '@/api/TagsAPI';
 import { CommentsAPI } from '@/api/CommentsAPI';
-import { ThoughtsAPI } from '@/api/ThoughtsAPI';
 import { BulletinBoardAPI } from '@/api/BulletinBoardAPI';
 import styles from './index.module.scss';
 import Head from "next/head";
@@ -30,21 +29,12 @@ interface ArticlesResponse {
   error?: string;
 }
 
-interface TagsResponse {
-  data: Tag[];
-  error?: string;
-}
-
 interface Comment {
   id: number;
   content: string;
   author: string;
   createdAt: string;
   articleTitle?: string;
-}
-
-interface CommentsResponse extends Array<Comment> {
-  // getAllComments 直接返回 Comment[] 数组
 }
 
 interface BulletinMessage {
