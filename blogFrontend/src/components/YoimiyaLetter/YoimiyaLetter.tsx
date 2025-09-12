@@ -22,11 +22,13 @@ const YoimiyaLetter: React.FC<YoimiyaLetterProps> = ({
   const [showLetter, setShowLetter] = useState(false);
   const [hasTriggered, setHasTriggered] = useState(false);
   const [canTrigger, setCanTrigger] = useState(false); // 是否可以触发
+  const [countdown, setCountdown] = useState(3); // 添加倒计时状态
 
   // 可用的邮票图片列表
   const stampImages = [
     '/images/YoimiyaLetter_1.jpg',
     '/images/YoimiyaLetter_2.jpg',
+    '/images/YoimiyaLetter_3.jpg',
   ];
 
   // 检测是否滚动到页面一半
@@ -70,15 +72,26 @@ const YoimiyaLetter: React.FC<YoimiyaLetterProps> = ({
     return () => window.removeEventListener('scroll', handleScroll);
   }, [canTrigger, hasTriggered]);
 
-  // 弹窗3秒后自动打开信件
+  // 弹窗3秒后自动打开信件，添加倒计时逻辑
   useEffect(() => {
     if (showLetterModal) {
-      const timer = setTimeout(() => {
-        setShowLetterModal(false);
-        setShowLetter(true);
-      }, 3000);
+      // 重置倒计时
+      setCountdown(3);
 
-      return () => clearTimeout(timer);
+      // 开始倒计时
+      const countdownInterval = setInterval(() => {
+        setCountdown(prev => {
+          if (prev <= 1) {
+            clearInterval(countdownInterval);
+            setShowLetterModal(false);
+            setShowLetter(true);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(countdownInterval);
     }
   }, [showLetterModal]);
 
@@ -105,7 +118,7 @@ const YoimiyaLetter: React.FC<YoimiyaLetterProps> = ({
       <OperationTipModal
         open={showLetterModal}
         onClose={handleLetterModalClose}
-        message="宵宫给您写了一封信，3秒后打开..."
+        message={`宵宫给您写了一封信，${countdown}秒后打开...`}
         type="info"
         iconSize={128}
         autoClose={false}
@@ -122,7 +135,7 @@ const YoimiyaLetter: React.FC<YoimiyaLetterProps> = ({
             style={{ '--stamp-image': `url('${randomImage}')` } as React.CSSProperties}
           >
             <div className={styles.letterHeader}>
-              <h3>宵宫的信</h3>
+              <h3>宵宫寄语</h3>
             </div>
 
             <div className={styles.letterContent}>
