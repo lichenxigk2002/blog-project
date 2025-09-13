@@ -320,7 +320,7 @@ const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => 
                                         ))}
                                 </div>
                             ) : (
-                                <p className={styles.emptyMessage}>朋友们正在赶过来</p>
+                                <LoadingSpinner />
                             )}
                         </div>
                     </div> {/* 主要内容区域的结束标签 - 只包裹友链列表 */}
