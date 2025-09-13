@@ -252,13 +252,16 @@ $secondary: #6c3ec1;
   gap: 1.5rem;
   margin-top: 2rem;
   align-items: flex-start;
+  width: 100%; // 确保占满整个宽度
+  margin-right: 0; // 移除右侧margin
+  padding-right: 0; // 移除右侧padding
 }
 
 // 每日一图容器 - 固定正方形
 .dailyImageCard {
   @include card;
-  width: 400px;
-  height: 400px;
+  width: 320px;
+  height: 320px;
   flex-shrink: 0; // 防止收缩
   display: flex;
   flex-direction: column;
@@ -273,7 +276,7 @@ $secondary: #6c3ec1;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.2rem;
 
   h3 {
     color: #6c3ec1;
@@ -297,15 +300,15 @@ $secondary: #6c3ec1;
   cursor: pointer;
   margin-bottom: 1rem;
   flex: 1;
-  overflow: hidden;
   border-radius: 8px;
   padding: 20px; // 添加内边距，让图片变小
+  display: flex;
 }
 
 .imageWrapper {
-  position: relative;
-  width: 100%;
-  height: 100%;
+  width: 20rem;
+  height: 20rem;
+  margin: auto;
   border-radius: 8px;
   overflow: hidden;
   border: 2px solid white; // 从3px改为2px，边框变细
@@ -334,7 +337,6 @@ $secondary: #6c3ec1;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -377,23 +379,27 @@ $secondary: #6c3ec1;
   margin: 0;
 }
 
-// 右侧容器区域 - 使用flexbox垂直排列
+// 右侧容器区域 - 使用flexbox垂直排列，占满剩余空间
 .rightSection {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  flex: 1;
-  min-width: 0;
+  flex: 1; // 占满剩余空间
+  min-width: 0; // 防止内容溢出
+  margin-right: 0; // 确保没有右侧margin
 }
 
-// 评论和留言容器
+// 容器保持原样
 .recentComments,
 .recentBulletins {
   @include card;
-  height: 400px;
+  height: 320px;
   display: flex;
   flex-direction: column;
   min-width: 0;
+  flex: 1;
+  margin-right: 0;
+  overflow: visible;
 
   h2 {
     color: #6c3ec1;
@@ -404,7 +410,7 @@ $secondary: #6c3ec1;
   }
 }
 
-// 评论和留言列表容器
+// 测试：修改列表容器
 .commentList,
 .bulletinList {
   display: flex;
@@ -412,14 +418,15 @@ $secondary: #6c3ec1;
   gap: 0.75rem;
   flex: 1;
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: visible; // 测试：让列表不隐藏水平溢出
+  padding-right: 20px;
+  margin-right: -20px;
 
-  // 隐藏滚动条但保持滚动功能
-  scrollbar-width: none; // Firefox
-  -ms-overflow-style: none; // IE/Edge
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 
   &::-webkit-scrollbar {
-    display: none; // Chrome/Safari
+    display: none;
   }
 }
 
@@ -550,4 +557,19 @@ $secondary: #6c3ec1;
     height: 250px;
     padding: 1rem;
   }
+}
+
+// 确保内容区域也没有右侧padding
+.content {
+  flex: 1;
+  padding: 20px 20px 20px 20px; // 明确指定padding，右侧20px
+  overflow-y: auto;
+  background: transparent;
+  margin-top: 72px;
+  margin-bottom: 60px;
+  min-height: calc(100vh - 132px);
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 100%;
 }
