@@ -12,6 +12,7 @@ export { default as SearchBar } from './SearchBar/SearchBar';
 export { default as StatsCard } from './StatsCard/StatsCard';
 export { default as DataTable } from './DataTable/DataTable';
 export { default as FormModal } from './FormModal/FormModal';
+export { default as Card } from './Card/Card';
 
 // Export types
 export type { SelectOption, SelectProps } from './Select/Select';
