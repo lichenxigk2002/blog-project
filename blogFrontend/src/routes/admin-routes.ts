@@ -61,14 +61,15 @@ export const adminRoutes: AdminRoute[] = [
         name: 'RSS管理'
       }
     ]
-  }, {
+  },
+  {
     id: 11,
-    path: '/admin/settings',
-    name: '系统设置'
+    path: '/admin/copyright',
+    name: '版权管理'
   },
   {
     id: 12,
-    path: '/admin/copyright',
-    name: '版权管理'
+    path: '/admin/settings',
+    name: '系统设置'
   }
 ]; 
