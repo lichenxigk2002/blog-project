@@ -35,11 +35,15 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       <AdminSidebar collapsed={collapsed} />
 
       <div className={`${styles.main} ${collapsed ? styles.collapsed : ''}`}>
-        <AdminHeader
-          collapsed={collapsed}
-          onToggleCollapse={handleToggleCollapse}
-        />
+        {/* 固定头部 */}
+        <div className={styles.header}>
+          <AdminHeader
+            collapsed={collapsed}
+            onToggleCollapse={handleToggleCollapse}
+          />
+        </div>
 
+        {/* 内容区域 */}
         <div className={styles.content}>
           {showWatermark ? (
             <Watermark
@@ -55,7 +59,10 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           )}
         </div>
 
-        <AdminFooter />
+        {/* 固定底部 */}
+        <div className={styles.footer}>
+          <AdminFooter />
+        </div>
       </div>
     </div>
   );
