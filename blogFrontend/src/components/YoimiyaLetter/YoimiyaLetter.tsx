@@ -7,7 +7,7 @@ interface YoimiyaLetterProps {
   onClose: () => void;
   content: string;
   autoTrigger?: boolean;
-  triggerDelay?: number; // 阅读时间（毫秒）
+  triggerDelay?: number;
 }
 
 const YoimiyaLetter: React.FC<YoimiyaLetterProps> = ({
@@ -15,14 +15,15 @@ const YoimiyaLetter: React.FC<YoimiyaLetterProps> = ({
   onClose,
   content,
   autoTrigger = false,
-  triggerDelay = 60000 // 默认60秒
+  triggerDelay = 60000
 }) => {
   const [randomImage, setRandomImage] = useState<string>('');
   const [showLetterModal, setShowLetterModal] = useState(false);
   const [showLetter, setShowLetter] = useState(false);
   const [hasTriggered, setHasTriggered] = useState(false);
-  const [canTrigger, setCanTrigger] = useState(false); // 是否可以触发
-  const [countdown, setCountdown] = useState(3); // 添加倒计时状态
+  const [canTrigger, setCanTrigger] = useState(false);
+  const [countdown, setCountdown] = useState(3);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
 
   // 可用的邮票图片列表
   const stampImages = [
@@ -31,33 +32,67 @@ const YoimiyaLetter: React.FC<YoimiyaLetterProps> = ({
     '/images/YoimiyaLetter_3.jpg',
   ];
 
-  // 检测是否滚动到页面一半
-  const checkIfAtHalf = () => {
+  // 检测是否滚动到页面75%以下
+  const checkIfAtSeventyFivePercent = () => {
     const scrollTop = window.pageYOffset;
     const windowHeight = window.innerHeight;
     const documentHeight = document.documentElement.scrollHeight;
 
-    // 滚动到页面一半
-    return scrollTop + windowHeight >= documentHeight / 2;
+    // 滚动到页面75%以下（包括75%）
+    return scrollTop + windowHeight >= documentHeight * 0.75;
   };
 
-  // 1分钟后设置可以触发
+  // 等文章UI渲染完成后预加载图片
   useEffect(() => {
-    if (!autoTrigger || hasTriggered) return;
+    if (!autoTrigger) return;
+
+    // 等待页面完全加载和渲染
+    const preloadImages = () => {
+      const imagePromises = stampImages.map(src => {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = resolve;
+          img.onerror = reject;
+          img.src = src;
+        });
+      });
+
+      Promise.all(imagePromises)
+        .then(() => {
+          setImagesLoaded(true);
+          console.log('邮票图片预加载完成');
+        })
+        .catch(error => {
+          console.error('邮票图片预加载失败:', error);
+          setImagesLoaded(true);
+        });
+    };
+
+    // 等待DOM完全渲染后再预加载
+    const timer = setTimeout(() => {
+      preloadImages();
+    }, 2000); // 等待2秒确保文章UI渲染完成
+
+    return () => clearTimeout(timer);
+  }, [autoTrigger]);
+
+  // 图片预加载完成后，开始计时
+  useEffect(() => {
+    if (!autoTrigger || hasTriggered || !imagesLoaded) return;
 
     const timer = setTimeout(() => {
       setCanTrigger(true);
     }, triggerDelay);
 
     return () => clearTimeout(timer);
-  }, [autoTrigger, triggerDelay, hasTriggered]);
+  }, [autoTrigger, triggerDelay, hasTriggered, imagesLoaded]);
 
-  // 监听滚动，当可以触发且滚动到底部时触发
+  // 监听滚动，当可以触发且滚动到75%时触发
   useEffect(() => {
     if (!canTrigger || hasTriggered) return;
 
     const handleScroll = () => {
-      if (checkIfAtHalf()) {
+      if (checkIfAtSeventyFivePercent()) {
         setShowLetterModal(true);
         setHasTriggered(true);
         window.removeEventListener('scroll', handleScroll);
@@ -65,20 +100,16 @@ const YoimiyaLetter: React.FC<YoimiyaLetterProps> = ({
     };
 
     window.addEventListener('scroll', handleScroll);
-
-    // 初始检查一次
     handleScroll();
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, [canTrigger, hasTriggered]);
 
-  // 弹窗3秒后自动打开信件，添加倒计时逻辑
+  // 弹窗3秒后自动打开信件
   useEffect(() => {
     if (showLetterModal) {
-      // 重置倒计时
       setCountdown(3);
 
-      // 开始倒计时
       const countdownInterval = setInterval(() => {
         setCountdown(prev => {
           if (prev <= 1) {
@@ -97,11 +128,11 @@ const YoimiyaLetter: React.FC<YoimiyaLetterProps> = ({
 
   // 随机选择邮票图片
   useEffect(() => {
-    if (isVisible || showLetter) {
+    if ((isVisible || showLetter) && imagesLoaded) {
       const randomIndex = Math.floor(Math.random() * stampImages.length);
       setRandomImage(stampImages[randomIndex]);
     }
-  }, [isVisible, showLetter]);
+  }, [isVisible, showLetter, imagesLoaded]);
 
   const handleLetterModalClose = () => {
     setShowLetterModal(false);
@@ -128,7 +159,7 @@ const YoimiyaLetter: React.FC<YoimiyaLetterProps> = ({
       />
 
       {/* 信件内容 */}
-      {(isVisible || showLetter) && (
+      {(isVisible || showLetter) && imagesLoaded && (
         <div className={styles.letterOverlay}>
           <div
             className={styles.letterContainer}
