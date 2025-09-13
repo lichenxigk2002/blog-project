@@ -214,7 +214,7 @@ const ArticleDetail: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
         >
-            <p>正在加载中...</p>
+            <LoadingSpinner />
             <Link href="/main/Articles" className={styles.backLink}>
                 返回文章列表
             </Link>

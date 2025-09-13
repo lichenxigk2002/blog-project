@@ -4,7 +4,6 @@ import styles from './RecentArticles.module.scss';
 import { Article } from '@/types/Article';
 import { ArticlesAPI } from '@/api/ArticlesAPI';
 import { useLoading } from "@/hooks/useLoading";
-import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
 
 const RecentArticles: React.FC = () => {
     const [articles, setArticles] = useState<Article[]>([]);
@@ -33,7 +32,7 @@ const RecentArticles: React.FC = () => {
     if (isLoading) {
         return (
             <div className={styles.loadingContainer}>
-                <LoadingSpinner />
+                <p>正在加载中...</p>
             </div>
         );
     }

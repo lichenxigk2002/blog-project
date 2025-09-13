@@ -12,16 +12,47 @@ PROJECT_ROOT="/root/demo"  # 项目根目录
 BACKUP_DIR="/root/backups"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 CURRENT_BACKUP="$BACKUP_DIR/blogFrontend_backup_$TIMESTAMP"
+MAX_BACKUPS=10  # 最大备份数量
 
 echo "==== 开始部署 ===="
 
 mkdir -p $BACKUP_DIR || { echo "创建备份目录失败！"; exit 1; }
+
+# 清理旧备份函数
+cleanup_old_backups() {
+    echo "检查备份数量..."
+    
+    # 统计 blogFrontend 相关的备份数量
+    local backup_count=$(find $BACKUP_DIR -maxdepth 1 -type d -name "blogFrontend_backup_*" | wc -l)
+    
+    echo "当前备份数量: $backup_count"
+    
+    if [ $backup_count -ge $MAX_BACKUPS ]; then
+        echo "备份数量超过 $MAX_BACKUPS 个，开始清理最旧的备份..."
+        
+        # 按修改时间排序，删除最旧的备份
+        find $BACKUP_DIR -maxdepth 1 -type d -name "blogFrontend_backup_*" -printf '%T@ %p\n' | \
+        sort -n | \
+        head -n $((backup_count - MAX_BACKUPS + 1)) | \
+        while read timestamp backup_path; do
+            echo "删除旧备份: $(basename $backup_path)"
+            rm -rf "$backup_path"
+        done
+        
+        echo "旧备份清理完成"
+    else
+        echo "备份数量未超过限制，无需清理"
+    fi
+}
 
 # 备份当前版本（排除 node_modules 和 .next）
 if [ -d "$PROJECT_DIR" ]; then
     echo "开始备份当前版本..."
     rsync -av --exclude='node_modules' --exclude='.next' $PROJECT_DIR/ $CURRENT_BACKUP/ || { echo "备份失败！"; exit 1; }
     echo "备份完成：$CURRENT_BACKUP"
+    
+    # 备份完成后清理旧备份
+    cleanup_old_backups
 else
     echo "部署目录不存在，跳过备份"
 fi

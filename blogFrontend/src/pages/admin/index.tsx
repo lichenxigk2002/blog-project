@@ -8,6 +8,7 @@ import { BulletinBoardAPI } from '@/api/BulletinBoardAPI';
 import styles from './index.module.scss';
 import Head from "next/head";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
+import { Comment } from '@/types/Comment';
 
 interface Article {
   id: number;
@@ -29,13 +30,6 @@ interface ArticlesResponse {
   error?: string;
 }
 
-interface Comment {
-  id: number;
-  content: string;
-  author: string;
-  createdAt: string;
-  articleTitle?: string;
-}
 
 interface BulletinMessage {
   id: number;
@@ -368,6 +362,9 @@ const AdminDashboard: React.FC = () => {
             <div className={styles.dailyImageCard}>
               <div className={styles.cardHeader}>
                 <h3>每日一图</h3>
+                <div className={styles.imageInfo}>
+                  <p className={styles.imageTitle}>{getImageName(imageList[currentImageIndex])}</p>
+                </div>
                 <div className={styles.imageCounter}>
                   {currentImageIndex + 1} / {imageList.length}
                 </div>
@@ -391,11 +388,6 @@ const AdminDashboard: React.FC = () => {
                   </div>
                 </div>
               </div>
-
-              <div className={styles.imageInfo}>
-                <p className={styles.imageTitle}>{getImageName(imageList[currentImageIndex])}</p>
-                <p className={styles.imageDescription}>点击图片切换下一张</p>
-              </div>
             </div>
 
             <div className={styles.recentComments}>
@@ -405,7 +397,7 @@ const AdminDashboard: React.FC = () => {
                   recentComments.map((comment) => (
                     <div key={comment.id} className={styles.commentItem}>
                       <div className={styles.commentHeader}>
-                        <span className={styles.commentAuthor}>{comment.author}</span>
+                        <span className={styles.commentAuthor}>{comment.username}</span>
                         <span className={styles.commentDate}>
                           {new Date(comment.createdAt).toLocaleDateString()}
                         </span>
