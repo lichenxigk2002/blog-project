@@ -214,7 +214,7 @@ const AdminDashboard: React.FC = () => {
             <title>管理员页面 | 仪表盘</title>
             <meta name="description" />
           </Head>
-          <h1 className={styles.title}>仪表盘</h1>
+          <h1 className={styles.title}>孤芳不自赏，欢迎回来！</h1>
 
           <div className={styles.statsRow}>
             <div className={styles.statCard}>
