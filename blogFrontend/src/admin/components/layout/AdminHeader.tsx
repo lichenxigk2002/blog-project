@@ -29,7 +29,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ collapsed, onToggleCollapse }
             alt="管理员头像"
             className={styles.avatar}
           />
-          <span className={styles.username}>管理员</span>
+          <span className={styles.username}>孤芳不自赏</span>
         </div>
 
         <button
