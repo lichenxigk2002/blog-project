@@ -104,13 +104,11 @@ $font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
 .content {
   flex: 1;
   padding: 0 20px;
-  overflow-y: auto;
   background: transparent;
   margin-top: 72px; // 为固定头部留出空间
   margin-bottom: 60px; // 为固定底部留出空间
   min-height: calc(100vh - 132px); // 减去头部和底部的高度
   position: relative;
-  width: 100%;
   box-sizing: border-box;
   max-width: 100%;
 }
