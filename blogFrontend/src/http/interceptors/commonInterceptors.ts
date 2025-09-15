@@ -5,6 +5,12 @@ import { isTokenExpired } from '@/utils/jwtUtils';
 // 简单的内存缓存
 const cache = new Map<string, { data: any; timestamp: number; ttl: number }>();
 
+// 在文件顶部添加白名单
+const EXTERNAL_API_WHITELIST = [
+    'https://api.kamyang.com',
+    // 可以添加更多外部API域名
+];
+
 // 缓存拦截器 - 修复版本
 export const createCacheInterceptor = (defaultTTL: number = 5 * 60 * 1000): RequestInterceptor => ({
     beforeRequest: (config: RequestConfig) => {
@@ -201,6 +207,13 @@ export const createRetryInterceptor = (defaultMaxRetries: number = 3, defaultRet
             // 重写fetch函数以支持重试
             const originalFetchRef = originalFetch;
             const retryableFetch = async (url: string, options?: RequestInit) => {
+                // 检查是否是外部API，如果是则直接使用原生fetch
+                const isExternalAPI = EXTERNAL_API_WHITELIST.some(domain => url.startsWith(domain));
+
+                if (isExternalAPI) {
+                    return originalFetchRef(url, options);
+                }
+
                 let lastError: any;
 
                 for (let attempt = 0; attempt <= maxRetries; attempt++) {
