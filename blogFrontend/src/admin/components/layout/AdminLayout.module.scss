@@ -104,6 +104,10 @@ $font-main: 'Comic Sans MS', 'PingFang SC', 'Arial', sans-serif;
 .content {
   flex: 1;
   padding: 0 20px;
+<<<<<<< HEAD
+=======
+  overflow-y: auto;
+>>>>>>> 611627276e6ced0d41597ffe3cc6dcf5e75f70f0
   background: transparent;
   margin-top: 72px; // 为固定头部留出空间
   margin-bottom: 60px; // 为固定底部留出空间
