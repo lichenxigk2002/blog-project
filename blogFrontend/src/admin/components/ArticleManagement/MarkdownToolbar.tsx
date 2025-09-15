@@ -138,6 +138,23 @@ const MarkdownToolbar: React.FC<MarkdownToolbarProps> = ({
             <button type="button" className={styles.tagButton} onClick={e => { e.preventDefault(); setTableModalOpen(true); }} title="插入表格">📊</button>
             <button className={styles.tagButton} onClick={() => { insertAtCursor('---'); setShowToolbar(false); }} title="分割线">—</button>
           </div>
+
+          {/* 自定义组件 */}
+          <div className={styles.toolbarSection}>
+            <span className={styles.sectionLabel}>组件</span>
+            <button className={styles.tagButton} onClick={() => {
+              const metaTemplate = `\`\`\`meta
+title: 文章标题
+url: https://example.com
+image: https://www.gfbzsblog.site/images/avatar_20250520_215057.png
+desc: 文章描述
+platform: 平台名称
+\`\`\``;
+              insertAtCursor(metaTemplate);
+              setShowToolbar(false);
+            }} title="元信息卡片">📋</button>
+            <button className={styles.tagButton} onClick={() => { insertAtCursor('<video src="" controls />'); setShowToolbar(false); }} title="视频">📽️</button>
+          </div>
         </div>
       )}
       {/* 表格插入弹窗 */}
