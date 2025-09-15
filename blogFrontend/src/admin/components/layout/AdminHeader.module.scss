@@ -20,6 +20,61 @@
 .left {
   display: flex;
   align-items: center;
+  flex: 0 0 auto;
+}
+
+.center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.poetryContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  max-width: 400px;
+  text-align: center;
+}
+
+.poetryContent {
+  font-size: 14px;
+  color: #a259ff;
+  font-weight: 500;
+  line-height: 1.4;
+  font-style: italic;
+}
+
+.poetryAuthor {
+  font-size: 12px;
+  color: #8b5cf6;
+  opacity: 0.8;
+}
+
+.refreshBtn {
+  background: none;
+  border: none;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 8px;
+  color: #a259ff;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  opacity: 0.7;
+}
+
+.refreshBtn:hover {
+  background: #fbeaff;
+  opacity: 1;
+  transform: rotate(180deg);
+}
+
+.refreshBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .toggleBtn {
@@ -45,6 +100,7 @@
   display: flex;
   align-items: center;
   gap: 20px;
+  flex: 0 0 auto;
 }
 
 .userInfo {
@@ -102,5 +158,17 @@
 
   .username {
     display: none;
+  }
+
+  .poetryContainer {
+    max-width: 200px;
+  }
+
+  .poetryContent {
+    font-size: 12px;
+  }
+
+  .poetryAuthor {
+    font-size: 10px;
   }
 }
