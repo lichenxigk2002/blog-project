@@ -30,7 +30,6 @@ import styles from './[id].module.scss';
 import StrikethroughText from "@/components/ArticleUI/StrikethroughText/StrikethroughText"; // 组件样式
 import { useMobile } from '@/hooks/useMobile';
 import YoimiyaLetter from '@/components/YoimiyaLetter/YoimiyaLetter'; // 宵宫信件组件
-import OperationTipModal from '@/components/OperationTipModal/OperationTipModal';
 
 
 // 定义标题对象的类型
