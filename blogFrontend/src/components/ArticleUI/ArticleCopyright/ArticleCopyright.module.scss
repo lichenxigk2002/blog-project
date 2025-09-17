@@ -1,5 +1,5 @@
 .copyrightContainer {
-  padding: 10px 0;
+  padding: 10px 0 0;
   font-size: 12px;
   color: #666;
   line-height: 1.6;
@@ -91,9 +91,8 @@
 
 .blockchainStatus {
   margin-top: 12px;
-  padding: 8px 0;
   border-top: 1px solid var(--code-border);
-  padding-top: 12px;
+  padding: 12px 0 0;
 
   .blockchainHeader {
     display: flex;
@@ -152,7 +151,15 @@
     margin-top: 8px;
     padding-top: 8px;
     border-top: 1px solid var(--code-border);
-    animation: slideDown 0.3s ease;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    max-height: 0;
+    opacity: 0;
+
+    &.expanded {
+      max-height: 500px;
+      opacity: 1;
+    }
 
     .blockchainInfo {
       margin-bottom: 8px;
@@ -200,20 +207,6 @@
       line-height: 1.4;
       font-style: italic;
     }
-  }
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    max-height: 0;
-    transform: translateY(-10px);
-  }
-
-  to {
-    opacity: 1;
-    max-height: 200px;
-    transform: translateY(0);
   }
 }
 

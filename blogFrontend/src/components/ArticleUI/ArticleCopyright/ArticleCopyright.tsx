@@ -180,48 +180,46 @@ const ArticleCopyright: React.FC<ArticleCopyrightProps> = ({ article }) => {
                   </span>
                 </div>
 
-                {blockchainExpanded && (
-                  <div className={styles.blockchainDetails}>
-                    <div className={styles.blockchainInfo}>
-                      <div className={styles.blockchainItem}>
-                        <span className={styles.blockchainLabel}>区块链交易哈希：</span>
-                        <a
-                          href={getCrossbellExplorerUrl(copyrightInfo.blockchainTxHash)}
-                          className={styles.blockchainLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          title="在 Crossbell 区块浏览器上查看交易详情"
-                        >
-                          {formatHash(copyrightInfo.blockchainTxHash)}
-                        </a>
-                      </div>
-                      {/* 移除 Crossbell 相关的显示内容 */}
-                      {/*{copyrightInfo.noteId && (*/}
-                      {/*  <div className={styles.blockchainItem}>*/}
-                      {/*    <span className={styles.blockchainLabel}>Note ID：</span>*/}
-                      {/*    <a*/}
-                      {/*      href={getCrossbellUrl(copyrightInfo.noteId)}*/}
-                      {/*      className={styles.blockchainLink}*/}
-                      {/*      target="_blank"*/}
-                      {/*      rel="noopener noreferrer"*/}
-                      {/*      title="在 Crossbell 上查看内容"*/}
-                      {/*    >*/}
-                      {/*      {copyrightInfo.noteId}*/}
-                      {/*    </a>*/}
-                      {/*  </div>*/}
-                      {/*)}*/}
-                      <div className={styles.blockchainItem}>
-                        <span className={styles.blockchainLabel}>上链时间：</span>
-                        <span className={styles.blockchainValue}>
-                          {formatDate(copyrightInfo.updatedAt)}
-                        </span>
-                      </div>
+                <div className={`${styles.blockchainDetails} ${blockchainExpanded ? styles.expanded : ''}`}>
+                  <div className={styles.blockchainInfo}>
+                    <div className={styles.blockchainItem}>
+                      <span className={styles.blockchainLabel}>区块链交易哈希：</span>
+                      <a
+                        href={getCrossbellExplorerUrl(copyrightInfo.blockchainTxHash)}
+                        className={styles.blockchainLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="在 Crossbell 区块浏览器上查看交易详情"
+                      >
+                        {formatHash(copyrightInfo.blockchainTxHash)}
+                      </a>
                     </div>
-                    <div className={styles.blockchainDescription}>
-                      本文已通过 Crossbell 区块链进行去中心化版权保护。区块链技术确保内容的时间戳不可篡改，提供永久性的数字证明。交易哈希作为唯一标识符，可在 Crossbell 区块浏览器中验证其真实性。该技术基于 Polygon 网络，具有高安全性和低交易成本的优势。
+                    {/* 移除 Crossbell 相关的显示内容 */}
+                    {/*{copyrightInfo.noteId && (*/}
+                    {/*  <div className={styles.blockchainItem}>*/}
+                    {/*    <span className={styles.blockchainLabel}>Note ID：</span>*/}
+                    {/*    <a*/}
+                    {/*      href={getCrossbellUrl(copyrightInfo.noteId)}*/}
+                    {/*      className={styles.blockchainLink}*/}
+                    {/*      target="_blank"*/}
+                    {/*      rel="noopener noreferrer"*/}
+                    {/*      title="在 Crossbell 上查看内容"*/}
+                    {/*    >*/}
+                    {/*      {copyrightInfo.noteId}*/}
+                    {/*    </a>*/}
+                    {/*  </div>*/}
+                    {/*)}*/}
+                    <div className={styles.blockchainItem}>
+                      <span className={styles.blockchainLabel}>上链时间：</span>
+                      <span className={styles.blockchainValue}>
+                        {formatDate(copyrightInfo.updatedAt)}
+                      </span>
                     </div>
                   </div>
-                )}
+                  <div className={styles.blockchainDescription}>
+                    本文已通过 Crossbell 区块链进行去中心化版权保护。区块链技术确保内容的时间戳不可篡改，提供永久性的数字证明。交易哈希作为唯一标识符，可在 Crossbell 区块浏览器中验证其真实性。该技术基于 Polygon 网络，具有高安全性和低交易成本的优势。
+                  </div>
+                </div>
               </div>
             )}
           </>
