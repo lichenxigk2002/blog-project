@@ -9,6 +9,7 @@ import type { FriendLinks } from "@/types/FriendLinks";
 import OperationTipModal from '@/components/OperationTipModal/OperationTipModal';
 import DOMPurify from 'dompurify';
 import { useMobile } from '@/hooks/useMobile';
+import { handleImageError, createImageWithFallback, ImageWithFallback } from '@/utils/randomImageUtils';
 
 // 新增：定义props类型
 interface FriendLinksPageProps {
@@ -301,10 +302,16 @@ const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => 
                                                 }}
                                             >
                                                 <div className={styles.avatar}>
-                                                    <img src={link.avatarUrl} alt={link.name} />
+                                                    <ImageWithFallback
+                                                        src={link.avatarUrl}
+                                                        alt={link.name}
+                                                    />
                                                 </div>
                                                 <div className={styles.bgAvatar}>
-                                                    <img src={link.avatarUrl} alt={link.name + '背景'} />
+                                                    <ImageWithFallback
+                                                        src={link.avatarUrl}
+                                                        alt={link.name + '背景'}
+                                                    />
                                                 </div>
                                                 <div className={styles.info}>
                                                     <h3
@@ -461,10 +468,16 @@ const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => 
                                                 }}
                                             >
                                                 <div className={styles.avatar}>
-                                                    <img src={link.avatarUrl} alt={link.name} />
+                                                    <ImageWithFallback
+                                                        src={link.avatarUrl}
+                                                        alt={link.name}
+                                                    />
                                                 </div>
                                                 <div className={styles.bgAvatar}>
-                                                    <img src={link.avatarUrl} alt={link.name + '背景'} />
+                                                    <ImageWithFallback
+                                                        src={link.avatarUrl}
+                                                        alt={link.name + '背景'}
+                                                    />
                                                 </div>
                                                 <div className={styles.info}>
                                                     <h3
@@ -483,7 +496,11 @@ const FriendLinks: React.FC<FriendLinksPageProps> = ({ initialFriendLinks }) => 
                             <div className={styles.detailSection} ref={detailSectionRef}>
                                 <div className={styles.detailHeader} ref={detailHeaderRef}>
                                     <div className={styles.detailInfo}>
-                                        <img src={selectedFriendLink.avatarUrl} alt={selectedFriendLink.name} className={styles.detailAvatar} />
+                                        <ImageWithFallback
+                                            src={selectedFriendLink.avatarUrl}
+                                            alt={selectedFriendLink.name}
+                                            className={styles.detailAvatar}
+                                        />
                                         <div className={styles.detailText}>
                                             <h2>{selectedFriendLink.name}</h2>
                                             <p>{selectedFriendLink.description}</p>

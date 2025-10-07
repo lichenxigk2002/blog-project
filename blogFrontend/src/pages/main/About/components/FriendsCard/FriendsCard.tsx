@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { FriendLinksAPI } from '@/api/FriendLinkAPI';
 import { FriendLinks } from '@/types/FriendLinks';
 import styles from './FriendsCard.module.scss';
+import { ImageWithFallback } from '@/utils/randomImageUtils';
 
 const ANIMATION_CONFIG = {
   SMOOTH_TAU: 0.25,
@@ -205,10 +206,9 @@ const FriendsCard: React.FC = () => {
         }}
       >
         <div className={styles.avatarContainer}>
-          <img
+          <ImageWithFallback
             src={friend.avatarUrl}
             alt={friend.name}
-            title={`点击访问 ${friend.name} 的网站`}
             className={styles.friendAvatar}
           />
         </div>
