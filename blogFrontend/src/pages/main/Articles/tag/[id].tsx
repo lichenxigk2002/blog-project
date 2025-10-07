@@ -5,7 +5,7 @@ import styles from './TagArticles.module.scss';
 import { Article } from '@/types/Article';
 import { TagsAPI } from '@/api/TagsAPI';
 import Head from "next/head";
-import {FaArrowLeft} from "react-icons/fa";
+import { FaArrowLeft } from "react-icons/fa";
 
 export default function TagArticles() {
   const router = useRouter();
@@ -29,7 +29,7 @@ export default function TagArticles() {
         setError(null);
 
         // 使用 TagsAPI 获取标签信息
-        const {name} = await TagsAPI.getTagById(Number(id));
+        const { name } = await TagsAPI.getTagById(Number(id));
         setTagName(name);
 
         // 使用 TagsAPI 获取该标签下的文章
@@ -64,7 +64,7 @@ export default function TagArticles() {
       <div className={styles.error}>
         <p>{error}</p>
         <a onClick={() => routerBack.back()}
-           className={styles.backLink}
+          className={styles.backLink}
         >
           <FaArrowLeft style={{ color: "var(--text)" }} />
           返回
@@ -86,7 +86,7 @@ export default function TagArticles() {
         <div className={styles.empty}>
           <p>该标签下暂无文章</p>
           <a onClick={() => routerBack.back()}
-             className={styles.backLink}
+            className={styles.backLink}
           >
             <FaArrowLeft style={{ color: "var(--text)" }} />
             返回
@@ -115,7 +115,7 @@ export default function TagArticles() {
             </Link>
           ))}
           <a onClick={() => routerBack.back()}
-             className={styles.backLink}
+            className={styles.backLink}
           >
             <FaArrowLeft style={{ color: "var(--text)" }} />
             返回
