@@ -17,7 +17,6 @@ const Button: React.FC<ButtonProps> = ({
 }) => {
   const isIconOnly = icon && !children;
 
-
   return (
     <button
       className={`${styles.button} ${styles[variant]} ${styles[size]} ${isIconOnly ? styles.iconOnly : ''} ${className}`}
